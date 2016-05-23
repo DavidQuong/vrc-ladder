@@ -1,0 +1,25 @@
+# use nodejs6
+image: node:6
+
+# cache node_modules to cut down on build times
+cache:
+  paths:
+  - node_modules
+
+variables:
+  NPM_CONFIG_LOG_LEVEL: warn
+  NODE_ENV: test
+
+# install modules before doing any tests
+before_script:
+  - npm install
+
+# make sure code is sane
+lint:
+  script: npm run lint
+  stage: test
+
+# TODO: Enable specs.
+# spec:
+#   script: npm run spec
+#   stage: test

@@ -1,0 +1,51 @@
+{
+  "name": "xxx",
+  "version": "0.1.0",
+  "description": "Hello world.",
+  "author": "BASED GOD",
+  "license": "UNLICENSED",
+  "repository": "my/github",
+  "scripts": {
+    "dev": "NODE_ENV=development ./node_modules/.bin/webpack-udev-server config/webpack/web.webpack.config.babel.js",
+    "build": "./node_modules/.bin/webpack --bail --config config/webpack/web.webpack.config.babel.js",
+    "lint": "./node_modules/.bin/eslint .",
+    "test": "npm run lint"
+  },
+  "dependencies": {
+    "classnames": "^2.2.5",
+    "lodash": "^4.12.0",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0",
+    "react-intl": "^2.1.2",
+    "react-redux": "^4.4.5",
+    "react-typeahead": "^2.0.0-alpha.5",
+    "recompose": "^0.19.0",
+    "redux": "^3.5.2",
+    "redux-actions": "^0.9.1",
+    "redux-form": "^5.2.4",
+    "redux-thunk": "^2.1.0"
+  },
+  "devDependencies": {
+    "babel-preset-metalab": "^0.2.1",
+    "chromedriver": "^2.21.2",
+    "enzyme": "^2.3.0",
+    "eslint": "^2.10.2",
+    "eslint-config-metalab": "^4.0.1",
+    "eslint-plugin-filenames": "^0.2.0",
+    "eslint-plugin-import": "^1.8.0",
+    "eslint-plugin-lodash-fp": "^1.2.0",
+    "eslint-plugin-react": "^5.1.1",
+    "leadfoot": "^1.6.8",
+    "webpack": "^1.13.0",
+    "webpack-assets": "^0.2.0",
+    "webpack-config-babel": "^0.2.0",
+    "webpack-config-entry": "^0.3.0",
+    "webpack-config-json": "^0.2.0",
+    "webpack-config-optimize": "^0.2.0",
+    "webpack-config-postcss": "^0.2.3",
+    "webpack-config-root": "^0.2.1",
+    "webpack-config-source-maps": "^0.2.2",
+    "webpack-partial": "^1.2.0",
+    "webpack-udev-server": "^0.5.0"
+  }
+}
