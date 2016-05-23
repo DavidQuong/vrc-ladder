@@ -26,6 +26,7 @@
     "redux-thunk": "^2.1.0"
   },
   "devDependencies": {
+    "babel-core": "^6.9.1",
     "babel-preset-metalab": "^0.2.1",
     "chromedriver": "^2.21.2",
     "enzyme": "^2.3.0",

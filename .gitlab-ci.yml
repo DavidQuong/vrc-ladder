@@ -1,25 +1,39 @@
-# use nodejs6
-image: node:6
-
-# cache node_modules to cut down on build times
+# Cache node_modules to cut down on build times.
 cache:
   paths:
   - node_modules
 
-variables:
-  NPM_CONFIG_LOG_LEVEL: warn
-  NODE_ENV: test
+stages:
+  - frontend-test
+  - backend-test
 
-# install modules before doing any tests
-before_script:
-  - npm install
+# Template for frontend CI tasks.
+.frontend-template: &frontend-test
+  variables:
+    NPM_CONFIG_LOG_LEVEL: warn
+    NODE_ENV: test
+  before_script:
+    - cd frontend
+    - npm install
+  image: node:6
+  stage: frontend-test
 
-# make sure code is sane
-lint:
-  script: npm run lint
-  stage: test
+# Template for backend CI tasks.
+.backend-template: &backend-test
+  image: java:8
+  stage: backend-test
+  before_script:
+    - cd backend
 
-# TODO: Enable specs.
-# spec:
-#   script: npm run spec
-#   stage: test
+# Check frontend for style issues.
+frontend-lint:
+  <<: *frontend-test
+  script:
+    - npm run lint
+
+# Check backend for sanity.
+backend-spec:
+  <<: *backend-test
+  script:
+    - ./gradlew build
+    - ./gradlew test
