@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Trevor on 5/26/2016.
  * A placeholder for the actual database to provide dummy data for implementation testing purposes
  */
 public class MockDatabase {
