@@ -7,13 +7,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by Trevor on 5/26/2016.
  * A class for sorting teams into groups that will play against each other
  * Groups are strictly limited to 3 or 4 teams
  */
 public class Group {
-    private static final int MIN_NUM_TEAMS = 3;
-    private static final int MAX_NUM_TEAMS = 4;
+    public static final int MIN_NUM_TEAMS = 3;
+    public static final int MAX_NUM_TEAMS = 4;
 
     private final List<Team> teams;
 

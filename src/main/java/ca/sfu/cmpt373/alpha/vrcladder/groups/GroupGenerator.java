@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by Trevor on 5/26/2016.
  * A class for generating the groups of teams that will play matches against each other each week
  */
 public class GroupGenerator {
@@ -25,18 +24,18 @@ public class GroupGenerator {
         List<Team> teamsToGroup = new ArrayList<>();
 
         //figure out how many teams won't fit into groups of three
-        int idealTeamCount = 3;
-        int extraTeams = attendingTeams.size() % idealTeamCount;
+        int groupCount = Group.MIN_NUM_TEAMS;
+        int extraTeams = attendingTeams.size() % groupCount;
 
         //while there are teams that won't fit into groups of three, make groups of four instead
         if (extraTeams > 0) {
-            idealTeamCount = 4;
+            groupCount = Group.MAX_NUM_TEAMS;
         }
 
         //make groups starting from the bottom of the list so that groups of four are created from the lowest ranked players
         for (int i = attendingTeams.size() - 1; i >= 0; i--) {
             teamsToGroup.add(attendingTeams.get(i));
-            if (teamsToGroup.size() == idealTeamCount) {
+            if (teamsToGroup.size() == groupCount) {
                 //reverse teamsToGroup before adding them to a group, so that they are in ranked order
                 Collections.reverse(teamsToGroup);
                 matchGroupings.add(new Group(teamsToGroup));
@@ -44,7 +43,7 @@ public class GroupGenerator {
                 extraTeams--;
                 if (extraTeams == 0) {
                     //switch back to groups of three
-                    idealTeamCount = 3;
+                    groupCount = Group.MIN_NUM_TEAMS;
                 }
             }
         }
