@@ -1,16 +1,17 @@
 package ca.sfu.cmpt373.alpha.vrcladder.db;
 
-import ca.sfu.cmpt373.alpha.vrcladder.teams.AttendanceInfo;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserName;
+import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,11 +44,7 @@ public class MockDatabase {
             if (previousUser == null) {
                 previousUser = user;
             } else {
-                teams.add(new Team(user, previousUser, mockRanking,
-                        new AttendanceInfo(
-                                true,
-                                AttendanceInfo.TimeSlot.FIRST,
-                                AttendanceInfo.AttendanceStatus.ON_TIME)));
+                teams.add(new Team(new IdType(), user, mockRanking, previousUser, new AttendanceCard(new IdType(), PlayTime.TIME_SLOT_A)));
                 previousUser = null;
                 mockRanking++;
             }

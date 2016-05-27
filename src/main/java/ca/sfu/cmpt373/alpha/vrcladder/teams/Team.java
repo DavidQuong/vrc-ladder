@@ -1,38 +1,53 @@
 package ca.sfu.cmpt373.alpha.vrcladder.teams;
 
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
+import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
-/**
- * Created by Trevor on 5/26/2016.
- * A class that acts as a container for team members
- */
+// TODO - Potentially add more fields
 public class Team {
-    //teams should be strictly two members, not an arbitrary size
-    private final User member1;
-    private final User member2;
-    private final int ranking;
-    private final AttendanceInfo attendanceInfo;
 
-    public Team(User member1, User member2, int ranking, AttendanceInfo attendanceInfo) {
-        this.member1 = member1;
-        this.member2 = member2;
+    private IdType id;
+    private User firstPlayer;
+    private User secondPlayer;
+    private AttendanceCard attendanceCard;
+    private int ranking;
+
+    public Team(IdType id, User firstPlayer, int ranking, User secondPlayer, AttendanceCard attendanceCard) {
+        verifyPlayers(firstPlayer, secondPlayer);
+        this.id = id;
+        this.firstPlayer = firstPlayer;
+        this.secondPlayer = secondPlayer;
+        this.attendanceCard = attendanceCard;
         this.ranking = ranking;
-        this.attendanceInfo = attendanceInfo;
     }
 
-    public User getMember1() {
-        return member1;
+    public IdType getId() {
+        return id;
     }
 
-    public User getMember2() {
-        return member2;
+    public User getFirstPlayer() {
+        return firstPlayer;
     }
 
-    public AttendanceInfo getAttendanceInfo() {
-        return attendanceInfo;
+    public User getSecondPlayer() {
+        return secondPlayer;
+    }
+
+    public AttendanceCard getAttendanceCard() {
+        return attendanceCard;
     }
 
     public int getRanking() {
-        return ranking;
+        return this.ranking;
     }
+
+    // TODO - Replace RuntimeException with more specific (possibly custom) type of error.
+    private void verifyPlayers(User firstPlayer, User secondPlayer) throws RuntimeException {
+        if (firstPlayer.getUserRole() != UserRole.PLAYER || secondPlayer.getUserRole() != UserRole.PLAYER) {
+            throw new RuntimeException();
+        }
+    }
+
 }

@@ -63,7 +63,7 @@ public class GroupGenerator {
     private static List<Team> getAttendingTeams (List<Team> teams) {
         List<Team> attendingTeams = new ArrayList<>();
         for (Team team : teams) {
-            if (team.getAttendanceInfo().getIsAttending()) {
+            if (team.getAttendanceCard().isAttending()) {
                 attendingTeams.add(team);
             }
         }
