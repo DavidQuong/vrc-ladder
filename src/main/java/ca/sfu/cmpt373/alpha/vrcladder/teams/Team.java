@@ -10,13 +10,13 @@ public class Team {
     //teams should be strictly two members, not an arbitrary size
     private final User member1;
     private final User member2;
-
-    //TODO: decide whether we should add a ranking member variable, or just rely on the database to return teams in ranked order
+    private final int ranking;
     private final AttendanceInfo attendanceInfo;
 
-    public Team(User member1, User member2, AttendanceInfo attendanceInfo) {
+    public Team(User member1, User member2, int ranking, AttendanceInfo attendanceInfo) {
         this.member1 = member1;
         this.member2 = member2;
+        this.ranking = ranking;
         this.attendanceInfo = attendanceInfo;
     }
 
@@ -30,5 +30,9 @@ public class Team {
 
     public AttendanceInfo getAttendanceInfo() {
         return attendanceInfo;
+    }
+
+    public int getRanking() {
+        return ranking;
     }
 }

@@ -37,16 +37,19 @@ public class MockDatabase {
     private static List<Team> generateMockTeams(List<User> users) {
         List<Team> teams = new ArrayList<>();
         User previousUser = null;
+        //ranking is just incremented after a team is made
+        int mockRanking = 0;
         for (User user : users) {
             if (previousUser == null) {
                 previousUser = user;
             } else {
-                teams.add(new Team(user, previousUser,
+                teams.add(new Team(user, previousUser, mockRanking,
                         new AttendanceInfo(
                                 true,
                                 AttendanceInfo.TimeSlot.FIRST,
                                 AttendanceInfo.AttendanceStatus.ON_TIME)));
                 previousUser = null;
+                mockRanking++;
             }
         }
 
