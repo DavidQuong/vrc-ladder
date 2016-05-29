@@ -1,7 +1,17 @@
-package ca.sfu.cmpt373.alpha.vrcladder.users.ladder;
+package ca.sfu.cmpt373.alpha.vrcladder.ladder;
 
+import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserName;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.Random;
 
 /**
  * Created by Amaterasu on 2016-05-26.
@@ -39,21 +49,27 @@ public class Ladder {
         return ladderList.get(teamPosition);
     }
 
-    public int findTeamPosition(Team team){
+    public int findTeamPosition(Team team) throws NoSuchElementException{
         for (Team t:ladderList){
-            if(t.getTeamID())
+            if(team.getId().equals(t.getId())) return ladderList.indexOf(t);
         }
+        throw new NoSuchElementException("Team with id: " + team.getId() + " does not exist in the ladder.");
     }
 
-    public List<Team> getLadder(){
-        return ladderList;
-    }
 
+    /**
+     * Inserts team at the bottom of the ladder
+     * @param team
+     */
     public void pushTeam(Team team){
-
         ladderList.add(team);
     }
 
+    /**
+     * Inserts team at the position specified
+     * @param position
+     * @param team
+     */
     public void insertTeamAtPosition(int position, Team team){
         ladderList.add(position, team);
     }
@@ -90,6 +106,7 @@ public class Ladder {
     public void updateDatabase(){
 
     }
+
 
 }
 

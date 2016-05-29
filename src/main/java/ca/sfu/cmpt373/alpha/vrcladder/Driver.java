@@ -1,7 +1,8 @@
 package ca.sfu.cmpt373.alpha.vrcladder;
 
-import ca.sfu.cmpt373.alpha.vrcladder.users.ladder.Ladder;
-import ca.sfu.cmpt373.alpha.vrcladder.users.ladder.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.ladder.Ladder;
+import ca.sfu.cmpt373.alpha.vrcladder.ladder.LadderTestHelper;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,6 @@ public class Driver {
         Ladder ladder = new Ladder(teams);
 
         for(int i = 0; i < 10; i++){
-            ladder.pushTeam(new Team(UUID.randomUUID()));
         }
 
         for(int i = 0; i < 3; i++){
@@ -35,7 +35,10 @@ public class Driver {
         }*/
 
         System.out.println(ladder.getLadderVolume());
+        System.out.println(ladder.getLadderTeamCount());
 
+        LadderTestHelper ladderTestHelper = new LadderTestHelper();
+        ladderTestHelper.generateTeam();
 
     }
 
