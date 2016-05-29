@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public class EmailAddress {
 
     private String emailAddress;
-    private static final String REGEX_PATTERN =  "^[A-Z0-9._%+-]+" +
+    private static final String REGEX_PATTERN =  "^[A-Z0-9._-]+" +
                                                  "@[A-Z0-9.-]+" +
                                                  "\\.[A-Z]{2,6}$";
 
@@ -25,7 +25,7 @@ public class EmailAddress {
         return emailAddress;
     }
 
-    private void verifyFormat(String emailAddress) {
+    public void verifyFormat(String emailAddress) {
         Pattern pattern = Pattern.compile(REGEX_PATTERN, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(emailAddress);
         if(!matcher.find()){
