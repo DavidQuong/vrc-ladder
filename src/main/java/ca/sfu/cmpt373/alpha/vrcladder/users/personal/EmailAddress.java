@@ -1,15 +1,23 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.personal;
 
 import java.util.IllegalFormatException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-// TODO - Add verification of email format, such that its of the form: <email name>@<domain name><top level domain>
 public class EmailAddress {
 
     private String emailAddress;
+    private static final String REGEX_PATTERN =  "^[A-Z0-9._%+-]+" +
+                                                 "@[A-Z0-9.-]+" +
+                                                 "\\.[A-Z]{2,6}$";
 
-    public EmailAddress(String emailAddress) throws IllegalFormatException {
+    public void setEmailAddress(String emailAddress) throws IllegalFormatException {
         verifyFormat(emailAddress);
         this.emailAddress = emailAddress;
+    }
+
+    public String getEmailAddress() {
+        return this.emailAddress;
     }
 
     @Override
@@ -17,7 +25,11 @@ public class EmailAddress {
         return emailAddress;
     }
 
-    private void verifyFormat(String emailAddress) throws IllegalFormatException {
-
+    private void verifyFormat(String emailAddress) {
+        Pattern pattern = Pattern.compile(REGEX_PATTERN, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(emailAddress);
+        if(!matcher.find()){
+            throw new IllegalArgumentException("Email format is not correct");
+        }
     }
 }
