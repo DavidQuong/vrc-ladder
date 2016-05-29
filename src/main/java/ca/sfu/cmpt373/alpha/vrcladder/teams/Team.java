@@ -37,4 +37,12 @@ public class Team {
         }
     }
 
+    @Override
+    public String toString(){
+        return  "[" + id + ",\n"
+                + firstPlayer.toString() + ",\n"
+                + secondPlayer.toString() + "]\n";
+
+    }
+
 }

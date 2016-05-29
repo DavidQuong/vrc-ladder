@@ -1,12 +1,11 @@
 package ca.sfu.cmpt373.alpha.vrcladder;
 
 import ca.sfu.cmpt373.alpha.vrcladder.ladder.Ladder;
-import ca.sfu.cmpt373.alpha.vrcladder.ladder.LadderTestHelper;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class Driver {
 
@@ -20,12 +19,18 @@ public class Driver {
 
         Ladder ladder = new Ladder(teams);
 
-        for(int i = 0; i < 10; i++){
+        TeamGenerator teamGenerator = new TeamGenerator();
+        for (int i = 0; i < 4; i++) {
+            ladder.pushTeam(teamGenerator.generateTeam());
         }
 
-        for(int i = 0; i < 3; i++){
-            ladder.pushTeam(null);
-        }
+        //ladder.insertTeamAtPosition(4, null);
+        System.out.printf("%s", ladder.toString());
+
+        ladder.swapTeams(0,3);
+        System.out.println("\n\n");
+        System.out.printf("%s", ladder.toString());
+
 
 
         ///print the ladder
@@ -36,9 +41,6 @@ public class Driver {
 
         System.out.println(ladder.getLadderVolume());
         System.out.println(ladder.getLadderTeamCount());
-
-        LadderTestHelper ladderTestHelper = new LadderTestHelper();
-        ladderTestHelper.generateTeam();
 
     }
 

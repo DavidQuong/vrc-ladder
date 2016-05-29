@@ -49,4 +49,13 @@ public class User {
         return userRole.hasAuthorizationToPerform(action);
     }
 
+    @Override
+    public String toString(){
+        return  "userID = " + userId.getUserId() + ", "
+                + userName.getDisplayName() + ", "
+                + userRole + ", "
+                + emailAddress.toString() + ", "
+                + phoneNumber.toString();
+    }
+
 }

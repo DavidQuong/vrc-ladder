@@ -291,7 +291,6 @@ Emil
 Emile
 Emily
 Emma
-Erectus
 Eric
 Erik
 Erin
@@ -312,7 +311,6 @@ Finn
 Finster
 Fiona
 Fisher
-Fist
 Flag
 Flagg
 Flash
@@ -325,9 +323,6 @@ Francis
 Franke
 Freeman
 Frost
-Fuck
-Fucker
-Fuckface
 Furiosa
 Fury
 Gabriel
@@ -401,8 +396,6 @@ Houle
 Howard
 Hudson
 Hughes
-Humongous
-Humungus
 Hyun
 Ian
 Ilya
@@ -800,9 +793,7 @@ Sidney
 Singer
 Sir
 Skyler
-Slaughter
 Slinger
-Slit
 Smirnova
 Smith
 Snake
@@ -857,9 +848,6 @@ Tiana
 Tim
 Timmy
 Timothy
-Tit
-Tittie
-Titties
 Toadie
 Toast
 Todd
