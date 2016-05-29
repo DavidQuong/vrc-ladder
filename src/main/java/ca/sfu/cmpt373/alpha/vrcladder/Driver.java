@@ -14,24 +14,29 @@ public class Driver {
     public static void main(String[] args) {
         // Template code
 
-        System.out.printf("%s", "Printing...");
+        System.out.printf("%s%n", "Printing...");
         teams = new ArrayList<>();
 
         Ladder ladder = new Ladder(teams);
 
-        UUID uuid;
-        for(int i = 0; i < 100; i++){
-            uuid = UUID.randomUUID();
-            Team team = new Team(uuid);
-            ladder.insertTeam(team);
+        for(int i = 0; i < 10; i++){
+            ladder.pushTeam(new Team(UUID.randomUUID()));
         }
-        System.out.printf("%s %n", "Mark...");
+
+        for(int i = 0; i < 3; i++){
+            ladder.pushTeam(null);
+        }
+
 
         ///print the ladder
-        List<Team> tempLadder = ladder.getLadder();
+/*        List<Team> tempLadder = ladder.getLadder();
         for(Team team:tempLadder){
             System.out.println(team.getTeamID());
-        }
+        }*/
+
+        System.out.println(ladder.getLadderVolume());
+
+
     }
 
 }

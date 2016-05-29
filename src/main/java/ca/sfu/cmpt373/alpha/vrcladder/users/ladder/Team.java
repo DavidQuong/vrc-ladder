@@ -13,7 +13,9 @@ public class Team {
     User player2;
     UUID teamID;
     public Team(UUID teamID){
+
         this.teamID = teamID;
+
     }
 
     public UUID getTeamID(){return teamID;}

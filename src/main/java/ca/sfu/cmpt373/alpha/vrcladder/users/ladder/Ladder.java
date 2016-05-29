@@ -10,30 +10,52 @@ public class Ladder {
 
     //ladderList of team objects
     List<Team> ladderList;
+    final private int LADDER_VOLUME = 200;
+    private int teamCount;
 
 
     public Ladder(){
-        ladderList = new ArrayList<>();
+
+        ladderList = new ArrayList<>(LADDER_VOLUME);
+        teamCount = 0;
     }
 
     public Ladder(List<Team> newLadder){
+
         ladderList = newLadder;
+    }
+
+    @Override
+    public String toString(){
+
+        return "Ladder Data";
     }
 
     /**
      * Zero indexed
      */
-    public Team getTeamAtPosition(int teamPosition){
+    public Team findTeamAtPosition(int teamPosition){
 
         return ladderList.get(teamPosition);
+    }
+
+    public int findTeamPosition(Team team){
+        for (Team t:ladderList){
+            if(t.getTeamID())
+        }
     }
 
     public List<Team> getLadder(){
         return ladderList;
     }
 
-    public void insertTeam(Team team){
+    public void pushTeam(Team team){
+
         ladderList.add(team);
+    }
+
+    public void insertTeamAtPosition(int position, Team team){
+        ladderList.add(position, team);
     }
 
     /**
@@ -41,7 +63,7 @@ public class Ladder {
      * @return
      */
     public int getLadderVolume(){
-        return ladderList.size();
+        return LADDER_VOLUME;
     }
 
     /**
@@ -49,13 +71,25 @@ public class Ladder {
      * @return
      */
     public int getLadderTeamCount(){
-        return -1;
+        return ladderList.size();
     }
 
 
     /**
-     * Swap
+     * Swap the positions of two Teams in the ladder
+     * @param team1
+     * @param team2
      */
+    public void swapTeams(Team team1, Team team2){
+
+    }
+
+    /**
+     * Updates database with data based on current ladder
+     */
+    public void updateDatabase(){
+
+    }
 
 }
 
