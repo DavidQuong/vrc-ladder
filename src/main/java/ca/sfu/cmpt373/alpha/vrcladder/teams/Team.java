@@ -4,6 +4,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 
 // TODO - Potentially add more fields
 public class Team {
@@ -12,9 +13,10 @@ public class Team {
     private User firstPlayer;
     private User secondPlayer;
     private AttendanceCard attendanceCard;
+    private AttendanceStatus attendanceStatus;
     private int ranking;
 
-    public Team(IdType id, User firstPlayer, int ranking, User secondPlayer, AttendanceCard attendanceCard) {
+    public Team(IdType id, User firstPlayer, User secondPlayer, int ranking, AttendanceCard attendanceCard) {
         verifyPlayers(firstPlayer, secondPlayer);
         this.id = id;
         this.firstPlayer = firstPlayer;
@@ -39,8 +41,20 @@ public class Team {
         return attendanceCard;
     }
 
+    public void setRanking(int ranking){
+        this.ranking = ranking;
+    }
+
     public int getRanking() {
         return this.ranking;
+    }
+
+    public void setAttendance(AttendanceStatus attendance){
+        this.attendanceStatus = attendance;
+    }
+
+    public AttendanceStatus getAttendace(){
+        return this.attendanceStatus;
     }
 
     // TODO - Replace RuntimeException with more specific (possibly custom) type of error.
