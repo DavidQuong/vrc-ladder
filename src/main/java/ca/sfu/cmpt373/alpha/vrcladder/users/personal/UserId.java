@@ -1,15 +1,18 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.personal;
 
-// TODO - Implement Comparable interface
+import java.util.IllegalFormatException;
+
+// TODO - Add verification of user ID format.
 public class UserId {
 
-    private Integer id;
+    private String id;
 
-    public UserId(Integer userId) {
+    public UserId(String userId) {
+        verifyFormat(userId);
         id = userId;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return id;
     }
 
@@ -30,6 +33,10 @@ public class UserId {
         }
 
         return true;
+    }
+
+    private void verifyFormat(String userId) throws IllegalFormatException {
+
     }
 
 }
