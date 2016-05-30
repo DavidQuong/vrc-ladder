@@ -5,13 +5,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class EmailAddress {
-
-    private String emailAddress;
     private static final String REGEX_PATTERN =  "^[A-Z0-9._-]+" +
-                                                 "@[A-Z0-9.-]+" +
-                                                 "\\.[A-Z]{2,6}$";
+            "@[A-Z0-9.-]+" +
+            "\\.[A-Z]{2,6}$";
+    private String emailAddress;
 
-    public void setEmailAddress(String emailAddress) throws IllegalFormatException {
+    public EmailAddress(String emailAddress) throws IllegalFormatException {
         verifyFormat(emailAddress);
         this.emailAddress = emailAddress;
     }
@@ -25,7 +24,7 @@ public class EmailAddress {
         return emailAddress;
     }
 
-    public void verifyFormat(String emailAddress) {
+    private void verifyFormat(String emailAddress) {
         Pattern pattern = Pattern.compile(REGEX_PATTERN, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(emailAddress);
         if(!matcher.find()){

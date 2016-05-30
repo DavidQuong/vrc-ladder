@@ -11,8 +11,7 @@ public class EmailAddressTest {
     public void testEmailAddress(){
         // TODO: either assert or some extra for failure tests.
         for(String email : emailList){
-            EmailAddress emailObject = new EmailAddress();
-            emailObject.verifyFormat(email);
+            EmailAddress emailObject = new EmailAddress(email);
         }
     }
 }
