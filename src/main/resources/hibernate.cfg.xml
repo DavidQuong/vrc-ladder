@@ -20,6 +20,8 @@
         <property name="hbm2ddl.auto">create</property>
 
         <mapping class="ca.sfu.cmpt373.alpha.vrcladder.users.User"/>
+        <mapping class="ca.sfu.cmpt373.alpha.vrcladder.teams.Team"/>
+        <mapping class="ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard"/>
 
     </session-factory>
 

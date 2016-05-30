@@ -3,7 +3,6 @@ package ca.sfu.cmpt373.alpha.vrcladder.users.personal;
 import java.util.IllegalFormatException;
 
 // TODO - Add verification of email format, such that its of the form: <email name>@<domain name><top level domain>
-//      - Implement Comparable interface
 public class EmailAddress {
 
     private String emailAddress;
