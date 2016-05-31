@@ -15,9 +15,28 @@ public class EmailAddress {
         this.emailAddress = emailAddress;
     }
 
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
     @Override
     public String toString() {
-        return emailAddress;
+        return getEmailAddress();
+    }
+
+    @Override
+    public boolean equals(Object otherObj) {
+        if (this == otherObj) {
+            return true;
+        }
+
+        if (otherObj == null || getClass() != otherObj.getClass()) {
+            return false;
+        }
+
+        EmailAddress otherEmail = (EmailAddress) otherObj;
+
+        return emailAddress.equals(otherEmail.emailAddress);
     }
 
     private void verifyFormat(String emailAddress) throws IllegalArgumentException {

@@ -21,9 +21,28 @@ public class PhoneNumber {
         this.phoneNumber = strippedPhoneNumber;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
     @Override
     public String toString() {
-        return phoneNumber;
+        return getPhoneNumber();
+    }
+
+    @Override
+    public boolean equals(Object otherObj) {
+        if (this == otherObj) {
+            return true;
+        }
+
+        if (otherObj == null || getClass() != otherObj.getClass()) {
+            return false;
+        }
+
+        PhoneNumber otherPhoneNumber = (PhoneNumber) otherObj;
+
+        return phoneNumber.equals(otherPhoneNumber.phoneNumber);
     }
 
     private void verifyFormat(String phoneNumber) throws IllegalFormatException {

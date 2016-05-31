@@ -17,6 +17,11 @@ public class UserId {
     }
 
     @Override
+    public String toString() {
+        return getUserId();
+    }
+
+    @Override
     public boolean equals(Object comparedObj) {
         if (this == comparedObj) {
             return true;
@@ -26,13 +31,9 @@ public class UserId {
             return false;
         }
 
-        UserId otherId = (UserId) comparedObj;
+        UserId otherUserId = (UserId) comparedObj;
 
-        if (id != otherId.id) {
-            return false;
-        }
-
-        return true;
+        return id.equals(otherUserId.id);
     }
 
     private void verifyFormat(String userId) throws IllegalFormatException {
