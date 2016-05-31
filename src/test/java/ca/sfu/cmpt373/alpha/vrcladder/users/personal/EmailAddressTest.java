@@ -13,13 +13,13 @@ public class EmailAddressTest {
     @Test
     public void testValidEmailAddress1() {
         EmailAddress emailAddress = new EmailAddress(VALID_EMAIL_1);
-        Assert.assertEquals(VALID_EMAIL_1, emailAddress.toString());
+        Assert.assertEquals(VALID_EMAIL_1, emailAddress.getEmailAddress());
     }
 
     @Test
     public void testValidEmailAddress2() {
         EmailAddress emailAddress = new EmailAddress(VALID_EMAIL_2);
-        Assert.assertEquals(VALID_EMAIL_2, emailAddress.toString());
+        Assert.assertEquals(VALID_EMAIL_2, emailAddress.getEmailAddress());
     }
 
     @Test(expected = IllegalArgumentException.class)
