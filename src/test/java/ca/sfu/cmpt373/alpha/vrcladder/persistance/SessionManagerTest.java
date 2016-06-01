@@ -6,6 +6,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.After;
@@ -34,7 +35,7 @@ public class SessionManagerTest {
             MOCK_USER_ID.toString(),
             MOCK_USER_ROLE,
             MOCK_FIRST_NAME,
-            null,
+            StringUtils.EMPTY,
             MOCK_LAST_NAME,
             MOCK_PHONE_NUMBER.toString(),
             MOCK_EMAIL_ADDRESS.toString()
@@ -77,7 +78,7 @@ public class SessionManagerTest {
             userId.toString(),
             userRole,
             firstName,
-            null,
+            StringUtils.EMPTY,
             lastName,
             phoneNumber.toString(),
             emailAddress.toString()

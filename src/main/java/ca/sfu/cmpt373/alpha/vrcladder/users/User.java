@@ -34,39 +34,6 @@ public class User {
         // Required by Hibernate
     }
 
-    public User(UserId userId, UserRole userRole, String firstName, String middleName, String lastName,
-        EmailAddress emailAddress, PhoneNumber phoneNumber) {
-        this.userId = userId;
-        this.userRole = userRole;
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.lastName = lastName;
-        this.emailAddress = emailAddress;
-        this.phoneNumber = phoneNumber;
-    }
-
-    public User(String userId, UserRole userRole, String firstName, String lastName, String emailAddress,
-        String phoneNumber) {
-        this.userId = new UserId(userId);
-        this.userRole = userRole;
-        this.firstName = firstName;
-        this.middleName = null;
-        this.lastName = lastName;
-        this.emailAddress = new EmailAddress(emailAddress);
-        this.phoneNumber = new PhoneNumber(phoneNumber);
-    }
-
-    public User(String userId, UserRole userRole, String firstName, String middleName, String lastName,
-        String emailAddress, String phoneNumber) {
-        this.userId = new UserId(userId);
-        this.userRole = userRole;
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.lastName = lastName;
-        this.emailAddress = new EmailAddress(emailAddress);
-        this.phoneNumber = new PhoneNumber(phoneNumber);
-    }
-
     @Id
     @Column(name = PersistenceConstants.COLUMN_ID)
     public String getUserId() {
@@ -97,10 +64,10 @@ public class User {
     }
 
     public boolean hasMiddleName() {
-        return (middleName != null);
+        return (middleName.isEmpty());
     }
 
-    @Column(name = PersistenceConstants.COLUMN_MIDDLE_NAME)
+    @Column(name = PersistenceConstants.COLUMN_MIDDLE_NAME, nullable = false)
     public String getMiddleName() {
         return middleName;
     }
