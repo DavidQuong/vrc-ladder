@@ -36,7 +36,7 @@ public class UserGenerator {
         //get names file
         Scanner names;
         try {
-            names = new Scanner(new BufferedReader(new FileReader("C:\\Users\\Samus\\IdeaProjects\\prj\\names.txt")));
+            names = new Scanner(new BufferedReader(new FileReader("res\\names.txt")));
         } catch (FileNotFoundException e) {
             System.out.printf("%s", e.getMessage());
             e.printStackTrace();
