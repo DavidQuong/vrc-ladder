@@ -1,3 +1,5 @@
+package ca.sfu.cmpt373.alpha.vrcladder.ladder;
+
 import java.util.ArrayList;
 
 class LadderTest
@@ -5,9 +7,10 @@ class LadderTest
 	
 	private int ATTENDING = 0;
 	private int NOT_ATTENDING = 1;
+	private boolean initialized = false;
 	
 	//List of Lists of Teams, first index is Case, second is ATTENDING or NOT_ATTENDING
-	ArrayList<ArrayList<ArrayList<Team>>> TestTeams = new ArrayList<ArrayList<Team>>();
+	ArrayList<ArrayList<ArrayList<Team>>> TestTeams;
 	
 	LadderTest()
 	{
@@ -19,19 +22,109 @@ class LadderTest
 	private void GenTeams()
 	{
 		
-		//Case 1: All non-attending teams said so, all attending teams present
-		//Case 2: All non-attending teams said so, all attending teams late
-		//Case 3: All non-attending teams said attendance, all attending teams late
-		//Case 4: All non-attending teams said attendance, all attending teams present
-		//Case 5: All attending teams late, others vary
-		//Case 6: All attending teams present, others vary
-		//Case 7: All non-attending teams said so, others vary
-		//Case 8: All non-attending teams said attendance, others vary
-		//Case 9: All vary (At least one of each)
+		//Case 0: All non-attending teams said so,         all attending teams present
+		//Case 1: All non-attending teams said so,         all attending teams late
+		//Case 2: All non-attending teams said attendance, all attending teams late
+		//Case 3: All non-attending teams said attendance, all attending teams present
+		//Case 4: Others vary,                             all attending teams late, 
+		//Case 5: Others vary,                             all attending teams present
+		//Case 6: All non-attending teams said so,         others vary
+		//Case 7: All non-attending teams said attendance, others vary
+		//Case 8: All vary
+
+		if(!this.initialized)
+		{
 		
-		TeamGenerator TeamGen = new TeamGenerator();
+			TeamGenerator TeamGen = new TeamGenerator();
+			Random randomInt = new Random();
 		
-		//Generate the teams according to documentation and store them in TestTeams by class and attendance
+			TestTeams = new ArrayList<ArrayList<ArrayList<Team>>>();
+
+			for(int case = 0;case < 9;case++) //Adding cases
+			{
+
+				TestTeams.add(new ArrayList<ArrayList<Team>>());
+
+				for(int attendance = 0;attendance < 2;attendance++) //Adding ATTENDING/NOT_ATTENDING
+				{
+
+					TestTeams.get(case).add(new ArrayList<Team>());
+
+					for(int k = 0;k < 25;k++)
+					{
+
+						Team creation = TeamGen.generateTeam();
+
+						if(attendance == ATTENDING)
+						{
+
+							if(case == 0 || case == 3 || case == 5)
+							{
+
+								creation.setAttendance(PRESENT);
+
+							}
+							else if(case == 1 || case == 2 || case == 4)
+							{
+
+								creation.setAttendance(LATE);
+
+							}
+							else if(randomInt.nextInt(100) < 50)
+							{
+
+								creation.setAttendance(PRESENT);
+
+							}
+							else
+							{
+
+								creation.setAttendance(LATE);
+
+							}
+
+						}
+						else //NOT_ATTENDING
+						{
+
+							if(case == 0 || case == 1 || case == 6)
+							{
+
+								creation.setAttendance(ABSENT);
+
+							}
+							else if(case == 2 || case == 3 || case == 7)
+							{
+
+								creation.setAttendance(NO_SHOW);
+
+							}
+							else if(randomInt.nextInt(100) < 50)
+							{
+
+								creation.setAttendance(ABSENT);
+
+							}
+							else
+							{
+
+								creation.setAttendance(NO_SHOW);
+
+							}
+
+						}
+
+						TestTeams.get(case).get(attendance).add(creation);
+
+					}
+
+				}
+
+			}
+
+		}
+
+		this.initialized = true;
 		
 	}
 	
