@@ -21,25 +21,25 @@ public class PhoneNumberTest {
     @Test
     public void testValidPhoneNumber() {
         PhoneNumber phoneNumber = new PhoneNumber(VALID_PHONE_NUM_SIMPLE);
-        Assert.assertEquals(VALID_PHONE_NUM_1_PROCESSED, phoneNumber.toString());
+        Assert.assertEquals(VALID_PHONE_NUM_1_PROCESSED, phoneNumber.getPhoneNumber());
     }
 
     @Test
     public void testValidPhoneNumberWithDashes() {
         PhoneNumber phoneNumber = new PhoneNumber(VALID_PHONE_NUM_DASHES);
-        Assert.assertEquals(VALID_PHONE_NUM_2_PROCESSED, phoneNumber.toString());
+        Assert.assertEquals(VALID_PHONE_NUM_2_PROCESSED, phoneNumber.getPhoneNumber());
     }
 
     @Test
     public void testValidPhoneNumberWithSpaces() {
         PhoneNumber phoneNumber = new PhoneNumber(VALID_PHONE_NUM_SPACES);
-        Assert.assertEquals(VALID_PHONE_NUM_3_PROCESSED, phoneNumber.toString());
+        Assert.assertEquals(VALID_PHONE_NUM_3_PROCESSED, phoneNumber.getPhoneNumber());
     }
 
     @Test
     public void testValidPhoneNumberWithMixedCharcaters() {
         PhoneNumber phoneNumber = new PhoneNumber(VALID_PHONE_NUM_MIXED);
-        Assert.assertEquals(VALID_PHONE_NUM_4_PROCESSED, phoneNumber.toString());
+        Assert.assertEquals(VALID_PHONE_NUM_4_PROCESSED, phoneNumber.getPhoneNumber());
     }
 
     @Test(expected = IllegalArgumentException.class)

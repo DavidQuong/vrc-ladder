@@ -6,31 +6,51 @@ import java.util.IllegalFormatException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// TODO - Add verification of phone number format, i.e., 1-800-123-4567
 public class PhoneNumber {
 
-    private static final String REPLACED_CHARACTERS_REGEX = "[- \\(\\)]+";
-    private static final String PHONE_REGEX_PATTERN = "^[0-9]{10,11}$";
-    private static final String PHONE_ERROR_MSG_FORMAT = "%s is not a valid phone number.";
+    private static final String REPLACED_CHARACTERS_REGEX_PATTERN = "[- \\(\\)]+";
+    private static final String PHONE_NUM_FORMAT_REGEX_PATTERN = "^[0-9]{10,11}$";
+    private static final String PHONE_NUM_FORMAT_ERROR_MSG = "%s is not a valid phone number.";
+
+    private static final Pattern FORMAT_PATTERN = Pattern.compile(PHONE_NUM_FORMAT_REGEX_PATTERN,
+        Pattern.CASE_INSENSITIVE);
 
     private String phoneNumber;
 
     public PhoneNumber(String phoneNumber) throws IllegalFormatException {
-        String strippedPhoneNumber = phoneNumber.replaceAll(REPLACED_CHARACTERS_REGEX, StringUtils.EMPTY);
+        String strippedPhoneNumber = phoneNumber.replaceAll(REPLACED_CHARACTERS_REGEX_PATTERN, StringUtils.EMPTY);
         verifyFormat(strippedPhoneNumber);
         this.phoneNumber = strippedPhoneNumber;
     }
 
-    @Override
-    public String toString() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
+    @Override
+    public String toString() {
+        return getPhoneNumber();
+    }
+
+    @Override
+    public boolean equals(Object otherObj) {
+        if (this == otherObj) {
+            return true;
+        }
+
+        if (otherObj == null || getClass() != otherObj.getClass()) {
+            return false;
+        }
+
+        PhoneNumber otherPhoneNumber = (PhoneNumber) otherObj;
+
+        return phoneNumber.equals(otherPhoneNumber.phoneNumber);
+    }
+
     private void verifyFormat(String phoneNumber) throws IllegalFormatException {
-        Pattern pattern = Pattern.compile(PHONE_REGEX_PATTERN, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(phoneNumber);
+        Matcher matcher = FORMAT_PATTERN.matcher(phoneNumber);
         if(!matcher.find()){
-            String errorMsg = String.format(PHONE_ERROR_MSG_FORMAT, phoneNumber);
+            String errorMsg = String.format(PHONE_NUM_FORMAT_ERROR_MSG, phoneNumber);
             throw new IllegalArgumentException(errorMsg);
         }
     }

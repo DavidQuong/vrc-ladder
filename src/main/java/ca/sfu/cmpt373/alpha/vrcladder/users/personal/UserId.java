@@ -1,9 +1,16 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.personal;
 
 import java.util.IllegalFormatException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-// TODO - Add verification of user ID format.
 public class UserId {
+
+    private static final String USER_ID_FORMAT_REGEX_PATTERN =  "^[0-9]+$";
+    private static final String USER_ID_FORMAT_ERROR_MSG = "%s is not a valid user ID.";
+
+    private static final Pattern FORMAT_PATTERN = Pattern.compile(USER_ID_FORMAT_REGEX_PATTERN,
+        Pattern.CASE_INSENSITIVE);
 
     private String id;
 
@@ -17,6 +24,11 @@ public class UserId {
     }
 
     @Override
+    public String toString() {
+        return getUserId();
+    }
+
+    @Override
     public boolean equals(Object comparedObj) {
         if (this == comparedObj) {
             return true;
@@ -26,17 +38,17 @@ public class UserId {
             return false;
         }
 
-        UserId otherId = (UserId) comparedObj;
+        UserId otherUserId = (UserId) comparedObj;
 
-        if (id != otherId.id) {
-            return false;
-        }
-
-        return true;
+        return id.equals(otherUserId.id);
     }
 
     private void verifyFormat(String userId) throws IllegalFormatException {
-
+        Matcher matcher = FORMAT_PATTERN.matcher(userId);
+        if(!matcher.find()){
+            String errorMsg = String.format(USER_ID_FORMAT_ERROR_MSG, userId);
+            throw new IllegalArgumentException(errorMsg);
+    }
     }
 
 }
