@@ -27,6 +27,7 @@ public class UserGenerator {
 
     final String[] AREA_CODE = new String[]{"604", "778"};
     final int PHONE_DIGITS = 10;
+    final short EMAIL_STARTS_WITH = 0;
 
     public UserGenerator() {
 
@@ -36,7 +37,7 @@ public class UserGenerator {
         //get names file
         Scanner names;
         try {
-            names = new Scanner(new BufferedReader(new FileReader("C:\\Users\\Samus\\IdeaProjects\\prj\\names.txt")));
+            names = new Scanner(new BufferedReader(new FileReader("res\\names.txt")));
         } catch (FileNotFoundException e) {
             System.out.printf("%s", e.getMessage());
             e.printStackTrace();
@@ -55,7 +56,7 @@ public class UserGenerator {
         names.close();
         UserId userID = new UserId(randomInt.nextInt(MAX_ID));
 
-        String newEmail = username.getFirstName().charAt(0) + username.getLastName() + "@vrc.ca";
+        String newEmail = username.getFirstName().charAt(EMAIL_STARTS_WITH) + username.getLastName() + "@vrc.ca";
         EmailAddress userEmail = new EmailAddress(newEmail);
 
         //build a phone number
