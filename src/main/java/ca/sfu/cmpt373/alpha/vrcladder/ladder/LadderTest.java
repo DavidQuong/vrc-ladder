@@ -50,7 +50,7 @@ class LadderTest
 
 					testTeams.get(case).add(new ArrayList<Team>());
 
-					for(int k = 0;k < 25;k++)
+					for(int i = 0;i < 25;i++)
 					{
 
 						Team creation = teamGen.generateTeam();
@@ -513,27 +513,37 @@ class LadderTest
 	{
 		
 		int successes = 0;
+		GroupGenerator getGroups = new GroupGenerator();
+		
+		int teamCount = ??;
+		ArrayList<ArrayList<Team>> expectedResults = new ArrayList<ArrayList<Team>>();
+		expectedResults.add(new ArrayList<Team>());
+		expectedResults.add(new ArrayList<Team>());
+		expectedResults.add(new ArrayList<Team>());
+		expectedResults.add(new ArrayList<Team>());
+		expectedResults.add(new ArrayList<Team>());
+		expectedResults.add(new ArrayList<Team>());
+		expectedResults.add(new ArrayList<Team>());
+		expectedResults.add(new ArrayList<Team>());
+		expectedResults.add(new ArrayList<Team>());
+		//define expected results
 		
 		System.out.println("Starting Test Case 1:");
 		
 		for(int case = 0;case < 9;case++)
 		{
 			
-			boolean subSuccess = true;
-			
 			System.out.println("	Sub Case " + (case + 1) + ":");
 			
-			ArrayList<ArrayList<Team>> theseTeams = GetTeams(<amount>, case);
-			ArrayList<Team> ladderTestTeams = new ArrayList<Team>();
-			
-			//Manipulate teams
-			
-			Ladder testLadder = new Ladder(ladderTestTeams);
-			testLadder.updateLadder(<list of groups>);
+			ArrayList<ArrayList<Team>> ladderTestTeams = GetTeams(teamCount, case);
+			ArrayList<Group> ladderTestGroups getGroups.generateMatchGroupings(ladderTestTeams);
 
-			//check result
+			//add win/loss data
+
+			Ladder testLadder = new Ladder(ladderTestTeams);
+			testLadder.updateLadder(ladderTestGroups);
 			
-			if(subSuccess)
+			if(expectedResults.get(case).equals(testLadder.ladderList))
 			{
 				
 				System.out.println("		Passed");
