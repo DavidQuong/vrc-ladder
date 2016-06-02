@@ -1,7 +1,7 @@
-package ca.sfu.cmpt373.alpha.vrcladder.groups;
+package ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic;
 
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
-import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 
 import java.util.ArrayList;
 import java.util.Collections;

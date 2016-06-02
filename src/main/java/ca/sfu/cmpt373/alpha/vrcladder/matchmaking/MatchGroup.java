@@ -1,4 +1,4 @@
-package ca.sfu.cmpt373.alpha.vrcladder.groups;
+package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 
@@ -28,7 +28,7 @@ public class MatchGroup {
     /**
      * @throws IllegalStateException if the list contains more or less than the min/max amount of permissible teams
      */
-    MatchGroup(List<Team> teams) {
+    public MatchGroup(List<Team> teams) {
         if (teams.size() < MIN_NUM_TEAMS || teams.size() > MAX_NUM_TEAMS) {
             throw new IllegalStateException("Teams list contains more or less than the min or max number of permissible teams");
         }

@@ -1,6 +1,8 @@
-package ca.sfu.cmpt373.alpha.vrcladder.groups;
+package ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic;
 
 import ca.sfu.cmpt373.alpha.vrcladder.db.MockDatabase;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import org.junit.Assert;
 import org.junit.Test;

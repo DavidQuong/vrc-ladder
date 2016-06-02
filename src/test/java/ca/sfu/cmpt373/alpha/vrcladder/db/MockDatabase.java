@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.db;
 
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
@@ -64,5 +65,18 @@ public class MockDatabase {
         //number of users should be twice the number of teams since each team needs two users
         int numUsers = numTeams * 2;
         return generateMockTeams(generateMockUsers(numUsers));
+    }
+
+    /**
+     * In the real database, the interface would not let the user select the number of courts.
+     * The courts would be fixed to 6 courts (what vrc has)
+     * * @return a list of court objects
+     */
+    public static List<Court> getCourts(int courtCount) {
+        List<Court> courts = new ArrayList<>();
+        for (int i = 0; i < courtCount; i++) {
+            courts.add(new Court());
+        }
+        return courts;
     }
 }
