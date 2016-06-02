@@ -5,6 +5,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -13,7 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-// TODO - Replace RuntimeExceptions on verification methods with something more meaningful.
+// TODO - Ensure uniqueness of team (no team with same two players, i.e., in reverse order)
 @Entity
 @Table(name = PersistenceConstants.TABLE_TEAM)
 public class Team {
@@ -37,7 +38,7 @@ public class Team {
         id = new IdType(newId);
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = PersistenceConstants.COLUMN_FIRST_PLAYER_ID, nullable = false)
     public User getFirstPlayer() {
         return firstPlayer;
@@ -47,7 +48,7 @@ public class Team {
         firstPlayer = player;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = PersistenceConstants.COLUMN_SECOND_PLAYER_ID, nullable = false)
     public User getSecondPlayer() {
         return secondPlayer;
@@ -57,7 +58,7 @@ public class Team {
         secondPlayer = player;
     }
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = PersistenceConstants.COLUMN_ATTENDANCE_CARD_ID, nullable = false)
     public AttendanceCard getAttendanceCard() {
         return attendanceCard;
