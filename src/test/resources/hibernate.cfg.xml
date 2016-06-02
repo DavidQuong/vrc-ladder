@@ -17,7 +17,7 @@
         <property name="dialect">org.hibernate.dialect.H2Dialect</property>
 
         <property name="show_sql">true</property>
-        <property name="hbm2ddl.auto">create</property>
+        <property name="hbm2ddl.auto">create-drop</property>
 
         <mapping class="ca.sfu.cmpt373.alpha.vrcladder.users.User"/>
         <mapping class="ca.sfu.cmpt373.alpha.vrcladder.teams.Team"/>

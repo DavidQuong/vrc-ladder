@@ -1,17 +1,21 @@
 package ca.sfu.cmpt373.alpha.vrcladder;
 
-import ca.sfu.cmpt373.alpha.vrcladder.persistence.DatabaseManager;
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
+import ca.sfu.cmpt373.alpha.vrcladder.users.UserFactory;
+import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 
 public class Application {
 
-    private DatabaseManager dbManager;
+    private SessionManager sessionManager;
+    private UserManager userManager;
 
     public Application() {
-        dbManager = new DatabaseManager();
+        sessionManager = new SessionManager();
+        userManager = new UserManager(sessionManager);
     }
 
     public void shutDown() {
-        dbManager.shutDown();
+        sessionManager.shutDown();
     }
 
 }
