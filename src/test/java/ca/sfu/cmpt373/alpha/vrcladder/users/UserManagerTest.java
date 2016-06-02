@@ -17,17 +17,14 @@ public class UserManagerTest extends BaseTest {
     private static final UserRole MOCK_USER_ROLE = UserRole.PLAYER;
     private static final String MOCK_FIRST_NAME = "Scott";
     private static final String MOCK_LAST_NAME = "Johnson";
-    private static final PhoneNumber MOCK_PHONE_NUMBER = new PhoneNumber("(604) 111-2222");
     private static final EmailAddress MOCK_EMAIL_ADDRESS = new EmailAddress("scottj@vrc.ca");
+    private static final PhoneNumber MOCK_PHONE_NUMBER = new PhoneNumber("(604) 111-2222");
 
     private UserManager userManager;
 
     @Before
     public void setup() {
         userManager = new UserManager(sessionManager);
-
-        userManager.createUser(MOCK_USER_ID.getUserId(), MOCK_USER_ROLE, MOCK_FIRST_NAME, MOCK_LAST_NAME,
-            MOCK_EMAIL_ADDRESS.getEmailAddress(), MOCK_PHONE_NUMBER.getPhoneNumber());
     }
 
     @Test
@@ -105,6 +102,5 @@ public class UserManagerTest extends BaseTest {
         Assert.assertNotNull(originalUser);
         Assert.assertNull(user);
     }
-
 
 }
