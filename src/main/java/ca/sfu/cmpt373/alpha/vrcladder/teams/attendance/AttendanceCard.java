@@ -22,20 +22,10 @@ public class AttendanceCard {
         // Required by Hibernate
     }
 
-    public AttendanceCard(PlayTime playTime) {
-        this.id = new IdType();
-        this.preferredPlayTime = playTime;
-    }
-
-    public AttendanceCard(IdType id, PlayTime playTime) {
-        this.id = id;
-        this.preferredPlayTime = playTime;
-    }
-
     @Id
     @Column(name = PersistenceConstants.COLUMN_ID)
     public String getId() {
-        return id.toString();
+        return id.getId();
     }
 
     public void setId(String newId) {
