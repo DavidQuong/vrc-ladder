@@ -1,6 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcladder.groups;
 
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,27 +10,27 @@ import java.util.List;
 /**
  * A class for generating the groups of teams that will play matches against each other each week
  */
-public class GroupGenerator {
+public class MatchGroupGenerator {
     /**
      * preconditions: teams are assumed to be in sorted ranked order
      * Generates groups of three or four teams to play matches against one another
      */
-    public static List<Group> generateMatchGroupings(List<Team> teams) {
+    public static List<MatchGroup> generateMatchGroupings(List<Team> teams) {
         //TODO: figure out requirements on how to deal with different prefered time slots
         //if (team.getAttendanceInfo().getPreferedTimeSlot() == AttendanceInfo.TimeSlot.FIRST)
 
-        List<Group> matchGroupings = new ArrayList<>();
+        List<MatchGroup> matchGroupings = new ArrayList<>();
 
         List<Team> attendingTeams = getAttendingTeams(teams);
         List<Team> teamsToGroup = new ArrayList<>();
 
         //figure out how many teams won't fit into groups of three
-        int groupCount = Group.MIN_NUM_TEAMS;
+        int groupCount = MatchGroup.MIN_NUM_TEAMS;
         int extraTeams = attendingTeams.size() % groupCount;
 
         //while there are teams that won't fit into groups of three, make groups of four instead
         if (extraTeams > 0) {
-            groupCount = Group.MAX_NUM_TEAMS;
+            groupCount = MatchGroup.MAX_NUM_TEAMS;
         }
 
         //make groups starting from the bottom of the list so that groups of four are created from the lowest ranked players
@@ -38,12 +39,12 @@ public class GroupGenerator {
             if (teamsToGroup.size() == groupCount) {
                 //reverse teamsToGroup before adding them to a group, so that they are in ranked order
                 Collections.reverse(teamsToGroup);
-                matchGroupings.add(new Group(teamsToGroup));
-                teamsToGroup = new ArrayList<>();
+                matchGroupings.add(new MatchGroup(teamsToGroup));
+                teamsToGroup.clear();
                 extraTeams--;
                 if (extraTeams == 0) {
                     //switch back to groups of three
-                    groupCount = Group.MIN_NUM_TEAMS;
+                    groupCount = MatchGroup.MIN_NUM_TEAMS;
                 }
             }
         }

@@ -8,7 +8,6 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
-import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserName;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
 import java.util.ArrayList;
@@ -24,11 +23,13 @@ public class MockDatabase {
     private static List<User> generateMockUsers (int numUsers) {
         List<User> users = new ArrayList<>();
         for (int i = 0; i < numUsers; i++) {
-            users.add(new User(new UserId(i),
+            users.add(new User(new UserId("" + i),
                     UserRole.PLAYER,
-                    new UserName("FirstName" + i, "MiddleName" + i, "LastName" + 1),
-                    new EmailAddress("Email" + i),
-                    new PhoneNumber("" + i))
+                    "First",
+                    "Middle",
+                    "Last",
+                    new EmailAddress(i + "Email@test.com"),
+                    new PhoneNumber("123456789" + i))
             );
         }
         return users;
