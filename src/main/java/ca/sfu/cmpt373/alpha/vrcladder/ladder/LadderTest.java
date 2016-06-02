@@ -10,7 +10,7 @@ class LadderTest
 	private boolean initialized = false;
 	
 	//List of Lists of Teams, first index is Case, second is ATTENDING or NOT_ATTENDING
-	ArrayList<ArrayList<ArrayList<Team>>> TestTeams;
+	ArrayList<ArrayList<ArrayList<Team>>> testTeams;
 	
 	LadderTest()
 	{
@@ -35,25 +35,25 @@ class LadderTest
 		if(!this.initialized)
 		{
 		
-			TeamGenerator TeamGen = new TeamGenerator();
+			TeamGenerator teamGen = new TeamGenerator();
 			Random randomInt = new Random();
 		
-			TestTeams = new ArrayList<ArrayList<ArrayList<Team>>>();
+			testTeams = new ArrayList<ArrayList<ArrayList<Team>>>();
 
 			for(int case = 0;case < 9;case++) //Adding cases
 			{
 
-				TestTeams.add(new ArrayList<ArrayList<Team>>());
+				testTeams.add(new ArrayList<ArrayList<Team>>());
 
 				for(int attendance = 0;attendance < 2;attendance++) //Adding ATTENDING/NOT_ATTENDING
 				{
 
-					TestTeams.get(case).add(new ArrayList<Team>());
+					testTeams.get(case).add(new ArrayList<Team>());
 
 					for(int k = 0;k < 25;k++)
 					{
 
-						Team creation = TeamGen.generateTeam();
+						Team creation = teamGen.generateTeam();
 
 						if(attendance == ATTENDING)
 						{
@@ -90,7 +90,7 @@ class LadderTest
 							if(case == 0 || case == 1 || case == 6)
 							{
 
-								creation.setAttendance(ABSENT);
+								creation.setAttendanceCard(new AttendanceCard(new IDType(), creation, NONE));
 
 							}
 							else if(case == 2 || case == 3 || case == 7)
@@ -102,7 +102,7 @@ class LadderTest
 							else if(randomInt.nextInt(100) < 50)
 							{
 
-								creation.setAttendance(ABSENT);
+								creation.setAttendanceCard(new AttendanceCard(new IDType(), creation, NONE));
 
 							}
 							else
@@ -114,7 +114,7 @@ class LadderTest
 
 						}
 
-						TestTeams.get(case).get(attendance).add(creation);
+						testTeams.get(case).get(attendance).add(creation);
 
 					}
 
@@ -131,331 +131,347 @@ class LadderTest
 	public boolean RunTests()
 	{
 		
-		int Successes = 0;
-		int MiniSuccesses = 0;
-		int TestResults = 0;
+		int successes = 0;
+		int miniSuccesses = 0;
+		int testResults = 0;
 
-		TestResults = TestCase1();
-		if(TestResults == 9)
+		testResults = TestCase1();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 1 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 1 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 1 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 		
-		TestResults = TestCase2();
-		if(TestResults == 9)
+		testResults = TestCase2();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 2 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 2 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 2 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase3();
-		if(TestResults == 9)
+		testResults = TestCase3();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 3 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 3 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 3 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase4();
-		if(TestResults == 9)
+		testResults = TestCase4();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 4 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 4 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 4 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase5();
-		if(TestResults == 9)
+		testResults = TestCase5();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 5 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 5 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 5 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase6();
-		if(TestResults == 9)
+		testResults = TestCase6();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 6 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 6 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 6 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase7();
-		if(TestResults == 9)
+		testResults = TestCase7();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 7 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 7 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 7 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase8();
-		if(TestResults == 9)
+		testResults = TestCase8();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 8 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 8 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 8 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase9();
-		if(TestResults == 9)
+		testResults = TestCase9();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 9 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 9 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 9 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase10();
-		if(TestResults == 9)
+		testResults = TestCase10();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 10 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 10 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 10 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase11();
-		if(TestResults == 9)
+		testResults = TestCase11();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 11 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 11 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 11 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 		
-		TestResults = TestCase12();
-		if(TestResults == 9)
+		testResults = TestCase12();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 12 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 12 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 12 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase13();
-		if(TestResults == 9)
+		testResults = TestCase13();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 13 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 13 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 13 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase14();
-		if(TestResults == 9)
+		testResults = TestCase14();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 14 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 14 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 14 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase15();
-		if(TestResults == 9)
+		testResults = TestCase15();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 15 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 15 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 15 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase16();
-		if(TestResults == 9)
+		testResults = TestCase16();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 16 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 16 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 16 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase17();
-		if(TestResults == 9)
+		testResults = TestCase17();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 17 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 17 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 17 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase18();
-		if(TestResults == 9)
+		testResults = TestCase18();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 18 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 18 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 18 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase19();
-		if(TestResults == 9)
+		testResults = TestCase19();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 19 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 19 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 19 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
 
-		TestResults = TestCase20();
-		if(TestResults == 9)
+		testResults = TestCase20();
+		if(testResults == 9)
 		{
 
 			System.out.println("Test Case 20 Passed, 9/9\n");
-			Successes++;
+			successes++;
 
 		}
 		else
 		{
 
-			System.out.println("Test Case 20 Failed, " + TestResults + "/9\n");
+			System.out.println("Test Case 20 Failed, " + testResults + "/9\n");
 
 		}
-		MiniSuccesses += TestResults;
+		miniSuccesses += testResults;
+
+		testResults = TestCase21();
+		if(testResults == 9)
+		{
+
+			System.out.println("Test Case 21 Passed, 9/9\n");
+			successes++;
+
+		}
+		else
+		{
+
+			System.out.println("Test Case 21 Failed, " + testResults + "/9\n");
+
+		}
+		miniSuccesses += testResults;
 		
-		if(Successes == 20)
+		if(successes == 21)
 		{
 
 			return true;
@@ -467,27 +483,27 @@ class LadderTest
 	}
 	
 	//First index is ATTENDING or NOT_ATTENDING
-	private ArrayList<ArrayList<Team>> GetTeams(int Amount, int Case)
+	private ArrayList<ArrayList<Team>> GetTeams(int amount, int case)
 	{
 		
-		ArrayList<Team> CasedList = TestTeams.get(Case);
+		ArrayList<Team> casedList = TestTeams.get(case);
 		
-		if(Amount >= CasedList.size())
+		if(amount >= casedList.size())
 		{
 			
-			throw new RuntimeException("Bad amount in GetTeams (" + Amount + " >= " + CasedList.size() + ")") ;
+			throw new RuntimeException("Bad amount in GetTeams (" + amount + " >= " + casedList.size() + ")") ;
 			
 		}
-		if(Amount * 2 >= CasedList.size())
+		if(amount * 2 >= casedList.size())
 		{
 		
-			return new ArrayList<Team>(CasedList.subList(Amount, CasedList.size())).addAll(new ArrayList<Team>(CasedList.subList(0, (Amount * 2) - CasedList.size())));
+			return new ArrayList<Team>(casedList.subList(amount, casedList.size())).addAll(new ArrayList<Team>(casedList.subList(0, (amount * 2) - casedList.size())));
 					
 		}
 		else
 		{
 			
-			return new ArrayList<Team>(CasedList.subList(Amount, Amount * 2));
+			return new ArrayList<Team>(casedList.subList(amount, amount * 2));
 			
 		}
 		
@@ -496,32 +512,32 @@ class LadderTest
 	private int TestCase1() //Case 1: Groups are directly beside one another, groups of 3 only
 	{
 		
-		int Successes = 0;
+		int successes = 0;
 		
 		System.out.println("Starting Test Case 1:");
 		
-		for(int Case = 0;Case < 9;Case++)
+		for(int case = 0;case < 9;case++)
 		{
 			
-			boolean SubSuccess = true;
+			boolean subSuccess = true;
 			
-			System.out.println("	Sub Case " + (Case + 1) + ":");
+			System.out.println("	Sub Case " + (case + 1) + ":");
 			
-			ArrayList<ArrayList<Team>> TheseTeams = GetTeams(<amount>, Case);
-			ArrayList<Team> LadderTestTeams = new ArrayList<Team>();
+			ArrayList<ArrayList<Team>> theseTeams = GetTeams(<amount>, case);
+			ArrayList<Team> ladderTestTeams = new ArrayList<Team>();
 			
 			//Manipulate teams
 			
-			Ladder TestLadder = new Ladder(LadderTestTeams);
-			TestLadder.<somemethod>();
+			Ladder testLadder = new Ladder(ladderTestTeams);
+			testLadder.updateLadder(<list of groups>);
 
 			//check result
 			
-			if(SubSuccess)
+			if(subSuccess)
 			{
 				
 				System.out.println("		Passed");
-				Successes++;
+				successes++;
 				
 			}
 			else
@@ -533,7 +549,7 @@ class LadderTest
 			
 		}
 		
-		return Successes;
+		return successes;
 		
 	}
 	
@@ -664,6 +680,13 @@ class LadderTest
 	}
 	
 	private int TestCase20() //Case 20: Groups have non-attending teams beside and inside them, groups of 3/4, all overlapping, not predictably interchanging (At least one of each)
+	{
+		
+		//here
+		
+	}
+
+	private int TestCase21() //Case 21: Two playing teams
 	{
 		
 		//here
