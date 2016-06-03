@@ -21,16 +21,15 @@ public class TeamManager {
     }
 
     public Team createTeam(User firstPlayer, User secondPlayer) {
-        Team newTeam = new TeamBuilder()
-            .setFirstPlayer(firstPlayer)
-            .setSecondPlayer(secondPlayer)
-            .buildTeam();
+        Team newTeam = new Team(firstPlayer, secondPlayer);
 
         Session session = sessionManager.getSession();
 
         Transaction transaction = session.beginTransaction();
         session.save(newTeam);
         transaction.commit();
+
+        session.close();
 
         return newTeam;
     }
@@ -41,11 +40,7 @@ public class TeamManager {
         User firstPlayer = session.get(User.class, firstPlayerId);
         User secondPlayer = session.get(User.class, secondPlayerId);
 
-        Team newTeam = new TeamBuilder()
-            .setFirstPlayer(firstPlayer)
-            .setSecondPlayer(secondPlayer)
-            .buildTeam();
-
+        Team newTeam = new Team(firstPlayer, secondPlayer);
         Transaction transaction = session.beginTransaction();
         session.save(newTeam);
         transaction.commit();

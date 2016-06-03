@@ -15,11 +15,14 @@ import javax.persistence.Transient;
 @Table(name = PersistenceConstants.TABLE_ATTENDANCE_CARD)
 public class AttendanceCard {
 
+    private static final PlayTime DEFUALT_PLAYTIME = PlayTime.NONE;
+
     private IdType id;
     private PlayTime preferredPlayTime;
 
     public AttendanceCard() {
-        // Required by Hibernate
+        this.id = new IdType();
+        this.preferredPlayTime = DEFUALT_PLAYTIME;
     }
 
     @Id

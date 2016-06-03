@@ -20,12 +20,22 @@ import javax.persistence.Table;
 public class Team {
 
     private IdType id;
+    private AttendanceCard attendanceCard;
     private User firstPlayer;
     private User secondPlayer;
-    private AttendanceCard attendanceCard;
 
     public Team() {
-        // Required by Hibernate
+        this.id = new IdType();
+        this.attendanceCard = new AttendanceCard();
+        this.firstPlayer = null;
+        this.secondPlayer = null;
+    }
+
+    public Team(User firstPlayer, User secondPlayer) {
+        this.id = new IdType();
+        this.attendanceCard = new AttendanceCard();
+        this.firstPlayer = firstPlayer;
+        this.secondPlayer = secondPlayer;
     }
 
     @Id
@@ -36,6 +46,16 @@ public class Team {
 
     public void setId(String newId) {
         id = new IdType(newId);
+    }
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = PersistenceConstants.COLUMN_ATTENDANCE_CARD_ID, nullable = false)
+    public AttendanceCard getAttendanceCard() {
+        return attendanceCard;
+    }
+
+    public void setAttendanceCard(AttendanceCard newAttendanceCard) {
+        attendanceCard = newAttendanceCard;
     }
 
     @ManyToOne(cascade = CascadeType.REFRESH)
@@ -56,16 +76,6 @@ public class Team {
 
     public void setSecondPlayer(User player) {
         secondPlayer = player;
-    }
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = PersistenceConstants.COLUMN_ATTENDANCE_CARD_ID, nullable = false)
-    public AttendanceCard getAttendanceCard() {
-        return attendanceCard;
-    }
-
-    public void setAttendanceCard(AttendanceCard newAttendanceCard) {
-        attendanceCard = newAttendanceCard;
     }
 
 }
