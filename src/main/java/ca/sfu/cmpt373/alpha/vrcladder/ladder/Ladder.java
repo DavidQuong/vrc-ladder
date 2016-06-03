@@ -17,6 +17,7 @@ public class Ladder {
     //ladderList of team objects
     List<Team> ladderList;
     final private int LADDER_VOLUME = 200;
+    final private int ATTENDANCE_PENALTY =2;
     private int teamCount;
 
     public enum SHIFT_DIRECTION {UP, DOWN}
@@ -162,6 +163,7 @@ public class Ladder {
 
         return -1;
     }
+
     //swap teams in a match based on rank, then switch highest team of match with lowest team of previous match
     //then, apply penalties
     public void updateLadder(Matches[] matches){
@@ -169,35 +171,41 @@ public class Ladder {
         for (int i =1;i<matches.length; i++){
             arrangeMatchResults(matches[i]);
 
-            int team1Pos = findTeamPosition(matches[i].getTeam1());
-            int team2Pos = findTeamPosition(matches[i].getTeam2());
-            int team3Pos = findTeamPosition(matches[i].getTeam3());
+            if(matches[i].teamsInvolved()==3)
+                swapBetweenMatches(matches, i);
 
-            int lowTeam = findLowestNumber(team1Pos, team2Pos, team3Pos);
-
-            team1Pos = findTeamPosition(matches[i-1].getTeam1());
-            team2Pos = findTeamPosition(matches[i-1].getTeam2());
-            team3Pos = findTeamPosition(matches[i-1].getTeam3());
-
-            int highTeam = findHighestNumber(team1Pos, team2Pos, team3Pos);
-
-            swapTeams(highTeam,lowTeam);
 
         }
         int ladderSize = this.getLadderTeamCount();
         //prevent loop from going out of bounds
         if (ladderSize>=getLadderVolume())
-            ladderSize-=2;
+            ladderSize-=ATTENDANCE_PENALTY;
 
         for (int k =0;k<ladderSize; k++){
             if(!ladderList.get(k).getAttendanceCard().isAttending()){
                 Team tempTeam = ladderList.get(k);
                 ladderList.remove(k);
-                ladderList.add(k-2, tempTeam);
+                ladderList.add(k-ATTENDANCE_PENALTY, tempTeam);
 
             }
 
         }
+    }
+    private void swapBetweenMatches(Matches[] matches, int index){
+        int team1Pos = findTeamPosition(matches[index].getTeam1());
+        int team2Pos = findTeamPosition(matches[index].getTeam2());
+        int team3Pos = findTeamPosition(matches[index].getTeam3());
+
+        int lowTeam = findLowestNumber(team1Pos, team2Pos, team3Pos);
+
+        team1Pos = findTeamPosition(matches[index-1].getTeam1());
+        team2Pos = findTeamPosition(matches[index-1].getTeam2());
+        team3Pos = findTeamPosition(matches[index-1].getTeam3());
+
+        int highTeam = findHighestNumber(team1Pos, team2Pos, team3Pos);
+
+        swapTeams(highTeam,lowTeam);
+
     }
     /**
      * Shift all teams below the cutoff(exclusive) down or up a specified number of slots
@@ -232,7 +240,7 @@ public class Ladder {
     }
 
     private void arrange4Teams(Matches match){
-        
+
 
     }
     private void arrange3Teams(Matches match){
