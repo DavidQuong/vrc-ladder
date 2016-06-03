@@ -2,13 +2,13 @@ package ca.sfu.cmpt373.alpha.vrcladder.exceptions;
 
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 
-public class UnplayablePlayTimeException extends BaseException {
+public class PlayTimeException extends BaseException {
 
-    public UnplayablePlayTimeException(PlayTime playTime) {
+    public PlayTimeException(PlayTime playTime) {
         super("Play time " + playTime + " is unplayable");
     }
 
-    public UnplayablePlayTimeException(String message) {
+    public PlayTimeException(String message) {
         super(message);
     }
 }

@@ -1,7 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic;
 
 import ca.sfu.cmpt373.alpha.vrcladder.db.MockDatabase;
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.CourtsFullException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MatchMakingException;
 import org.junit.Test;
 
 
@@ -14,15 +14,15 @@ public class MatchSchedulerTest {
     public void testMaxTeamCount() {
         int testTeamCount = 38;
         MatchScheduler.scheduleMatches(
-                MockDatabase.getCourts(NUM_COURTS),
+                NUM_COURTS,
                 MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(testTeamCount)));
     }
 
-    @Test (expected = CourtsFullException.class)
+    @Test (expected = MatchMakingException.class)
     public void testCourtsFull() {
         int testTeamCount = 39;
         MatchScheduler.scheduleMatches(
-                MockDatabase.getCourts(NUM_COURTS),
+                NUM_COURTS,
                 MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(testTeamCount)));
     }
 }

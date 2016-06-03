@@ -1,8 +1,8 @@
 package ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic;
 
 import ca.sfu.cmpt373.alpha.vrcladder.db.MockDatabase;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MatchMakingException;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
-import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,8 +19,7 @@ public class MatchGroupGeneratorTest {
         List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(MAX_TEST_TEAM_COUNT));
         for (MatchGroup matchGroup : matchGroups) {
             List<Team> teams = matchGroup.getTeams();
-            Assert.assertTrue(teams.size() == MatchGroup.MAX_NUM_TEAMS ||  teams.size() == MatchGroup.MIN_NUM_TEAMS);
-            System.out.println();
+            Assert.assertTrue(teams.size() == MatchGroup.MAX_NUM_TEAMS || teams.size() == MatchGroup.MIN_NUM_TEAMS);
         }
     }
 
@@ -65,7 +64,7 @@ public class MatchGroupGeneratorTest {
         }
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = MatchMakingException.class)
     public void testIllegalTeamCounts() {
         int failureCount = 0;
         int teamCount = 0;

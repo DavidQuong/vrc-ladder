@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MatchMakingException;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 
@@ -11,14 +12,14 @@ import java.util.List;
  * A class for generating the groups of teams that will play matches against each other each week
  */
 public class MatchGroupGenerator {
+    private static final String ERROR_MESSAGE = "There are not enough teams to sort into groups of 3 or 4";
+
     /**
      * preconditions: teams are assumed to be in sorted ranked order
      * Generates groups of three or four teams to play matches against one another
+     * @throws MatchMakingException if teams cannot be sorted into groups
      */
     public static List<MatchGroup> generateMatchGroupings(List<Team> teams) {
-        //TODO: figure out requirements on how to deal with different prefered time slots
-        //if (team.getAttendanceInfo().getPreferedTimeSlot() == AttendanceInfo.TimeSlot.FIRST)
-
         List<MatchGroup> matchGroupings = new ArrayList<>();
 
         List<Team> attendingTeams = getAttendingTeams(teams);
@@ -53,9 +54,8 @@ public class MatchGroupGenerator {
         Collections.reverse(matchGroupings);
 
         //this only happens if there are less than three teams, or five teams
-        //TODO: handle this error more gracefully
         if (extraTeams > 0) {
-            throw new IllegalStateException("There are not enough teams to sort into groups of 3 or 4");
+            throw new MatchMakingException(ERROR_MESSAGE);
         }
         return matchGroupings;
     }
