@@ -1,37 +1,29 @@
 package ca.sfu.cmpt373.alpha.vrcladder.teams;
 
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.DatabaseManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
  * Provides an interface to perform create, read, update, and delete (CRUD) operations on,
  * teams in the database.
  */
-public class TeamManager {
+public class TeamManager extends DatabaseManager<Team> {
 
-    private SessionManager sessionManager;
+    private static final Class TEAM_CLASS_TYPE = Team.class;
 
     public TeamManager(SessionManager sessionManager) {
-        this.sessionManager = sessionManager;
+        super(TEAM_CLASS_TYPE, sessionManager);
     }
 
     public Team createTeam(User firstPlayer, User secondPlayer) {
         Team newTeam = new Team(firstPlayer, secondPlayer);
 
-        Session session = sessionManager.getSession();
-
-        Transaction transaction = session.beginTransaction();
-        session.save(newTeam);
-        transaction.commit();
-
-        session.close();
-
-        return newTeam;
+        return create(newTeam);
     }
 
     public Team createTeam(String firstPlayerId, String secondPlayerId) {
@@ -41,23 +33,16 @@ public class TeamManager {
         User secondPlayer = session.get(User.class, secondPlayerId);
 
         Team newTeam = new Team(firstPlayer, secondPlayer);
-        Transaction transaction = session.beginTransaction();
-        session.save(newTeam);
-        transaction.commit();
 
-        return newTeam;
+        return create(newTeam);
     }
 
     public Team getTeam(IdType teamId) {
-        return getTeam(teamId.getId());
+        return getById(teamId.getId());
     }
 
     public Team getTeam(String teamId) {
-        Session session = sessionManager.getSession();
-        Team team = session.get(Team.class, teamId);
-        session.close();
-
-        return team;
+        return getById(teamId);
     }
 
     public Team setTeamAttendance(IdType teamId, PlayTime preferredPlayTime) {
@@ -67,33 +52,22 @@ public class TeamManager {
     public Team setTeamAttendance(String teamId, PlayTime preferredPlayTime) {
         Session session = sessionManager.getSession();
 
-        Transaction transaction = session.beginTransaction();
         Team team = session.get(Team.class, teamId);
         AttendanceCard attendanceCard = team.getAttendanceCard();
         attendanceCard.setPreferredPlayTime(preferredPlayTime);
 
-        session.save(team);
-        transaction.commit();
+        team = update(team, session);
         session.close();
 
         return team;
     }
 
     public Team deleteTeam(IdType teamId) {
-        return deleteTeam(teamId.getId());
+        return deleteById(teamId.getId());
     }
 
     public Team deleteTeam(String teamId) {
-        Session session = sessionManager.getSession();
-
-        Transaction transaction = session.beginTransaction();
-        Team team = session.get(Team.class, teamId);
-
-        session.delete(team);
-        transaction.commit();
-        session.close();
-
-        return team;
+        return deleteById(teamId);
     }
 
 }

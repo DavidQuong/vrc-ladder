@@ -7,6 +7,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.OneToMany;
@@ -72,7 +73,6 @@ public class MatchGroup {
     }
 
     //TODO: research how to avoid requiring private setters
-    //private setters required by hibernate
     private void setId(IdType id) {
         this.id = id;
     }
