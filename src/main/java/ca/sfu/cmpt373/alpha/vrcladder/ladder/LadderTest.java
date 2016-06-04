@@ -17,13 +17,13 @@ class LadderTest {
 	
 	//List of Lists of Teams, first index is Case, second is ATTENDING or NOT_ATTENDING
 	ArrayList<ArrayList<ArrayList<Team>>> testTeams;
-	
+
 	LadderTest() {
-		
-		this.GenTeams();
+
+        this.GenTeams();
 		
 	}
-	
+
 	private void GenTeams() {
 		
 		//Case 0: All non-attending teams said so,         all attending teams present
@@ -37,10 +37,10 @@ class LadderTest {
 		//Case 8: All vary
 
 		if(!this.initialized) {
-		
+
 			TeamGenerator teamGen = new TeamGenerator();
 			Random randomInt = new Random();
-		
+
 			this.testTeams = new ArrayList<ArrayList<ArrayList<Team>>>();
 
 			for(int testCase = 1;testCase < 9;testCase++) { //Adding cases
@@ -117,7 +117,7 @@ class LadderTest {
 		this.initialized = true;
 		
 	}
-	
+
 	public boolean RunTests() {
 		
 		int successes = 0;
@@ -444,7 +444,7 @@ class LadderTest {
 		}
 		
 	}
-	
+
 	private int TestCase1() { //Case 1: Groups are directly beside one another, groups of 3 only
 		
 		int successes = 0;
@@ -458,7 +458,7 @@ class LadderTest {
 		//define expected results
 		
 		System.out.println("Starting Test Case 1:");
-		
+
 		for(int testCase = 0;testCase < 9;testCase++) {
 			
 			System.out.println("	Sub Case " + (testCase + 1) + ":");
@@ -472,7 +472,7 @@ class LadderTest {
 
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups);
-			
+
 			if(expectedResults.get(testCase).equals(testLadder.ladderList)) {
 				
 				System.out.println("		Passed");
@@ -490,115 +490,115 @@ class LadderTest {
 		return successes;
 		
 	}
-	
+
 	private int TestCase2() { //Case 2: Groups are directly beside one another, groups of 4 only
 		
 		
 		
 	}
-	
+
 	private int TestCase3() { //Case 3: Groups are directly beside one another, groups of 3/4, not predictably interchanging (At least one of each)
 		
 		//here
 		
 	}
-	
+
 	private int TestCase4() { //Case 4: Groups have non-attending teams between them, groups of 3 only
 		
 		//here
 		
 	}
-	
+
 	private int TestCase5() { //Case 5: Groups have non-attending teams between them, groups of 4 only
 		
 		//here
 		
 	}
-	
+
 	private int TestCase6() { //Case 6: Groups have non-attending teams between them, groups of 3/4, not predictably interchanging (At least one of each)
 		
 		//here
 		
 	}
-	
+
 	private int TestCase7() { //Case 7: Groups have non-attending teams inside them, groups of 3 only
 		
 		//here
 		
 	}
-	
+
 	private int TestCase8() { //Case 8: Groups have non-attending teams inside them, groups of 4 only
 		
 		//here
 		
 	}
-	
+
 	private int TestCase9() { //Case 9: Groups have non-attending teams inside them, groups of 3/4, not predictably interchanging (At least one of each)
 		
 		//here
 		
 	}
-	
+
 	private int TestCase10() { //Case 10: Single group of 3, no other teams
 		
 		//here
 		
 	}
-	
+
 	private int TestCase11() { //Case 11: Single group of 3, other non-attending teams around
 		
 		//here
 		
 	}
-	
+
 	private int TestCase12() { //Case 12: Single group of 4, no other teams
 		
 		//here
 		
 	}
-	
+
 	private int TestCase13() { //Case 13: Single group of 4, other non-attending teams around
 		
 		//here
 		
 	}
-	
+
 	private int TestCase14() { //Case 14: Single group of 3, all other non-attending teams after
 		
 		//here
 		
 	}
-	
+
 	private int TestCase15() { //Case 15: Single group of 3, all other non-attending teams before
 		
 		//here
 		
 	}
-	
+
 	private int TestCase16() { //Case 16: Single group of 4, all other non-attending teams after
 		
 		//here
 		
 	}
-	
+
 	private int TestCase17() { //Case 17: Single group of 4, all other non-attending teams before
 		
 		//here
 		
 	}
-	
+
 	private int TestCase18() { //Case 18: Groups have non-attending teams beside and inside them, groups of 3 only, all overlapping
 		
 		//here
 		
 	}
-	
+
 	private int TestCase19() { //Case 19: Groups have non-attending teams beside and inside them, groups of 4 only, all overlapping
 		
 		//here
 		
 	}
-	
+
 	private int TestCase20() { //Case 20: Groups have non-attending teams beside and inside them, groups of 3/4, all overlapping, not predictably interchanging (At least one of each)
 		
 		//here
