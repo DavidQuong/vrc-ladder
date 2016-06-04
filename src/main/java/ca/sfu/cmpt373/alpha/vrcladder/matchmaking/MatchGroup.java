@@ -46,7 +46,7 @@ public class MatchGroup {
     }
 
     public MatchGroup(Team team1, Team team2, Team team3, Team team4) {
-        Arrays.asList(team1, team2, team3, team4);
+        this.teams = Arrays.asList(team1, team2, team3, team4);
         setId(new IdType());
     }
 
