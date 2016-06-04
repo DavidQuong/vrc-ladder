@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.db;
 
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
@@ -8,7 +9,6 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
-import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserName;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
 import java.util.ArrayList;
@@ -24,11 +24,13 @@ public class MockDatabase {
     private static List<User> generateMockUsers (int numUsers) {
         List<User> users = new ArrayList<>();
         for (int i = 0; i < numUsers; i++) {
-            users.add(new User(new UserId(i),
+            users.add(new User(new UserId("" + i),
                     UserRole.PLAYER,
-                    new UserName("FirstName" + i, "MiddleName" + i, "LastName" + 1),
-                    new EmailAddress("Email" + i),
-                    new PhoneNumber("" + i))
+                    "First",
+                    "Middle",
+                    "Last",
+                    new EmailAddress(i + "Email@test.com"),
+                    new PhoneNumber("123456789" + i))
             );
         }
         return users;
@@ -63,5 +65,18 @@ public class MockDatabase {
         //number of users should be twice the number of teams since each team needs two users
         int numUsers = numTeams * 2;
         return generateMockTeams(generateMockUsers(numUsers));
+    }
+
+    /**
+     * In the real database, the interface would not let the user select the number of courts.
+     * The courts would be fixed to 6 courts (what vrc has)
+     * * @return a list of court objects
+     */
+    public static List<Court> getCourts(int courtCount) {
+        List<Court> courts = new ArrayList<>();
+        for (int i = 0; i < courtCount; i++) {
+            courts.add(new Court());
+        }
+        return courts;
     }
 }
