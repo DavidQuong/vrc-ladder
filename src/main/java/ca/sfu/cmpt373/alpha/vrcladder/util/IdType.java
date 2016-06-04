@@ -19,6 +19,11 @@ public class IdType {
     }
 
     @Override
+    public String toString() {
+        return getId();
+    }
+
+    @Override
     public boolean equals(Object otherObj) {
         if (this == otherObj) {
             return true;

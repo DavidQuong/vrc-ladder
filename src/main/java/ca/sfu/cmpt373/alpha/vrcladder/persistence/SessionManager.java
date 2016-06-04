@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Manages Sessions (connections) to the underlying database (data source).
+ * Provides interface to create and manage Sessions (connections) to the database (data source).
  */
-class SessionManager {
+public class SessionManager {
 
     private SessionFactory sessionFactory;
     private List<Session> sessions;
@@ -27,7 +27,13 @@ class SessionManager {
 
     public void shutDown() {
         if (sessionFactory != null) {
-            sessions.forEach(Session::close);
+            // Close open sessions.
+            for (Session session : sessions) {
+                if (session.isConnected()) {
+                    session.close();
+                }
+            }
+
             sessionFactory.close();
         }
     }

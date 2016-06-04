@@ -1,10 +1,11 @@
-package ca.sfu.cmpt373.alpha.vrcladder.db;
+package ca.sfu.cmpt373.alpha.vrcladder.persistance;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcladder.users.UserBuilder;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
@@ -24,14 +25,13 @@ public class MockDatabase {
     private static List<User> generateMockUsers (int numUsers) {
         List<User> users = new ArrayList<>();
         for (int i = 0; i < numUsers; i++) {
-            users.add(new User(new UserId("" + i),
-                    UserRole.PLAYER,
-                    "First",
-                    "Middle",
-                    "Last",
-                    new EmailAddress(i + "Email@test.com"),
-                    new PhoneNumber("123456789" + i))
-            );
+            users.add(new UserBuilder()
+                    .setEmailAddress("test@test.com")
+                    .setFirstName("TestUser " + i)
+                    .setMiddleName("MiddleName")
+                    .setLastName("LastName")
+                    .setPhoneNumber("778-235-4841")
+                    .buildUser());
         }
         return users;
     }
