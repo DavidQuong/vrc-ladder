@@ -8,6 +8,10 @@ import com.sun.istack.internal.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A class used for scheduling matches on a court in a particular time slot
+ * essentially just a mapping between a PlayTime and a MatchGroup
+ */
 public class Court {
     private static final String ERROR_MESSAGE_TIME_SLOT_FILLED = "Time slot is filled";
     private static final String ERROR_MESSAGE_NO_MATCH_SCHEDULED = "There is no match scheduled for this play time";

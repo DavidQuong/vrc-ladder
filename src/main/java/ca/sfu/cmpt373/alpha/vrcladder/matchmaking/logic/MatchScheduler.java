@@ -14,7 +14,7 @@ public class MatchScheduler {
     /**
      * @throws MatchMakingException if Courts are full, and matches cannot be scheduled
      */
-    public static void scheduleMatches(int numCourts, List<MatchGroup> matchGroups) {
+    public static List<Court> scheduleMatches(int numCourts, List<MatchGroup> matchGroups) {
         //generate courts to schedule matches in
         List<Court> courts = new ArrayList<>();
         for (int i = 0; i < numCourts; i++) {
@@ -55,5 +55,6 @@ public class MatchScheduler {
                 }
             }
         }
+        return courts;
     }
 }
