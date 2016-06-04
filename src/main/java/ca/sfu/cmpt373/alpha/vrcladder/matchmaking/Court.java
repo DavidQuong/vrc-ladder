@@ -3,7 +3,6 @@ package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MatchMakingException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PlayTimeException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
-import com.sun.istack.internal.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +21,7 @@ public class Court {
      * @throws MatchMakingException if the time slot is filled
      * @throws PlayTimeException if the play time is unplayable
      */
-    public void scheduleMatch(@NotNull MatchGroup matchGroup, @NotNull PlayTime playTime) {
+    public void scheduleMatch(MatchGroup matchGroup, PlayTime playTime) {
         checkTimeSlotFilled(playTime);
         playTime.checkPlayablePlayTime();
         scheduledMatches.put(playTime, matchGroup);
@@ -31,7 +30,7 @@ public class Court {
     /**
      * @throws PlayTimeException if the play time is unplayable
      */
-    public boolean isPlayTimeFree(@NotNull PlayTime playTime) {
+    public boolean isPlayTimeFree(PlayTime playTime) {
         playTime.checkPlayablePlayTime();
         return !scheduledMatches.containsKey(playTime);
     }
@@ -39,7 +38,7 @@ public class Court {
     /**
      * @throws PlayTimeException if the play time is unplayable
      */
-    public MatchGroup getScheduledMatch(@NotNull PlayTime playTime) {
+    public MatchGroup getScheduledMatch(PlayTime playTime) {
         boolean isMatchScheduled = !isPlayTimeFree(playTime);
         if (isMatchScheduled) {
             playTime.checkPlayablePlayTime();

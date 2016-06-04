@@ -7,7 +7,7 @@ public class Log {
 
     private static final LogMode LOG_MODE = LogMode.DEBUG;
 
-    public static void i(String message) {
+    public static void info(String message) {
         if (LOG_MODE == LogMode.DEBUG) {
             System.out.println(message);
         }

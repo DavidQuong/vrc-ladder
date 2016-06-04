@@ -5,15 +5,27 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
-import javax.persistence.*;
-import java.util.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import javax.persistence.CascadeType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+
 
 /**
  * A class for sorting teams into groups that will play against each other in matches
  * Groups are strictly limited to 3 or 4 teams
  */
 @Entity
-@Table (name = PersistenceConstants.TABLE_MATCH_GROUP)
+@Table(name = PersistenceConstants.TABLE_MATCH_GROUP)
 public class MatchGroup {
     public static final int MIN_NUM_TEAMS = 3;
     public static final int MAX_NUM_TEAMS = 4;
@@ -24,17 +36,18 @@ public class MatchGroup {
     private List<Team> teams;
 
     public MatchGroup () {
-        //required by Hibernate
+        setId(new IdType());
+        setTeams(new ArrayList<>());
     }
 
     public MatchGroup(Team team1, Team team2, Team team3) {
         this.teams = Arrays.asList(team1, team2, team3);
-        initialize();
+        setId(new IdType());
     }
 
     public MatchGroup(Team team1, Team team2, Team team3, Team team4) {
         Arrays.asList(team1, team2, team3, team4);
-        initialize();
+        setId(new IdType());
     }
 
     /**
@@ -45,11 +58,6 @@ public class MatchGroup {
             throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
         }
         this.teams = new ArrayList<>(teams);
-        initialize();
-    }
-
-    //for common constructor initialization
-    private void initialize() {
         setId(new IdType());
     }
 
