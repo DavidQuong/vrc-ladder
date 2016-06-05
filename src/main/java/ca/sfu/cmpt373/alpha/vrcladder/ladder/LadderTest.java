@@ -536,7 +536,7 @@ class LadderTest
 		return Successes;
 		
 	}
-	
+	/*
 	private int TestCase2() //Case 2: Groups are directly beside one another, groups of 4 only
 	{
 		
@@ -669,7 +669,7 @@ class LadderTest
 		//here
 		
 	}
-	
+	*/
 	//Credits: Got way to get a sublist from http://beginnersbook.com/2013/12/how-to-get-sublist-of-an-arraylist-with-example/
 	
 }
