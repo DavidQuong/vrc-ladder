@@ -127,4 +127,20 @@ public class MatchGroup {
 
         return votedPlayTime;
     }
+
+    public Team getTeam1(){
+        return teams.get(0);
+    }
+
+    public Team getTeam2(){
+        return teams.get(1);
+    }
+
+    public Team getTeam3(){
+        return teams.get(2);
+    }
+
+    public Team getTeam4(){
+        return teams.get(3);
+    }
 }

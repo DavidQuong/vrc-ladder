@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.ladder;
 
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 //import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserName;
 
@@ -188,15 +189,13 @@ public class Ladder {
 
         int lowTeam = findLowestNumber(teamPos);
 
-         teamPos = {findTeamPosition(MatchGroup[index-1].getTeam1()),
-                findTeamPosition(MatchGroup[index-1].getTeam2()),
-                findTeamPosition(MatchGroup[index-1].getTeam3())};
-        ;
+        teamPos[0] = {findTeamPosition(MatchGroup[index-1].getTeam1());
+        teamPos[1] = findTeamPosition(MatchGroup[index-1].getTeam2());
+        teamPos[2] = findTeamPosition(MatchGroup[index-1].getTeam3())};
 
         int highTeam = findHighestNumber(teamPos);
 
         swapTeams(highTeam,lowTeam);
-
     }
     /**
      * Shift all teams below the cutoff(exclusive) down or up a specified number of slots
