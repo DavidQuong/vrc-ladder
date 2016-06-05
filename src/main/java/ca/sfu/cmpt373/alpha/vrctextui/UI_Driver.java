@@ -1,8 +1,11 @@
 package ca.sfu.cmpt373.alpha.vrctextui;
 
 import ca.sfu.cmpt373.alpha.vrcladder.Application;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchGroupGenerator;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchScheduler;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
-import ca.sfu.cmpt373.alpha.vrcladder.users.UserBuilder;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 
 import java.util.ArrayList;
@@ -11,24 +14,28 @@ import java.util.Scanner;
 
 public class UI_Driver {
     private static final int NULL_OPTION = -1;
-    private static int createdUsersCount;
     private static List<User> users;
+    private static List<Team> teams;
 
     public static void main(String[] args) {
         final int ADD_PLAYER_OPTION = 1;
         final int DELETE_PLAYER_OPTION = 2;
         final int MAKE_TEAM_OPTION = 3;
-        final int EXIT_OPTION = 4;
+        final int SCHEDULE_MATCHES_OPTION = 4;
+        final int EXIT_OPTION = 5;
 
         Application application = new Application();
         users = new ArrayList<>();
-        createdUsersCount = 0;
+        teams = new ArrayList<>();
 
-        String[] options = {"Add new player", "Delete player", "Make team", "Exit"};
+        String[] options = {"Add new player", "Delete player", "Make team", "Schedule matches", "Exit"};
         Menu mainMenu = new Menu("Main Menu", options);
         int userChoice = NULL_OPTION;
         while (userChoice != EXIT_OPTION) {
             Decorator.clearScreen();
+            users = application.getUserManager().getAllUsers();
+            teams = application.getTeamManager().getAllTeams();
+            displayLadderBoard();
             mainMenu.display();
             System.out.println("Choose an option between " + ADD_PLAYER_OPTION + " and " + EXIT_OPTION + ":");
             userChoice = mainMenu.getMenuChoice();
@@ -45,6 +52,9 @@ public class UI_Driver {
                     Decorator.clearScreen();
                     showMakeTeamMenu(application);
                     break;
+                case SCHEDULE_MATCHES_OPTION:
+                    Decorator.clearScreen();
+                    showScheduleMatchesMenu(application);
                 case EXIT_OPTION:
                     break;
                 default:
@@ -52,6 +62,15 @@ public class UI_Driver {
             System.out.println();
         }
         application.shutDown();
+    }
+
+    private static void displayLadderBoard() {
+        for (int i = 0; i < teams.size(); i++) {
+            System.out.println("Team: " + (i + 1));
+            System.out.println(teams.get(i).getFirstPlayer().getDisplayName());
+            System.out.println(teams.get(i).getSecondPlayer().getDisplayName());
+            System.out.println();
+        }
     }
 
     public static void showAddPlayerMenu(Application application) {
@@ -85,18 +104,7 @@ public class UI_Driver {
         System.out.println("\nType " + RETURN_OPTION + " to return to main menu, or " + CONFIRM_OPTION + " to confirm:");
 
         if (Menu.getNumberInRange(RETURN_OPTION, CONFIRM_OPTION) == CONFIRM_OPTION) {
-            createdUsersCount++;
-            users.add(new UserBuilder()
-                    .setUserId("" + createdUsersCount)
-                    .setEmailAddress(emailAddress)
-                    .setFirstName(firstName)
-                    .setMiddleName(middleName)
-                    .setLastName(lastName)
-                    .setPhoneNumber(phoneNumber)
-                    .setUserRole(UserRole.PLAYER)
-                    .buildUser()
-            );
-            application.getUserManager().createUser("" + createdUsersCount, UserRole.PLAYER, firstName, middleName, lastName, emailAddress, phoneNumber);
+            application.getUserManager().createUser("" + (users.size() + 1), UserRole.PLAYER, firstName, middleName, lastName, emailAddress, phoneNumber);
         }
     }
 
@@ -112,7 +120,7 @@ public class UI_Driver {
         if (users.size() > 0) {
             System.out.println("\nType 0 to return to main menu, or choose a user by entering their list number:");
             // TODO: Error checking when user tries to choose a deleted UserId
-            int userChoice = Menu.getNumberInRange(RETURN_OPTION, createdUsersCount);
+            int userChoice = Menu.getNumberInRange(RETURN_OPTION, users.size());
 
             if (userChoice != RETURN_OPTION) {
                 User userToBeDeleted = application.getUserManager().getUser("" + userChoice);
@@ -152,21 +160,21 @@ public class UI_Driver {
         if (users.size() > 0) {
             System.out.println("\nType 0 to return to main menu, or choose a user by entering their list number:");
             // TODO: Error checking when user tries to choose a deleted UserId
-            int firstPlayerChoice = Menu.getNumberInRange(0, createdUsersCount);
-
+            int firstPlayerChoice = Menu.getNumberInRange(0, users.size());
             if (firstPlayerChoice != RETURN_OPTION) {
                 Decorator.printUnderlined("\nSelect a partner:");
-                User firstUser = application.getUserManager().getUser("" + firstPlayerChoice);
-                listAllUsersExceptOne(firstUser.getUserId());
+                User firstUser = users.get(firstPlayerChoice - 1);
+                users.remove(firstUser);
+                listAllUsers();
 
                 System.out.println("\nChoose a user by entering their list number:");
                 // TODO: Error checking when user tries to choose a deleted UserId
                 int secondPlayerChoice = NULL_OPTION;
                 while (secondPlayerChoice == NULL_OPTION || secondPlayerChoice == firstPlayerChoice) {
-                    secondPlayerChoice = Menu.getNumberInRange(1, createdUsersCount);
+                    secondPlayerChoice = Menu.getNumberInRange(1, Integer.MAX_VALUE);
                 }
 
-                User secondUser = application.getUserManager().getUser("" + secondPlayerChoice);
+                User secondUser = users.get(secondPlayerChoice - 1);
 
                 System.out.println("\nCreate team with the following players?");
                 System.out.println("\tName: \"" + firstUser.getDisplayName() + "\"");
@@ -186,10 +194,17 @@ public class UI_Driver {
         System.out.println();
     }
 
+    public static void showScheduleMatchesMenu(Application application) {
+        List<Court> courts = MatchScheduler.scheduleMatches(6, MatchGroupGenerator.generateMatchGroupings(teams));
+        for (Court court : courts) {
+            //TODO: schedule matches display code
+        }
+    }
+
     private static void listAllUsers() {
         if (users.size() > 0) {
-            for (User user : users) {
-                System.out.println(user.getUserId() + ". " + user.getDisplayName());
+            for (int i = 0; i < users.size(); i++) {
+                System.out.println((i + 1) + ". " + users.get(i).getDisplayName());
             }
         } else {
             System.out.println("-- No users are currently in the system. --");

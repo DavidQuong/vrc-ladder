@@ -8,6 +8,8 @@ import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.util.List;
+
 /**
  * Provides an interface to perform create, read, update, and delete (CRUD) operations on,
  * teams in the database.
@@ -94,6 +96,10 @@ public class TeamManager {
         session.close();
 
         return team;
+    }
+
+    public List<Team> getAllTeams() {
+        return sessionManager.getSession().createCriteria(Team.class).list();
     }
 
 }
