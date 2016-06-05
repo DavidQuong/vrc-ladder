@@ -2,14 +2,17 @@ package ca.sfu.cmpt373.alpha.vrctextui;
 
 import ca.sfu.cmpt373.alpha.vrcladder.Application;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchScheduler;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class UI_Driver {
@@ -54,7 +57,9 @@ public class UI_Driver {
                     break;
                 case SCHEDULE_MATCHES_OPTION:
                     Decorator.clearScreen();
-                    showScheduleMatchesMenu(application);
+                    showScheduleMatchesMenu();
+                    waitForEnterKey();
+                    Decorator.clearScreen();
                 case EXIT_OPTION:
                     break;
                 default:
@@ -73,7 +78,7 @@ public class UI_Driver {
         }
     }
 
-    public static void showAddPlayerMenu(Application application) {
+    private static void showAddPlayerMenu(Application application) {
         final int CONFIRM_OPTION = 1;
         final int RETURN_OPTION = 0;
 
@@ -108,7 +113,7 @@ public class UI_Driver {
         }
     }
 
-    public static void showDeletePlayerMenu(Application application) {
+    private static void showDeletePlayerMenu(Application application) {
         final int CONFIRM_OPTION = 1;
         final int RETURN_OPTION = 0;
 
@@ -139,13 +144,17 @@ public class UI_Driver {
                 }
             }
         } else {
-            System.out.print("\nPress Enter to return to main menu ... ");
-            Scanner scanner = new Scanner(System.in);
-            scanner.nextLine();
+            waitForEnterKey();
         }
     }
 
-    public static void showMakeTeamMenu(Application application) {
+    private static void waitForEnterKey() {
+        System.out.print("\nPress Enter to return to main menu ... ");
+        Scanner scanner = new Scanner(System.in);
+        scanner.nextLine();
+    }
+
+    private static void showMakeTeamMenu(Application application) {
         final int CONFIRM_OPTION = 1;
         final int RETURN_OPTION = 0;
 
@@ -187,17 +196,25 @@ public class UI_Driver {
                 }
             }
         } else {
-            System.out.print("\nPress Enter to return to main menu ... ");
-            Scanner scanner = new Scanner(System.in);
-            scanner.nextLine();
+            waitForEnterKey();
         }
         System.out.println();
     }
 
-    public static void showScheduleMatchesMenu(Application application) {
+    private static void showScheduleMatchesMenu() {
         List<Court> courts = MatchScheduler.scheduleMatches(6, MatchGroupGenerator.generateMatchGroupings(teams));
-        for (Court court : courts) {
-            //TODO: schedule matches display code
+        for (int i = 0; i < courts.size(); i++) {
+            System.out.println("Court " + (i + 1));
+            Map<PlayTime, MatchGroup> scheduledMatches = courts.get(i).getScheduledMatches();
+            for (PlayTime playTime : scheduledMatches.keySet()) {
+                System.out.println("\t" + playTime.getDisplayTime());
+                MatchGroup matchGroup = scheduledMatches.get(playTime);
+                for (Team team : matchGroup.getTeams()) {
+                    System.out.println("\t" + team.getFirstPlayer().getDisplayName() + ", " + team.getSecondPlayer().getDisplayName());
+                    System.out.println("\t" + "----------------");
+                }
+            }
+            System.out.println();
         }
     }
 
@@ -205,18 +222,6 @@ public class UI_Driver {
         if (users.size() > 0) {
             for (int i = 0; i < users.size(); i++) {
                 System.out.println((i + 1) + ". " + users.get(i).getDisplayName());
-            }
-        } else {
-            System.out.println("-- No users are currently in the system. --");
-        }
-    }
-
-    private static void listAllUsersExceptOne(String ignoredUserId) {
-        if (users.size() > 0) {
-            for (User user : users) {
-                if (user.getUserId() != ignoredUserId) {
-                    System.out.println(user.getUserId() + ". " + user.getDisplayName());
-                }
             }
         } else {
             System.out.println("-- No users are currently in the system. --");
