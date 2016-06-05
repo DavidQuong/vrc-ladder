@@ -24,6 +24,10 @@ public class Game {
         ScoreSheet result = findPlayerSheet(player);
         return result;
     }
+    public ScoreSheet getScoreSheet(teams player) {
+        ScoreSheet result = findPlayerSheet(player.);
+        return result;
+    }
 
     private ScoreSheet findPlayerSheet(User player){
         ScoreSheet result = new ScoreSheet();

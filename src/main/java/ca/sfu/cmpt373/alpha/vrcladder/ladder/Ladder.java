@@ -160,7 +160,7 @@ public class Ladder {
         for (int matchIndex =1; matchIndex<MatchGroup.length; matchIndex++){
             arrangeMatchResults(MatchGroup[matchIndex]);
 
-            if(MatchGroup[matchIndex].teamsInvolved()==3) {
+            if(MatchGroup[matchIndex].getTeams().size()==3) {
                 swapBetweenMatchGroup(MatchGroup, matchIndex);
             }
 
@@ -176,7 +176,6 @@ public class Ladder {
                 Team tempTeam = ladderList.get(k);
                 ladderList.remove(k);
                 ladderList.add(k-ATTENDANCE_PENALTY, tempTeam);
-
             }
 
         }
@@ -189,43 +188,21 @@ public class Ladder {
 
         int lowTeam = findLowestNumber(teamPos);
 
-        teamPos[0] = {findTeamPosition(MatchGroup[index-1].getTeam1());
+        teamPos[0] = findTeamPosition(MatchGroup[index-1].getTeam1());
         teamPos[1] = findTeamPosition(MatchGroup[index-1].getTeam2());
-        teamPos[2] = findTeamPosition(MatchGroup[index-1].getTeam3())};
+        teamPos[2] = findTeamPosition(MatchGroup[index-1].getTeam3());
 
         int highTeam = findHighestNumber(teamPos);
 
         swapTeams(highTeam,lowTeam);
     }
-    /**
-     * Shift all teams below the cutoff(exclusive) down or up a specified number of slots
-     */
-    private void shiftLadder(SHIFT_DIRECTION shiftDirection, int cutoff, int slots) {
-        if (shiftDirection == SHIFT_DIRECTION.DOWN) {
-            shiftLadderDown(cutoff, slots);
-        } else if (shiftDirection == SHIFT_DIRECTION.UP) {
-            shiftLadderUp(cutoff, slots);
-        }
 
-    }
-
-    private void shiftLadderDown(int cutoff, int slots) {
-        //start at the bottom and go up
-        int decr = ladderList.size() - 1;
-        while (decr > cutoff) {
-            swapTeams(decr, decr + 1);
-        }
-    }
-
-    private void shiftLadderUp(int cutoff, int slots) {
-
-    }
 
     private void arrangeMatchResults(MatchGroup match){
-        if (match.teamsInvolved()==3){
+        if (match.getTeams().size()==3){
             arrange3Teams(match);
         }
-        else if(match.teamsInvolved()==4){
+        else if(match.getTeams().size()==4){
             arrange4Teams(match);
         }
 
@@ -236,7 +213,7 @@ public class Ladder {
 
     }
     private void arrange3Teams(MatchGroup match){
-        if(match.team1Wins()==0){
+        /*if(match.team1Wins()==0){
             if(match.team2Wins() ==2){
                 swapTeams(match.getTeam1(), match.getTeam2());
             } else if(match.team3Wins() ==2){
@@ -248,7 +225,7 @@ public class Ladder {
                 swapTeams(match.getTeam2(),match.getTeam3());
             }
 
-        }
+        }*/
 
     }
 
