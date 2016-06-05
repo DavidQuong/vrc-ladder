@@ -10,8 +10,17 @@ public class IdType {
         id = UUID.randomUUID().toString();
     }
 
+    public IdType(String id) {
+        this.id = id;
+    }
+
     public String getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return getId();
     }
 
     @Override

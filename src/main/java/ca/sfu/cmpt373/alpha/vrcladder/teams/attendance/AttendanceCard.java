@@ -1,51 +1,53 @@
 package ca.sfu.cmpt373.alpha.vrcladder.teams.attendance;
 
-import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
-import static ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
+@Entity
+@Table(name = PersistenceConstants.TABLE_ATTENDANCE_CARD)
 public class AttendanceCard {
 
+    private static final PlayTime DEFUALT_PLAYTIME = PlayTime.NONE;
+
     private IdType id;
-    private Team team;
     private PlayTime preferredPlayTime;
-    private boolean isAttending;
 
-    public AttendanceCard(IdType id, Team team, PlayTime playTime) {
-        this.id = id;
-        this.team = team;
-
-        updateAttendance(playTime);
-        this.preferredPlayTime = playTime;
+    public AttendanceCard() {
+        this.id = new IdType();
+        this.preferredPlayTime = DEFUALT_PLAYTIME;
     }
 
-    public Team getTeam() {
-        return team;
+    @Id
+    @Column(name = PersistenceConstants.COLUMN_ID)
+    public String getId() {
+        return id.getId();
     }
 
+    public void setId(String newId) {
+        id = new IdType(newId);
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = PersistenceConstants.COLUMN_PLAY_TIME, nullable = false)
     public PlayTime getPreferredPlayTime() {
         return preferredPlayTime;
     }
 
     public void setPreferredPlayTime(PlayTime playTime) {
-        updateAttendance(playTime);
         preferredPlayTime = playTime;
     }
 
+    @Transient
     public boolean isAttending() {
-        return isAttending;
-    }
-
-    private void updateAttendance(PlayTime playTime) {
-        if (playTime == null) {
-            // TODO - Provide more descriptive error message.
-            throw new NullPointerException();
-        } else if (playTime == NONE) {
-            isAttending = false;
-        } else {
-            isAttending = true;
-        }
+        return  (preferredPlayTime != PlayTime.NONE);
     }
 
 }

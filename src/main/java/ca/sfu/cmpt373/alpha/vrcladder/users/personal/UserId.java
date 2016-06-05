@@ -1,16 +1,31 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.personal;
 
-// TODO - Implement Comparable interface
+import java.util.IllegalFormatException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class UserId {
 
-    private Integer id;
+    private static final String USER_ID_FORMAT_REGEX_PATTERN =  "^[0-9]+$";
+    private static final String USER_ID_FORMAT_ERROR_MSG = "%s is not a valid user ID.";
 
-    public UserId(Integer userId) {
+    private static final Pattern FORMAT_PATTERN = Pattern.compile(USER_ID_FORMAT_REGEX_PATTERN,
+        Pattern.CASE_INSENSITIVE);
+
+    private String id;
+
+    public UserId(String userId) {
+        verifyFormat(userId);
         id = userId;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return getUserId();
     }
 
     @Override
@@ -23,13 +38,17 @@ public class UserId {
             return false;
         }
 
-        UserId otherId = (UserId) comparedObj;
+        UserId otherUserId = (UserId) comparedObj;
 
-        if (id != otherId.id) {
-            return false;
-        }
+        return id.equals(otherUserId.id);
+    }
 
-        return true;
+    private void verifyFormat(String userId) throws IllegalFormatException {
+        Matcher matcher = FORMAT_PATTERN.matcher(userId);
+        if(!matcher.find()){
+            String errorMsg = String.format(USER_ID_FORMAT_ERROR_MSG, userId);
+            throw new IllegalArgumentException(errorMsg);
+    }
     }
 
 }
