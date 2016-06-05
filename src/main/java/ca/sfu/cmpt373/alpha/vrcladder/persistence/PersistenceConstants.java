@@ -20,4 +20,6 @@ public class PersistenceConstants {
     public static final String TABLE_ATTENDANCE_CARD = "ATTENDANCE_CARD";
     public static final String COLUMN_PLAY_TIME = "PLAY_TIME";
 
+    public static final String TABLE_MATCH_GROUP = "MATCH_GROUP";
+
 }
