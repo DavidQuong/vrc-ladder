@@ -5,7 +5,6 @@ import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
  * Provides an interface to perform create, read, update, and delete (CRUD) operations on
@@ -19,12 +18,12 @@ public class UserManager extends DatabaseManager<User> {
         super(USER_CLASS_TYPE, sessionManager);
     }
 
-    public User createUser(String userId, UserRole userRole, String firstName, String lastName, String emailAddress,
+    public User create(String userId, UserRole userRole, String firstName, String lastName, String emailAddress,
         String phoneNumber) {
-        return createUser(userId, userRole, firstName, StringUtils.EMPTY, lastName, emailAddress, phoneNumber);
+        return create(userId, userRole, firstName, StringUtils.EMPTY, lastName, emailAddress, phoneNumber);
     }
 
-    public User createUser(String userId, UserRole userRole, String firstName, String middleName, String lastName,
+    public User create(String userId, UserRole userRole, String firstName, String middleName, String lastName,
         String emailAddress, String phoneNumber) {
         User createdUser = new UserBuilder()
             .setUserId(userId)
@@ -40,10 +39,6 @@ public class UserManager extends DatabaseManager<User> {
         return createdUser;
     }
 
-    public User getUser(String userId) {
-        return getById(userId);
-    }
-
     public User updateUser(String userId, UserRole userRole, String firstName, String middleName, String lastName,
         String emailAddress, String phoneNumber) {
         Session session = sessionManager.getSession();
@@ -57,10 +52,6 @@ public class UserManager extends DatabaseManager<User> {
         user.setPhoneNumber(phoneNumber);
 
         return update(user, session);
-    }
-
-    public User deleteUser(String userId) {
-        return deleteById(userId);
     }
 
 }

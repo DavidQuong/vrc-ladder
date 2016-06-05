@@ -20,13 +20,13 @@ public class TeamManager extends DatabaseManager<Team> {
         super(TEAM_CLASS_TYPE, sessionManager);
     }
 
-    public Team createTeam(User firstPlayer, User secondPlayer) {
+    public Team create(User firstPlayer, User secondPlayer) {
         Team newTeam = new Team(firstPlayer, secondPlayer);
 
         return create(newTeam);
     }
 
-    public Team createTeam(String firstPlayerId, String secondPlayerId) {
+    public Team create(String firstPlayerId, String secondPlayerId) {
         Session session = sessionManager.getSession();
 
         User firstPlayer = session.get(User.class, firstPlayerId);
@@ -37,19 +37,11 @@ public class TeamManager extends DatabaseManager<Team> {
         return create(newTeam);
     }
 
-    public Team getTeam(IdType teamId) {
-        return getById(teamId.getId());
+    public Team updateAttendance(IdType teamId, PlayTime preferredPlayTime) {
+        return updateAttendance(teamId.getId(), preferredPlayTime);
     }
 
-    public Team getTeam(String teamId) {
-        return getById(teamId);
-    }
-
-    public Team setTeamAttendance(IdType teamId, PlayTime preferredPlayTime) {
-        return setTeamAttendance(teamId.getId(), preferredPlayTime);
-    }
-
-    public Team setTeamAttendance(String teamId, PlayTime preferredPlayTime) {
+    public Team updateAttendance(String teamId, PlayTime preferredPlayTime) {
         Session session = sessionManager.getSession();
 
         Team team = session.get(Team.class, teamId);
@@ -60,14 +52,6 @@ public class TeamManager extends DatabaseManager<Team> {
         session.close();
 
         return team;
-    }
-
-    public Team deleteTeam(IdType teamId) {
-        return deleteById(teamId.getId());
-    }
-
-    public Team deleteTeam(String teamId) {
-        return deleteById(teamId);
     }
 
 }

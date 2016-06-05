@@ -10,7 +10,7 @@ import org.hibernate.Transaction;
  */
 public abstract class DatabaseManager<T> {
 
-    protected final Class<T> STORED_CLASS_TYPE;
+    private final Class<T> STORED_CLASS_TYPE;
     protected SessionManager sessionManager;
 
     public DatabaseManager(Class<T> storedClassType, SessionManager sessionManager) {
@@ -18,7 +18,7 @@ public abstract class DatabaseManager<T> {
         this.sessionManager = sessionManager;
     }
 
-    protected T create(T obj) {
+    public T create(T obj) {
         Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
 
@@ -29,7 +29,7 @@ public abstract class DatabaseManager<T> {
         return obj;
     }
 
-    protected T getById(String id) {
+    public T getById(String id) {
         Session session = sessionManager.getSession();
         T obj = session.get(STORED_CLASS_TYPE, id);
         session.close();
@@ -37,7 +37,7 @@ public abstract class DatabaseManager<T> {
         return obj;
     }
 
-    protected T update(T obj) {
+    public T update(T obj) {
         Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
 
@@ -48,7 +48,7 @@ public abstract class DatabaseManager<T> {
         return obj;
     }
 
-    protected T update(T obj, Session session) {
+    public T update(T obj, Session session) {
         Transaction transaction = session.beginTransaction();
         session.update(obj);
         transaction.commit();
@@ -56,7 +56,7 @@ public abstract class DatabaseManager<T> {
         return obj;
     }
 
-    protected T deleteById(String id) {
+    public T deleteById(String id) {
         Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
 
