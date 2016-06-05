@@ -1,15 +1,12 @@
-package ca.sfu.cmpt373.alpha.vrcladder.db;
+package ca.sfu.cmpt373.alpha.vrcladder.persistance;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
-import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcladder.users.UserBuilder;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
-import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
-import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
-import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
-import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +21,15 @@ public class MockDatabase {
     private static List<User> generateMockUsers (int numUsers) {
         List<User> users = new ArrayList<>();
         for (int i = 0; i < numUsers; i++) {
-            users.add(new User(new UserId("" + i),
-                    UserRole.PLAYER,
-                    "First",
-                    "Middle",
-                    "Last",
-                    new EmailAddress(i + "Email@test.com"),
-                    new PhoneNumber("123456789" + i))
-            );
+            users.add(new UserBuilder()
+                    .setUserId("" + i)
+                    .setEmailAddress("test@test.com")
+                    .setFirstName("TestUser " + i)
+                    .setMiddleName("MiddleName")
+                    .setLastName("LastName")
+                    .setPhoneNumber("778-235-4841")
+                    .setUserRole(UserRole.PLAYER)
+                    .buildUser());
         }
         return users;
     }
@@ -40,19 +38,19 @@ public class MockDatabase {
         List<Team> teams = new ArrayList<>();
         User previousUser = null;
         //ranking is just incremented after a team is made
-        int mockRanking = 0;
         for (User user : users) {
             if (previousUser == null) {
                 previousUser = user;
             } else {
-                teams.add(new Team(new IdType(), user, mockRanking, previousUser, new AttendanceCard(new IdType(), PlayTime.TIME_SLOT_A)));
+                Team team = new Team(previousUser, user);
+                team.getAttendanceCard().setPreferredPlayTime(PlayTime.TIME_SLOT_A);
+                teams.add(team);
                 previousUser = null;
-                mockRanking++;
             }
         }
 
         if (previousUser != null) {
-            System.out.println("Odd number of users. One user not sorted into a team");
+            throw new IllegalStateException("Odd number of users. One user not sorted into a team");
         }
 
         return teams;
@@ -72,11 +70,13 @@ public class MockDatabase {
      * The courts would be fixed to 6 courts (what vrc has)
      * * @return a list of court objects
      */
-    public static List<Court> getCourts(int courtCount) {
-        List<Court> courts = new ArrayList<>();
-        for (int i = 0; i < courtCount; i++) {
-            courts.add(new Court());
+    public static List<MatchGroup> getMockMatchGroups(int matchGroupCount) {
+        int playersNeededToFormGroup = 6;
+        List<MatchGroup> matchGroups = new ArrayList<>();
+        for (int i = 0; i < matchGroupCount; i++) {
+            matchGroups.add(new MatchGroup(
+                    generateMockTeams(generateMockUsers(playersNeededToFormGroup))));
         }
-        return courts;
+        return matchGroups;
     }
 }
