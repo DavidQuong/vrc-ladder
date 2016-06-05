@@ -2,7 +2,6 @@ package ca.sfu.cmpt373.alpha.vrcladder.ladder;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
-//import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserName;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,12 +9,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
 
-/**
- * Created by Amaterasu on 2016-05-26.
- */
+
 public class Ladder {
 
-    //ladderList of team objects
+
     List<Team> ladderList;
     final private int LADDER_VOLUME = 200;
     final private int ATTENDANCE_PENALTY =2;
@@ -62,11 +59,7 @@ public class Ladder {
     }
 
 
-    /**
-     * Inserts team at the bottom of the ladder
-     *
-     * @param team
-     */
+
     public void pushTeam(Team team) {
         ladderList.add(team);
     }
@@ -86,12 +79,7 @@ public class Ladder {
     }
 
 
-    /**
-     * Swap the positions of two Teams in the ladder
-     *
-     * @param team1
-     * @param team2
-     */
+
     public void swapTeams(Team team1, Team team2) {
         int team1Position;
         int team2Position;
@@ -107,12 +95,6 @@ public class Ladder {
         swapTeams(team1Position, team2Position);
     }
 
-    /**
-     * Swap the positions of two Teams in the ladder
-     *
-     * @param team1Position
-     * @param team2Position
-     */
     public void swapTeams(int team1Position, int team2Position) {
         if (!verifyPositions(team1Position) || !verifyPositions(team2Position)) return;
 
@@ -226,7 +208,7 @@ public class Ladder {
                 swapTeams(match.getTeam2(),match.getTeam3());
             }
 
-        }*/
+        }*///KEEPING COMMENT FOR REVIEW
 
     }
 
