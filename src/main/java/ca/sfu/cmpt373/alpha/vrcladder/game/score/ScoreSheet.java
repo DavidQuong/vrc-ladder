@@ -37,9 +37,9 @@ public class ScoreSheet {
         return this.teams.size();
     }
 
-    public boolean checkTeamPlayer(User player){
-        for(Team team : teams){
-            if(team.checkTeamPlayer(player)){
+    public boolean checkTeamPlayer(User player) {
+        for (Team team : teams) {
+            if (team.getFirstPlayer().equals(player) || team.getSecondPlayer().equals(player)) {
                 return true;
             }
         }
