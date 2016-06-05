@@ -54,6 +54,43 @@ public class UI_Driver {
         application.shutDown();
     }
 
+    public static void setAttendanceStatus(Application application) {
+        final int CONFIRM_OPTION = 1;
+        final int RETURN_OPTION = 0;
+
+        Decorator.clearScreen();
+        Decorator.printInBox("Set Attendance for Teams", '*');
+        System.out.println();
+        Decorator.printUnderlined("Existing Teams:");
+        listAllUsers();
+        if (users.size() > 0) {
+            System.out.println("\nType 0 to return to main menu, or choose a user by entering their list number:");
+            // TODO: Error checking when user tries to choose a deleted UserId
+            int userChoice = Menu.getNumberInRange(RETURN_OPTION, createdUsersCount);
+
+            if (userChoice != RETURN_OPTION) {
+                User userToBeDeleted = application.getUserManager().getUser("" + userChoice);
+
+                System.out.println("\nDelete user with following details?");
+                System.out.println("\tName: \"" + userToBeDeleted.getDisplayName() + "\"");
+                System.out.println("\tEmail Address: \"" + userToBeDeleted.getEmailAddress() + "\"");
+                System.out.println("\tPhone Number: \"" + userToBeDeleted.getPhoneNumber() + "\"");
+
+                System.out.println("\nType " + RETURN_OPTION + " to return to main menu, or " + CONFIRM_OPTION + " to confirm:");
+
+                if (Menu.getNumberInRange(RETURN_OPTION, CONFIRM_OPTION) == CONFIRM_OPTION) {
+                    users.remove(userToBeDeleted);
+                    application.getUserManager().deleteUser("" + userChoice);
+                    // Note createdUsersCount should not be decremented here
+                }
+            }
+        } else {
+            System.out.print("\nPress Enter to return to main menu ... ");
+            Scanner scanner = new Scanner(System.in);
+            scanner.nextLine();
+        }
+    }
+
     public static void showAddPlayerMenu(Application application) {
         final int CONFIRM_OPTION = 1;
         final int RETURN_OPTION = 0;
@@ -207,4 +244,8 @@ public class UI_Driver {
             System.out.println("-- No users are currently in the system. --");
         }
     }
+
+//    private static listAllTeams() {
+//
+//    }
 }
