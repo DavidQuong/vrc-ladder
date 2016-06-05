@@ -126,4 +126,16 @@ public class MatchGroup {
 
         return votedPlayTime;
     }
+    @Transient
+    public Team getTeam1(){
+        return teams.get(0);
+    }
+    @Transient
+    public Team getTeam2(){
+        return teams.get(1);
+    }
+    @Transient
+    public Team getTeam3(){
+        return teams.get(2);
+    }
 }
