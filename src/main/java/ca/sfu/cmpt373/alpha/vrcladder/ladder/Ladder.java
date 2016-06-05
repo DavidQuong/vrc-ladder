@@ -55,9 +55,6 @@ public class Ladder {
 
     public int findTeamPosition(Team team) throws NoSuchElementException {
         for (Team t : ladderList) {
-            //System.out.println(ladderList.indexOf(team) + ": " + team.getId() + "\n"
-            //       + ladderList.indexOf(t) + ": " + t.getId().toString() + "\n\n");
-
             if (t != null && team.getId().equals(t.getId())) return ladderList.indexOf(team);
         }
         throw new NoSuchElementException("Team with id: " + team.getId() + " does not exist in the ladder.");
@@ -129,57 +126,49 @@ public class Ladder {
         return (position < 0 || position >= ladderList.size());
     }
 
-    /**
-     * Updates database with data based on current ladder
-     */
+
     private void updateDatabase() {
 
 
     }
 
-    private int findLowestNumber(int init, int mid, int end)
-    {
-        if(init<=mid&&init<=end)
-        return init;
+    private int findLowestNumber(int[] array) {
+        int lowest = array[0];
+        for (int i=0;i<array.length;i++) {
+            if (array[i] < lowest) {
+                lowest = array[i];
+            }
+        }
+        return lowest;
 
-        if(mid<=init&&mid<=end)
-            return init;
-
-        if(end<=mid&&end<=init)
-            return init;
-
-        return -1;
     }
-    private int findHighestNumber(int init, int mid, int end)
-    {
-        if(init>=mid&&init>=end)
-            return init;
-
-        if(mid>=init&&mid>=end)
-            return init;
-
-        if(end>=mid&&end>=init)
-            return init;
-
-        return -1;
+    private int findHighestNumber(int[] array) {
+        int highest = 0;
+        for (int i=0;i<array.length;i++) {
+            if (array[i] > highest){
+                highest = array[i];
+            }
+        }
+        return highest;
     }
 
     //swap teams in a match based on rank, then switch highest team of match with lowest team of previous match
     //then, apply penalties
-    public void updateLadder(Matches[] matches){
-        arrangeMatchResults(matches[0]);//have to do 0 first, to arrang top of ladder
-        for (int i =1;i<matches.length; i++){
-            arrangeMatchResults(matches[i]);
+    public void updateLadder(MatchGroup[] MatchGroup){
+        arrangeMatchResults(MatchGroup[0]);
+        for (int matchIndex =1; matchIndex<MatchGroup.length; matchIndex++){
+            arrangeMatchResults(MatchGroup[matchIndex]);
 
-            if(matches[i].teamsInvolved()==3)
-                swapBetweenMatches(matches, i);
-
+            if(MatchGroup[matchIndex].teamsInvolved()==3) {
+                swapBetweenMatchGroup(MatchGroup, matchIndex);
+            }
 
         }
         int ladderSize = this.getLadderTeamCount();
         //prevent loop from going out of bounds
-        if (ladderSize>=getLadderVolume())
+        if (ladderSize>=getLadderVolume()){
             ladderSize-=ATTENDANCE_PENALTY;
+        }
 
         for (int k =0;k<ladderSize; k++){
             if(!ladderList.get(k).getAttendanceCard().isAttending()){
@@ -191,18 +180,20 @@ public class Ladder {
 
         }
     }
-    private void swapBetweenMatches(Matches[] matches, int index){
-        int team1Pos = findTeamPosition(matches[index].getTeam1());
-        int team2Pos = findTeamPosition(matches[index].getTeam2());
-        int team3Pos = findTeamPosition(matches[index].getTeam3());
 
-        int lowTeam = findLowestNumber(team1Pos, team2Pos, team3Pos);
+    private void swapBetweenMatchGroup(MatchGroup[] MatchGroup, int index){
+        int[] teamPos = {findTeamPosition(MatchGroup[index].getTeam1()),
+        findTeamPosition(MatchGroup[index].getTeam2()),
+        findTeamPosition(MatchGroup[index].getTeam3())};
 
-        team1Pos = findTeamPosition(matches[index-1].getTeam1());
-        team2Pos = findTeamPosition(matches[index-1].getTeam2());
-        team3Pos = findTeamPosition(matches[index-1].getTeam3());
+        int lowTeam = findLowestNumber(teamPos);
 
-        int highTeam = findHighestNumber(team1Pos, team2Pos, team3Pos);
+         teamPos = {findTeamPosition(MatchGroup[index-1].getTeam1()),
+                findTeamPosition(MatchGroup[index-1].getTeam2()),
+                findTeamPosition(MatchGroup[index-1].getTeam3())};
+        ;
+
+        int highTeam = findHighestNumber(teamPos);
 
         swapTeams(highTeam,lowTeam);
 
@@ -231,30 +222,32 @@ public class Ladder {
 
     }
 
-    private void arrangeMatchResults(Matches match){
-        if (match.teamsInvolved()==3)
+    private void arrangeMatchResults(MatchGroup match){
+        if (match.teamsInvolved()==3){
             arrange3Teams(match);
-        else if(match.teamsInvolved()==4)
+        }
+        else if(match.teamsInvolved()==4){
             arrange4Teams(match);
+        }
 
     }
 
-    private void arrange4Teams(Matches match){
+    private void arrange4Teams(MatchGroup match){
 
 
     }
-    private void arrange3Teams(Matches match){
+    private void arrange3Teams(MatchGroup match){
         if(match.team1Wins()==0){
             if(match.team2Wins() ==2){
                 swapTeams(match.getTeam1(), match.getTeam2());
-            }
-            else if(match.team3Wins() ==2){
+            } else if(match.team3Wins() ==2){
                 swapTeams(match.getTeam1(), match.getTeam3());
             }
         }
         if (match.team2Wins ==0){
-            if (match.team3Wins()==2)
+            if (match.team3Wins()==2){
                 swapTeams(match.getTeam2(),match.getTeam3());
+            }
 
         }
 
