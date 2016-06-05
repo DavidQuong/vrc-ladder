@@ -1,67 +1,81 @@
 package ca.sfu.cmpt373.alpha.vrcladder.teams;
 
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
-import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
-import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 
-// TODO - Potentially add more fields
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+// TODO - Ensure uniqueness of team (no team with same two players, i.e., in reverse order)
+@Entity
+@Table(name = PersistenceConstants.TABLE_TEAM)
 public class Team {
 
     private IdType id;
+    private AttendanceCard attendanceCard;
     private User firstPlayer;
     private User secondPlayer;
-    private AttendanceCard attendanceCard;
-    private AttendanceStatus attendanceStatus;
-    private int ranking;
 
-    public Team(IdType id, User firstPlayer, User secondPlayer, int ranking, AttendanceCard attendanceCard) {
-        verifyPlayers(firstPlayer, secondPlayer);
-        this.id = id;
+    public Team() {
+        this.id = new IdType();
+        this.attendanceCard = new AttendanceCard();
+        this.firstPlayer = null;
+        this.secondPlayer = null;
+    }
+
+    public Team(User firstPlayer, User secondPlayer) {
+        this.id = new IdType();
+        this.attendanceCard = new AttendanceCard();
         this.firstPlayer = firstPlayer;
         this.secondPlayer = secondPlayer;
-        this.attendanceCard = attendanceCard;
-        this.ranking = ranking;
     }
 
-    public IdType getId() {
-        return id;
+    @Id
+    @Column(name = PersistenceConstants.COLUMN_ID)
+    public String getId() {
+        return id.getId();
     }
 
-    public User getFirstPlayer() {
-        return firstPlayer;
+    public void setId(String newId) {
+        id = new IdType(newId);
     }
 
-    public User getSecondPlayer() {
-        return secondPlayer;
-    }
-
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = PersistenceConstants.COLUMN_ATTENDANCE_CARD_ID, nullable = false)
     public AttendanceCard getAttendanceCard() {
         return attendanceCard;
     }
 
-    public void setRanking(int ranking){
-        this.ranking = ranking;
+    public void setAttendanceCard(AttendanceCard newAttendanceCard) {
+        attendanceCard = newAttendanceCard;
     }
 
-    public int getRanking() {
-        return this.ranking;
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = PersistenceConstants.COLUMN_FIRST_PLAYER_ID, nullable = false)
+    public User getFirstPlayer() {
+        return firstPlayer;
     }
 
-    public void setAttendance(AttendanceStatus attendance){
-        this.attendanceStatus = attendance;
+    public void setFirstPlayer(User player) {
+        firstPlayer = player;
     }
 
-    public AttendanceStatus getAttendace(){
-        return this.attendanceStatus;
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = PersistenceConstants.COLUMN_SECOND_PLAYER_ID, nullable = false)
+    public User getSecondPlayer() {
+        return secondPlayer;
     }
 
-    // TODO - Replace RuntimeException with more specific (possibly custom) type of error.
-    private void verifyPlayers(User firstPlayer, User secondPlayer) throws RuntimeException {
-        if (firstPlayer.getUserRole() != UserRole.PLAYER || secondPlayer.getUserRole() != UserRole.PLAYER) {
-            throw new RuntimeException();
-        }
+    public void setSecondPlayer(User player) {
+        secondPlayer = player;
     }
 
 }
