@@ -37,7 +37,7 @@ public class UserManagerTest extends BaseTest {
         final EmailAddress emailAddress = new EmailAddress("djmatthews@vrc.ca");
         final PhoneNumber phoneNumber = new PhoneNumber("604-000-1234");
 
-        userManager.createUser(id.getUserId(), userRole, firstName, middleName, lastName,
+        userManager.create(id.getUserId(), userRole, firstName, middleName, lastName,
             emailAddress.getEmailAddress(), phoneNumber.getPhoneNumber());
 
         Session session = sessionManager.getSession();
@@ -56,7 +56,7 @@ public class UserManagerTest extends BaseTest {
 
     @Test
     public void testGetUser() {
-        User user = userManager.getUser(MOCK_USER_ID.getUserId());
+        User user = userManager.getById(MOCK_USER_ID.getUserId());
 
         Assert.assertNotNull(user);
         Assert.assertEquals(MOCK_USER_ID.getUserId(), user.getUserId());
@@ -93,7 +93,7 @@ public class UserManagerTest extends BaseTest {
 
     @Test
     public void testDeleteUser() {
-        User originalUser = userManager.deleteUser(MOCK_USER_ID.getUserId());
+        User originalUser = userManager.deleteById(MOCK_USER_ID.getUserId());
 
         Session session = sessionManager.getSession();
         User user = session.get(User.class, MOCK_USER_ID.getUserId());

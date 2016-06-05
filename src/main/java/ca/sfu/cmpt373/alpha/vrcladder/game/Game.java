@@ -24,9 +24,9 @@ public class Game {
         ScoreSheet result = findPlayerSheet(player);
         return result;
     }
-    public ScoreSheet getScoreSheet(teams player) {
+    public ScoreSheet getScoreSheet(Team player) {
         ScoreSheet result = findPlayerSheet(player.);
-        return result;
+        return this.getScoreSheet(player.);
     }
 
     private ScoreSheet findPlayerSheet(User player){

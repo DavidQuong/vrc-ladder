@@ -213,6 +213,7 @@ public class Ladder {
 
     }
     private void arrange3Teams(MatchGroup match){
+        //match.getScoreSheet().getscores();
         /*if(match.team1Wins()==0){
             if(match.team2Wins() ==2){
                 swapTeams(match.getTeam1(), match.getTeam2());
