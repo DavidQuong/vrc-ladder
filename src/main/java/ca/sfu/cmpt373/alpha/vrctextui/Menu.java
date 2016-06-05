@@ -25,6 +25,10 @@ public class Menu {
     }
 
     public static int getNumberInRange(int start, int end) {
+        if (start > end) {
+            throw new IllegalArgumentException("parameter start must be <= end");
+        }
+
         Scanner scanner = new Scanner(System.in);
         int userChoice;
 
@@ -32,6 +36,7 @@ public class Menu {
             System.out.println("(Enter a choice between " + start + " and " + end + ")");
             System.out.print("> ");
             userChoice = scanner.nextInt();
+            scanner.nextLine(); // Strip newline in stream
         } while (!(userChoice >= start && userChoice <= end));
         return userChoice;
     }

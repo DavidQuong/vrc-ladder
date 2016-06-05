@@ -1,27 +1,47 @@
 package ca.sfu.cmpt373.alpha.vrctextui;
 
-/**
- * Created by Hassan Fahad on 2016-06-01.
- */
+import ca.sfu.cmpt373.alpha.vrcladder.Application;
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
+import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
+import ca.sfu.cmpt373.alpha.vrcladder.Application;
+
+import java.util.Scanner;
+
 public class UI_Driver {
     private static final int NULL_OPTION = -1;
+    private static long numUsers;
 
     public static void main(String[] args) {
-        final int OPTION1 = 1;
-        final int EXIT_OPTION = 2;
-        String[] options = {"option 1: do something", "exit"};
+        final int ADD_PLAYER_OPTION = 1;
+        final int MAKE_TEAM_OPTION = 2;
+        final int EXIT_OPTION = 3;
+        String[] options = {"Add new player", "Make team", "Exit"};
 
-        Decorator.printInBox("Menu Class Test", '*');
-        System.out.println();
+        Application application = new Application();
+        numUsers = 0;
 
-        Menu testMenu = new Menu("MAIN MENU", options);
+        Menu mainMenu = new Menu("Main Menu", options);
         int userChoice = NULL_OPTION;
         while (userChoice != EXIT_OPTION) {
             Decorator.clearScreen();
-            testMenu.display();
-            userChoice = testMenu.getMenuChoice();
+            mainMenu.display();
+            userChoice = mainMenu.getMenuChoice();
             switch (userChoice) {
-                case OPTION1: showOption1();
+                case ADD_PLAYER_OPTION:
+                    Decorator.clearScreen();
+                    showAddPlayerMenu(application);
+                    for (int i = 1; i < numUsers; i++) {
+                        User user = application.getUserManager().getUser(Integer.toString(i));
+                        System.out.println(user.getFirstName());
+                        System.out.println(user.getEmailAddress());
+                        System.out.println(user.getPhoneNumber());
+                    }
+                    break;
+                case MAKE_TEAM_OPTION:
+                    Decorator.clearScreen();
+//                    showMakeTeamMenu(application.getUserManager());
                     break;
                 case EXIT_OPTION:
                     break;
@@ -29,29 +49,71 @@ public class UI_Driver {
             }
             System.out.println();
         }
+        application.shutDown();
     }
 
-    public static void showOption1() {
-        final int OPTION1 = 1;
-        final int OPTION2 = 2;
-        final int RETURN_OPTION = 3;
-        String[] options = {"take the blue pill", "take the red pill", "return to main menu"};
-        Menu option1menu = new Menu("OPTION1", options);
-        int userChoice = NULL_OPTION;
-        while (userChoice != RETURN_OPTION) {
-            Decorator.clearScreen();
-            option1menu.display();
-            userChoice = option1menu.getMenuChoice();
-            switch (userChoice) {
-                case OPTION1:
-                    break;
-                case OPTION2:
-                    break;
-                case RETURN_OPTION:
-                    break;
-                default:
-            }
-            System.out.println();
+//    public static void showMakeTeamMenu(UserManager userManager) {
+//        final int ADD_PLAYER_OPTION = 1;
+//        final int MAKE_TEAM_OPTION = 2;
+//        final int EXIT_OPTION = 3;
+//        String[] options = {"Add new player", "Make team", "Exit"};
+//
+//        Menu makeTeamMenu = new Menu("Make new team", options);
+//        int userChoice = NULL_OPTION;
+//        while (userChoice != EXIT_OPTION) {
+//            Decorator.clearScreen();
+//            makeTeamMenu.display();
+//            userChoice = makeTeamMenu.getMenuChoice();
+//            switch (userChoice) {
+//                case ADD_PLAYER_OPTION:
+//                    Decorator.clearScreen();
+//                    showAddPlayerMenu(userManager);
+//                    break;
+//                case MAKE_TEAM_OPTION:
+//                    Decorator.clearScreen();
+//                    showMakeTeamMenu(userManager);
+//                    break;
+//                case EXIT_OPTION:
+//                    return;
+//                default:
+//            }
+//            System.out.println();
+//        }
+//    }
+
+    public static void showAddPlayerMenu(Application application) {
+        final int CONFIRM_OPTION = 1;
+        final int RETURN_OPTION = 0;
+
+        Decorator.printInBox("Add Player", '*');
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter first name: ");
+        String firstName = scanner.nextLine();
+        System.out.println("Enter middle name: ");
+        String middleName = scanner.nextLine();
+        System.out.println("Enter last name: ");
+        String lastName = scanner.nextLine();
+        System.out.println("Enter email address (id@domain.com): ");
+        String emailAddress = scanner.nextLine();
+        System.out.println("Enter phone number: ");
+        String phoneNumber = scanner.nextLine();
+
+        System.out.println("Create user with following details?");
+        System.out.println("\tName: \"" + firstName + " " + middleName + " " + lastName + "\"");
+        System.out.println("\tEmail Address: \"" + emailAddress + "\"");
+        System.out.println("\tPhone Number: \"" + phoneNumber + "\"");
+
+        System.out.println("(Type " + CONFIRM_OPTION + " to confirm and " + RETURN_OPTION + " to return to main menu)");
+
+        switch (Menu.getNumberInRange(RETURN_OPTION, CONFIRM_OPTION)) {
+            case CONFIRM_OPTION:
+                numUsers++;
+                application.getUserManager().createUser(Long.toString(numUsers), UserRole.PLAYER, firstName, middleName, lastName, emailAddress, phoneNumber);
+                return;
+            case RETURN_OPTION:
+                break;
+            default:
         }
     }
 }
