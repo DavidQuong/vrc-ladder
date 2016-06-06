@@ -6,6 +6,8 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 
+import java.util.List;
+
 /**
  * Provides an interface to perform create, read, update, and delete (CRUD) operations on
  * users in the database.
@@ -52,6 +54,10 @@ public class UserManager extends DatabaseManager<User> {
         user.setPhoneNumber(phoneNumber);
 
         return update(user, session);
+    }
+
+    public List<User> getAllUsers() {
+        return sessionManager.getSession().createCriteria(User.class).list();
     }
 
 }
