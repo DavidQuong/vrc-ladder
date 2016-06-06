@@ -16,14 +16,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-public class UI_Driver {
+public class TextUserInterfaceDriver {
     private static final int NULL_OPTION = -1;
     private static List<User> users;
     private static List<Team> teams;
 
     public static void main(String[] args) {
         final int ADD_PLAYER_OPTION = 1;
-//        final int DELETE_PLAYER_OPTION = 2;
         final int SHOW_PLAYERS_OPTION = 2;
         final int MAKE_TEAM_OPTION = 3;
         final int SET_ATTENDANCE_OPTION = 4;
@@ -259,7 +258,6 @@ public class UI_Driver {
                         MatchGroup matchGroup = scheduledMatches.get(playTime);
                         for (Team team : matchGroup.getTeams()) {
                             System.out.println("\tTeam " + team.getFirstPlayer().getDisplayName() + " & " + team.getSecondPlayer().getDisplayName());
-//                        System.out.println("\t" + "----------------");
                         }
                         Decorator.printLine(LINE_LENGTH, '~');
                     }

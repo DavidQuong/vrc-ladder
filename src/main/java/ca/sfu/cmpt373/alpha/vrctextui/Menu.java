@@ -2,9 +2,6 @@ package ca.sfu.cmpt373.alpha.vrctextui;
 
 import java.util.Scanner;
 
-/**
- * Created by Karan on 01/06/2016.
- */
 public class Menu {
     private String[] options;
     private String title;
