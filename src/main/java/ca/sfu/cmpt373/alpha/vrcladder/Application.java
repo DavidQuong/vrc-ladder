@@ -20,4 +20,11 @@ public class Application {
         sessionManager.shutDown();
     }
 
+    public UserManager getUserManager() {
+        return userManager;
+    }
+
+    public TeamManager getTeamManager() {
+        return teamManager;
+    }
 }

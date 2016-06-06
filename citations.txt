@@ -1,0 +1,1 @@
+vrc-ladder-app\src\main\java\ca\sfu\cmpt373\alpha\vrctextui\Menu.java: Idea based on design from Summer 2016 CMPT213 As0.

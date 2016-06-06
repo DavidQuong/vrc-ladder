@@ -78,4 +78,18 @@ public class Team {
         secondPlayer = player;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        boolean result = false;
+        if (other == null) {
+            result = false;
+        } else if (other == this) {
+            result = true;
+        } else if (other instanceof Team) {
+            Team that = (Team) other;
+            result = this.getId().equals(that.getId());
+        }
+        return result;
+    }
+
 }

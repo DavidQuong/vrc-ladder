@@ -120,12 +120,16 @@ public class User {
     }
 
     @Override
-    public String toString(){
-        return  "userID = " + userId.getUserId() + ", "
-                + getDisplayName() + ", "
-                + userRole + ", "
-                + emailAddress.toString() + ", "
-                + phoneNumber.toString();
+    public boolean equals(Object other) {
+        boolean result = false;
+        if (other == null) {
+            result = false;
+        } else if (other == this) {
+            result = true;
+        } else if (other instanceof User) {
+            User that = (User) other;
+            result = this.getUserId().equals(that.getUserId());
+        }
+        return result;
     }
-
 }
