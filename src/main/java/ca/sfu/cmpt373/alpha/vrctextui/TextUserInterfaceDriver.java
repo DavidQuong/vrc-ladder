@@ -223,23 +223,23 @@ public class TextUserInterfaceDriver {
 
     private static void showScheduleMatchesMenu() {
         try {
-            final int LINE_LENGTH = 30;
+            final int LINE_LENGTH = 45;
             List<Court> courts = MatchScheduler.scheduleMatches(6, MatchGroupGenerator.generateMatchGroupings(teams));
             for (int i = 0; i < courts.size(); i++) {
-                System.out.println("Court " + (i + 1));
+                Decorator.printUnderlined("Court " + (i + 1));
                 Map<PlayTime, MatchGroup> scheduledMatches = courts.get(i).getScheduledMatches();
                 if (scheduledMatches.size() > 0) {
                     for (PlayTime playTime : scheduledMatches.keySet()) {
-                        System.out.println("\t(Playing at " + playTime.getDisplayTime() + ")");
+                        System.out.println("\t\t** Playing at " + playTime.getDisplayTime() + " **");
                         MatchGroup matchGroup = scheduledMatches.get(playTime);
                         for (Team team : matchGroup.getTeams()) {
                             System.out.println("\tTeam " + team.getFirstPlayer().getDisplayName() + " & " + team.getSecondPlayer().getDisplayName());
                         }
-                        Decorator.printLine(LINE_LENGTH, '~');
                     }
                 } else {
-                    System.out.println("-- No groups are scheduled at this court at any time --");
+                    System.out.println("No groups are scheduled to play at this court.");
                 }
+                Decorator.printLine(LINE_LENGTH, '~');
                 System.out.println();
             }
         } catch (MatchMakingException e) {
