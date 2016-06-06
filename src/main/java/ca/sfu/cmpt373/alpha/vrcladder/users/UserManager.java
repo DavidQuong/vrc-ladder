@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.util.List;
+
 /**
  * Provides an interface to perform create, read, update, and delete (CRUD) operations on
  * users in the database.
@@ -94,6 +96,10 @@ public class UserManager {
 
         session.update(user);
         transaction.commit();
+    }
+
+    public List<User> getAllUsers() {
+        return sessionManager.getSession().createCriteria(User.class).list();
     }
 
 }
