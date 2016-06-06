@@ -20,7 +20,6 @@
         <property name="hbm2ddl.auto">create-drop</property>
         <property name="hibernate.hbm2ddl.import_files">mock_data.sql</property>
 
-
         <mapping class="ca.sfu.cmpt373.alpha.vrcladder.users.User"/>
         <mapping class="ca.sfu.cmpt373.alpha.vrcladder.teams.Team"/>
         <mapping class="ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard"/>

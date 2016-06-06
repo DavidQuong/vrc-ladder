@@ -138,7 +138,7 @@ public class TextUserInterfaceDriver {
             System.out.println("\nType " + RETURN_OPTION + " to return to main menu, or " + CONFIRM_OPTION + " to confirm:");
 
             if (Menu.getNumberInRange(RETURN_OPTION, CONFIRM_OPTION) == CONFIRM_OPTION) {
-                application.getUserManager().createUser("" + (users.size() + 1), UserRole.PLAYER, firstName, middleName, lastName, emailAddress, phoneNumber);
+                application.getUserManager().create("" + (users.size() + 1), UserRole.PLAYER, firstName, middleName, lastName, emailAddress, phoneNumber);
             }
         } catch (Exception exception) {
             System.out.print("\nInput error: missing required fields or illegal format.");
@@ -185,7 +185,7 @@ public class TextUserInterfaceDriver {
                     default:
                         break;
                 }
-                application.getTeamManager().setTeamAttendance(team.getId(), chosenPlayTime);
+                application.getTeamManager().updateAttendance(team.getId(), chosenPlayTime);
             }
         } else {
             waitForEnterKey();
@@ -236,7 +236,7 @@ public class TextUserInterfaceDriver {
                 System.out.println("\nType " + RETURN_OPTION + " to return to main menu, or " + CONFIRM_OPTION + " to confirm:");
 
                 if (Menu.getNumberInRange(RETURN_OPTION, CONFIRM_OPTION) == CONFIRM_OPTION) {
-                    application.getTeamManager().createTeam(firstUser, secondUser);
+                    application.getTeamManager().create(firstUser, secondUser);
                 }
             }
         } else {
