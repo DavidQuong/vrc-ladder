@@ -44,7 +44,7 @@ public class TeamManagerTest extends BaseTest {
         Assert.assertNotNull(firstPlayer);
         Assert.assertNotNull(secondPlayer);
 
-        Team newTeam = teamManager.createTeam(firstPlayer, secondPlayer);
+        Team newTeam = teamManager.create(firstPlayer, secondPlayer);
 
         Team team = session.get(Team.class, newTeam.getId());
         Assert.assertNotNull(team);
@@ -61,7 +61,7 @@ public class TeamManagerTest extends BaseTest {
         Assert.assertNotNull(firstPlayer);
         Assert.assertNotNull(secondPlayer);
 
-        Team newTeam = teamManager.createTeam(MOCK_NEW_FIRST_PLAYER_ID.getUserId(),
+        Team newTeam = teamManager.create(MOCK_NEW_FIRST_PLAYER_ID.getUserId(),
             MOCK_NEW_SECOND_PLAYER_ID.getUserId());
 
         Team team = session.get(Team.class, newTeam.getId());
@@ -71,7 +71,7 @@ public class TeamManagerTest extends BaseTest {
 
     @Test
     public void testGetTeam() {
-        Team team = teamManager.getTeam(MOCK_TEAM_ID);
+        Team team = teamManager.getById(MOCK_TEAM_ID.getId());
         AttendanceCard attendanceCard = team.getAttendanceCard();
 
         Assert.assertEquals(MOCK_FIRST_PLAYER_ID.getUserId(), team.getFirstPlayer().getUserId());
@@ -83,7 +83,7 @@ public class TeamManagerTest extends BaseTest {
     @Test
     public void testUpdateTeamAttendance() {
         final PlayTime newPlayTime = PlayTime.TIME_SLOT_A;
-        teamManager.setTeamAttendance(MOCK_TEAM_ID, newPlayTime);
+        teamManager.updateAttendance(MOCK_TEAM_ID, newPlayTime);
 
         Session session = sessionManager.getSession();
         Team team = session.get(Team.class, MOCK_TEAM_ID.getId());
@@ -95,7 +95,7 @@ public class TeamManagerTest extends BaseTest {
 
     @Test
     public void testDeleteTeam() {
-        Team originalTeam = teamManager.deleteTeam(MOCK_TEAM_ID);
+        Team originalTeam = teamManager.deleteById(MOCK_TEAM_ID.getId());
         AttendanceCard originalAttendanceCard = originalTeam.getAttendanceCard();
 
         Session session = sessionManager.getSession();

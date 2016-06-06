@@ -35,7 +35,7 @@ public class MatchGroupManagerTest extends BaseTest {
 
         List<Team> teams = new ArrayList<>();
         for (String teamId : MOCK_TEAM_IDS) {
-            teams.add(teamManager.getTeam(teamId));
+            teams.add(teamManager.getById(teamId));
         }
 
         MatchGroup matchGroupCreated = matchGroupManager.createMatchGroup(teams);
