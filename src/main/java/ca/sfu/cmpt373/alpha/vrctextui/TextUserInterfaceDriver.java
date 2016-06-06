@@ -32,7 +32,6 @@ public class TextUserInterfaceDriver {
         Application application = new Application();
         users = new ArrayList<>();
         teams = new ArrayList<>();
-
         String[] options = {"Add new player", "Show existing players", "Make team", "Set attendance for teams", "Schedule matches", "Exit"};
         Menu mainMenu = new Menu("Main Menu", options);
         int userChoice = NULL_OPTION;
@@ -53,7 +52,7 @@ public class TextUserInterfaceDriver {
                     break;
                 case SHOW_PLAYERS_OPTION:
                     Decorator.clearScreen();
-                    showPlayersMenu(application);
+                    showPlayersMenu();
                     break;
                 case MAKE_TEAM_OPTION:
                     Decorator.clearScreen();
@@ -77,12 +76,10 @@ public class TextUserInterfaceDriver {
         application.shutDown();
     }
 
-    private static void showPlayersMenu(Application application) {
+    private static void showPlayersMenu() {
         Decorator.clearScreen();
         Decorator.printInBox("Existing Players", '*');
         System.out.println();
-        // TODO: Only list users that don't have a team, not all users
-        // TODO: Handle case when there are no users available to join a team
         listAllUsers();
         waitForEnterKey();
         System.out.println();
@@ -94,10 +91,8 @@ public class TextUserInterfaceDriver {
                 System.out.print((i + 1) + ". ");
                 System.out.print(teams.get(i).getFirstPlayer().getDisplayName());
                 System.out.print(" & " + teams.get(i).getSecondPlayer().getDisplayName());
-
                 PlayTime attendanceStatus = teams.get(i).getAttendanceCard().getPreferredPlayTime();
                 System.out.print(" (Attendance Status is \"" + attendanceStatus.getDisplayTime() + "\")");
-
                 System.out.println();
             }
         } else {
@@ -108,9 +103,7 @@ public class TextUserInterfaceDriver {
     private static void showAddPlayerMenu(Application application) {
         final int CONFIRM_OPTION = 1;
         final int RETURN_OPTION = 0;
-
         Decorator.printInBox("Add Player", '*');
-
         try {
             Scanner scanner = new Scanner(System.in);
             System.out.print("Enter first name*: ");
@@ -123,9 +116,6 @@ public class TextUserInterfaceDriver {
             String emailAddress = scanner.nextLine();
             System.out.print("Enter phone number*: ");
             String phoneNumber = scanner.nextLine();
-
-            // TODO: Handle possible input errors here like blank fields, IllegalFormatException etc with a while loop
-
             System.out.println("\nCreate user with following details?");
             if (middleName.isEmpty()) {
                 System.out.println("\tName: \"" + firstName + " " + lastName + "\"");
@@ -160,12 +150,9 @@ public class TextUserInterfaceDriver {
 
         if (teams.size() > 0) {
             System.out.println("\nType 0 to return to main menu, or choose a user by entering their list number:");
-            // TODO: Error checking when user tries to choose a deleted UserId
             int teamChoice = Menu.getNumberInRange(RETURN_OPTION, teams.size());
             System.out.println();
-
             if (teamChoice != RETURN_OPTION) {
-
                 Team team = teams.get(teamChoice - 1);
                 String[] options = {"Not Attending", "8:00PM", "9:30PM"};
                 Menu attendanceStatusMenu = new Menu("Attendance Choices", options);
@@ -201,40 +188,29 @@ public class TextUserInterfaceDriver {
     private static void showMakeTeamMenu(Application application) {
         final int CONFIRM_OPTION = 1;
         final int RETURN_OPTION = 0;
-
         Decorator.clearScreen();
         Decorator.printInBox("Make Team", '*');
         System.out.println();
         Decorator.printUnderlined("Existing Users:");
-        // TODO: Only list users that don't have a team, not all users
-        // TODO: Handle case when there are no users available to join a team
         listAllUsers();
-
         if (users.size() > 0) {
             System.out.println("\nType 0 to return to main menu, or choose a user by entering their list number:");
-            // TODO: Error checking when user tries to choose a deleted UserId
             int firstPlayerChoice = Menu.getNumberInRange(0, users.size());
             if (firstPlayerChoice != RETURN_OPTION) {
                 Decorator.printUnderlined("\nSelect a partner:");
                 User firstUser = users.get(firstPlayerChoice - 1);
                 users.remove(firstUser);
                 listAllUsers();
-
                 System.out.println("\nChoose a user by entering their list number:");
-                // TODO: Error checking when user tries to choose a deleted UserId
                 int secondPlayerChoice = NULL_OPTION;
                 while (secondPlayerChoice == NULL_OPTION || secondPlayerChoice == firstPlayerChoice) {
                     secondPlayerChoice = Menu.getNumberInRange(1, Integer.MAX_VALUE);
                 }
-
                 User secondUser = users.get(secondPlayerChoice - 1);
-
                 System.out.println("\nCreate team with the following players?");
                 System.out.println("\tName: \"" + firstUser.getDisplayName() + "\"");
                 System.out.println("\tName: \"" + secondUser.getDisplayName() + "\"");
-
                 System.out.println("\nType " + RETURN_OPTION + " to return to main menu, or " + CONFIRM_OPTION + " to confirm:");
-
                 if (Menu.getNumberInRange(RETURN_OPTION, CONFIRM_OPTION) == CONFIRM_OPTION) {
                     application.getTeamManager().create(firstUser, secondUser);
                 }

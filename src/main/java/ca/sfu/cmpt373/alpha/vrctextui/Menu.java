@@ -27,7 +27,6 @@ public class Menu {
             if (start > end) {
                 throw new IllegalArgumentException("parameter 'start' must be <= 'end'");
             }
-
             Scanner scanner = new Scanner(System.in);
             System.out.print("> ");
             int userChoice = scanner.nextInt();
