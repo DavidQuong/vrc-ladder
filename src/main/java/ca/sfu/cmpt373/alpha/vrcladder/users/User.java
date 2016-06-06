@@ -122,7 +122,7 @@ public class User {
     @Override
     public String toString(){
         return  "userID = " + userId.getUserId() + ", "
-                + userName.getDisplayName() + ", "
+                + getDisplayName() + ", "
                 + userRole + ", "
                 + emailAddress.toString() + ", "
                 + phoneNumber.toString();

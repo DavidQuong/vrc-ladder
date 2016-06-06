@@ -2,6 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.game;
 
 import ca.sfu.cmpt373.alpha.vrcladder.game.score.ScoreSheet;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +25,7 @@ public class Game {
         ScoreSheet result = findPlayerSheet(player);
         return result;
     }
-    public ScoreSheet getScoreSheet(Team player) {
-        ScoreSheet result = findPlayerSheet(player.);
-        return this.getScoreSheet(player.);
-    }
+
 
     private ScoreSheet findPlayerSheet(User player){
         ScoreSheet result = new ScoreSheet();
