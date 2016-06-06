@@ -89,10 +89,10 @@ public class TextUserInterfaceDriver {
         if (teams.size() > 0) {
             for (int i = 0; i < teams.size(); i++) {
                 System.out.print((i + 1) + ". ");
-                System.out.print(teams.get(i).getFirstPlayer().getDisplayName());
-                System.out.print(" & " + teams.get(i).getSecondPlayer().getDisplayName());
+                String teamName = teams.get(i).getFirstPlayer().getDisplayName() + " & " + teams.get(i).getSecondPlayer().getDisplayName();
                 PlayTime attendanceStatus = teams.get(i).getAttendanceCard().getPreferredPlayTime();
-                System.out.print(" (Attendance Status is \"" + attendanceStatus.getDisplayTime() + "\")");
+                String attendanceInfo = " (Attendance Status is \"" + attendanceStatus.getDisplayTime() + "\")";
+                System.out.printf("%-40s%33s", teamName, attendanceInfo);
                 System.out.println();
             }
         } else {
