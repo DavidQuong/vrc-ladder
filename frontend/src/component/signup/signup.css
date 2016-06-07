@@ -1,0 +1,62 @@
+
+.signup {
+  font-family: 'Roboto', sans-serif;
+  padding: 15px;
+  margin-bottom: 50px;
+  font-size: 16px;
+  display: block;
+}
+
+
+.goodForm {
+  width: 66%;
+  height: 34px;
+  float: left;
+  padding-top: 6px;
+  padding-right: 12px;
+  padding-bottom: 6px;
+  padding-left: 20px;
+  border-radius: 4px;
+  border: solid 1px #ccc;
+}
+
+.errorForm {
+  composes: goodForm;
+  width: 40%;
+  border: solid 1px red;
+}
+
+.center {
+  margin: auto;
+  width: 60%;
+  text-align: center;
+}
+
+.errorMsg {
+  width: 20%;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  float: right;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.formHorizontal {
+  display: block;
+}
+
+.formGroup {
+  margin-right: 15px;
+  margin-left: 15px;
+  margin-bottom: 15px;
+  height: 34px;
+}
+
+.colXsTitle {
+  width: 33.3%;
+  position: relative;
+  float: left;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+}

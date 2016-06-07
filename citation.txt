@@ -1,0 +1,32 @@
+//WebAPP
+
+All webpack settings, and redux settings are from various guides online. I listed anything I have read or visited at the bottom.
+
+Forms are created using Redux-form:
+http://redux-form.com/5.2.5/#/getting-started?_k=fglreo
+
+CSS buttons were created from:
+http://css3buttongenerator.com/
+
+https://developer.mozilla.org/en/docs/Web/API/Window/localStorage
+
+https://github.com/lodash/lodash/wiki/FP-Guide
+https://github.com/JedWatson/classnames
+https://github.com/css-modules/css-modules
+https://github.com/peterramsing/lost/wiki/Installation
+https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options
+https://github.com/fmoo/react-typeahead
+https://github.com/reactjs/reselect
+http://redux-form.com/5.2.3/#/api/reduxForm?_k=cvo2xg
+https://lodash.com/docs
+https://github.com/acdlite/redux-actions
+https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options
+http://flowtype.org/
+https://github.com/zalmoxisus/redux-devtools-extension
+https://github.com/gaearon/redux-thunk
+https://github.com/zalmoxisus/redux-devtools-extension
+https://github.com/zippyui/react-button
+https://blog.risingstack.com/the-react-way-getting-started-tutorial/
+
+http://paletton.com/#uid=13L0u0kllll5wtvdqpqtghgKwdb
+http://localhost:8080/

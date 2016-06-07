@@ -1,7 +1,4 @@
-.idea/
-.gradle/
-build/
 node_modules
+examples
 *.log
-dist
 coverage
