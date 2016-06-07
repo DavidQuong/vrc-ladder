@@ -61,42 +61,35 @@ class LadderTest {
 
 								creation.setAttendance(PRESENT);
 
-							}
-							else if(testCase == 1 || testCase == 2 || testCase == 4) {
+							} else if(testCase == 1 || testCase == 2 || testCase == 4) {
 
 								creation.setAttendance(LATE);
 
-							}
-							else if(i % 2 == 0) {
+							} else if(i % 2 == 0) {
 
 								creation.setAttendance(PRESENT);
 
-							}
-							else {
+							} else {
 
 								creation.setAttendance(LATE);
 
 							}
 
-						}
-						else { //NOT_ATTENDING
+						} else { //NOT_ATTENDING
 
 							if(testCase == 0 || testCase == 1 || testCase == 6) {
 
 								creation.setAttendanceCard(new AttendanceCard(new IdType(), creation, PlayTime::NONE));
 
-							}
-							else if(testCase == 2 || testCase == 3 || testCase == 7) {
+							} else if(testCase == 2 || testCase == 3 || testCase == 7) {
 
 								creation.setAttendance(NO_SHOW);
 
-							}
-							else if(i % 2 == 0) {
+							} else if(i % 2 == 0) {
 
 								creation.setAttendanceCard(new AttendanceCard(new IdType(), creation, PlayTime::NONE));
 
-							}
-							else {
+							} else {
 
 								creation.setAttendance(NO_SHOW);
 
@@ -127,13 +120,12 @@ class LadderTest {
 		testResults = TestCase1();
 		if(testResults == TEST_CASE_COUNT) {
 
-			System.out.println("Test Case 1 Passed, 9/9\n");
+			System.out.println("Test Case 1 Passed, " + TEST_CASE_COUNT + "/" + TEST_CASE_COUNT + "\n");
 			successes++;
 
-		}
-		else {
+		} else {
 
-			System.out.println("Test Case 1 Failed, " + testResults + "/9\n");
+			System.out.println("Test Case 1 Failed, " + testResults + "/" + TEST_CASE_COUNT + "\n");
 
 		}
 		miniSuccesses += testResults;
@@ -141,13 +133,12 @@ class LadderTest {
 		testResults = TestCase2();
 		if(testResults == TEST_CASE_COUNT) {
 
-			System.out.println("Test Case 2 Passed, 9/9\n");
+			System.out.println("Test Case 2 Passed, " + TEST_CASE_COUNT + "/" + TEST_CASE_COUNT + "\n");
 			successes++;
 
-		}
-		else {
+		} else {
 
-			System.out.println("Test Case 2 Failed, " + testResults + "/9\n");
+			System.out.println("Test Case 2 Failed, " + testResults + "/" + TEST_CASE_COUNT + "\n");
 
 		}
 		miniSuccesses += testResults;
@@ -155,13 +146,12 @@ class LadderTest {
 		testResults = TestCase3();
 		if(testResults == TEST_CASE_COUNT) {
 
-			System.out.println("Test Case 3 Passed, 9/9\n");
+			System.out.println("Test Case 3 Passed, " + TEST_CASE_COUNT + "/" + TEST_CASE_COUNT + "\n");
 			successes++;
 
-		}
-		else {
+		} else {
 
-			System.out.println("Test Case 3 Failed, " + testResults + "/9\n");
+			System.out.println("Test Case 3 Failed, " + testResults + "/" + TEST_CASE_COUNT + "\n");
 
 		}
 		miniSuccesses += testResults;
@@ -169,13 +159,12 @@ class LadderTest {
 		testResults = TestCase4();
 		if(testResults == TEST_CASE_COUNT) {
 
-			System.out.println("Test Case 4 Passed, 9/9\n");
+			System.out.println("Test Case 4 Passed, " + TEST_CASE_COUNT + "/" + TEST_CASE_COUNT + "\n");
 			successes++;
 
-		}
-		else {
+		} else {
 
-			System.out.println("Test Case 4 Failed, " + testResults + "/9\n");
+			System.out.println("Test Case 4 Failed, " + testResults + "/" + TEST_CASE_COUNT + "\n");
 
 		}
 		miniSuccesses += testResults;
@@ -183,13 +172,12 @@ class LadderTest {
 		testResults = TestCase5();
 		if(testResults == TEST_CASE_COUNT) {
 
-			System.out.println("Test Case 5 Passed, 9/9\n");
+			System.out.println("Test Case 5 Passed, " + TEST_CASE_COUNT + "/" + TEST_CASE_COUNT + "\n");
 			successes++;
 
-		}
-		else {
+		} else {
 
-			System.out.println("Test Case 5 Failed, " + testResults + "/9\n");
+			System.out.println("Test Case 5 Failed, " + testResults + "/" + TEST_CASE_COUNT + "\n");
 
 		}
 		miniSuccesses += testResults;
@@ -433,8 +421,7 @@ class LadderTest {
 			result.get(NOT_ATTENDING).addAll(new ArrayList<Team>(casedList.get(NOT_ATTENDING).subList(0, (amount * 2) - casedList.size())));
 			return result;
 					
-		}
-		else {
+		} else {
 
 			ArrayList<ArrayList<Team>> result = new ArrayList<ArrayList<Team>>();
 			result.add(new ArrayList<Team>(casedList.get(ATTENDING).subList(amount, amount * 2)));
@@ -452,7 +439,7 @@ class LadderTest {
 		
 		int teamCount = 9;
 		ArrayList<ArrayList<Team>> expectedResults = new ArrayList<ArrayList<Team>>();
-		for(int i = 0;i < 9;i++) {
+		for(int i = 0;i < TEST_CASE_COUNT;i++) {
             ArrayList<Team> sourceResults = GetTeams(teamCount, i).get(ATTENDING);
             expectedResults.add(new ArrayList<Team>()); //2, 1, 4, 0, 3, 6, 5, 7, 8
             if(i < 6) {
@@ -465,8 +452,7 @@ class LadderTest {
                 expectedResults.get(i).add(sourceResults.get(5));
                 expectedResults.get(i).add(sourceResults.get(7));
                 expectedResults.get(i).add(sourceResults.get(8));
-            }
-            else { //Factoring late
+            } else { //Factoring late
                 expectedResults.get(i).add(sourceResults.get(1));
                 expectedResults.get(i).add(sourceResults.get(3));
                 expectedResults.get(i).add(sourceResults.get(5));
@@ -502,8 +488,7 @@ class LadderTest {
 				System.out.println("		Passed");
 				successes++;
 				
-			}
-			else {
+			} else {
 				
 				System.out.println("		Failed");
 				
@@ -538,8 +523,7 @@ class LadderTest {
                 expectedResults.get(i).add(sourceResults.get(8));
                 expectedResults.get(i).add(sourceResults.get(10));
                 expectedResults.get(i).add(sourceResults.get(11));
-            }
-            else { //Factoring late
+            } else { //Factoring late
                 expectedResults.get(i).add(sourceResults.get(0));
                 expectedResults.get(i).add(sourceResults.get(2));
                 expectedResults.get(i).add(sourceResults.get(6));
@@ -582,8 +566,7 @@ class LadderTest {
                 System.out.println("		Passed");
                 successes++;
 
-            }
-            else {
+            } else {
 
                 System.out.println("		Failed");
 
@@ -623,8 +606,7 @@ class LadderTest {
                 expectedResults.get(i).add(sourceResults.get(10));
                 expectedResults.get(i).add(sourceResults.get(14));
                 expectedResults.get(i).add(sourceResults.get(16));
-            }
-            else {
+            } else {
                 expectedResults.get(i).add(sourceResults.get(1));
                 expectedResults.get(i).add(sourceResults.get(3));
                 expectedResults.get(i).add(sourceResults.get(9));
@@ -674,8 +656,7 @@ class LadderTest {
                 System.out.println("		Passed");
                 successes++;
 
-            }
-            else {
+            } else {
 
                 System.out.println("		Failed");
 
@@ -824,8 +805,7 @@ class LadderTest {
                 System.out.println("		Passed");
                 successes++;
 
-            }
-            else {
+            } else {
 
                 System.out.println("		Failed");
 
@@ -1004,8 +984,7 @@ class LadderTest {
                 System.out.println("		Passed");
                 successes++;
 
-            }
-            else {
+            } else {
 
                 System.out.println("		Failed");
 
