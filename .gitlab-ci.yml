@@ -1,21 +1,19 @@
 # Cache node_modules to cut down on build times.
 cache:
   paths:
-    - node_modules
+    - frontend/node_modules
+    - /root/.gradle
 
 stages:
-  - frontend-test
-  - backend-test
-
-variables:
-  NPM_CONFIG_LOG_LEVEL: warn
-  NODE_ENV: test
+  - test
 
 # Check frontend for sanity.
 frontend:
   image: node:6
-  stage: frontend-test
+  stage: test
   script:
+    - export NPM_CONFIG_LOGLEVEL=warn
+    - export NODE_ENV=test
     - cd frontend
     - npm install
     - npm run lint
@@ -23,7 +21,7 @@ frontend:
 # Check backend for sanity.
 backend:
   image: java:8
-  stage: backend-test
+  stage: test
   script:
     - cd backend
     - ./gradlew build
