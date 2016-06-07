@@ -7,34 +7,24 @@ stages:
   - frontend-test
   - backend-test
 
-.frontend-template: &frontend-test
-  variables:
-    NPM_CONFIG_LOG_LEVEL: warn
-    NODE_ENV: test
-  before_script:
-    - cd frontend
-    - npm install
+variables:
+  NPM_CONFIG_LOG_LEVEL: warn
+  NODE_ENV: test
+
+# Check frontend for sanity.
+frontend:
   image: node:6
   stage: frontend-test
-  script: exit 1
-
-# Template for backend CI tasks.
-.backend-template: &backend-test
-  image: java:8
-  stage: backend-test
-  before_script:
-    - cd backend
-  script: exit 1
-
-# Check frontend for style issues.
-frontend-lint:
-  <<: *frontend-test
   script:
+    - cd frontend
+    - npm install
     - npm run lint
 
 # Check backend for sanity.
-backend-spec:
-  <<: *backend-test
+backend:
+  image: java:8
+  stage: backend-test
   script:
+    - cd backend
     - ./gradlew build
     - ./gradlew test
