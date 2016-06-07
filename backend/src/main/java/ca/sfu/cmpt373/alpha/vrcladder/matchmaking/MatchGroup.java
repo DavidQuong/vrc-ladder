@@ -1,6 +1,5 @@
 package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
-import ca.sfu.cmpt373.alpha.vrcladder.game.score.ScoreSheet;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
@@ -35,7 +34,6 @@ public class MatchGroup {
 
     private IdType id;
     private List<Team> teams;
-    private ScoreSheet scoreSheet = new ScoreSheet();
 
     public MatchGroup () {
         setId(new IdType());
@@ -128,31 +126,16 @@ public class MatchGroup {
 
         return votedPlayTime;
     }
-
     @Transient
     public Team getTeam1(){
         return teams.get(0);
     }
-
     @Transient
     public Team getTeam2(){
         return teams.get(1);
     }
-
     @Transient
     public Team getTeam3(){
         return teams.get(2);
     }
-
-    @Transient
-    public Team getTeam4(){
-        if(getTeams().size()==4){
-            return teams.get(3);
-        }
-        else
-            return null;
-    }
-
-    @Transient
-    public  ScoreSheet getScoreSheet(){return scoreSheet;}
 }
