@@ -1,13 +1,12 @@
 # Cache node_modules to cut down on build times.
 cache:
   paths:
-  - node_modules
+    - node_modules
 
 stages:
   - frontend-test
   - backend-test
 
-# Template for frontend CI tasks.
 .frontend-template: &frontend-test
   variables:
     NPM_CONFIG_LOG_LEVEL: warn
@@ -17,6 +16,7 @@ stages:
     - npm install
   image: node:6
   stage: frontend-test
+  script: exit 1
 
 # Template for backend CI tasks.
 .backend-template: &backend-test
@@ -24,6 +24,7 @@ stages:
   stage: backend-test
   before_script:
     - cd backend
+  script: exit 1
 
 # Check frontend for style issues.
 frontend-lint:
