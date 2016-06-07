@@ -1,3 +1,4 @@
+/* global localStorage */
 import {createElement, Element} from 'react';
 import {connect} from 'react-redux';
 import {createAction} from 'redux-actions';
