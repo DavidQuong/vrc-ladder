@@ -1,15 +1,15 @@
-//package ca.sfu.cmpt373.alpha.vrcladder.users;
+// TODO - Update this to account for changes in the User class
+// This file is commented because it does not compile.
 //
-//import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+//package ca.sfu.cmpt373.alpha.vrcladder.util;
+//
 //import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 //import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 //import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 //import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 //import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
-//import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserName;
-//import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 //
-////import java.io.BufferedReader;
+//import java.io.BufferedReader;
 //import java.io.FileNotFoundException;
 //import java.io.FileReader;
 //import java.util.ArrayList;
@@ -17,9 +17,8 @@
 //import java.util.Random;
 //import java.util.Scanner;
 //
-///**
-// * Created by Samus on 29/05/2016.
-// */
+////import java.io.BufferedReader;
+//
 //public class UserGenerator {
 //
 //    final int MAX_ID = 99999999;
