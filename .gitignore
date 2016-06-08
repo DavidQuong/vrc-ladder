@@ -1,7 +1,0 @@
-.idea/
-.gradle/
-build/
-node_modules
-*.log
-dist
-coverage
