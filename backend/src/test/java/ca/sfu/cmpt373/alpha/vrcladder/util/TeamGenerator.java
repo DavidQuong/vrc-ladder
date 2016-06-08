@@ -1,16 +1,14 @@
-//package ca.sfu.cmpt373.alpha.vrcladder.teams;
+// TODO - Update UserGenerator first, then uncomment this.
+// This file is commented because it does not compile.
+//
+//package ca.sfu.cmpt373.alpha.vrcladder.util;
 //
 //import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 //import ca.sfu.cmpt373.alpha.vrcladder.users.User;
-//import ca.sfu.cmpt373.alpha.vrcladder.users.UserGenerator;
-//import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 //
-///**
-// * Created by Samus on 29/05/2016.
-// */
 //public class TeamGenerator {
 //
-////    public Team generateTeam() {
+//    public Team generateTeam() {
 //
 //        UserGenerator userGenerator = new UserGenerator();
 //        User user1 = userGenerator.generateUser();
