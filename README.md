@@ -8,8 +8,26 @@ This project is split up by the individual components, the frontend and the back
 ------------
 ### Frontend
 
-#### Instructions:
-TODO - Fill in instructions on how to get started
+#### Instructions (For OS X):
+1) Start a terminal session in the frontend directory (<project-dir>/frontend)
+2) Download dependencies:
+
+   brew install vips \
+   --with-webp \
+   --without-pango \
+   --without-python \
+   --without-pygobject3 \
+   --with-graphicsmagick
+
+3) Start local development server:
+
+	npm i && npm run dev
+
+4) Run the production build
+
+	npm run build
+
+TODO - Add instructions for Linux (and possibly Windows)
 
 #### Citations: 
 All webpack settings, and redux settings are from various guides online. Below is a list of online resources that were read or used.
@@ -37,7 +55,7 @@ All webpack settings, and redux settings are from various guides online. Below i
 ### Backend
 
 #### Instructions:
-1) Start a terminal session on the backend directory (<project-dir>/backend)
+1) Start a terminal session in the backend directory (<project-dir>/backend)
 2) Run "gradle clean run"
 
 #### Citations:
