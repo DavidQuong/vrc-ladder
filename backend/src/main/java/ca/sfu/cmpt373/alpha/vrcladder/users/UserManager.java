@@ -55,9 +55,4 @@ public class UserManager extends DatabaseManager<User> {
 
         return update(user, session);
     }
-
-    public List<User> getAllUsers() {
-        return sessionManager.getSession().createCriteria(User.class).list();
-    }
-
 }

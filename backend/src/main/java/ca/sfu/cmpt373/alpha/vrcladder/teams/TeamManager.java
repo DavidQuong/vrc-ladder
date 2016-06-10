@@ -55,9 +55,4 @@ public class TeamManager extends DatabaseManager<Team> {
 
         return team;
     }
-
-    public List<Team> getAllTeams() {
-        return sessionManager.getSession().createCriteria(Team.class).list();
-    }
-
 }

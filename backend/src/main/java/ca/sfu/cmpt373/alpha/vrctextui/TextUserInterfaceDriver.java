@@ -37,8 +37,8 @@ public class TextUserInterfaceDriver {
         int userChoice = NULL_OPTION;
         while (userChoice != EXIT_OPTION) {
             Decorator.clearScreen();
-            users = application.getUserManager().getAllUsers();
-            teams = application.getTeamManager().getAllTeams();
+            users = application.getUserManager().getAll();
+            teams = application.getTeamManager().getAll();
             Decorator.printInBox("Weekly Leaderboard", '*');
             displayLadderBoard();
             System.out.println();

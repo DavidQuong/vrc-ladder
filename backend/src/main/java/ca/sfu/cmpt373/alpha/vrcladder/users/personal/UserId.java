@@ -1,6 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.personal;
 
-import java.util.IllegalFormatException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +16,7 @@ public class UserId {
     private String id;
 
     public UserId(String userId) {
-        verifyFormat(userId);
+        validateFormat(userId);
         id = userId;
     }
 
@@ -43,11 +44,11 @@ public class UserId {
         return id.equals(otherUserId.id);
     }
 
-    private void verifyFormat(String userId) throws IllegalFormatException {
+    private void validateFormat(String userId) throws ValidationException {
         Matcher matcher = FORMAT_PATTERN.matcher(userId);
         if (!matcher.find()) {
             String errorMsg = String.format(USER_ID_FORMAT_ERROR_MSG, userId);
-            throw new IllegalArgumentException(errorMsg);
+            throw new ValidationException(errorMsg);
         }
     }
 
