@@ -109,8 +109,10 @@ public class RestDriver {
                 application.getTeamManager().updateAttendance(teamId, preferredPlayTime);
                 return "";
             } catch (JsonMappingException e) {
+                response.status(HTTP_STATUS_ERROR);
                 return ERROR_MESSAGE_INVALID_JSON_OBJECT;
             } catch (PersistenceException e) {
+                response.status(HTTP_STATUS_ERROR);
                 return e.getMessage();
             }
         });
