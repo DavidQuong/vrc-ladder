@@ -13,10 +13,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
-// TODO - Ensure uniqueness of team (no team with same two players, i.e., in reverse order)
 @Entity
-@Table(name = PersistenceConstants.TABLE_TEAM)
+@Table(name = PersistenceConstants.TABLE_TEAM, uniqueConstraints = @UniqueConstraint(columnNames =
+    {PersistenceConstants.COLUMN_FIRST_PLAYER_ID, PersistenceConstants.COLUMN_SECOND_PLAYER_ID}))
 public class Team {
 
     private IdType id;
