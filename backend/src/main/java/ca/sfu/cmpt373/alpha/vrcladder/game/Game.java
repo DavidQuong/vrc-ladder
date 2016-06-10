@@ -16,13 +16,17 @@ public class Game {
     private List<ScoreSheet> scoreSheets = new ArrayList<>();
 
 
-    public Game(List<MatchGroup> groups){
-        this.groups = groups;
+    public Game(List<MatchGroup> inputGroups){
+        this.groups = inputGroups;
         initScoreSheets();
     }
 
     public ScoreSheet getScoreSheet(User player) {
         ScoreSheet result = findPlayerSheet(player);
+        return result;
+    }
+    public ScoreSheet getScoreSheet(Team player) {
+        ScoreSheet result = findPlayerSheet(player.getFirstPlayer());
         return result;
     }
 

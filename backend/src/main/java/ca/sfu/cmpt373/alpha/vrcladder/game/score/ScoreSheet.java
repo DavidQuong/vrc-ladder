@@ -52,7 +52,7 @@ public class ScoreSheet {
         }
         return false;
     }
-
+//arranges team in least based on scores
     public List<Team> getScores() {
         List<Team> results = new ArrayList<>(this.teams);
 

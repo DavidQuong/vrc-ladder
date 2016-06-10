@@ -34,10 +34,12 @@ public class MatchGroup {
 
     private IdType id;
     private List<Team> teams;
+    private ScoreSheet scoreSheet;
 
     public MatchGroup () {
         setId(new IdType());
         setTeams(new ArrayList<>());
+        scoreSheet(teams);
     }
 
     public MatchGroup(Team team1, Team team2, Team team3) {
@@ -126,6 +128,7 @@ public class MatchGroup {
 
         return votedPlayTime;
     }
+
     @Transient
     public Team getTeam1(){
         return teams.get(0);
@@ -138,4 +141,12 @@ public class MatchGroup {
     public Team getTeam3(){
         return teams.get(2);
     }
+    @transient
+    public Team getTeam4() {
+            if(teams.size() >3) {
+                return teams.get(4);
+            }
+    }
+    @transient
+    public List<Team> getPlacement(){return scoreSheet.getScores();}
 }
