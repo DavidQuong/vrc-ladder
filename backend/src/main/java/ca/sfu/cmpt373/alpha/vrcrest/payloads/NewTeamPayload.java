@@ -17,6 +17,5 @@ public class NewTeamPayload implements Validateable {
 
     public boolean isValid() {
         return userId1 != null && userId2 != null;
-
     }
 }

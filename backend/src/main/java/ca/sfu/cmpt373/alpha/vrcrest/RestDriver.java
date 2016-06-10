@@ -1,8 +1,10 @@
 package ca.sfu.cmpt373.alpha.vrcrest;
 
 import ca.sfu.cmpt373.alpha.vrcladder.Application;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PersistenceException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcrest.payloads.NewTeamPayload;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -73,7 +75,7 @@ public class RestDriver {
 //        sample input JSON:
 //        {
 //            "userId1" : "86432",
-//                "userId2" : "59152"
+//            "userId2" : "59152"
 //        }
         post("/teams/new", (request, response) -> {
             try {
@@ -92,6 +94,24 @@ public class RestDriver {
             } catch (JsonParseException e) {
                 response.status(HTTP_STATUS_ERROR);
                 return ERROR_MESSAGE_JSON_PARSE + "\n" + e.getMessage();
+            }
+        });
+
+//        sample input:
+//        POST: /teams/attendance/TEAM_ID_IN_DATABASE
+//        "TIME_SLOT_A"
+        String paramTeamId = ":teamId";
+        post("/teams/attendance/" + paramTeamId, (request, response) -> {
+            try {
+                String teamId = request.params(paramTeamId);
+                ObjectMapper objectMapper = new ObjectMapper();
+                PlayTime preferredPlayTime = objectMapper.readValue(request.body(), PlayTime.class);
+                application.getTeamManager().updateAttendance(teamId, preferredPlayTime);
+                return "";
+            } catch (JsonMappingException e) {
+                return ERROR_MESSAGE_INVALID_JSON_OBJECT;
+            } catch (PersistenceException e) {
+                return e.getMessage();
             }
         });
     }

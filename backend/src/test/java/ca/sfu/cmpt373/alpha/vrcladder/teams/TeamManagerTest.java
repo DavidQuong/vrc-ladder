@@ -1,6 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcladder.teams;
 
 import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PersistenceException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
@@ -91,6 +92,12 @@ public class TeamManagerTest extends BaseTest {
         session.close();
 
         Assert.assertEquals(newPlayTime, attendanceCard.getPreferredPlayTime());
+    }
+
+    @Test (expected = PersistenceException.class)
+    public void testUpdateNonExistentTeamAttendance() {
+        String nonExistentTeamId = "jfasjfapwefja";
+        teamManager.updateAttendance(nonExistentTeamId, PlayTime.TIME_SLOT_A);
     }
 
     @Test
