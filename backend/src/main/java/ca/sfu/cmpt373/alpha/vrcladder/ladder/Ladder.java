@@ -141,9 +141,8 @@ public class Ladder {
         arrangeMatchResults(MatchGroup[0]);
         for (int matchIndex =1; matchIndex<MatchGroup.length; matchIndex++){
             arrangeMatchResults(MatchGroup[matchIndex]);
-
         }
-        for (int matchIndex =1; matchIndex<MatchGroup.length; matchIndex++) {
+        for (int matchIndex =0; matchIndex<MatchGroup.length; matchIndex++) {
             swapBetweenMatchGroup(MatchGroup, matchIndex);
         }
 
@@ -163,27 +162,19 @@ public class Ladder {
         }
     }
 
-    private void swapBetweenMatchGroup(MatchGroup[] MatchGroup, int index){
-        List<Teams> teamOrder = match.getPlacement();
+    private void swapBetweenMatchGroup(MatchGroup[] MatchGroup, int index) {
+        if (MatchGroup.length >= index){
+            return;
+        }
+        List<Teams> teamOrder1 = MatchGroup[index].getPlacement();
+        List<Teams> teamOrder2 = MatchGroup[index - 1].getPlacement();
 
+        if (teamOrder1.length > 3){
+            swapTeams(teamorder1.get(3), teamOrder2.get(0));
+        }
+        else
+            swapTeams(teamorder1.get(2), teamOrder2.get(0));
 
-        int[] teamPos = {findTeamPosition(MatchGroup[index].getTeam1()),
-                findTeamPosition(MatchGroup[index].getTeam2()),
-                findTeamPosition(MatchGroup[index].getTeam3())};
-
-        int lowTeam =
-        if(teamOrder.size > 3)
-
-
-        ilowTeam = findLowestNumber(teamPos);
-
-        teamPos[0] = findTeamPosition(MatchGroup[index-1].getTeam1());
-        teamPos[1] = findTeamPosition(MatchGroup[index-1].getTeam2());
-        teamPos[2] = findTeamPosition(MatchGroup[index-1].getTeam3());
-
-        int highTeam = findHighestNumber(teamPos);
-
-        swapTeams(highTeam,lowTeam);
     }
 
 
@@ -226,7 +217,7 @@ public class Ladder {
     private void arrange3Teams(MatchGroup match){
         List<Teams> teamOrder = match.getPlacement();
 
-        int[] teamPos = {
+        int[] teamPos ={
                 findTeamPosition(teamOrder.get(0)),
                 findTeamPosition(teamOrder.get(1)),
                 findTeamPosition(teamOrder.get(2))};
