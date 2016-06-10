@@ -3,6 +3,11 @@ package ca.sfu.cmpt373.alpha.vrcladder.ladder;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 
+
+
+//public enum SHIFT_DIRECTION {UP, DOWN}
+
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,14 +17,12 @@ import java.util.*;
 
 public class Ladder {
 
-
-    List<Team> ladderList;
+    private int teamCount;
+    private List<Team> ladderList;
     final private int LADDER_VOLUME = 200;
     final private int ATTENDANCE_PENALTY =2;
-    private int teamCount;
-
-    public enum SHIFT_DIRECTION {UP, DOWN}
-
+    final private int LATE_PENALTY =4;
+    final private int NO_SHOW_PENALTY =10;
 
     public Ladder() {
 
@@ -166,14 +169,14 @@ public class Ladder {
         if (MatchGroup.length >= index){
             return;
         }
-        List<Teams> teamOrder1 = MatchGroup[index].getPlacement();
-        List<Teams> teamOrder2 = MatchGroup[index - 1].getPlacement();
+        List<Team> teamOrder1 = MatchGroup[index].getPlacement();
+        List<Team> teamOrder2 = MatchGroup[index - 1].getPlacement();
 
-        if (teamOrder1.length > 3){
-            swapTeams(teamorder1.get(3), teamOrder2.get(0));
+        if (teamOrder1.size() > 3){
+            swapTeams(teamOrder1.get(3), teamOrder2.get(0));
         }
         else
-            swapTeams(teamorder1.get(2), teamOrder2.get(0));
+            swapTeams(teamOrder1.get(2), teamOrder2.get(0));
 
     }
 
@@ -189,7 +192,7 @@ public class Ladder {
     }
 
     private void arrange4Teams(MatchGroup match){
-        List<Teams> teamOrder = match.getPlacement();
+        List<Team> teamOrder = match.getPlacement();
         int[] teamPos={
                 findTeamPosition(teamOrder.get(0)),
                 findTeamPosition(teamOrder.get(1)),
@@ -201,21 +204,24 @@ public class Ladder {
         int highTeam = findHighestNumber(teamPos);
         swapTeams(highTeam,lowTeam);
         //swap first and fourth, if applicable
-        if(findTeamPosition(teamOrder.get(1))>findTeamPosition(teamOrder.get(2))
+        if(findTeamPosition(teamOrder.get(1))>findTeamPosition(teamOrder.get(2))){
             lowTeam =findTeamPosition(teamOrder.get(2));
+        }
         else
             lowTeam =findTeamPosition(teamOrder.get(1));
 
         //swap second and third, if applicable
-        if(findTeamPosition(teamOrder.get(2))>findTeamPosition(teamOrder.get(2))
-            highTeam =findTeamPosition(teamOrder.get(1));
-        else
+        if(findTeamPosition(teamOrder.get(2))>findTeamPosition(teamOrder.get(2))){
+            highTeam = findTeamPosition(teamOrder.get(1));
+        }
+        else{
             highTeam =findTeamPosition(teamOrder.get(2));
+        }
 
         swapTeams(highTeam,lowTeam);
     }
     private void arrange3Teams(MatchGroup match){
-        List<Teams> teamOrder = match.getPlacement();
+        List<Team> teamOrder = match.getPlacement();
 
         int[] teamPos ={
                 findTeamPosition(teamOrder.get(0)),

@@ -78,7 +78,7 @@ public class ScoreSheet {
         return results;
     }
 
-    private void recordTeamScore(Team team, int round, boolean score) throws SizeLimitExceededException {
+    public void recordTeamScore(Team team, int round, boolean score) throws SizeLimitExceededException {
         for(ScoreCard card : scoreCards){
             if(team.equals(card.getTeam())){
                 card.setScoreCard(round, score);
