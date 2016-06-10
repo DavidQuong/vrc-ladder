@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.hibernate.PropertyValueException;
+import org.eclipse.jetty.http.HttpStatus;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -23,8 +24,6 @@ import static spark.Spark.post;
 
 public class RestDriver {
     private static final String TYPE_JSON = "application/json";
-    private static final int HTTP_STATUS_OK = 200;
-    private static final int HTTP_STATUS_ERROR = 400;
     private static final String ERROR_MESSAGE_JSON_PARSE = "There was an error parsing your JSON request";
     private static final String ERROR_MESSAGE_INVALID_JSON_OBJECT = "The JSON object provided was not well-formed";
     private static final String ERROR_MESSAGE_NONEXISTENT_USER_ID = "user ID does not exist";
@@ -64,10 +63,10 @@ public class RestDriver {
                 //but users are required to provide a unique id when signing up
                 return "";
             } catch (ValidationException | JsonMappingException e) {
-                response.status(HTTP_STATUS_ERROR);
+                response.status(HttpStatus.BAD_REQUEST_400);
                 return e.getMessage();
             } catch (JsonParseException e) {
-                response.status(HTTP_STATUS_ERROR);
+                response.status(HttpStatus.BAD_REQUEST_400);
                 return ERROR_MESSAGE_JSON_PARSE + "\n" + e.getMessage();
             }
         });
@@ -82,17 +81,17 @@ public class RestDriver {
                 ObjectMapper objectMapper = new ObjectMapper();
                 NewTeamPayload newTeam = objectMapper.readValue(request.body(), NewTeamPayload.class);
                 if (!newTeam.isValid()) {
-                    response.status(HTTP_STATUS_ERROR);
+                    response.status(HttpStatus.BAD_REQUEST_400);
                     return ERROR_MESSAGE_INVALID_JSON_OBJECT;
                 }
                 Team team = application.getTeamManager().create(newTeam.getUserId1().getUserId(), newTeam.getUserId2().getUserId());
                 return team.getId();
             } catch (PropertyValueException e) {
                 //this exception happens if userIds are provided that don't exist in the database
-                response.status(HTTP_STATUS_ERROR);
+                response.status(HttpStatus.BAD_REQUEST_400);
                 return ERROR_MESSAGE_NONEXISTENT_USER_ID;
             } catch (JsonParseException e) {
-                response.status(HTTP_STATUS_ERROR);
+                response.status(HttpStatus.BAD_REQUEST_400);
                 return ERROR_MESSAGE_JSON_PARSE + "\n" + e.getMessage();
             }
         });
@@ -109,10 +108,10 @@ public class RestDriver {
                 application.getTeamManager().updateAttendance(teamId, preferredPlayTime);
                 return "";
             } catch (JsonMappingException e) {
-                response.status(HTTP_STATUS_ERROR);
+                response.status(HttpStatus.BAD_REQUEST_400);
                 return ERROR_MESSAGE_INVALID_JSON_OBJECT;
             } catch (PersistenceException e) {
-                response.status(HTTP_STATUS_ERROR);
+                response.status(HttpStatus.BAD_REQUEST_400);
                 return e.getMessage();
             }
         });
