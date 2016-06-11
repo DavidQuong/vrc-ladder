@@ -8,7 +8,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import org.apache.commons.lang3.StringUtils;
 
-public class UserGenerator {
+public class MockUserGenerator {
 
     private final static String EMAIL_FORMAT = "user%s@vrc.ca";
     private final static int PHONE_NUMBER_SIZE = 10;
