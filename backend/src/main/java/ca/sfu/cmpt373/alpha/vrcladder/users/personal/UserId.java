@@ -44,6 +44,11 @@ public class UserId {
         return id.equals(otherUserId.id);
     }
 
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
     private void validateFormat(String userId) throws ValidationException {
         Matcher matcher = FORMAT_PATTERN.matcher(userId);
         if (!matcher.find()) {

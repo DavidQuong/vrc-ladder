@@ -122,16 +122,23 @@ public class User {
     }
 
     @Override
-    public boolean equals(Object other) {
-        boolean result = false;
-        if (other == null) {
-            result = false;
-        } else if (other == this) {
-            result = true;
-        } else if (other instanceof User) {
-            User that = (User) other;
-            result = this.getUserId().equals(that.getUserId());
+    public boolean equals(Object otherObj) {
+        if (this == otherObj) {
+            return true;
         }
-        return result;
+
+        if (otherObj == null || getClass() != otherObj.getClass()) {
+            return false;
+        }
+
+        User otherUser = (User) otherObj;
+
+        return userId.equals(otherUser.userId);
     }
+
+    @Override
+    public int hashCode() {
+        return userId.hashCode();
+    }
+
 }
