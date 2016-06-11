@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.personal;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,12 +24,12 @@ public class UserIdTest {
         Assert.assertEquals(VALID_USER_ID_LONGER, userId.getUserId());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = ValidationException.class)
     public void testInvalidUserIdWithLetters() {
         UserId userId = new UserId(INVALID_USER_ID_LETTERS);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = ValidationException.class)
     public void testInvalidUserIdWithSpecialCharacter() {
         UserId userId = new UserId(INVALID_USER_ID_SPECIAL_CHAR);
     }

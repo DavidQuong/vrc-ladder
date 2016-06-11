@@ -1,8 +1,8 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.personal;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.IllegalFormatException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,9 +17,9 @@ public class PhoneNumber {
 
     private String phoneNumber;
 
-    public PhoneNumber(String phoneNumber) throws IllegalFormatException {
+    public PhoneNumber(String phoneNumber) throws ValidationException {
         String strippedPhoneNumber = phoneNumber.replaceAll(REPLACED_CHARACTERS_REGEX_PATTERN, StringUtils.EMPTY);
-        verifyFormat(strippedPhoneNumber);
+        validateFormat(strippedPhoneNumber);
         this.phoneNumber = strippedPhoneNumber;
     }
 
@@ -47,11 +47,11 @@ public class PhoneNumber {
         return phoneNumber.equals(otherPhoneNumber.phoneNumber);
     }
 
-    private void verifyFormat(String phoneNumber) throws IllegalFormatException {
+    private void validateFormat(String phoneNumber) throws ValidationException {
         Matcher matcher = FORMAT_PATTERN.matcher(phoneNumber);
         if(!matcher.find()){
             String errorMsg = String.format(PHONE_NUM_FORMAT_ERROR_MSG, phoneNumber);
-            throw new IllegalArgumentException(errorMsg);
+            throw new ValidationException(errorMsg);
         }
     }
 

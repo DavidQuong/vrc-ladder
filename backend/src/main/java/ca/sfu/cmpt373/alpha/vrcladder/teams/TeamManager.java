@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.teams;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PersistenceException;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.DatabaseManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
@@ -15,7 +16,7 @@ import java.util.List;
  * teams in the database.
  */
 public class TeamManager extends DatabaseManager<Team> {
-
+    private static final String ERROR_NO_TEAM = "There is no team for this team ID";
     private static final Class TEAM_CLASS_TYPE = Team.class;
 
     public TeamManager(SessionManager sessionManager) {
@@ -47,6 +48,9 @@ public class TeamManager extends DatabaseManager<Team> {
         Session session = sessionManager.getSession();
 
         Team team = session.get(Team.class, teamId);
+        if (team == null) {
+            throw new PersistenceException(ERROR_NO_TEAM);
+        }
         AttendanceCard attendanceCard = team.getAttendanceCard();
         attendanceCard.setPreferredPlayTime(preferredPlayTime);
 
@@ -55,9 +59,4 @@ public class TeamManager extends DatabaseManager<Team> {
 
         return team;
     }
-
-    public List<Team> getAllTeams() {
-        return sessionManager.getSession().createCriteria(Team.class).list();
-    }
-
 }

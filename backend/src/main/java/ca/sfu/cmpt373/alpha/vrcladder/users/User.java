@@ -6,6 +6,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -86,6 +87,7 @@ public class User {
     }
 
     @Transient
+    @JsonIgnore
     public String getDisplayName() {
         String constructedName = firstName + " ";
         if (middleName != null && !middleName.isEmpty()) {

@@ -59,7 +59,8 @@ All webpack settings, and redux settings are from various guides online. Below i
 
 #### Instructions:
 1) Start a terminal session in the backend directory (<project-dir>/backend)
-2) Run "gradle clean run"
+2) Run "gradle clean run", or "gradlew clean run" if gradle is not installed on your machine
 
 #### Citations:
 - src\main\java\ca\sfu\cmpt373\alpha\vrctextui\Menu.java: Idea based on design from Summer 2016 CMPT213 As0.
+- https://sparktutorials.github.io/2015/04/03/spark-lombok-jackson-reduce-boilerplate.html for dataToJSON method in RestDriver

@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.personal;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,12 +43,12 @@ public class PhoneNumberTest {
         Assert.assertEquals(VALID_PHONE_NUM_4_PROCESSED, phoneNumber.getPhoneNumber());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = ValidationException.class)
     public void testInvalidPhoneNumberWithLetters() {
         PhoneNumber phoneNumber = new PhoneNumber(INVALID_PHONE_NUM_LETTERS);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = ValidationException.class)
     public void testInvalidLongPhoneNumber() {
         PhoneNumber phoneNumber = new PhoneNumber(INVALID_PHONE_NUM_TOO_LONG);
     }

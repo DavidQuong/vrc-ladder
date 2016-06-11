@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.personal;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,12 +23,12 @@ public class EmailAddressTest {
         Assert.assertEquals(VALID_EMAIL_2, emailAddress.getEmailAddress());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = ValidationException.class)
     public void testInvalidEmail1() {
         EmailAddress emailAddress = new EmailAddress(INVALID_EMAIL_1);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = ValidationException.class)
     public void testInvalidEmail2() {
         EmailAddress emailAddress = new EmailAddress(INVALID_EMAIL_2);
     }

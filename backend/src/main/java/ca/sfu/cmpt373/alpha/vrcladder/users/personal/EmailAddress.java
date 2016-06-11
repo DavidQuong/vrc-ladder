@@ -1,5 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.personal;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,8 +15,8 @@ public class EmailAddress {
 
     private String emailAddress;
 
-    public EmailAddress(String emailAddress) throws IllegalArgumentException {
-        verifyFormat(emailAddress);
+    public EmailAddress(String emailAddress) throws ValidationException {
+        validateFormat(emailAddress);
         this.emailAddress = emailAddress;
     }
 
@@ -42,11 +44,11 @@ public class EmailAddress {
         return emailAddress.equals(otherEmail.emailAddress);
     }
 
-    private void verifyFormat(String emailAddress) throws IllegalArgumentException {
+    private void validateFormat(String emailAddress) throws ValidationException {
         Matcher matcher = FORMAT_PATTERN.matcher(emailAddress);
         if(!matcher.find()){
             String errorMsg = String.format(EMAIL_FORMAT_ERROR_MSG, emailAddress);
-            throw new IllegalArgumentException(errorMsg);
+            throw new ValidationException(errorMsg);
         }
     }
 }
