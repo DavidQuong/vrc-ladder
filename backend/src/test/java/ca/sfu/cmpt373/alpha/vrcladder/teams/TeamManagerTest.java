@@ -7,7 +7,11 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
+import ca.sfu.cmpt373.alpha.vrcladder.util.MockUserGenerator;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,35 +23,39 @@ import org.junit.Test;
 
 public class TeamManagerTest extends BaseTest {
 
-    private static final IdType MOCK_TEAM_ID = new IdType("35abe4c1-1e5b-4e6a-ab5c-9fffa5c89bf8");
-    private static final UserId MOCK_FIRST_PLAYER_ID = new UserId("59152");
-    private static final UserId MOCK_SECOND_PLAYER_ID = new UserId("59153");
-    private static final IdType MOCK_ATTENDANCE_CARD_ID = new IdType("8250c624-a8de-4078-9b6c-701666541ed3");
-    private static final PlayTime MOCK_PLAY_TIME = PlayTime.NONE;
-
-    private static final UserId MOCK_NEW_FIRST_PLAYER_ID = new UserId("59154");
-    private static final UserId MOCK_NEW_SECOND_PLAYER_ID = new UserId("59155");
-
     private TeamManager teamManager;
+    private Team teamFixture;
 
     @Before
     public void setUp() {
         teamManager = new TeamManager(sessionManager);
+        teamFixture = MockTeamGenerator.generateTeam();
+
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+        session.save(teamFixture.getFirstPlayer());
+        session.save(teamFixture.getSecondPlayer());
+        session.save(teamFixture);
+        transaction.commit();
+        session.close();
     }
 
     @Test
     public void testCreateTeamByUser() {
         Session session = sessionManager.getSession();
-        User firstPlayer = session.get(User.class, MOCK_NEW_FIRST_PLAYER_ID.getUserId());
-        User secondPlayer = session.get(User.class, MOCK_NEW_SECOND_PLAYER_ID.getUserId());
+        User firstPlayer = MockUserGenerator.generatePlayer();
+        User secondPlayer = MockUserGenerator.generatePlayer();
 
-        // Ensure users exist
-        Assert.assertNotNull(firstPlayer);
-        Assert.assertNotNull(secondPlayer);
+        // Save generated players
+        Transaction transaction = session.beginTransaction();
+        session.save(firstPlayer);
+        session.save(secondPlayer);
+        transaction.commit();
 
         Team newTeam = teamManager.create(firstPlayer, secondPlayer);
 
         Team team = session.get(Team.class, newTeam.getId());
+        session.close();
         Assert.assertNotNull(team);
         Assert.assertNotNull(team.getAttendanceCard());
     }
@@ -55,39 +63,44 @@ public class TeamManagerTest extends BaseTest {
     @Test
     public void testCreateTeamByUserId() {
         Session session = sessionManager.getSession();
-        User firstPlayer = session.get(User.class, MOCK_NEW_FIRST_PLAYER_ID.getUserId());
-        User secondPlayer = session.get(User.class, MOCK_NEW_SECOND_PLAYER_ID.getUserId());
+        User firstPlayer = MockUserGenerator.generatePlayer();
+        User secondPlayer = MockUserGenerator.generatePlayer();
 
-        // Ensure users exist
-        Assert.assertNotNull(firstPlayer);
-        Assert.assertNotNull(secondPlayer);
+        // Save generated players
+        Transaction transaction = session.beginTransaction();
+        session.save(firstPlayer);
+        session.save(secondPlayer);
+        transaction.commit();
 
-        Team newTeam = teamManager.create(MOCK_NEW_FIRST_PLAYER_ID.getUserId(),
-            MOCK_NEW_SECOND_PLAYER_ID.getUserId());
+        Team newTeam = teamManager.create(firstPlayer.getUserId(), secondPlayer.getUserId());
 
         Team team = session.get(Team.class, newTeam.getId());
+        session.close();
         Assert.assertNotNull(team);
         Assert.assertNotNull(team.getAttendanceCard());
     }
 
     @Test
     public void testGetTeam() {
-        Team team = teamManager.getById(MOCK_TEAM_ID.getId());
-        AttendanceCard attendanceCard = team.getAttendanceCard();
+        Team existingTeam = teamManager.getById(teamFixture.getId());
+        Assert.assertNotNull(existingTeam);
 
-        Assert.assertEquals(MOCK_FIRST_PLAYER_ID.getUserId(), team.getFirstPlayer().getUserId());
-        Assert.assertEquals(MOCK_SECOND_PLAYER_ID.getUserId(), team.getSecondPlayer().getUserId());
-        Assert.assertEquals(MOCK_ATTENDANCE_CARD_ID.getId(), attendanceCard.getId());
-        Assert.assertEquals(MOCK_PLAY_TIME, attendanceCard.getPreferredPlayTime());
+        AttendanceCard attendanceCard = existingTeam.getAttendanceCard();
+        Assert.assertNotNull(attendanceCard);
+        Assert.assertEquals(teamFixture.getFirstPlayer(), existingTeam.getFirstPlayer());
+        Assert.assertEquals(teamFixture.getSecondPlayer(), existingTeam.getSecondPlayer());
+        Assert.assertEquals(teamFixture.getAttendanceCard(), attendanceCard);
+        Assert.assertEquals(teamFixture.getAttendanceCard().getPreferredPlayTime(),
+            attendanceCard.getPreferredPlayTime());
     }
 
     @Test
     public void testUpdateTeamAttendance() {
         final PlayTime newPlayTime = PlayTime.TIME_SLOT_A;
-        teamManager.updateAttendance(MOCK_TEAM_ID, newPlayTime);
+        teamManager.updateAttendance(teamFixture.getId(), newPlayTime);
 
         Session session = sessionManager.getSession();
-        Team team = session.get(Team.class, MOCK_TEAM_ID.getId());
+        Team team = session.get(Team.class, teamFixture.getId());
         AttendanceCard attendanceCard = session.get(AttendanceCard.class, team.getAttendanceCard().getId());
         session.close();
 
@@ -102,14 +115,14 @@ public class TeamManagerTest extends BaseTest {
 
     @Test
     public void testDeleteTeam() {
-        Team originalTeam = teamManager.deleteById(MOCK_TEAM_ID.getId());
+        Team originalTeam = teamManager.deleteById(teamFixture.getId());
         AttendanceCard originalAttendanceCard = originalTeam.getAttendanceCard();
 
         Session session = sessionManager.getSession();
-        Team team = session.get(Team.class, MOCK_TEAM_ID.getId());
+        Team team = session.get(Team.class, teamFixture.getId());
         AttendanceCard attendanceCard = session.get(AttendanceCard.class, originalAttendanceCard.getId());
-        User firstPlayer = session.get(User.class, MOCK_FIRST_PLAYER_ID.getUserId());
-        User secondPlayer = session.get(User.class, MOCK_SECOND_PLAYER_ID.getUserId());
+        User firstPlayer = session.get(User.class, teamFixture.getFirstPlayer().getUserId());
+        User secondPlayer = session.get(User.class, teamFixture.getSecondPlayer().getUserId());
         session.close();
 
         Assert.assertNotNull(originalTeam);
