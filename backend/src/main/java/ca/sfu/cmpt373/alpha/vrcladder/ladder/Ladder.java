@@ -8,40 +8,35 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 //public enum SHIFT_DIRECTION {UP, DOWN}
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.*;
 
 
 public class Ladder {
 
     private int teamCount;
-    private List<Team> ladderList;
-    final private int LADDER_VOLUME = 200;
-    final private int ATTENDANCE_PENALTY =2;
+    private List<Team> ladder;
+    final private int ATTENDANCE_PENALTY = 2;
     final private int LATE_PENALTY =4;
     final private int NO_SHOW_PENALTY =10;
 
     public Ladder() {
 
-        ladderList = new ArrayList<>(LADDER_VOLUME);
+        ladder = new ArrayList<>();
         teamCount = 0;
     }
 
     public Ladder(List<Team> newLadder) {
 
-        ladderList = newLadder;
+        ladder = newLadder;
     }
 
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("");
 
-        for (int i = 0; i < ladderList.size(); i++) {
+        for (int i = 0; i < ladder.size(); i++) {
             stringBuilder.append(i + " :");
-            stringBuilder.append(ladderList.get(i).toString() + "\n ");
+            stringBuilder.append(ladder.get(i).toString() + "\n ");
         }
 
         String s = stringBuilder.toString();
@@ -51,12 +46,12 @@ public class Ladder {
 
     public Team findTeamAtPosition(int teamPosition) {
 
-        return ladderList.get(teamPosition);
+        return ladder.get(teamPosition);
     }
 
     public int findTeamPosition(Team team) throws NoSuchElementException {
-        for (Team t : ladderList) {
-            if (t != null && team.getId().equals(t.getId())) return ladderList.indexOf(team);
+        for (Team t : ladder) {
+            if (t != null && team.getId().equals(t.getId())) return ladder.indexOf(team);
         }
         throw new NoSuchElementException("Team with id: " + team.getId() + " does not exist in the ladder.");
     }
@@ -64,21 +59,19 @@ public class Ladder {
 
 
     public void pushTeam(Team team) {
-        ladderList.add(team);
+        ladder.add(team);
     }
 
     public void insertTeamAtPosition(int position, Team team) {
 
-        ladderList.add(position, team);
+        ladder.add(position, team);
 
     }
 
-    public int getLadderVolume() {
-        return LADDER_VOLUME;
-    }
+
 
     public int getLadderTeamCount() {
-        return ladderList.size();
+        return ladder.size();
     }
 
 
@@ -101,15 +94,15 @@ public class Ladder {
     public void swapTeams(int team1Position, int team2Position) {
         if (!verifyPositions(team1Position) || !verifyPositions(team2Position)) return;
 
-        Team tempTeam = ladderList.get(team1Position);
-        ladderList.remove(team1Position);
-        insertTeamAtPosition(team1Position, ladderList.get(team2Position - 1));
-        ladderList.remove(team2Position);
+        Team tempTeam = ladder.get(team1Position);
+        ladder.remove(team1Position);
+        insertTeamAtPosition(team1Position, ladder.get(team2Position - 1));
+        ladder.remove(team2Position);
         insertTeamAtPosition(team2Position, tempTeam);
     }
 
     private boolean verifyPositions(int position) {
-        return (position < 0 || position >= ladderList.size());
+        return (position < 0 || position >= ladder.size());
     }
 
 
@@ -149,20 +142,35 @@ public class Ladder {
             swapBetweenMatchGroup(MatchGroup, matchIndex);
         }
 
-        int ladderSize = this.getLadderTeamCount();
-        //prevent loop from going out of bounds
-        if (ladderSize>=getLadderVolume()){
-            ladderSize-=ATTENDANCE_PENALTY;
-        }
-
+        int ladderSize = this.getLadderTeamCount() - ATTENDANCE_PENALTY;
         for (int k =0;k<ladderSize; k++){
-            if(!ladderList.get(k).getAttendanceCard().isAttending()){
-                Team tempTeam = ladderList.get(k);
-                ladderList.remove(k);
-                ladderList.add(k-ATTENDANCE_PENALTY, tempTeam);
+            if(!ladder.get(k).getAttendanceCard().willAttend()){
+                Team tempTeam = ladder.get(k);
+                ladder.remove(k);
+                ladder.add(k-ATTENDANCE_PENALTY, tempTeam);
             }
 
         }
+        ladderSize = this.getLadderTeamCount() - NO_SHOW_PENALTY;
+        for (int k =0;k<ladderSize; k++){
+            if(ladder.get(k).getAttendanceCard().noShow()){
+                Team tempTeam = ladder.get(k);
+                ladder.remove(k);
+                ladder.add(k-NO_SHOW_PENALTY, tempTeam);
+            }
+
+        }
+
+        ladderSize = this.getLadderTeamCount() - LATE_PENALTY;
+        for (int k =0;k<ladderSize; k++){
+            if(ladder.get(k).getAttendanceCard().late()){
+                Team tempTeam = ladder.get(k);
+                ladder.remove(k);
+                ladder.add(k-LATE_PENALTY, tempTeam);
+            }
+
+        }
+
     }
 
     private void swapBetweenMatchGroup(MatchGroup[] MatchGroup, int index) {
