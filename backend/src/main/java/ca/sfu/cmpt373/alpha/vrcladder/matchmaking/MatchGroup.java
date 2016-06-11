@@ -159,4 +159,9 @@ public class MatchGroup {
         return id.equals(otherMatchGroup.id);
     }
 
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
 }

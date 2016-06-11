@@ -65,4 +65,9 @@ public class AttendanceCard {
         return id.equals(otherAttendanceCard.id);
     }
 
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
 }

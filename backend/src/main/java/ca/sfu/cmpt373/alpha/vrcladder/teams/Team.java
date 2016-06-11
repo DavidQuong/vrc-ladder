@@ -93,4 +93,9 @@ public class Team {
         return id.equals(otherTeam.id);
     }
 
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
 }
