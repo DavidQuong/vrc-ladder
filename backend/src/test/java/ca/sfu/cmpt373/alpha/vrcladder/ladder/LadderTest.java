@@ -50,6 +50,7 @@ class LadderTest {
 		if(!this.initialized) {
 
 			TeamManager teamGen = new TeamManager(new SessionManager());
+            int userId = 0;
 
 			this.testTeams = new ArrayList<ArrayList<ArrayList<Team>>>();
 
@@ -64,8 +65,7 @@ class LadderTest {
 					for(int i = 0;i < 25;i++) {
 
                         User newUser1 = new User();
-                        //newUser1.setUserId("");
-                        System.out.println("Add UserId");
+                        newUser1.setUserId(new Integer(userId).toString());
                         newUser1.setUserRole(UserRole.PLAYER);
                         newUser1.setFirstName("jimbo");
                         newUser1.setMiddleName("");
@@ -73,15 +73,18 @@ class LadderTest {
                         newUser1.setEmailAddress("jimbo@mcgaggen.net");
                         newUser1.setPhoneNumber("6041234567");
 
+                        userId++;
+
                         User newUser2 = new User();
-                        //newUser2.setUserId("");
-                        System.out.println("Add UserId");
+                        newUser2.setUserId(new Integer(userId).toString());
                         newUser2.setUserRole(UserRole.PLAYER);
                         newUser2.setFirstName("jimbo");
                         newUser2.setMiddleName("");
                         newUser2.setLastName("mcgaggen");
                         newUser2.setEmailAddress("jimbo@mcgaggen.net");
                         newUser2.setPhoneNumber("6041234567");
+
+                        userId++;
 
 						Team creation = teamGen.create(newUser1, newUser2);
 
