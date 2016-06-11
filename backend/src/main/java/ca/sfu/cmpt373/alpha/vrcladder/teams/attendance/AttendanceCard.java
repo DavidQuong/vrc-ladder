@@ -50,4 +50,19 @@ public class AttendanceCard {
         return  (preferredPlayTime != PlayTime.NONE);
     }
 
+    @Override
+    public boolean equals(Object otherObj) {
+        if (this == otherObj) {
+            return true;
+        }
+
+        if (otherObj == null || getClass() != otherObj.getClass()) {
+            return false;
+        }
+
+        AttendanceCard otherAttendanceCard = (AttendanceCard) otherObj;
+
+        return id.equals(otherAttendanceCard.id);
+    }
+
 }
