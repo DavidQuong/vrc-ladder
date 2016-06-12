@@ -15,7 +15,7 @@ import javax.persistence.Transient;
 @Table(name = PersistenceConstants.TABLE_ATTENDANCE_CARD)
 public class AttendanceCard {
 
-    private static final PlayTime DEFUALT_PLAYTIME = PlayTime.NONE;
+    private static final PlayTime DEFAULT_PLAYTIME = PlayTime.NONE;
 
     private IdType id;
     private PlayTime preferredPlayTime;
@@ -23,7 +23,7 @@ public class AttendanceCard {
 
     public AttendanceCard() {
         this.id = new IdType();
-        this.preferredPlayTime = DEFUALT_PLAYTIME;
+        this.preferredPlayTime = DEFAULT_PLAYTIME;
     }
 
     @Id
@@ -49,6 +49,26 @@ public class AttendanceCard {
     @Transient
     public boolean isAttending() {
         return  (preferredPlayTime != PlayTime.NONE);
+    }
+
+    @Override
+    public boolean equals(Object otherObj) {
+        if (this == otherObj) {
+            return true;
+        }
+
+        if (otherObj == null || getClass() != otherObj.getClass()) {
+            return false;
+        }
+
+        AttendanceCard otherAttendanceCard = (AttendanceCard) otherObj;
+
+        return id.equals(otherAttendanceCard.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 
     public boolean late(){

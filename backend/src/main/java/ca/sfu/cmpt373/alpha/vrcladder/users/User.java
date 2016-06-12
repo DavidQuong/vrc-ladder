@@ -6,6 +6,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -86,6 +87,7 @@ public class User {
     }
 
     @Transient
+    @JsonIgnore
     public String getDisplayName() {
         String constructedName = firstName + " ";
         if (middleName != null && !middleName.isEmpty()) {
@@ -120,16 +122,23 @@ public class User {
     }
 
     @Override
-    public boolean equals(Object other) {
-        boolean result = false;
-        if (other == null) {
-            result = false;
-        } else if (other == this) {
-            result = true;
-        } else if (other instanceof User) {
-            User that = (User) other;
-            result = this.getUserId().equals(that.getUserId());
+    public boolean equals(Object otherObj) {
+        if (this == otherObj) {
+            return true;
         }
-        return result;
+
+        if (otherObj == null || getClass() != otherObj.getClass()) {
+            return false;
+        }
+
+        User otherUser = (User) otherObj;
+
+        return userId.equals(otherUser.userId);
     }
+
+    @Override
+    public int hashCode() {
+        return userId.hashCode();
+    }
+
 }

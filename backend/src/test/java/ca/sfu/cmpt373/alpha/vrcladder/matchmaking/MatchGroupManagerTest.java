@@ -2,53 +2,96 @@ package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
 import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PersistenceException;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchGroupGenerator;
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
+import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
+import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MatchGroupManagerTest extends BaseTest {
-    //MOCK_MATCH_GROUP_TEAM_IDS = ids of teams that exist inside MOCK_MATCH_GROUP_ID
-    private static final String MOCK_MATCH_GROUP_ID = "1";
-    private static final String[] MOCK_MATCH_GROUP_TEAM_IDS = new String [] {"1", "2", "3"};
-    //teams that don't exist in any current group
-    private static final String[] MOCK_TEAM_IDS = new String[] {"4", "5", "6", "7"};
+
+    private MatchGroupManager matchGroupManager;
+    private MatchGroup matchGroupFixture;
+
+    @Before
+    public void setUp() {
+        matchGroupManager = new MatchGroupManager(sessionManager);
+        matchGroupFixture = MockMatchGroupGenerator.generateFourTeamMatchGroup();
+
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+        for (Team team: matchGroupFixture.getTeams()) {
+            session.save(team.getFirstPlayer());
+            session.save(team.getSecondPlayer());
+            session.save(team);
+        }
+        session.save(matchGroupFixture);
+        transaction.commit();
+        session.close();
+    }
 
     @Test
     public void testGetMatchGroup() {
-        MatchGroupManager matchGroupManager = new MatchGroupManager(sessionManager);
-        MatchGroup matchGroup = matchGroupManager.getMatchGroup(MOCK_MATCH_GROUP_ID);
-        List<Team> teams = matchGroup.getTeams();
-        for (int i = 0; i < 3; i++) {
-            Assert.assertTrue(teams.get(i).getId().equals(MOCK_MATCH_GROUP_TEAM_IDS[i]));
-        }
+        MatchGroup existingMatchGroup = matchGroupManager.getMatchGroup(matchGroupFixture.getId());
+
+        Assert.assertEquals(matchGroupFixture.getTeam1(), existingMatchGroup.getTeam1());
+        Assert.assertEquals(matchGroupFixture.getTeam2(), existingMatchGroup.getTeam2());
+        Assert.assertEquals(matchGroupFixture.getTeam3(), existingMatchGroup.getTeam3());
     }
 
     @Test
     public void testCreateMatchGroup() {
-        //TODO: figure out how to test without depending on TeamManager
-        MatchGroupManager matchGroupManager = new MatchGroupManager(sessionManager);
-        TeamManager teamManager = new TeamManager(sessionManager);
+        Team team1 = MockTeamGenerator.generateTeam();
+        Team team2 = MockTeamGenerator.generateTeam();
+        Team team3 = MockTeamGenerator.generateTeam();
+        List<Team> teams = Arrays.asList(team1, team2, team3);
 
-        List<Team> teams = new ArrayList<>();
-        for (String teamId : MOCK_TEAM_IDS) {
-            teams.add(teamManager.getById(teamId));
+        // Store users and teams in database.
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+        for (Team team : teams) {
+            session.save(team.getFirstPlayer());
+            session.save(team.getSecondPlayer());
+            session.save(team);
         }
+        transaction.commit();
+        session.close();
 
-        MatchGroup matchGroupCreated = matchGroupManager.createMatchGroup(teams);
-        MatchGroup matchGroupRetrieved = matchGroupManager.getMatchGroup(matchGroupCreated.getId());
-        Assert.assertTrue(matchGroupCreated.getId().equals(matchGroupRetrieved.getId()));
+        MatchGroup newMatchGroup = matchGroupManager.createMatchGroup(teams);
+        Assert.assertEquals(team1, newMatchGroup.getTeam1());
+        Assert.assertEquals(team2, newMatchGroup.getTeam2());
+        Assert.assertEquals(team3, newMatchGroup.getTeam3());
     }
 
-    @Test (expected = PersistenceException.class)
+    @Test
     public void testDeleteMatchGroup() {
-        MatchGroupManager matchGroupManager = new MatchGroupManager(sessionManager);
-        matchGroupManager.deleteMatchGroup(MOCK_MATCH_GROUP_ID);
+        MatchGroup originalMatchGroup = matchGroupManager.deleteMatchGroup(matchGroupFixture.getId());
 
-        //this should throw a PersistenceException when trying to retrieve an object that doesn't exist
-        MatchGroup matchGroup = matchGroupManager.getMatchGroup(MOCK_MATCH_GROUP_ID);
+        Session session = sessionManager.getSession();
+        MatchGroup matchGroup = session.get(MatchGroup.class, originalMatchGroup.getId());
+        session.close();
+
+        Assert.assertNotNull(originalMatchGroup);
+        // Ensure that the match group is deleted.
+        Assert.assertNull(matchGroup);
+
+        // Ensure that the individual teams are not deleted.
+        Assert.assertNotNull(originalMatchGroup.getTeam1());
+        Assert.assertNotNull(originalMatchGroup.getTeam2());
+        Assert.assertNotNull(originalMatchGroup.getTeam3());
     }
+
 }

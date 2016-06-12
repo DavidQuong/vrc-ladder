@@ -38,4 +38,9 @@ public class IdType {
         return id.equals(otherIdType.id);
     }
 
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
 }

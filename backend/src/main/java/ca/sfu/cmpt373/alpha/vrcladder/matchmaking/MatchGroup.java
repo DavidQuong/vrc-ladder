@@ -28,10 +28,12 @@ import java.util.Map;
 @Entity
 @Table(name = PersistenceConstants.TABLE_MATCH_GROUP)
 public class MatchGroup {
+
     public static final int MIN_NUM_TEAMS = 3;
     public static final int MAX_NUM_TEAMS = 4;
 
-    private static final String ERROR_MESSAGE_NUM_TEAMS = "Teams list contains more or less than the min or max number of permissible teams";
+    private static final String ERROR_MESSAGE_NUM_TEAMS = "Teams list contains more or less than the min or max " +
+        "number of permissible teams";
 
     private IdType id;
     private List<Team> teams;
@@ -96,7 +98,7 @@ public class MatchGroup {
     public PlayTime getPreferredGroupPlayTime() {
         Map<PlayTime, Integer> preferredTimeCounts = new HashMap<>();
 
-        //count the 'votes' of preferred time slots for each team in a group
+        // Count the 'votes' of preferred time slots for each team in a group.
         for (Team team : teams) {
             PlayTime playTime = team.getAttendanceCard().getPreferredPlayTime();
             if (preferredTimeCounts.containsKey(playTime)) {
@@ -106,7 +108,7 @@ public class MatchGroup {
             }
         }
 
-        //find the time slot with the max votes
+        // Find the time slot with the max votes.
         PlayTime votedPlayTime = null;
         int maxVoteCount = 0;
         boolean tie = false;
@@ -122,7 +124,7 @@ public class MatchGroup {
             }
         }
 
-        //if there's a tie in votes, choose the highest ranked player's preference
+        // If there's a tie in votes, choose the highest ranked player's preference.
         if (tie) {
             votedPlayTime = teams.get(0).getAttendanceCard().getPreferredPlayTime();
         }
@@ -134,14 +136,37 @@ public class MatchGroup {
     public Team getTeam1(){
         return teams.get(0);
     }
+
     @Transient
     public Team getTeam2(){
         return teams.get(1);
     }
+
     @Transient
     public Team getTeam3(){
         return teams.get(2);
     }
+
+    @Override
+    public boolean equals(Object otherObj) {
+        if (this == otherObj) {
+            return true;
+        }
+
+        if (otherObj == null || getClass() != otherObj.getClass()) {
+            return false;
+        }
+
+        MatchGroup otherMatchGroup = (MatchGroup) otherObj;
+
+        return id.equals(otherMatchGroup.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
     @Transient
     public Team getTeam4() {
             if(teams.size() >3) {

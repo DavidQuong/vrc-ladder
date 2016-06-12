@@ -79,17 +79,23 @@ public class Team {
     }
 
     @Override
-    public boolean equals(Object other) {
-        boolean result = false;
-        if (other == null) {
-            result = false;
-        } else if (other == this) {
-            result = true;
-        } else if (other instanceof Team) {
-            Team that = (Team) other;
-            result = this.getId().equals(that.getId());
+    public boolean equals(Object otherObj) {
+        if (this == otherObj) {
+            return true;
         }
-        return result;
+
+        if (otherObj == null || getClass() != otherObj.getClass()) {
+            return false;
+        }
+
+        Team otherTeam = (Team) otherObj;
+
+        return id.equals(otherTeam.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 
 }

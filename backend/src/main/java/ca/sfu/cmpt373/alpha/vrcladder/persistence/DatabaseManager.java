@@ -1,7 +1,10 @@
 package ca.sfu.cmpt373.alpha.vrcladder.persistence;
 
+import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
+import java.util.List;
 
 /**
  * The DatabaseManager implements both read and delete (by ID) operations,
@@ -66,6 +69,10 @@ public abstract class DatabaseManager<T> {
         session.close();
 
         return obj;
+    }
+
+    public List<T> getAll() {
+        return sessionManager.getSession().createCriteria(STORED_CLASS_TYPE).list();
     }
 
 
