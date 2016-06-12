@@ -8,6 +8,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcladder.util.CriterionConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -26,8 +27,6 @@ import java.util.List;
 public class TeamManager extends DatabaseManager<Team> {
 
     private static final Class TEAM_CLASS_TYPE = Team.class;
-    private static final String FIRST_PLAYER_USER_ID_PROPERTY = "firstPlayer.userId";
-    private static final String SECOND_PLAYER_USER_ID_PROPERTY = "secondPlayer.userId";
 
     public TeamManager(SessionManager sessionManager) {
         super(TEAM_CLASS_TYPE, sessionManager);
@@ -104,17 +103,17 @@ public class TeamManager extends DatabaseManager<Team> {
 
     private boolean isExistingTeam(User firstPlayer, User secondPlayer) {
         Session session = sessionManager.getSession();
-        Criterion playerPairCriterion = Restrictions.and(
-            Restrictions.eq(FIRST_PLAYER_USER_ID_PROPERTY, firstPlayer.getUserId()),
-            Restrictions.eq(SECOND_PLAYER_USER_ID_PROPERTY, secondPlayer.getUserId()));
-        Criterion reversePlayerPairCriterion = Restrictions.and(
-                Restrictions.eq(FIRST_PLAYER_USER_ID_PROPERTY, secondPlayer.getUserId()),
-                Restrictions.eq(SECOND_PLAYER_USER_ID_PROPERTY, firstPlayer.getUserId()));
 
-        Criteria playerPairCriterea = session.createCriteria(Team.class)
+        Criterion playerPairCriterion = Restrictions.and(
+            Restrictions.eq(CriterionConstants.FIRST_PLAYER_USER_ID_PROPERTY, firstPlayer.getUserId()),
+            Restrictions.eq(CriterionConstants.SECOND_PLAYER_USER_ID_PROPERTY, secondPlayer.getUserId()));
+        Criterion reversePlayerPairCriterion = Restrictions.and(
+            Restrictions.eq(CriterionConstants.FIRST_PLAYER_USER_ID_PROPERTY, secondPlayer.getUserId()),
+            Restrictions.eq(CriterionConstants.SECOND_PLAYER_USER_ID_PROPERTY, firstPlayer.getUserId()));
+        Criteria playerPairCriteria = session.createCriteria(Team.class)
             .add(Restrictions.or(playerPairCriterion, reversePlayerPairCriterion));
 
-        List results = playerPairCriterea.list();
+        List results = playerPairCriteria.list();
         session.close();
 
         return (!results.isEmpty());
