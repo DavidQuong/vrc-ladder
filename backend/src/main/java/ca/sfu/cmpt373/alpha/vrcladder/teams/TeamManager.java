@@ -91,17 +91,7 @@ public class TeamManager extends DatabaseManager<Team> {
         }
 
         if (playTime.isPlayable()) {
-            User firstPlayer = team.getFirstPlayer();
-            Team playingTeam = isAlreadyPlaying(firstPlayer);
-            if (playingTeam != null && !team.equals(playingTeam)) {
-                throw new MultiplePlayTimeException(firstPlayer.getUserId(), playingTeam.getId());
-            }
-
-            User secondPlayer = team.getSecondPlayer();
-            playingTeam = isAlreadyPlaying(secondPlayer);
-            if (playingTeam != null && !team.equals(playingTeam)) {
-                throw new MultiplePlayTimeException(secondPlayer.getUserId(), playingTeam.getId());
-            }
+            checkForActiveTeam(team);
         }
 
         AttendanceCard attendanceCard = team.getAttendanceCard();
@@ -131,7 +121,21 @@ public class TeamManager extends DatabaseManager<Team> {
         return (!matchedTeams.isEmpty());
     }
 
-    private Team isAlreadyPlaying(User player) {
+    private void checkForActiveTeam(Team team) {
+        User firstPlayer = team.getFirstPlayer();
+        Team activeTeam = findActiveTeam(firstPlayer);
+        if (activeTeam != null && !team.equals(activeTeam)) {
+            throw new MultiplePlayTimeException(firstPlayer.getUserId(), activeTeam.getId());
+        }
+
+        User secondPlayer = team.getSecondPlayer();
+        activeTeam = findActiveTeam(secondPlayer);
+        if (activeTeam != null && !team.equals(activeTeam)) {
+            throw new MultiplePlayTimeException(secondPlayer.getUserId(), activeTeam.getId());
+        }
+    }
+
+    private Team findActiveTeam(User player) {
         Session session = sessionManager.getSession();
 
         Criterion firstPlayerCriterion = Restrictions.eq(CriterionConstants.FIRST_PLAYER_USER_ID_PROPERTY,
@@ -152,5 +156,7 @@ public class TeamManager extends DatabaseManager<Team> {
 
         return null;
     }
+
+
 
 }
