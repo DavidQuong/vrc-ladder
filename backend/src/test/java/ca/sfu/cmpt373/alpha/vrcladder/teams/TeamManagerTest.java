@@ -1,25 +1,23 @@
 package ca.sfu.cmpt373.alpha.vrcladder.teams;
 
 import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PersistenceException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.DuplicateTeamMemberException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
-import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
-import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockUserGenerator;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 // TODO: Add more tests, testing the following:
-//       - Attempting to create an existing team
-//       - Attempting to create an existing team, but reverse order of players
 //       - Attempting to set a preferred playtime for two teams with a common player
+//       - Attempting to create a Team with a non-player role
 
 public class TeamManagerTest extends BaseTest {
 
@@ -107,9 +105,9 @@ public class TeamManagerTest extends BaseTest {
         Assert.assertEquals(newPlayTime, attendanceCard.getPreferredPlayTime());
     }
 
-    @Test (expected = PersistenceException.class)
+    @Test(expected = EntityNotFoundException.class)
     public void testUpdateNonExistentTeamAttendance() {
-        String nonExistentTeamId = "jfasjfapwefja";
+        final String nonExistentTeamId = "nonExistentTeamId";
         teamManager.updateAttendance(nonExistentTeamId, PlayTime.TIME_SLOT_A);
     }
 
@@ -135,6 +133,42 @@ public class TeamManagerTest extends BaseTest {
         // Ensure that the individual players are not deleted.
         Assert.assertNotNull(firstPlayer);
         Assert.assertNotNull(secondPlayer);
+    }
+
+    @Test(expected = DuplicateTeamMemberException.class)
+    public void testCreateTeamWithSamePlayer() {
+        Session session = sessionManager.getSession();
+        User player = MockUserGenerator.generatePlayer();
+
+        // Should throw a DuplicateTeamMemberException.
+        teamManager.create(player, player);
+    }
+
+    @Test(expected = ExistingTeamException.class)
+    public void testCreateDuplicateTeam() {
+        Session session = sessionManager.getSession();
+        Team existingTeam = session.get(Team.class, teamFixture.getId());
+        session.close();
+
+        // Ensure team exists
+        Assert.assertNotNull(existingTeam);
+
+        // Should throw an ExistingTeamException.
+        teamManager.create(existingTeam.getFirstPlayer(), existingTeam.getSecondPlayer());
+    }
+
+    @Test(expected = ExistingTeamException.class)
+    public void testCreateDuplicateTeamReverseOrder() {
+        Session session = sessionManager.getSession();
+        Team existingTeam = session.get(Team.class, teamFixture.getId());
+        session.close();
+
+        // Ensure team exists
+        Assert.assertNotNull(existingTeam);
+
+        // Should throw an ExistingTeamException.
+        // Note the reverse order of arguments from testCreateDuplicateTeam.
+        teamManager.create(existingTeam.getSecondPlayer(), existingTeam.getFirstPlayer());
     }
 
 }

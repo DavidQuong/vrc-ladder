@@ -6,11 +6,11 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 
-import java.util.List;
-
 /**
  * Provides an interface to perform create, read, update, and delete (CRUD) operations on
  * users in the database.
+ *
+ * TODO - Handle errors that can arise from User creation (i.e., non-unique email or user ID).
  */
 public class UserManager extends DatabaseManager<User> {
 
@@ -18,6 +18,11 @@ public class UserManager extends DatabaseManager<User> {
 
     public UserManager(SessionManager sessionManager) {
         super(USER_CLASS_TYPE, sessionManager);
+    }
+
+    @Override
+    public User create(User user) {
+        return super.create(user);
     }
 
     public User create(String userId, UserRole userRole, String firstName, String lastName, String emailAddress,

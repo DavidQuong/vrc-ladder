@@ -1,8 +1,8 @@
 package ca.sfu.cmpt373.alpha.vrcladder.persistence;
 
-import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.List;
 
@@ -10,6 +10,10 @@ import java.util.List;
  * The DatabaseManager implements both read and delete (by ID) operations,
  * but requires users of the class to implement both create and update operations
  * on their own.
+ *
+ * Note that the visibility of some methods are set to protected, this is to ensure
+ * that only the extending classes may make use of such and catch errors that may
+ * arise when those methods are used.
  */
 public abstract class DatabaseManager<T> {
 
@@ -21,7 +25,7 @@ public abstract class DatabaseManager<T> {
         this.sessionManager = sessionManager;
     }
 
-    public T create(T obj) {
+    protected T create(T obj) throws ConstraintViolationException {
         Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
 
@@ -40,7 +44,7 @@ public abstract class DatabaseManager<T> {
         return obj;
     }
 
-    public T update(T obj) {
+    protected T update(T obj) {
         Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
 
@@ -51,10 +55,21 @@ public abstract class DatabaseManager<T> {
         return obj;
     }
 
-    public T update(T obj, Session session) {
+    protected T update(T obj, Session session) {
         Transaction transaction = session.beginTransaction();
         session.update(obj);
         transaction.commit();
+
+        return obj;
+    }
+
+    public T delete(T obj) {
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+
+        session.delete(obj);
+        transaction.commit();
+        session.close();
 
         return obj;
     }
@@ -74,6 +89,5 @@ public abstract class DatabaseManager<T> {
     public List<T> getAll() {
         return sessionManager.getSession().createCriteria(STORED_CLASS_TYPE).list();
     }
-
 
 }

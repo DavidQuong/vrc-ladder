@@ -5,6 +5,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.exceptions;
  * It's not really used right now, but may be useful in the future
  */
 public class BaseException extends RuntimeException {
+
     public BaseException() {
         super();
     }
