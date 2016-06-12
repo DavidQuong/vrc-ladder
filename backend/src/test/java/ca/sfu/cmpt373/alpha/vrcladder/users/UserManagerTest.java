@@ -114,6 +114,16 @@ public class UserManagerTest extends BaseTest {
         transaction.commit();
 
         userManager.delete(team.getFirstPlayer());
+        session.clear();
+
+        Team existingTeam = session.get(Team.class, team.getId());
+        User firstPlayer = session.get(User.class, team.getFirstPlayer().getUserId());
+        User secondPlayer = session.get(User.class, team.getSecondPlayer().getUserId());
+        session.close();
+
+        Assert.assertNull(existingTeam);
+        Assert.assertNull(firstPlayer);
+        Assert.assertNotNull(secondPlayer);
     }
 
 }
