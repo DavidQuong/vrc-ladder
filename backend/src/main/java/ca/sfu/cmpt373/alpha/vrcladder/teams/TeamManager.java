@@ -3,6 +3,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.teams;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.DuplicateTeamMemberException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MultiplePlayTimeException;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.DatabaseManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
@@ -81,24 +82,35 @@ public class TeamManager extends DatabaseManager<Team> {
         return updateAttendance(teamId.getId(), preferredPlayTime);
     }
 
-    public Team updateAttendance(String teamId, PlayTime preferredPlayTime) {
+    public Team updateAttendance(String teamId, PlayTime playTime) {
         Session session = sessionManager.getSession();
 
         Team team = session.get(Team.class, teamId);
         if (team == null) {
             throw new EntityNotFoundException();
         }
+
+        if (playTime.isPlayable()) {
+            User firstPlayer = team.getFirstPlayer();
+            Team playingTeam = isAlreadyPlaying(firstPlayer);
+            if (playingTeam != null && !team.equals(playingTeam)) {
+                throw new MultiplePlayTimeException(firstPlayer.getUserId(), playingTeam.getId());
+            }
+
+            User secondPlayer = team.getSecondPlayer();
+            playingTeam = isAlreadyPlaying(secondPlayer);
+            if (playingTeam != null && !team.equals(playingTeam)) {
+                throw new MultiplePlayTimeException(secondPlayer.getUserId(), playingTeam.getId());
+            }
+        }
+
         AttendanceCard attendanceCard = team.getAttendanceCard();
-        attendanceCard.setPreferredPlayTime(preferredPlayTime);
+        attendanceCard.setPreferredPlayTime(playTime);
 
         team = update(team, session);
         session.close();
 
         return team;
-    }
-
-    public List<Team> getAllTeams() {
-        return sessionManager.getSession().createCriteria(Team.class).list();
     }
 
     private boolean isExistingTeam(User firstPlayer, User secondPlayer) {
@@ -113,10 +125,32 @@ public class TeamManager extends DatabaseManager<Team> {
         Criteria playerPairCriteria = session.createCriteria(Team.class)
             .add(Restrictions.or(playerPairCriterion, reversePlayerPairCriterion));
 
-        List results = playerPairCriteria.list();
+        List<Team> matchedTeams = playerPairCriteria.list();
         session.close();
 
-        return (!results.isEmpty());
+        return (!matchedTeams.isEmpty());
+    }
+
+    private Team isAlreadyPlaying(User player) {
+        Session session = sessionManager.getSession();
+
+        Criterion firstPlayerCriterion = Restrictions.eq(CriterionConstants.FIRST_PLAYER_USER_ID_PROPERTY,
+            player.getUserId());
+        Criterion secondPlayerCriterion = Restrictions.eq(CriterionConstants.SECOND_PLAYER_USER_ID_PROPERTY,
+            player.getUserId());
+        Criteria playingCriteria = session.createCriteria(Team.class)
+            .add(Restrictions.or(firstPlayerCriterion, secondPlayerCriterion));
+
+        List<Team> matchedTeams = playingCriteria.list();
+        session.close();
+
+        for (Team team : matchedTeams) {
+            if (team.getAttendanceCard().getPreferredPlayTime().isPlayable()) {
+                return team;
+            }
+        }
+
+        return null;
     }
 
 }
