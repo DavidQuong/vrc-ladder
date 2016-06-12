@@ -1,8 +1,8 @@
 package ca.sfu.cmpt373.alpha.vrcladder.teams;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.DuplicateTeamMemberException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PersistenceException;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.DatabaseManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
@@ -24,7 +24,7 @@ import java.util.List;
  * TODO - Ensure that a player cannot opt-in play for multiple teams in a given tournament.
  */
 public class TeamManager extends DatabaseManager<Team> {
-    private static final String ERROR_NO_TEAM = "There is no team for this team ID";
+
     private static final Class TEAM_CLASS_TYPE = Team.class;
     private static final String FIRST_PLAYER_USER_ID_PROPERTY = "firstPlayer.userId";
     private static final String SECOND_PLAYER_USER_ID_PROPERTY = "secondPlayer.userId";
@@ -53,6 +53,31 @@ public class TeamManager extends DatabaseManager<Team> {
         return newTeam;
     }
 
+    public Team create(String firstPlayerId, String secondPlayerId) {
+        Session session = sessionManager.getSession();
+        User firstPlayer = session.get(User.class, firstPlayerId);
+        User secondPlayer = session.get(User.class, secondPlayerId);
+        session.close();
+
+        if (firstPlayer == null || secondPlayer == null) {
+            throw new EntityNotFoundException();
+        }
+
+        if (isExistingTeam(firstPlayer, secondPlayer)) {
+            throw new ExistingTeamException();
+        }
+
+        Team newTeam = new Team(firstPlayer, secondPlayer);
+
+        try {
+            create(newTeam);
+        } catch (ConstraintViolationException exception) {
+            throw new ExistingTeamException();
+        }
+
+        return newTeam;
+    }
+
     public Team updateAttendance(IdType teamId, PlayTime preferredPlayTime) {
         return updateAttendance(teamId.getId(), preferredPlayTime);
     }
@@ -62,7 +87,7 @@ public class TeamManager extends DatabaseManager<Team> {
 
         Team team = session.get(Team.class, teamId);
         if (team == null) {
-            throw new PersistenceException(ERROR_NO_TEAM);
+            throw new EntityNotFoundException();
         }
         AttendanceCard attendanceCard = team.getAttendanceCard();
         attendanceCard.setPreferredPlayTime(preferredPlayTime);

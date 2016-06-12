@@ -2,8 +2,8 @@ package ca.sfu.cmpt373.alpha.vrcladder.teams;
 
 import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.DuplicateTeamMemberException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PersistenceException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
@@ -59,6 +59,26 @@ public class TeamManagerTest extends BaseTest {
     }
 
     @Test
+    public void testCreateTeamByUserId() {
+        Session session = sessionManager.getSession();
+        User firstPlayer = MockUserGenerator.generatePlayer();
+        User secondPlayer = MockUserGenerator.generatePlayer();
+
+        // Save generated players
+        Transaction transaction = session.beginTransaction();
+        session.save(firstPlayer);
+        session.save(secondPlayer);
+        transaction.commit();
+
+        Team newTeam = teamManager.create(firstPlayer.getUserId(), secondPlayer.getUserId());
+
+        Team team = session.get(Team.class, newTeam.getId());
+        session.close();
+        Assert.assertNotNull(team);
+        Assert.assertNotNull(team.getAttendanceCard());
+    }
+
+    @Test
     public void testGetTeam() {
         Team existingTeam = teamManager.getById(teamFixture.getId());
         Assert.assertNotNull(existingTeam);
@@ -85,7 +105,7 @@ public class TeamManagerTest extends BaseTest {
         Assert.assertEquals(newPlayTime, attendanceCard.getPreferredPlayTime());
     }
 
-    @Test(expected = PersistenceException.class)
+    @Test(expected = EntityNotFoundException.class)
     public void testUpdateNonExistentTeamAttendance() {
         final String nonExistentTeamId = "nonExistentTeamId";
         teamManager.updateAttendance(nonExistentTeamId, PlayTime.TIME_SLOT_A);
