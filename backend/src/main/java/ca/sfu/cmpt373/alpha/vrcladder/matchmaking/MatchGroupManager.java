@@ -1,11 +1,11 @@
 package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PersistenceException;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.DatabaseManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
+import javax.persistence.PersistenceException;
 import java.util.List;
 
 public class MatchGroupManager extends DatabaseManager<MatchGroup> {

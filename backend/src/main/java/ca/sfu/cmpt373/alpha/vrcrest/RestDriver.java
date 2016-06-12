@@ -1,7 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcrest;
 
 import ca.sfu.cmpt373.alpha.vrcladder.Application;
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PersistenceException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
@@ -12,9 +11,10 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.hibernate.PropertyValueException;
 import org.eclipse.jetty.http.HttpStatus;
+import org.hibernate.PropertyValueException;
 
+import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.io.StringWriter;
 

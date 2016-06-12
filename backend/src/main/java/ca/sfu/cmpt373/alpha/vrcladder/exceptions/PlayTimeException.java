@@ -11,4 +11,5 @@ public class PlayTimeException extends BaseException {
     public PlayTimeException(String message) {
         super(message);
     }
+
 }
