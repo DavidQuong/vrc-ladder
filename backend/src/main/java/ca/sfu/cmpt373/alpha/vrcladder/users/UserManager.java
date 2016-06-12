@@ -77,7 +77,7 @@ public class UserManager extends DatabaseManager<User> {
             Session session = sessionManager.getSession();
             Transaction transaction = session.beginTransaction();
 
-            List<Team> teams = getPlayerTeams(user.getUserId());
+            List<Team> teams = getTeamsOfPlayer(user.getUserId());
             teams.forEach(session::delete);
             session.delete(user);
 
@@ -103,16 +103,20 @@ public class UserManager extends DatabaseManager<User> {
         return delete(user);
     }
 
-    private List<Team> getPlayerTeams(String playerId) {
+    private List<Team> getTeamsOfPlayer(String playerId) {
         Session session = sessionManager.getSession();
 
         Criterion firstPlayerCriterion = Restrictions.eq(CriterionConstants.FIRST_PLAYER_USER_ID_PROPERTY,
             playerId);
         Criterion secondPlayerCriterion = Restrictions.eq(CriterionConstants.SECOND_PLAYER_USER_ID_PROPERTY,
             playerId);
-        Criteria playerCriteria = session.createCriteria(Team.class)
+        Criteria teamCriteria = session.createCriteria(Team.class)
             .add(Restrictions.or(firstPlayerCriterion, secondPlayerCriterion));
 
-        return playerCriteria.list();
+        List<Team> matchedTeams = teamCriteria.list();
+        session.close();
+
+        return matchedTeams;
     }
+
 }
