@@ -147,6 +147,10 @@ public class MatchGroup {
         return teams.get(2);
     }
 
+    @Transient
+    public Team getTeam (int num){
+        return teams.get(num); }
+
     @Override
     public boolean equals(Object otherObj) {
         if (this == otherObj) {

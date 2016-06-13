@@ -94,11 +94,5 @@ public class AttendanceCard {
         return false;
     }
 
-    public boolean willAttend(){
-        switch(attendStatus){
-            case NO_PARTICIPATION:
-                return false;
-        }
-        return true;
-    }
+
 }
