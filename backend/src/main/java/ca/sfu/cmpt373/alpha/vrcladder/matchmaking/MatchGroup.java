@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.ArrayList;
@@ -79,6 +80,7 @@ public class MatchGroup {
     }
 
     @OneToMany(cascade = CascadeType.ALL)
+    @OrderColumn
     public List<Team> getTeams() {
         return Collections.unmodifiableList(teams);
     }
