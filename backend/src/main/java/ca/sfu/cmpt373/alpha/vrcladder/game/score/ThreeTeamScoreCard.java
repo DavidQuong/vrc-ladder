@@ -63,6 +63,9 @@ public class ThreeTeamScoreCard extends ScoreCard {
 
     @Override
     public List<Team> getRankedResults() {
+        if (currentRound <= LAST_ROUND) {
+            throw new IllegalStateException(ERROR_ROUNDS_NOT_OVER);
+        }
 //        matches are played as follows:
 //        a. 1 VS 2
 //        b. Winner (a) VS 3

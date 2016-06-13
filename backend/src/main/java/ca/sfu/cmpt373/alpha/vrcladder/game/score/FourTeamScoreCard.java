@@ -3,12 +3,18 @@ package ca.sfu.cmpt373.alpha.vrcladder.game.score;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 
+import javax.persistence.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 public class FourTeamScoreCard extends ScoreCard {
     private static final int LAST_ROUND = 4;
     private static final int NUMBER_OF_TEAMS = 4;
+
+    private FourTeamScoreCard() {
+        //for hibernate
+    }
 
     public FourTeamScoreCard(MatchGroup matchGroup) {
         super(matchGroup);
@@ -67,6 +73,9 @@ public class FourTeamScoreCard extends ScoreCard {
 
     @Override
     public List<Team> getRankedResults() {
+        if (currentRound <= LAST_ROUND) {
+            throw new IllegalStateException(ERROR_ROUNDS_NOT_OVER);
+        }
 //        matches are played in the following order:
 //        a) 1V4
 //        b) 2V3
@@ -88,10 +97,5 @@ public class FourTeamScoreCard extends ScoreCard {
         rankedTeams.add(winnerD);
         rankedTeams.add(loserD);
         return rankedTeams;
-    }
-
-    @Override
-    public String getId() {
-        return null;
     }
 }

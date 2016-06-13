@@ -22,6 +22,7 @@ public abstract class ScoreCard {
     static final String ERROR_TEAM_NOT_IN_ROUND = "team is not in round";
     static final String ERROR_MATCHGROUP_SIZE = "matchgroup must be of size 4";
     static final String ERROR_ROUNDS_OVER = "All round winners have been recorded";
+    static final String ERROR_ROUNDS_NOT_OVER = "Not all rounds have been played yet";
 
     @Id
     @Column(name = PersistenceConstants.COLUMN_ID)
