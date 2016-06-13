@@ -4,6 +4,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.DuplicateTeamMemberException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MultiplePlayTimeException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
@@ -16,7 +17,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 // TODO: Add more tests, testing the following:
-//       - Attempting to set a preferred playtime for two teams with a common player
 //       - Attempting to create a Team with a non-player role
 
 public class TeamManagerTest extends BaseTest {
@@ -94,15 +94,46 @@ public class TeamManagerTest extends BaseTest {
 
     @Test
     public void testUpdateTeamAttendance() {
-        final PlayTime newPlayTime = PlayTime.TIME_SLOT_A;
-        teamManager.updateAttendance(teamFixture.getId(), newPlayTime);
+        final PlayTime newPlayTime1 = PlayTime.TIME_SLOT_A;
+        final PlayTime newPlayTime2 = PlayTime.TIME_SLOT_B;
+        final PlayTime newPlayTime3 = PlayTime.NONE;
+        teamManager.updateAttendance(teamFixture.getId(), newPlayTime1);
 
         Session session = sessionManager.getSession();
         Team team = session.get(Team.class, teamFixture.getId());
+
         AttendanceCard attendanceCard = session.get(AttendanceCard.class, team.getAttendanceCard().getId());
+        Assert.assertEquals(newPlayTime1, attendanceCard.getPreferredPlayTime());
+        session.clear();
+
+        teamManager.updateAttendance(teamFixture.getId(), newPlayTime2);
+        session.refresh(attendanceCard);
+        Assert.assertEquals(newPlayTime2, attendanceCard.getPreferredPlayTime());
+        session.clear();
+
+        teamManager.updateAttendance(teamFixture.getId(), newPlayTime3);
+        session.refresh(attendanceCard);
+        Assert.assertEquals(newPlayTime3, attendanceCard.getPreferredPlayTime());
+        session.close();
+    }
+
+    @Test(expected = MultiplePlayTimeException.class)
+    public void testUpdateTeamAttendanceWithAlreadyAttendingPlayer() {
+        User commonPlayer = teamFixture.getFirstPlayer();
+        User newMockPlayer = MockUserGenerator.generatePlayer();
+        Team newTeam = new Team(commonPlayer, newMockPlayer);
+
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+
+        session.save(newMockPlayer);
+        session.save(newTeam);
+
+        transaction.commit();
         session.close();
 
-        Assert.assertEquals(newPlayTime, attendanceCard.getPreferredPlayTime());
+        teamManager.updateAttendance(teamFixture.getId(), PlayTime.TIME_SLOT_A);
+        teamManager.updateAttendance(newTeam.getId(), PlayTime.TIME_SLOT_B);
     }
 
     @Test(expected = EntityNotFoundException.class)
