@@ -29,10 +29,9 @@ public class ThreeTeamScoreCard extends ScoreCard {
             throw new IllegalStateException(ERROR_ROUNDS_OVER);
         }
         verifyTeamIsInRound(team);
-        roundWinners.put(currentRound, team);
+        roundWinners.add(team);
         currentRound++;
     }
-
 
     private void verifyTeamIsInRound(Team team) {
         switch (currentRound) {
@@ -41,12 +40,12 @@ public class ThreeTeamScoreCard extends ScoreCard {
                 throwIfFalse(isTeamOneOrTwo);
                 break;
             case 2:
-                Team winnerA = roundWinners.get(1);
+                Team winnerA = roundWinners.get(0);
                 boolean isWinnerAOrTeamThree = team == winnerA || team == matchGroup.getTeam3();
                 throwIfFalse(isWinnerAOrTeamThree);
                 break;
             case 3:
-                Team loserA = roundWinners.get(1).equals(matchGroup.getTeam1()) ? matchGroup.getTeam2() : matchGroup.getTeam1();
+                Team loserA = roundWinners.get(0).equals(matchGroup.getTeam1()) ? matchGroup.getTeam2() : matchGroup.getTeam1();
                 boolean isLoserAOrTeamThree = team == loserA || team == matchGroup.getTeam3();
                 throwIfFalse(isLoserAOrTeamThree);
                 break;
@@ -70,10 +69,10 @@ public class ThreeTeamScoreCard extends ScoreCard {
 //        c. Loser (a) VS 3
 //        ranks are derived from wins/losses of this ordering
         List<Team> rankedTeams = new ArrayList<>();
-        Team loserA = roundWinners.get(1).equals(matchGroup.getTeam1()) ? matchGroup.getTeam2() : matchGroup.getTeam1();
-        Team winnerA = roundWinners.get(1);
-        Team winnerB = roundWinners.get(2);
-        Team winnerC = roundWinners.get(3);
+        Team loserA = roundWinners.get(0).equals(matchGroup.getTeam1()) ? matchGroup.getTeam2() : matchGroup.getTeam1();
+        Team winnerA = roundWinners.get(0);
+        Team winnerB = roundWinners.get(1);
+        Team winnerC = roundWinners.get(2);
         if (winnerA.equals(winnerB)) {
             rankedTeams.add(winnerA);
             if (matchGroup.getTeam3().equals(winnerC)) {

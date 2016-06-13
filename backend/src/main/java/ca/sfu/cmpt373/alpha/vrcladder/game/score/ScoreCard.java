@@ -7,14 +7,17 @@ import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.OneToOne;
-import java.util.HashMap;
+import javax.persistence.OrderColumn;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class ScoreCard {
     static final String ERROR_TEAM_NOT_IN_ROUND = "team is not in round";
     static final String ERROR_MATCHGROUP_SIZE = "matchgroup must be of size 4";
@@ -27,9 +30,9 @@ public abstract class ScoreCard {
     @OneToOne
     MatchGroup matchGroup;
 
-    @javax.persistence.OneToMany(cascade = CascadeType.ALL)
-//    @javax.persistence.MapKey(name = "name")
-    Map<Integer, Team> roundWinners = new HashMap<>();
+    @javax.persistence.ManyToMany(cascade = CascadeType.ALL)
+    @OrderColumn
+    List<Team> roundWinners = new ArrayList<>();
 
     Integer currentRound = 1;
 

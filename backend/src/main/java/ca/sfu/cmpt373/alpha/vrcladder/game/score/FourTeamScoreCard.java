@@ -23,7 +23,7 @@ public class FourTeamScoreCard extends ScoreCard {
             throw new IllegalStateException(ERROR_ROUNDS_OVER);
         }
         verifyTeamIsInRound(team);
-        roundWinners.put(currentRound, team);
+        roundWinners.add(team);
         currentRound++;
     }
 
@@ -40,15 +40,15 @@ public class FourTeamScoreCard extends ScoreCard {
                 throwIfFalse(isTeamTwoOrThree);
                 break;
             case 3:
-                boolean isWinnerAOrWinnerB = team.equals(roundWinners.get(1)) ||
-                        team.equals(roundWinners.get(2));
+                boolean isWinnerAOrWinnerB = team.equals(roundWinners.get(0)) ||
+                        team.equals(roundWinners.get(1));
                 throwIfFalse(isWinnerAOrWinnerB);
                 break;
             case 4:
-                Team loserA = roundWinners.get(1).equals(matchGroup.getTeam1()) ?
+                Team loserA = roundWinners.get(0).equals(matchGroup.getTeam1()) ?
                         matchGroup.getTeams().get(3) :
                         matchGroup.getTeam1();
-                Team loserB = roundWinners.get(2).equals(matchGroup.getTeam2()) ?
+                Team loserB = roundWinners.get(1).equals(matchGroup.getTeam2()) ?
                         matchGroup.getTeam3() :
                         matchGroup.getTeam2();
                 boolean isLoserAOrB = team.equals(loserA) || team.equals(loserB);
@@ -73,10 +73,10 @@ public class FourTeamScoreCard extends ScoreCard {
 //        c) Winner a V Winner b
 //        d) Loser a V Loser b
 //        ranks are derived from wins/losses of this ordering
-        Team winnerA = roundWinners.get(1);
-        Team winnerB = roundWinners.get(2);
-        Team winnerC = roundWinners.get(3);
-        Team winnerD = roundWinners.get(4);
+        Team winnerA = roundWinners.get(0);
+        Team winnerB = roundWinners.get(1);
+        Team winnerC = roundWinners.get(2);
+        Team winnerD = roundWinners.get(3);
         Team loserA = winnerA.equals(matchGroup.getTeam1()) ? matchGroup.getTeam2() : matchGroup.getTeams().get(3);
         Team loserB = winnerB.equals(matchGroup.getTeam2()) ? matchGroup.getTeam3() : matchGroup.getTeam2();
         Team loserC = winnerA.equals(winnerC) ? winnerB : winnerA;

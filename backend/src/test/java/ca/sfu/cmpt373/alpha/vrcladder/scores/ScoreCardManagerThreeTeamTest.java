@@ -15,14 +15,16 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class ScoreCardManagerTest extends BaseTest {
+public class ScoreCardManagerThreeTeamTest extends BaseTest {
     private ScoreCardManager scoreCardManager;
     private MatchGroup matchGroupFixture;
+    private ScoreCard scoreCardFixture;
 
     @Before
     public void setUp() {
         scoreCardManager = new ScoreCardManager(sessionManager);
         matchGroupFixture = MockMatchGroupGenerator.generateThreeTeamMatchGroup();
+        scoreCardFixture = new ThreeTeamScoreCard(matchGroupFixture);
 
         Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
@@ -33,6 +35,8 @@ public class ScoreCardManagerTest extends BaseTest {
             session.save(team);
         }
         session.save(matchGroupFixture);
+        session.save(scoreCardFixture);
+
         transaction.commit();
         session.close();
     }
@@ -41,27 +45,42 @@ public class ScoreCardManagerTest extends BaseTest {
     public void testCreate() {
         ScoreCard newScoreCard = scoreCardManager.create(matchGroupFixture);
         Session session = sessionManager.getSession();
-        ScoreCard retrievedScoreCard = session.get(ThreeTeamScoreCard.class, newScoreCard.getId());
+        ScoreCard retrievedScoreCard = session.get(ScoreCard.class, newScoreCard.getId());
         session.close();
 
         Assert.assertEquals(newScoreCard, retrievedScoreCard);
     }
 
     @Test
-    public void updateScoreCard() {
-        //TODO: fix this test case
-        ScoreCard newScoreCard = scoreCardManager.create(matchGroupFixture);
+    public void testUpdateScoreCard() {
+        scoreCardFixture.recordRoundWinner(matchGroupFixture.getTeam1());
+        scoreCardFixture.recordRoundWinner(matchGroupFixture.getTeam1());
+        scoreCardFixture.recordRoundWinner(matchGroupFixture.getTeam3());
 
-        newScoreCard.recordRoundWinner(matchGroupFixture.getTeam1());
-        newScoreCard.recordRoundWinner(matchGroupFixture.getTeam1());
-        newScoreCard.recordRoundWinner(matchGroupFixture.getTeam3());
-
-        scoreCardManager.update(newScoreCard);
+        scoreCardManager.update(scoreCardFixture);
         Session session = sessionManager.getSession();
-        ScoreCard retrievedScoreCard = session.get(ThreeTeamScoreCard.class, newScoreCard.getId());
+        ScoreCard retrievedScoreCard = session.get(ScoreCard.class, scoreCardFixture.getId());
         session.close();
 
-        Assert.assertEquals(newScoreCard.getRankedResults(), retrievedScoreCard.getRankedResults());
+        Assert.assertEquals(scoreCardFixture.getRankedResults(), retrievedScoreCard.getRankedResults());
+    }
+
+    @Test
+    public void testDeleteScoreCard() {
+        ScoreCard deletedScoreCard = scoreCardManager.deleteById(scoreCardFixture.getId());
+        Assert.assertNotNull(deletedScoreCard);
+
+        Session session = sessionManager.getSession();
+        ScoreCard retrievedScoreCard = session.get(ScoreCard.class, scoreCardFixture.getId());
+        session.close();
+
+        Assert.assertNull(retrievedScoreCard);
+    }
+
+    @Test
+    public void testGetScoreCard() {
+        ScoreCard retrievedScoreCard = scoreCardManager.getById(scoreCardFixture.getId());
+        Assert.assertEquals(retrievedScoreCard, scoreCardFixture);
     }
 
 }
