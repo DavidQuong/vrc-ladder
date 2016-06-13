@@ -3,30 +3,18 @@ package ca.sfu.cmpt373.alpha.vrcladder.game.score;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 
-import javax.persistence.OneToOne;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class FourTeamScoreCard implements IScoreCard {
+public class FourTeamScoreCard extends ScoreCard {
     private static final int LAST_ROUND = 4;
     private static final int NUMBER_OF_TEAMS = 4;
 
-    private static final String ERROR_TEAM_NOT_IN_ROUND = "team is not in round";
-    private static final String ERROR_ROUNDS_OVER = "All round winners have been recorded";
-    private static final String ERROR_MATCHGROUP_SIZE = "matchgroup must be of size 4";
-
-    private MatchGroup matchGroup;
-    private Map<Integer, Team> roundWinners = new HashMap<>();
-
-    private Integer currentRound = 1;
-
     public FourTeamScoreCard(MatchGroup matchGroup) {
+        super(matchGroup);
         if (matchGroup.getTeams().size() != NUMBER_OF_TEAMS) {
             throw new IllegalArgumentException(ERROR_MATCHGROUP_SIZE);
         }
-        this.matchGroup = matchGroup;
     }
 
     @Override
@@ -100,5 +88,10 @@ public class FourTeamScoreCard implements IScoreCard {
         rankedTeams.add(winnerD);
         rankedTeams.add(loserD);
         return rankedTeams;
+    }
+
+    @Override
+    public String getId() {
+        return null;
     }
 }

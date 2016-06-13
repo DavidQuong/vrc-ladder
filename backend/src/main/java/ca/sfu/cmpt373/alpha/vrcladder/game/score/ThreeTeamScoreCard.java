@@ -3,28 +3,24 @@ package ca.sfu.cmpt373.alpha.vrcladder.game.score;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 
+import javax.persistence.Entity;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class ThreeTeamScoreCard implements IScoreCard {
+@Entity
+public class ThreeTeamScoreCard extends ScoreCard {
     private static final int LAST_ROUND = 3;
     private static final int NUMBER_OF_TEAMS = 3;
 
-    private static final String ERROR_TEAM_NOT_IN_ROUND = "team is not in round";
-    private static final String ERROR_MATCHGROUP_SIZE = "matchgroup must be of size 4";
-    private static final String ERROR_ROUNDS_OVER = "All round winners have been recorded";
-
-    private MatchGroup matchGroup;
-    private Map<Integer, Team> roundWinners = new HashMap<>();
-    private Integer currentRound = 1;
+    private ThreeTeamScoreCard() {
+        //for hibernate
+    }
 
     public ThreeTeamScoreCard(MatchGroup matchGroup) {
+        super(matchGroup);
         if (matchGroup.getTeams().size() != NUMBER_OF_TEAMS) {
             throw new IllegalArgumentException(ERROR_MATCHGROUP_SIZE);
         }
-        this.matchGroup = matchGroup;
     }
 
     @Override
