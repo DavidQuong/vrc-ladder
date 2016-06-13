@@ -4,6 +4,8 @@ import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,6 +25,7 @@ public abstract class ScoreCard {
     static final String ERROR_MATCHGROUP_SIZE = "matchgroup must be of size 4";
     static final String ERROR_ROUNDS_OVER = "All round winners have been recorded";
     static final String ERROR_ROUNDS_NOT_OVER = "Not all rounds have been played yet";
+    private static final String ERROR_TEAM_NOT_IN_GROUP = "Team is not in match group";
 
     @Id
     @Column(name = PersistenceConstants.COLUMN_ID)
@@ -45,6 +48,39 @@ public abstract class ScoreCard {
     ScoreCard() {
         id = new IdType().getId();
         //for hibernate
+    }
+
+    private void checkTeamInMatchGroup(Team team) {
+        boolean isTeamInGroup = false;
+        for (Team groupTeam : matchGroup.getTeams()) {
+            if (groupTeam.equals(team)) {
+                isTeamInGroup = true;
+            }
+        }
+        if (!isTeamInGroup) {
+            throw new IllegalStateException(ERROR_TEAM_NOT_IN_GROUP);
+        }
+    }
+
+    public Pair<Integer, Integer> getTeamWinsAndLosses(Team team) {
+        if (currentRound <= getLastRound()) {
+            throw new IllegalStateException(ERROR_ROUNDS_NOT_OVER);
+        }
+        checkTeamInMatchGroup(team);
+        int wins = 0;
+        int losses = 0;
+        for (Team winner : roundWinners) {
+            if (winner.equals(team)) {
+                wins++;
+            }
+        }
+        int gamesPlayedPerTeam = 2;
+        losses = gamesPlayedPerTeam - wins;
+        return new ImmutablePair<>(wins, losses);
+    }
+
+    public int getCurrentRound() {
+        return currentRound;
     }
 
     public String getId() {
@@ -72,4 +108,5 @@ public abstract class ScoreCard {
 
     public abstract void recordRoundWinner(Team team);
     public abstract List<Team> getRankedResults();
+    public abstract int getLastRound();
 }

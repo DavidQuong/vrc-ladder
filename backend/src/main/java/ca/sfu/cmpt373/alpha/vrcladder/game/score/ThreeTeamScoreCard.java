@@ -51,7 +51,6 @@ public class ThreeTeamScoreCard extends ScoreCard {
                 break;
             default:
                 assert(false);
-                break;
         }
     }
 
@@ -96,5 +95,10 @@ public class ThreeTeamScoreCard extends ScoreCard {
             rankedTeams.add(matchGroup.getTeam3());
         }
         return rankedTeams;
+    }
+
+    @Override
+    public int getLastRound() {
+        return LAST_ROUND;
     }
 }

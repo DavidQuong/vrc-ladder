@@ -98,4 +98,9 @@ public class FourTeamScoreCard extends ScoreCard {
         rankedTeams.add(loserD);
         return rankedTeams;
     }
+
+    @Override
+    public int getLastRound() {
+        return LAST_ROUND;
+    }
 }
