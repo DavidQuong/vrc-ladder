@@ -15,7 +15,6 @@ public class Game {
     private List<MatchGroup> groups;
     private List<ScoreSheet> scoreSheets = new ArrayList<>();
 
-
     public Game(List<MatchGroup> inputGroups){
         this.groups = inputGroups;
         initScoreSheets();
@@ -25,6 +24,7 @@ public class Game {
         ScoreSheet result = findPlayerSheet(player);
         return result;
     }
+
     public ScoreSheet getScoreSheet(Team player) {
         ScoreSheet result = findPlayerSheet(player.getFirstPlayer());
         return result;

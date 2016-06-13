@@ -175,6 +175,6 @@ public class MatchGroup {
         return null;
     }
     @Transient
-    public List<Team> getPlacement(){return scoreSheet.getTeams();}
+    public List<Team> getPlacement(){return scoreSheet.getScores();}
 
 }

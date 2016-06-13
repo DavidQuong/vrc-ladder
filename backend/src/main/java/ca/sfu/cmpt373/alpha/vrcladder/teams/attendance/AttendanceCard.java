@@ -19,7 +19,7 @@ public class AttendanceCard {
 
     private IdType id;
     private PlayTime preferredPlayTime;
-    private AttendanceStatus attendStatus;
+
 
     public AttendanceCard() {
         this.id = new IdType();
@@ -71,34 +71,4 @@ public class AttendanceCard {
         return id.hashCode();
     }
 
-    public boolean late(){
-        switch(attendStatus){
-            case LATE:
-                return true;
-        }
-        return false;
-    }
-
-    public boolean noShow(){
-        switch(attendStatus){
-            case NO_SHOW:
-            return true;
-    }
-
-        return false;}
-    public boolean attended(){
-        switch(attendStatus){
-            case PRESENT:
-            return true;
-        }
-        return false;
-    }
-
-    public boolean willAttend(){
-        switch(attendStatus){
-            case NO_PARTICIPATION:
-                return false;
-        }
-        return true;
-    }
 }
