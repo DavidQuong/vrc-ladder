@@ -1,12 +1,11 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users;
 
 import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
-import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
-import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
+import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockUserGenerator;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Assert;
@@ -72,7 +71,7 @@ public class UserManagerTest extends BaseTest {
         final PhoneNumber newPhoneNumber = new PhoneNumber("(778) 111-2222");
         final EmailAddress newEmailAddress = new EmailAddress("billyj@vrc.ca");
 
-        userManager.updateUser(userFixture.getUserId(), userFixture.getUserRole(), newFirstName, newMiddleName,
+        userManager.update(userFixture.getUserId(), userFixture.getUserRole(), newFirstName, newMiddleName,
             userFixture.getLastName(), newEmailAddress.getEmailAddress(), newPhoneNumber.getPhoneNumber());
 
         Session session = sessionManager.getSession();
@@ -101,6 +100,30 @@ public class UserManagerTest extends BaseTest {
 
         Assert.assertNotNull(originalUser);
         Assert.assertNull(user);
+    }
+
+    @Test
+    public void testDeleterUserOnTeam() {
+        Team team = MockTeamGenerator.generateTeam();
+
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+        session.save(team.getFirstPlayer());
+        session.save(team.getSecondPlayer());
+        session.save(team);
+        transaction.commit();
+
+        userManager.delete(team.getFirstPlayer());
+        session.clear();
+
+        Team existingTeam = session.get(Team.class, team.getId());
+        User firstPlayer = session.get(User.class, team.getFirstPlayer().getUserId());
+        User secondPlayer = session.get(User.class, team.getSecondPlayer().getUserId());
+        session.close();
+
+        Assert.assertNull(existingTeam);
+        Assert.assertNull(firstPlayer);
+        Assert.assertNotNull(secondPlayer);
     }
 
 }

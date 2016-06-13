@@ -1,23 +1,15 @@
 package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
 import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PersistenceException;
-import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchGroupGenerator;
-import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
-import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
-import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
-import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
