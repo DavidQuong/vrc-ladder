@@ -1,10 +1,10 @@
-package ca.sfu.cmpt373.alpha.vrcladder.game.score;
+package ca.sfu.cmpt373.alpha.vrcladder.scores;
 
 public class WinLossPair {
     private int wins;
     private int losses;
 
-    public WinLossPair(int wins, int losses) {
+    WinLossPair(int wins, int losses) {
         this.wins = wins;
         this.losses = losses;
     }

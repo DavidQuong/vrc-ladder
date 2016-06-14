@@ -1,8 +1,5 @@
 package ca.sfu.cmpt373.alpha.vrcladder.scores;
 
-import ca.sfu.cmpt373.alpha.vrcladder.game.score.ScoreCard;
-import ca.sfu.cmpt373.alpha.vrcladder.game.score.ThreeTeamScoreCard;
-import ca.sfu.cmpt373.alpha.vrcladder.game.score.WinLossPair;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
@@ -19,15 +16,12 @@ import java.util.List;
 import java.util.Map;
 
 public class ThreeTeamScoreCardTest {
-//        a. 1 VS 2
-//        b. Winner (a) VS 3
-//        c. Loser (a) VS 3
 
     @Test
     public void testGeneralCases() {
         MatchGroup matchGroup = MockMatchGroupGenerator.generateThreeTeamMatchGroup();
 
-        //map input to expected output
+        //map input (round winners) to expected output (ranked team orders)
         Map<List<Integer>, List<Integer>> testData = new HashMap<>();
         testData.put(Arrays.asList(1, 1, 3), Arrays.asList(1, 3, 2));
         testData.put(Arrays.asList(1, 3, 2), Arrays.asList(1, 2, 3));

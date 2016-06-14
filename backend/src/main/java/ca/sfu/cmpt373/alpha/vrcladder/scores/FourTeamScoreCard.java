@@ -1,4 +1,4 @@
-package ca.sfu.cmpt373.alpha.vrcladder.game.score;
+package ca.sfu.cmpt373.alpha.vrcladder.scores;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
@@ -93,8 +93,8 @@ public class FourTeamScoreCard extends ScoreCard {
         Team winnerC = roundWinners.get(INDEX_THIRD_ROUND_WINNER);
         Team winnerD = roundWinners.get(INDEX_FOURTH_ROUND_WINNER);
         Team loserA = winnerA.equals(matchGroup.getTeam1()) ?
-                matchGroup.getTeam2() :
-                matchGroup.getTeams().get(INDEX_FOURTH_MATCHGROUP_PLAYER);
+                matchGroup.getTeams().get(INDEX_FOURTH_MATCHGROUP_PLAYER) :
+                matchGroup.getTeam1();
         Team loserB = winnerB.equals(matchGroup.getTeam2()) ?
                 matchGroup.getTeam3() :
                 matchGroup.getTeam2();

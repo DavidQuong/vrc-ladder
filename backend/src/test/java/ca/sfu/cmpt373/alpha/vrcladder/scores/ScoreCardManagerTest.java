@@ -1,10 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.scores;
 
 import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
-import ca.sfu.cmpt373.alpha.vrcladder.game.score.FourTeamScoreCard;
-import ca.sfu.cmpt373.alpha.vrcladder.game.score.ScoreCard;
-import ca.sfu.cmpt373.alpha.vrcladder.game.score.ScoreCardManager;
-import ca.sfu.cmpt373.alpha.vrcladder.game.score.ThreeTeamScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;

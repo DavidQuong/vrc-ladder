@@ -1,13 +1,10 @@
-package ca.sfu.cmpt373.alpha.vrcladder.game.score;
+package ca.sfu.cmpt373.alpha.vrcladder.scores;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -47,7 +44,6 @@ public abstract class ScoreCard {
     }
 
     ScoreCard() {
-        id = new IdType().getId();
         //for hibernate
     }
 

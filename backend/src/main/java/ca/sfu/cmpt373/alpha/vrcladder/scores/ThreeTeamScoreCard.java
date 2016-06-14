@@ -1,11 +1,13 @@
-package ca.sfu.cmpt373.alpha.vrcladder.game.score;
+package ca.sfu.cmpt373.alpha.vrcladder.scores;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 
 import javax.persistence.Entity;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 public class ThreeTeamScoreCard extends ScoreCard {
@@ -13,8 +15,6 @@ public class ThreeTeamScoreCard extends ScoreCard {
     private static final int NUMBER_OF_TEAMS = 3;
 
     private static final int INDEX_FIRST_ROUND_WINNER = 0;
-    private static final int INDEX_SECOND_ROUND_WINNER = 1;
-    private static final int INDEX_THIRD_ROUND_WINNER = 2;
 
     private ThreeTeamScoreCard() {
         //for hibernate
@@ -68,40 +68,35 @@ public class ThreeTeamScoreCard extends ScoreCard {
 
     @Override
     public List<Team> getRankedResults() {
+        //Count the number of wins for each team.
+        //Winner will have at most two wins since each team only plays two games
+        //in the event of a tie, team orderings should remain unchanged
+
         if (currentRound <= LAST_ROUND) {
             throw new IllegalStateException(ERROR_ROUNDS_NOT_OVER);
         }
-//        matches are played as follows:
-//        a. 1 VS 2
-//        b. Winner (a) VS 3
-//        c. Loser (a) VS 3
-//        ranks are derived from wins/losses of this ordering
-        //TODO: simplify this by just counting the number of times each team won, and ordering based on that
+
+        Map<Team, Integer> teamWinCounts = new HashMap<>();
+
+        //initialize win counts for each team to zero
+        for (Team team : matchGroup.getTeams()) {
+            teamWinCounts.put(team, 0);
+        }
+
+        //count wins for each team
+        for (Team team : roundWinners) {
+            teamWinCounts.put(team, teamWinCounts.get(team) + 1);
+        }
+
+        //add teams with the most wins first
+        int lowestPossibleWinCount = 0;
         List<Team> rankedTeams = new ArrayList<>();
-        Team loserA = roundWinners.get(INDEX_FIRST_ROUND_WINNER).equals(matchGroup.getTeam1()) ?
-                matchGroup.getTeam2() :
-                matchGroup.getTeam1();
-        Team winnerA = roundWinners.get(INDEX_FIRST_ROUND_WINNER);
-        Team winnerB = roundWinners.get(INDEX_SECOND_ROUND_WINNER);
-        Team winnerC = roundWinners.get(INDEX_THIRD_ROUND_WINNER);
-        if (winnerA.equals(winnerB)) {
-            rankedTeams.add(winnerA);
-            if (matchGroup.getTeam3().equals(winnerC)) {
-                rankedTeams.add(matchGroup.getTeam3());
-                rankedTeams.add(loserA);
-            } else {
-                rankedTeams.add(loserA);
-                rankedTeams.add(matchGroup.getTeam3());
+        for (int targetWinCount = 2; targetWinCount >= lowestPossibleWinCount; targetWinCount--) {
+            for (Team team : matchGroup.getTeams()) {
+                if (teamWinCounts.get(team).equals(targetWinCount)) {
+                    rankedTeams.add(team);
+                }
             }
-        } else if (matchGroup.getTeam3().equals(winnerC)){
-            rankedTeams.add(matchGroup.getTeam3());
-            rankedTeams.add(winnerA);
-            rankedTeams.add(loserA);
-        } else {
-            //everyone won a game, and lost a game so their order doesn't change
-            rankedTeams.add(matchGroup.getTeam1());
-            rankedTeams.add(matchGroup.getTeam2());
-            rankedTeams.add(matchGroup.getTeam3());
         }
         return rankedTeams;
     }
