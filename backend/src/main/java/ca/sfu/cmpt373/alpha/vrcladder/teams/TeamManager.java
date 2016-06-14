@@ -29,6 +29,7 @@ import java.util.List;
 public class TeamManager extends DatabaseManager<Team> {
 
     private static final Class TEAM_CLASS_TYPE = Team.class;
+    private static final Integer FIRST_POSITION = 1;
 
     public TeamManager(SessionManager sessionManager) {
         super(TEAM_CLASS_TYPE, sessionManager);
@@ -166,7 +167,12 @@ public class TeamManager extends DatabaseManager<Team> {
             .setProjection(Projections.max(CriterionConstants.TEAM_LADDER_POSITION_PROPERTY));
         Integer lastPosition = (Integer) lastPositionCriteria.uniqueResult();
 
-        return new LadderPosition(lastPosition + 1);
+        if (lastPosition == null) {
+            return new LadderPosition(FIRST_POSITION);
+        } else {
+            return new LadderPosition(lastPosition + 1);
+        }
+
     }
 
 }
