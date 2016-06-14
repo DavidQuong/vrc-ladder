@@ -21,4 +21,24 @@ public class LadderPosition {
         return position;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        LadderPosition otherLadderPosition = (LadderPosition) obj;
+
+        return position.equals(otherLadderPosition.position);
+    }
+
+    @Override
+    public int hashCode() {
+        return position.hashCode();
+    }
+
 }
