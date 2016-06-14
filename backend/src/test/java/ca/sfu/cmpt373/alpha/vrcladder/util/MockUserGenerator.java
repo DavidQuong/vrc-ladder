@@ -44,6 +44,10 @@ public class MockUserGenerator {
         return newUser;
     }
 
+    public static void resetUserCount() {
+        userCount = 0;
+    }
+
     private static EmailAddress generateEmailAddress(String userNum) {
         String emailAddress = String.format(EMAIL_FORMAT, userNum);
 

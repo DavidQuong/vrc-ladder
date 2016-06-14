@@ -32,7 +32,13 @@ public class User {
     private PhoneNumber phoneNumber;
 
     public User() {
-        // Required by Hibernate
+        userId = null;
+        userRole = null;
+        firstName = null;
+        middleName = null;
+        lastName = null;
+        emailAddress = null;
+        phoneNumber = null;
     }
 
     @Id

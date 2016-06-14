@@ -24,19 +24,22 @@ public class Team {
     private AttendanceCard attendanceCard;
     private User firstPlayer;
     private User secondPlayer;
+    private LadderPosition ladderPosition;
 
     public Team() {
-        this.id = new IdType();
-        this.attendanceCard = new AttendanceCard();
+        this.id = null;
+        this.attendanceCard = null;
         this.firstPlayer = null;
         this.secondPlayer = null;
+        this.ladderPosition = null;
     }
 
-    public Team(User firstPlayer, User secondPlayer) {
+    public Team(User firstPlayer, User secondPlayer, LadderPosition ladderPosition) {
         this.id = new IdType();
         this.attendanceCard = new AttendanceCard();
         this.firstPlayer = firstPlayer;
         this.secondPlayer = secondPlayer;
+        this.ladderPosition = ladderPosition;
     }
 
     @Id
@@ -77,6 +80,15 @@ public class Team {
 
     public void setSecondPlayer(User player) {
         secondPlayer = player;
+    }
+
+    @Column(name = PersistenceConstants.COLUMN_LADDER_POSITION, nullable = false, unique = true)
+    public Integer getLadderPosition() {
+        return ladderPosition.getPosition();
+    }
+
+    public void setLadderPosition(Integer position) {
+        ladderPosition = new LadderPosition(position);
     }
 
     @Override

@@ -8,6 +8,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockUserGenerator;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +28,11 @@ public class UserManagerTest extends BaseTest {
         session.save(userFixture);
         transaction.commit();
         session.close();
+    }
+
+    @After
+    public void tearDown() {
+        MockUserGenerator.resetUserCount();
     }
 
     @Test
