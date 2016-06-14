@@ -12,6 +12,10 @@ public class ThreeTeamScoreCard extends ScoreCard {
     private static final int LAST_ROUND = 3;
     private static final int NUMBER_OF_TEAMS = 3;
 
+    private static final int INDEX_FIRST_ROUND_WINNER = 0;
+    private static final int INDEX_SECOND_ROUND_WINNER = 1;
+    private static final int INDEX_THIRD_ROUND_WINNER = 2;
+
     private ThreeTeamScoreCard() {
         //for hibernate
     }
@@ -37,24 +41,26 @@ public class ThreeTeamScoreCard extends ScoreCard {
         switch (currentRound) {
             case 1:
                 boolean isTeamOneOrTwo = matchGroup.getTeam1().equals(team) || matchGroup.getTeam2().equals(team);
-                throwIfFalse(isTeamOneOrTwo);
+                throwTeamNotInRoundIfFalse(isTeamOneOrTwo);
                 break;
             case 2:
-                Team winnerA = roundWinners.get(0);
+                Team winnerA = roundWinners.get(INDEX_FIRST_ROUND_WINNER);
                 boolean isWinnerAOrTeamThree = team == winnerA || team == matchGroup.getTeam3();
-                throwIfFalse(isWinnerAOrTeamThree);
+                throwTeamNotInRoundIfFalse(isWinnerAOrTeamThree);
                 break;
             case 3:
-                Team loserA = roundWinners.get(0).equals(matchGroup.getTeam1()) ? matchGroup.getTeam2() : matchGroup.getTeam1();
+                Team loserA = roundWinners.get(INDEX_FIRST_ROUND_WINNER).equals(matchGroup.getTeam1()) ?
+                        matchGroup.getTeam2() :
+                        matchGroup.getTeam1();
                 boolean isLoserAOrTeamThree = team == loserA || team == matchGroup.getTeam3();
-                throwIfFalse(isLoserAOrTeamThree);
+                throwTeamNotInRoundIfFalse(isLoserAOrTeamThree);
                 break;
             default:
-                assert(false);
+                throw new IllegalStateException(ERROR_INVALID_DEFAULT_CASE);
         }
     }
 
-    private void throwIfFalse (boolean condition) {
+    private void throwTeamNotInRoundIfFalse(boolean condition) {
         if (!condition) {
             throw new IllegalStateException(ERROR_TEAM_NOT_IN_ROUND);
         }
@@ -70,11 +76,14 @@ public class ThreeTeamScoreCard extends ScoreCard {
 //        b. Winner (a) VS 3
 //        c. Loser (a) VS 3
 //        ranks are derived from wins/losses of this ordering
+        //TODO: simplify this by just counting the number of times each team won, and ordering based on that
         List<Team> rankedTeams = new ArrayList<>();
-        Team loserA = roundWinners.get(0).equals(matchGroup.getTeam1()) ? matchGroup.getTeam2() : matchGroup.getTeam1();
-        Team winnerA = roundWinners.get(0);
-        Team winnerB = roundWinners.get(1);
-        Team winnerC = roundWinners.get(2);
+        Team loserA = roundWinners.get(INDEX_FIRST_ROUND_WINNER).equals(matchGroup.getTeam1()) ?
+                matchGroup.getTeam2() :
+                matchGroup.getTeam1();
+        Team winnerA = roundWinners.get(INDEX_FIRST_ROUND_WINNER);
+        Team winnerB = roundWinners.get(INDEX_SECOND_ROUND_WINNER);
+        Team winnerC = roundWinners.get(INDEX_THIRD_ROUND_WINNER);
         if (winnerA.equals(winnerB)) {
             rankedTeams.add(winnerA);
             if (matchGroup.getTeam3().equals(winnerC)) {

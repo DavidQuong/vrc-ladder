@@ -2,6 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.scores;
 
 import ca.sfu.cmpt373.alpha.vrcladder.game.score.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.game.score.ThreeTeamScoreCard;
+import ca.sfu.cmpt373.alpha.vrcladder.game.score.WinLossPair;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
@@ -81,7 +82,7 @@ public class ThreeTeamScoreCardTest {
             }
             Pair<List<Integer>, List<Integer>> expectedResults = testData.get(input);
             for (int i = 0; i < expectedResults.getLeft().size(); i++) {
-                Pair winLossResultsPair = new ImmutablePair<>(
+                WinLossPair winLossResultsPair = new WinLossPair(
                         expectedResults.getLeft().get(i),
                         expectedResults.getRight().get(i));
                 Assert.assertEquals(winLossResultsPair, scoreCard.getTeamWinsAndLosses(matchGroup.getTeams().get(i)));

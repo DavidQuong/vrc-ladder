@@ -146,6 +146,11 @@ public class MatchGroup {
         return teams.get(2);
     }
 
+    @Transient
+    public int getTeamCount() {
+        return teams.size();
+    }
+
     @Override
     public boolean equals(Object otherObj) {
         if (this == otherObj) {

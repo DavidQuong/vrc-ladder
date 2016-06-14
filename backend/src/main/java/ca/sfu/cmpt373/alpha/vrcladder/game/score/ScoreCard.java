@@ -21,11 +21,12 @@ import java.util.List;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class ScoreCard {
+    private static final String ERROR_TEAM_NOT_IN_GROUP = "Team is not in match group";
     static final String ERROR_TEAM_NOT_IN_ROUND = "team is not in round";
     static final String ERROR_MATCHGROUP_SIZE = "matchgroup must be of size 4";
     static final String ERROR_ROUNDS_OVER = "All round winners have been recorded";
     static final String ERROR_ROUNDS_NOT_OVER = "Not all rounds have been played yet";
-    private static final String ERROR_TEAM_NOT_IN_GROUP = "Team is not in match group";
+    static final String ERROR_INVALID_DEFAULT_CASE = "The default case should never occur";
 
     @Id
     @Column(name = PersistenceConstants.COLUMN_ID)
@@ -34,7 +35,7 @@ public abstract class ScoreCard {
     @OneToOne
     MatchGroup matchGroup;
 
-    @javax.persistence.ManyToMany(cascade = CascadeType.ALL)
+    @javax.persistence.ManyToMany
     @OrderColumn
     List<Team> roundWinners = new ArrayList<>();
 
@@ -62,7 +63,7 @@ public abstract class ScoreCard {
         }
     }
 
-    public Pair<Integer, Integer> getTeamWinsAndLosses(Team team) {
+    public WinLossPair getTeamWinsAndLosses(Team team) {
         if (currentRound <= getLastRound()) {
             throw new IllegalStateException(ERROR_ROUNDS_NOT_OVER);
         }
@@ -76,7 +77,7 @@ public abstract class ScoreCard {
         }
         int gamesPlayedPerTeam = 2;
         losses = gamesPlayedPerTeam - wins;
-        return new ImmutablePair<>(wins, losses);
+        return new WinLossPair(wins, losses);
     }
 
     public int getCurrentRound() {

@@ -12,7 +12,8 @@ public class ScoreCardManager extends DatabaseManager<ScoreCard> {
 
     public ScoreCard create(MatchGroup matchGroup) {
         ScoreCard scoreCard;
-        if (matchGroup.getTeams().size() == 3) {
+        int threeTeamCount = 3;
+        if (matchGroup.getTeamCount() == threeTeamCount) {
             scoreCard = new ThreeTeamScoreCard(matchGroup);
         } else {
             scoreCard = new FourTeamScoreCard(matchGroup);
