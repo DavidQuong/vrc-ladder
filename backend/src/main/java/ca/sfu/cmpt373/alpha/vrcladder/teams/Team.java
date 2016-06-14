@@ -26,12 +26,8 @@ public class Team {
     private User secondPlayer;
     private LadderPosition ladderPosition;
 
-    public Team() {
-        this.id = null;
-        this.attendanceCard = null;
-        this.firstPlayer = null;
-        this.secondPlayer = null;
-        this.ladderPosition = null;
+    private Team() {
+        // Required by Hibernate.
     }
 
     public Team(User firstPlayer, User secondPlayer, LadderPosition ladderPosition) {
@@ -42,13 +38,21 @@ public class Team {
         this.ladderPosition = ladderPosition;
     }
 
+    public Team(User firstPlayer, User secondPlayer, int position) {
+        this.id = new IdType();
+        this.attendanceCard = new AttendanceCard();
+        this.firstPlayer = firstPlayer;
+        this.secondPlayer = secondPlayer;
+        this.ladderPosition = new LadderPosition(position);
+    }
+
     @Id
     @Column(name = PersistenceConstants.COLUMN_ID)
     public String getId() {
         return id.getId();
     }
 
-    public void setId(String newId) {
+    private void setId(String newId) {
         id = new IdType(newId);
     }
 
@@ -58,7 +62,7 @@ public class Team {
         return attendanceCard;
     }
 
-    public void setAttendanceCard(AttendanceCard newAttendanceCard) {
+    private void setAttendanceCard(AttendanceCard newAttendanceCard) {
         attendanceCard = newAttendanceCard;
     }
 
@@ -68,7 +72,7 @@ public class Team {
         return firstPlayer;
     }
 
-    public void setFirstPlayer(User player) {
+    private void setFirstPlayer(User player) {
         firstPlayer = player;
     }
 
@@ -78,7 +82,7 @@ public class Team {
         return secondPlayer;
     }
 
-    public void setSecondPlayer(User player) {
+    private void setSecondPlayer(User player) {
         secondPlayer = player;
     }
 
