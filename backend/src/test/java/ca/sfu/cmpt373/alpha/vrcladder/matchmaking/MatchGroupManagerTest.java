@@ -1,6 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
 import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
+import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
@@ -74,12 +75,15 @@ public class MatchGroupManagerTest extends BaseTest {
         MatchGroup originalMatchGroup = matchGroupManager.deleteMatchGroup(matchGroupFixture.getId());
 
         Session session = sessionManager.getSession();
-        MatchGroup matchGroup = session.get(MatchGroup.class, originalMatchGroup.getId());
+        MatchGroup retrievedMatchGroup = session.get(MatchGroup.class, originalMatchGroup.getId());
+        ScoreCard retrievedScoreCard = session.get(ScoreCard.class, originalMatchGroup.getScoreCard().getId());
         session.close();
 
         Assert.assertNotNull(originalMatchGroup);
+        Assert.assertNotNull(originalMatchGroup.getScoreCard());
         // Ensure that the match group is deleted.
-        Assert.assertNull(matchGroup);
+        Assert.assertNull(retrievedMatchGroup);
+        Assert.assertNull(retrievedScoreCard);
 
         // Ensure that the individual teams are not deleted.
         Assert.assertNotNull(originalMatchGroup.getTeam1());

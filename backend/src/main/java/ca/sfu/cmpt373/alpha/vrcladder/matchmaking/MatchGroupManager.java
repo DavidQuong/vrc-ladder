@@ -94,4 +94,15 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
         return deleteById(matchGroupId);
     }
 
+    public MatchGroup updateScoreCard(MatchGroup matchGroup) {
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+
+        session.update(matchGroup.getScoreCard());
+        transaction.commit();
+        session.close();
+
+        return matchGroup;
+    }
+
 }

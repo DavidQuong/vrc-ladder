@@ -15,16 +15,20 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScoreCardManagerTest extends BaseTest {
-    private ScoreCardManager scoreCardManager;
+/**
+ * A class to test the database integration of @class {@link ScoreCard}
+ * Normally, there would be a DatabaseManager class associated with data in the database,
+ * but since ScoreCards should only ever be created when a MatchGroup is created,
+ * ScoreCards are created through the MatchGroupManager
+ */
+public class ScoreCardDatabaseTest extends BaseTest {
+    private MatchGroupManager matchGroupManager;
     private MatchGroup threeTeamMatchGroupFixture;
-    private ScoreCard threeTeamScoreCardFixture;
     private MatchGroup fourTeamMatchGroupFixture;
-    private ScoreCard fourTeamScoreCardFixture;
 
     @Before
     public void setUp() {
-        scoreCardManager = new ScoreCardManager(sessionManager);
+        matchGroupManager = new MatchGroupManager(sessionManager);
 
         threeTeamMatchGroupFixture = MockMatchGroupGenerator.generateThreeTeamMatchGroup();
 
@@ -37,8 +41,7 @@ public class ScoreCardManagerTest extends BaseTest {
             session.save(team);
         }
         session.save(threeTeamMatchGroupFixture);
-        threeTeamScoreCardFixture = threeTeamMatchGroupFixture.getScoreCard();
-        session.save(threeTeamScoreCardFixture);
+        session.save(threeTeamMatchGroupFixture.getScoreCard());
 
         fourTeamMatchGroupFixture = MockMatchGroupGenerator.generateFourTeamMatchGroup();
 
@@ -49,8 +52,7 @@ public class ScoreCardManagerTest extends BaseTest {
             session.save(team);
         }
         session.save(fourTeamMatchGroupFixture);
-        fourTeamScoreCardFixture = fourTeamMatchGroupFixture.getScoreCard();
-        session.save(fourTeamScoreCardFixture);
+        session.save(fourTeamMatchGroupFixture.getScoreCard());
 
         transaction.commit();
         session.close();
@@ -98,8 +100,9 @@ public class ScoreCardManagerTest extends BaseTest {
         for (int i = thirdTeamIndex; i >= 0; i--) {
             rankedTeams.add(threeTeamMatchGroupFixture.getTeams().get(i));
         }
-        threeTeamScoreCardFixture.setRankedTeams(rankedTeams);
-        testUpdate(threeTeamScoreCardFixture);
+        ScoreCard scoreCard = threeTeamMatchGroupFixture.getScoreCard();
+        scoreCard.setRankedTeams(rankedTeams);
+        testUpdate(threeTeamMatchGroupFixture);
     }
 
     @Test public void testUpdateFourTeams() {
@@ -108,50 +111,52 @@ public class ScoreCardManagerTest extends BaseTest {
         for (int i = fourthTeamIndex; i >= 0; i--) {
             rankedTeams.add(fourTeamMatchGroupFixture.getTeams().get(i));
         }
-        fourTeamScoreCardFixture.setRankedTeams(rankedTeams);
-        testUpdate(fourTeamScoreCardFixture);
+        ScoreCard scoreCard = fourTeamMatchGroupFixture.getScoreCard();
+        scoreCard.setRankedTeams(rankedTeams);
+        testUpdate(fourTeamMatchGroupFixture);
     }
 
-    private void testUpdate(ScoreCard scoreCard) {
-        scoreCardManager.update(scoreCard);
+    private void testUpdate(MatchGroup matchGroup) {
+        matchGroupManager.updateScoreCard(matchGroup);
+
         Session session = sessionManager.getSession();
-        ScoreCard retrievedScoreCard = session.get(ScoreCard.class, scoreCard.getId());
+        ScoreCard retrievedScoreCard = session.get(ScoreCard.class, matchGroup.getScoreCard().getId());
         session.close();
 
-        Assert.assertEquals(scoreCard.getRankedTeams(), retrievedScoreCard.getRankedTeams());
+        Assert.assertEquals(matchGroup.getScoreCard().getRankedTeams(), retrievedScoreCard.getRankedTeams());
     }
 
     @Test
     public void testDeleteThreeTeams() {
-        testDelete(threeTeamScoreCardFixture);
+        testDelete(threeTeamMatchGroupFixture);
     }
 
     @Test
     public void testDeleteThreeTeamsById() {
-        testDeleteById(threeTeamScoreCardFixture);
+        testDeleteById(threeTeamMatchGroupFixture);
     }
 
     @Test
     public void testDeleteFourTeams() {
-        testDelete(fourTeamScoreCardFixture);
+        testDelete(fourTeamMatchGroupFixture);
     }
 
     @Test
     public void testDeleteFourTeamsById() {
-        testDeleteById(fourTeamScoreCardFixture);
+        testDeleteById(fourTeamMatchGroupFixture);
     }
 
-    private void testDelete(ScoreCard scoreCard) {
-        ScoreCard deletedScoreCard = scoreCardManager.delete(scoreCard);
-        Assert.assertNotNull(deletedScoreCard);
-
+    private void testDelete(MatchGroup matchGroup) {
+        ScoreCard scoreCard = matchGroup.getScoreCard();
+        matchGroupManager.delete(matchGroup);
+        Assert.assertNotNull(scoreCard);
         assertDeleted(scoreCard);
     }
 
-    private void testDeleteById(ScoreCard scoreCard) {
-        ScoreCard deletedScoreCard = scoreCardManager.deleteById(scoreCard.getId());
-        Assert.assertNotNull(deletedScoreCard);
-
+    private void testDeleteById(MatchGroup matchGroup) {
+        ScoreCard scoreCard = matchGroup.getScoreCard();
+        matchGroupManager.deleteById(matchGroup.getId());
+        Assert.assertNotNull(scoreCard);
         assertDeleted(scoreCard);
     }
 
@@ -165,16 +170,16 @@ public class ScoreCardManagerTest extends BaseTest {
 
     @Test
     public void testGetThreeTeams() {
-        testGet(threeTeamScoreCardFixture);
+        testGet(threeTeamMatchGroupFixture);
     }
 
     @Test
     public void testGetFourTeams() {
-        testGet(fourTeamScoreCardFixture);
+        testGet(fourTeamMatchGroupFixture);
     }
 
-    private void testGet(ScoreCard scoreCard) {
-        ScoreCard retrievedScoreCard = scoreCardManager.getById(scoreCard.getId());
-        Assert.assertEquals(retrievedScoreCard, scoreCard);
+    private void testGet(MatchGroup matchGroup) {
+        ScoreCard retrievedScoreCard = matchGroupManager.getById(matchGroup.getId()).getScoreCard();
+        Assert.assertEquals(retrievedScoreCard, matchGroup.getScoreCard());
     }
 }
