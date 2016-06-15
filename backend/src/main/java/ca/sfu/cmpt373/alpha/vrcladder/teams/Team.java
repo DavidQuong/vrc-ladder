@@ -24,19 +24,26 @@ public class Team {
     private AttendanceCard attendanceCard;
     private User firstPlayer;
     private User secondPlayer;
+    private LadderPosition ladderPosition;
 
-    public Team() {
-        this.id = new IdType();
-        this.attendanceCard = new AttendanceCard();
-        this.firstPlayer = null;
-        this.secondPlayer = null;
+    private Team() {
+        // Required by Hibernate.
     }
 
-    public Team(User firstPlayer, User secondPlayer) {
+    public Team(User firstPlayer, User secondPlayer, LadderPosition ladderPosition) {
         this.id = new IdType();
         this.attendanceCard = new AttendanceCard();
         this.firstPlayer = firstPlayer;
         this.secondPlayer = secondPlayer;
+        this.ladderPosition = ladderPosition;
+    }
+
+    public Team(User firstPlayer, User secondPlayer, int position) {
+        this.id = new IdType();
+        this.attendanceCard = new AttendanceCard();
+        this.firstPlayer = firstPlayer;
+        this.secondPlayer = secondPlayer;
+        this.ladderPosition = new LadderPosition(position);
     }
 
     @Id
@@ -45,7 +52,7 @@ public class Team {
         return id.getId();
     }
 
-    public void setId(String newId) {
+    private void setId(String newId) {
         id = new IdType(newId);
     }
 
@@ -55,7 +62,7 @@ public class Team {
         return attendanceCard;
     }
 
-    public void setAttendanceCard(AttendanceCard newAttendanceCard) {
+    private void setAttendanceCard(AttendanceCard newAttendanceCard) {
         attendanceCard = newAttendanceCard;
     }
 
@@ -65,7 +72,7 @@ public class Team {
         return firstPlayer;
     }
 
-    public void setFirstPlayer(User player) {
+    private void setFirstPlayer(User player) {
         firstPlayer = player;
     }
 
@@ -75,8 +82,17 @@ public class Team {
         return secondPlayer;
     }
 
-    public void setSecondPlayer(User player) {
+    private void setSecondPlayer(User player) {
         secondPlayer = player;
+    }
+
+    @Column(name = PersistenceConstants.COLUMN_LADDER_POSITION, nullable = false, unique = true)
+    public Integer getLadderPosition() {
+        return ladderPosition.getPosition();
+    }
+
+    public void setLadderPosition(Integer position) {
+        ladderPosition = new LadderPosition(position);
     }
 
     @Override

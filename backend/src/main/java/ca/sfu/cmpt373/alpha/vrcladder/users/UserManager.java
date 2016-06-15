@@ -106,9 +106,9 @@ public class UserManager extends DatabaseManager<User> {
     private List<Team> getTeamsOfPlayer(String playerId) {
         Session session = sessionManager.getSession();
 
-        Criterion firstPlayerCriterion = Restrictions.eq(CriterionConstants.FIRST_PLAYER_USER_ID_PROPERTY,
+        Criterion firstPlayerCriterion = Restrictions.eq(CriterionConstants.TEAM_FIRST_PLAYER_USER_ID_PROPERTY,
             playerId);
-        Criterion secondPlayerCriterion = Restrictions.eq(CriterionConstants.SECOND_PLAYER_USER_ID_PROPERTY,
+        Criterion secondPlayerCriterion = Restrictions.eq(CriterionConstants.TEAM_SECOND_PLAYER_USER_ID_PROPERTY,
             playerId);
         Criteria teamCriteria = session.createCriteria(Team.class)
             .add(Restrictions.or(firstPlayerCriterion, secondPlayerCriterion));

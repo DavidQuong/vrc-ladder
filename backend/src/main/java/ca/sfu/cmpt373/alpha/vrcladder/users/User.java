@@ -32,7 +32,17 @@ public class User {
     private PhoneNumber phoneNumber;
 
     public User() {
-        // Required by Hibernate
+        // Required by Hibernate.
+    }
+
+    public User(UserId userId, UserRole userRole, String firstName, String middleName, String lastName, EmailAddress emailAddress, PhoneNumber phoneNumber) {
+        this.userId = userId;
+        this.userRole = userRole;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.emailAddress = emailAddress;
+        this.phoneNumber = phoneNumber;
     }
 
     @Id
@@ -41,7 +51,7 @@ public class User {
         return userId.getUserId();
     }
 
-    public void setUserId(String newUserId) {
+    private void setUserId(String newUserId) {
         userId = new UserId(newUserId);
     }
 

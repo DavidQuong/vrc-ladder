@@ -6,6 +6,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
+import ca.sfu.cmpt373.alpha.vrcladder.util.MockUserGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -16,31 +17,17 @@ import org.junit.Test;
 
 public class SessionManagerTest {
 
-    private static final UserId MOCK_USER_ID = new UserId("86432");
-    private static final UserRole MOCK_USER_ROLE = UserRole.PLAYER;
-    private static final String MOCK_FIRST_NAME = "Scott";
-    private static final String MOCK_LAST_NAME = "Johnson";
-    private static final PhoneNumber MOCK_PHONE_NUMBER = new PhoneNumber("(604) 111-2222");
-    private static final EmailAddress MOCK_EMAIL_ADDRESS = new EmailAddress("scottj@vrc.ca");
-
     private SessionManager sessionManager;
+
+    // The User class was arbitrarily chosen to test data persistence.
+    private User userFixture;
 
     @Before
     public void setUp() {
         sessionManager = new SessionManager();
 
-        Session session = sessionManager.getSession();
-        createOrUpdateUser(
-            session,
-            MOCK_USER_ID.toString(),
-            MOCK_USER_ROLE,
-            MOCK_FIRST_NAME,
-            StringUtils.EMPTY,
-            MOCK_LAST_NAME,
-            MOCK_PHONE_NUMBER.toString(),
-            MOCK_EMAIL_ADDRESS.toString()
-        );
-        session.close();
+        userFixture = MockUserGenerator.generatePlayer();
+        saveOrUpdateUser(userFixture);
     }
 
     @After
@@ -51,56 +38,53 @@ public class SessionManagerTest {
     @Test
     public void testGetEntity() {
         Session session = sessionManager.getSession();
-        User user = session.get(User.class, MOCK_USER_ID.toString());
+        User user = session.get(User.class, userFixture.getUserId());
         session.close();
 
         Assert.assertNotNull(user);
-        Assert.assertEquals(MOCK_USER_ID.getUserId(), user.getUserId());
-        Assert.assertEquals(MOCK_USER_ROLE, user.getUserRole());
-        Assert.assertEquals(MOCK_FIRST_NAME, user.getFirstName());
-        Assert.assertEquals(MOCK_LAST_NAME, user.getLastName());
-        Assert.assertEquals(MOCK_PHONE_NUMBER.getPhoneNumber(), user.getPhoneNumber());
-        Assert.assertEquals(MOCK_EMAIL_ADDRESS.getEmailAddress(), user.getEmailAddress());
+        Assert.assertEquals(userFixture.getUserRole(), user.getUserRole());
+        Assert.assertEquals(userFixture.getFirstName(), user.getFirstName());
+        Assert.assertEquals(userFixture.getMiddleName(), user.getMiddleName());
+        Assert.assertEquals(userFixture.getLastName(), user.getLastName());
+        Assert.assertEquals(userFixture.getEmailAddress(), user.getEmailAddress());
+        Assert.assertEquals(userFixture.getPhoneNumber(), user.getPhoneNumber());
     }
 
     @Test
     public void testCreateEntity() {
-        final UserId userId = new UserId("456789");
-        final UserRole userRole = UserRole.PLAYER;
+        User newUser = MockUserGenerator.generatePlayer();
+        saveOrUpdateUser(newUser);
+
+        final UserRole userRole = UserRole.MODERATOR;
         final String firstName = "Bob";
+        final String middleName = "David";
         final String lastName = "Doe";
         final PhoneNumber phoneNumber = new PhoneNumber("(604) 456-7890");
         final EmailAddress emailAddress = new EmailAddress("bobdoe@vrc.ca");
 
-        Session session = sessionManager.getSession();
-        createOrUpdateUser(
-            session,
-            userId.toString(),
-            userRole,
-            firstName,
-            StringUtils.EMPTY,
-            lastName,
-            phoneNumber.toString(),
-            emailAddress.toString()
-        );
+        newUser.setUserRole(UserRole.MODERATOR);
+        newUser.setFirstName(firstName);
+        newUser.setMiddleName(middleName);
+        newUser.setLastName(lastName);
+        newUser.setEmailAddress(emailAddress.getEmailAddress());
+        newUser.setPhoneNumber(phoneNumber.getPhoneNumber());
 
-        User user = session.get(User.class, userId.toString());
+        Session session = sessionManager.getSession();
+        User user = session.get(User.class, newUser.getUserId());
         session.close();
 
         Assert.assertNotNull(user);
+        Assert.assertEquals(userRole, newUser.getUserRole());
+        Assert.assertEquals(firstName, newUser.getFirstName());
+        Assert.assertEquals(middleName, newUser.getMiddleName());
+        Assert.assertEquals(lastName, newUser.getLastName());
+        Assert.assertEquals(emailAddress.getEmailAddress(), newUser.getEmailAddress());
+        Assert.assertEquals(phoneNumber.getPhoneNumber(), newUser.getPhoneNumber());
     }
 
-    private User createOrUpdateUser(Session session, String userId, UserRole userRole, String firstName, String middleName,
-                                    String lastName, String phoneNumber, String emailAddress) {
+    private User saveOrUpdateUser(User user) {
+        Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
-        User user = new User();
-        user.setUserId(userId);
-        user.setUserRole(userRole);
-        user.setFirstName(firstName);
-        user.setMiddleName(middleName);
-        user.setLastName(lastName);
-        user.setPhoneNumber(phoneNumber);
-        user.setEmailAddress(emailAddress);
         session.saveOrUpdate(user);
         transaction.commit();
 

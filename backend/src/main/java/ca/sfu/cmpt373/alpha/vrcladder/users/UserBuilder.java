@@ -115,16 +115,7 @@ public class UserBuilder {
             throw new IllegalStateException(BuilderErrorConstants.ERROR_MSG_NULL_USER_PHONE_NUMBER);
         }
 
-        User newUser = new User();
-        newUser.setUserId(userId.getUserId());
-        newUser.setUserRole(userRole);
-        newUser.setFirstName(firstName);
-        newUser.setMiddleName(middleName);
-        newUser.setLastName(lastName);
-        newUser.setEmailAddress(emailAddress.getEmailAddress());
-        newUser.setPhoneNumber(phoneNumber.getPhoneNumber());
-
-        return newUser;
+        return new User(userId, userRole, firstName, middleName, lastName, emailAddress, phoneNumber);
     }
 
 }
