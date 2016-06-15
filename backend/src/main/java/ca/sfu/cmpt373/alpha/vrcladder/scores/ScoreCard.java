@@ -13,38 +13,43 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class ScoreCard {
+public class ScoreCard {
     private static final String ERROR_TEAM_NOT_IN_GROUP = "Team is not in match group";
-    static final String ERROR_TEAM_NOT_IN_ROUND = "team is not in round";
-    static final String ERROR_MATCHGROUP_SIZE = "matchgroup must be of size 4";
-    static final String ERROR_ROUNDS_OVER = "All round winners have been recorded";
-    static final String ERROR_ROUNDS_NOT_OVER = "Not all rounds have been played yet";
-    static final String ERROR_INVALID_DEFAULT_CASE = "The default case should never occur";
+    private static final String ERROR_ILLEGAL_SIZE = "Ranked teams list must be the same size as MatchGroup teams";
 
     @Id
     @Column(name = PersistenceConstants.COLUMN_ID)
     private String id;
 
     @OneToOne
-    MatchGroup matchGroup;
+    private MatchGroup matchGroup;
 
     @javax.persistence.ManyToMany
     @OrderColumn
-    List<Team> roundWinners = new ArrayList<>();
+    private List<Team> rankedTeams = new ArrayList<>();
 
-    Integer currentRound = 1;
-
-    ScoreCard(MatchGroup matchGroup) {
+    public ScoreCard(MatchGroup matchGroup) {
         id = new IdType().getId();
         this.matchGroup = matchGroup;
     }
 
-    ScoreCard() {
+    private ScoreCard() {
         //for hibernate
+    }
+
+    public void setRankedTeams(List<Team> rankedTeams) {
+        for (Team team : rankedTeams) {
+            checkTeamInMatchGroup(team);
+        }
+        if (rankedTeams.size() > matchGroup.getTeamCount()
+                || rankedTeams.size() < matchGroup.getTeamCount()) {
+            throw new IllegalStateException(ERROR_ILLEGAL_SIZE);
+        }
+        this.rankedTeams = rankedTeams;
     }
 
     private void checkTeamInMatchGroup(Team team) {
@@ -59,25 +64,15 @@ public abstract class ScoreCard {
         }
     }
 
-    public WinLossPair getTeamWinsAndLosses(Team team) {
-        if (currentRound <= getLastRound()) {
-            throw new IllegalStateException(ERROR_ROUNDS_NOT_OVER);
-        }
-        checkTeamInMatchGroup(team);
-        int wins = 0;
-        int losses = 0;
-        for (Team winner : roundWinners) {
-            if (winner.equals(team)) {
-                wins++;
-            }
-        }
-        int gamesPlayedPerTeam = 2;
-        losses = gamesPlayedPerTeam - wins;
-        return new WinLossPair(wins, losses);
+    /**
+     * @return a list of teams in the order they came in in their matches
+     */
+    public List<Team> getRankedTeams() {
+        return this.rankedTeams;
     }
 
-    public int getCurrentRound() {
-        return currentRound;
+    public MatchGroup getMatchGroup() {
+        return this.matchGroup;
     }
 
     public String getId() {
@@ -102,8 +97,4 @@ public abstract class ScoreCard {
     public int hashCode() {
         return id.hashCode();
     }
-
-    public abstract void recordRoundWinner(Team team);
-    public abstract List<Team> getRankedResults();
-    public abstract int getLastRound();
 }

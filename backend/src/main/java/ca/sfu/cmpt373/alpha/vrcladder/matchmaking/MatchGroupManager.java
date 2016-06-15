@@ -2,8 +2,12 @@ package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.DatabaseManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
+import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 
 import javax.persistence.PersistenceException;
 import java.util.List;
@@ -33,6 +37,38 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
         MatchGroup matchGroup = new MatchGroup(team1, team2, team3, team4);
 
         return create(matchGroup);
+    }
+
+    @Override
+    public MatchGroup delete(MatchGroup matchGroup) {
+        return deleteById(matchGroup.getId());
+    }
+
+    @Override
+    public MatchGroup deleteById(String id) {
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+
+        MatchGroup matchGroup = session.get(MatchGroup.class, id);
+        session.delete(matchGroup);
+        session.delete(matchGroup.getScoreCard());
+        transaction.commit();
+        session.close();
+
+        return matchGroup;
+    }
+
+    @Override
+    protected MatchGroup create(MatchGroup matchGroup) throws ConstraintViolationException {
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+
+        session.save(matchGroup);
+        session.save(matchGroup.getScoreCard());
+        transaction.commit();
+        session.close();
+
+        return matchGroup;
     }
 
     /**

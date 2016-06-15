@@ -31,6 +31,7 @@ public class MatchGroupManagerTest extends BaseTest {
             session.save(team);
         }
         session.save(matchGroupFixture);
+        session.save(matchGroupFixture.getScoreCard());
         transaction.commit();
         session.close();
     }

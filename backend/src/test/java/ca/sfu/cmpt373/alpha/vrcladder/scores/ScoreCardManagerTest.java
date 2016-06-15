@@ -2,14 +2,17 @@ package ca.sfu.cmpt373.alpha.vrcladder.scores;
 
 import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
+import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ScoreCardManagerTest extends BaseTest {
@@ -24,7 +27,6 @@ public class ScoreCardManagerTest extends BaseTest {
         scoreCardManager = new ScoreCardManager(sessionManager);
 
         threeTeamMatchGroupFixture = MockMatchGroupGenerator.generateThreeTeamMatchGroup();
-        threeTeamScoreCardFixture = new ThreeTeamScoreCard(threeTeamMatchGroupFixture);
 
         Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
@@ -35,10 +37,10 @@ public class ScoreCardManagerTest extends BaseTest {
             session.save(team);
         }
         session.save(threeTeamMatchGroupFixture);
+        threeTeamScoreCardFixture = threeTeamMatchGroupFixture.getScoreCard();
         session.save(threeTeamScoreCardFixture);
 
         fourTeamMatchGroupFixture = MockMatchGroupGenerator.generateFourTeamMatchGroup();
-        fourTeamScoreCardFixture = new FourTeamScoreCard(fourTeamMatchGroupFixture);
 
         List<Team> mockFourMatchGroupTeams = fourTeamMatchGroupFixture.getTeams();
         for (Team team : mockFourMatchGroupTeams) {
@@ -47,6 +49,7 @@ public class ScoreCardManagerTest extends BaseTest {
             session.save(team);
         }
         session.save(fourTeamMatchGroupFixture);
+        fourTeamScoreCardFixture = fourTeamMatchGroupFixture.getScoreCard();
         session.save(fourTeamScoreCardFixture);
 
         transaction.commit();
@@ -55,18 +58,33 @@ public class ScoreCardManagerTest extends BaseTest {
 
     @Test
     public void testCreateThreeTeams() {
-        ScoreCard newScoreCard = scoreCardManager.create(threeTeamMatchGroupFixture);
-        testCreate(newScoreCard);
+        int numTeams = 3;
+        testCreate(numTeams);
     }
 
     @Test
     public void testCreateFourTeams() {
-        ScoreCard newScoreCard = scoreCardManager.create(fourTeamMatchGroupFixture);
-        testCreate(newScoreCard);
+        int numTeams = 4;
+        testCreate(numTeams);
     }
 
-    private void testCreate(ScoreCard newScoreCard) {
+    private void testCreate(int numTeams) {
+        List<Team> teams = new ArrayList<>();
         Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+        for (int i = 0; i < numTeams; i++) {
+            Team team = MockTeamGenerator.generateTeam();
+            session.save(team.getFirstPlayer());
+            session.save(team.getSecondPlayer());
+            session.save(team);
+            teams.add(team);
+        }
+        transaction.commit();
+        session.close();
+
+        MatchGroupManager matchGroupManager = new MatchGroupManager(sessionManager);
+        ScoreCard newScoreCard = matchGroupManager.createMatchGroup(teams).getScoreCard();
+        session = sessionManager.getSession();
         ScoreCard retrievedScoreCard = session.get(ScoreCard.class, newScoreCard.getId());
         session.close();
 
@@ -75,17 +93,22 @@ public class ScoreCardManagerTest extends BaseTest {
 
     @Test
     public void testUpdateThreeTeams() {
-        threeTeamScoreCardFixture.recordRoundWinner(threeTeamMatchGroupFixture.getTeam1());
-        threeTeamScoreCardFixture.recordRoundWinner(threeTeamMatchGroupFixture.getTeam1());
-        threeTeamScoreCardFixture.recordRoundWinner(threeTeamMatchGroupFixture.getTeam3());
+        List<Team> rankedTeams = new ArrayList<>();
+        int thirdTeamIndex = 2;
+        for (int i = thirdTeamIndex; i >= 0; i--) {
+            rankedTeams.add(threeTeamMatchGroupFixture.getTeams().get(i));
+        }
+        threeTeamScoreCardFixture.setRankedTeams(rankedTeams);
         testUpdate(threeTeamScoreCardFixture);
     }
 
     @Test public void testUpdateFourTeams() {
-        fourTeamScoreCardFixture.recordRoundWinner(fourTeamMatchGroupFixture.getTeam1());
-        fourTeamScoreCardFixture.recordRoundWinner(fourTeamMatchGroupFixture.getTeam2());
-        fourTeamScoreCardFixture.recordRoundWinner(fourTeamMatchGroupFixture.getTeam1());
-        fourTeamScoreCardFixture.recordRoundWinner(fourTeamMatchGroupFixture.getTeam3());
+        List<Team> rankedTeams = new ArrayList<>();
+        int fourthTeamIndex = 3;
+        for (int i = fourthTeamIndex; i >= 0; i--) {
+            rankedTeams.add(fourTeamMatchGroupFixture.getTeams().get(i));
+        }
+        fourTeamScoreCardFixture.setRankedTeams(rankedTeams);
         testUpdate(fourTeamScoreCardFixture);
     }
 
@@ -95,7 +118,7 @@ public class ScoreCardManagerTest extends BaseTest {
         ScoreCard retrievedScoreCard = session.get(ScoreCard.class, scoreCard.getId());
         session.close();
 
-        Assert.assertEquals(scoreCard.getRankedResults(), retrievedScoreCard.getRankedResults());
+        Assert.assertEquals(scoreCard.getRankedTeams(), retrievedScoreCard.getRankedTeams());
     }
 
     @Test
@@ -104,14 +127,35 @@ public class ScoreCardManagerTest extends BaseTest {
     }
 
     @Test
+    public void testDeleteThreeTeamsById() {
+        testDeleteById(threeTeamScoreCardFixture);
+    }
+
+    @Test
     public void testDeleteFourTeams() {
         testDelete(fourTeamScoreCardFixture);
     }
 
+    @Test
+    public void testDeleteFourTeamsById() {
+        testDeleteById(fourTeamScoreCardFixture);
+    }
+
     private void testDelete(ScoreCard scoreCard) {
+        ScoreCard deletedScoreCard = scoreCardManager.delete(scoreCard);
+        Assert.assertNotNull(deletedScoreCard);
+
+        assertDeleted(scoreCard);
+    }
+
+    private void testDeleteById(ScoreCard scoreCard) {
         ScoreCard deletedScoreCard = scoreCardManager.deleteById(scoreCard.getId());
         Assert.assertNotNull(deletedScoreCard);
 
+        assertDeleted(scoreCard);
+    }
+
+    private void assertDeleted(ScoreCard scoreCard) {
         Session session = sessionManager.getSession();
         ScoreCard retrievedScoreCard = session.get(ScoreCard.class, scoreCard.getId());
         session.close();

@@ -1,6 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
+import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
@@ -10,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -37,20 +39,21 @@ public class MatchGroup {
 
     private IdType id;
     private List<Team> teams;
+    private ScoreCard scoreCard;
 
-    public MatchGroup () {
-        setId(new IdType());
+    private MatchGroup () {
         setTeams(new ArrayList<>());
+        init();
     }
 
     public MatchGroup(Team team1, Team team2, Team team3) {
         this.teams = Arrays.asList(team1, team2, team3);
-        setId(new IdType());
+        init();
     }
 
     public MatchGroup(Team team1, Team team2, Team team3, Team team4) {
         this.teams = Arrays.asList(team1, team2, team3, team4);
-        setId(new IdType());
+        init();
     }
 
     /**
@@ -61,7 +64,12 @@ public class MatchGroup {
             throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
         }
         this.teams = new ArrayList<>(teams);
+        init();
+    }
+
+    private void init() {
         setId(new IdType());
+        scoreCard = new ScoreCard(this);
     }
 
     @Id
@@ -74,7 +82,6 @@ public class MatchGroup {
         this.id = new IdType(newId);
     }
 
-    //TODO: research how to avoid requiring private setters
     private void setId(IdType id) {
         this.id = id;
     }
@@ -87,6 +94,15 @@ public class MatchGroup {
 
     private void setTeams(List<Team> teams) {
         this.teams = teams;
+    }
+
+    @OneToOne
+    public ScoreCard getScoreCard() {
+        return this.scoreCard;
+    }
+
+    private void setScoreCard(ScoreCard scoreCard) {
+        this.scoreCard = scoreCard;
     }
 
     /**
