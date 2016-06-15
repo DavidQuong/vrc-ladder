@@ -6,6 +6,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
+import javax.naming.SizeLimitExceededException;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -131,7 +132,10 @@ public class MatchGroup {
 
         return votedPlayTime;
     }
-
+    @Transient
+    public void recordTeamScore(Team team, int round, boolean score) throws SizeLimitExceededException {
+        scoreSheet.recordTeamScore(team, round, score);
+    }
     @Transient
     public Team getTeam1(){
         return teams.get(0);
