@@ -2,7 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.teams;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 
-public class LadderPosition {
+public class LadderPosition implements Comparable<LadderPosition> {
 
     private static final String INVALID_POSITION_FORMAT = "Invalid valid rank position: %s.";
 
@@ -39,6 +39,11 @@ public class LadderPosition {
     @Override
     public int hashCode() {
         return position.hashCode();
+    }
+
+    @Override
+    public int compareTo(LadderPosition ladderPosition) {
+        return position.compareTo(ladderPosition.position);
     }
 
 }
