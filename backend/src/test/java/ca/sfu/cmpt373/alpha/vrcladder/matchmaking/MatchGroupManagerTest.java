@@ -4,8 +4,10 @@ import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
+import ca.sfu.cmpt373.alpha.vrcladder.util.MockUserGenerator;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +15,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
+// TODO - Refactor to use Mock<Class>Generator classes
 public class MatchGroupManagerTest extends BaseTest {
 
     private MatchGroupManager matchGroupManager;
@@ -33,6 +36,12 @@ public class MatchGroupManagerTest extends BaseTest {
         session.save(matchGroupFixture);
         transaction.commit();
         session.close();
+    }
+
+    @After
+    public void tearDown() {
+        MockUserGenerator.resetUserCount();
+        MockTeamGenerator.resetTeamCount();
     }
 
     @Test

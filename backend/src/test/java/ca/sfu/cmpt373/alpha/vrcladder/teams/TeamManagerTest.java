@@ -5,6 +5,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.exceptions.DuplicateTeamMemberException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MultiplePlayTimeException;
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
@@ -12,9 +13,12 @@ import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockUserGenerator;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
 
 // TODO: Add more tests, testing the following:
 //       - Attempting to create a Team with a non-player role
@@ -38,13 +42,19 @@ public class TeamManagerTest extends BaseTest {
         session.close();
     }
 
+    @After
+    public void tearDown() {
+        MockUserGenerator.resetUserCount();
+        MockTeamGenerator.resetTeamCount();
+    }
+
     @Test
     public void testCreateTeamByUser() {
-        Session session = sessionManager.getSession();
         User firstPlayer = MockUserGenerator.generatePlayer();
         User secondPlayer = MockUserGenerator.generatePlayer();
 
         // Save generated players
+        Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
         session.save(firstPlayer);
         session.save(secondPlayer);
@@ -60,11 +70,11 @@ public class TeamManagerTest extends BaseTest {
 
     @Test
     public void testCreateTeamByUserId() {
-        Session session = sessionManager.getSession();
         User firstPlayer = MockUserGenerator.generatePlayer();
         User secondPlayer = MockUserGenerator.generatePlayer();
 
         // Save generated players
+        Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
         session.save(firstPlayer);
         session.save(secondPlayer);
@@ -76,6 +86,32 @@ public class TeamManagerTest extends BaseTest {
         session.close();
         Assert.assertNotNull(team);
         Assert.assertNotNull(team.getAttendanceCard());
+    }
+
+    @Test
+    public void testMultipleCreateTeams() {
+        Session session = sessionManager.getSession();
+        final int teamsCreated = 4;
+        for (int i = 0; i < teamsCreated; i++) {
+            Transaction transaction = session.beginTransaction();
+            User firstPlayer = MockUserGenerator.generatePlayer();
+            User secondPlayer = MockUserGenerator.generatePlayer();
+            session.save(firstPlayer);
+            session.save(secondPlayer);
+            transaction.commit();
+
+            teamManager.create(firstPlayer, secondPlayer);
+        }
+
+        List<Team> teams = teamManager.getAll();
+        // Account for team created in setUp().
+        Assert.assertEquals(teamsCreated + 1, teams.size());
+
+        Integer position = 1;
+        for (Team team : teams) {
+            Assert.assertEquals(position, team.getLadderPosition());
+            position++;
+        }
     }
 
     @Test
@@ -121,7 +157,8 @@ public class TeamManagerTest extends BaseTest {
     public void testUpdateTeamAttendanceWithAlreadyAttendingPlayer() {
         User commonPlayer = teamFixture.getFirstPlayer();
         User newMockPlayer = MockUserGenerator.generatePlayer();
-        Team newTeam = new Team(commonPlayer, newMockPlayer);
+        LadderPosition ladderPosition = MockTeamGenerator.generateLadderPosition();
+        Team newTeam = new Team(commonPlayer, newMockPlayer, ladderPosition);
 
         Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();

@@ -25,7 +25,7 @@ public abstract class DatabaseManager<T> {
         this.sessionManager = sessionManager;
     }
 
-    protected T create(T obj) throws ConstraintViolationException {
+    protected T create(T obj) {
         Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
 
@@ -87,7 +87,11 @@ public abstract class DatabaseManager<T> {
     }
 
     public List<T> getAll() {
-        return sessionManager.getSession().createCriteria(STORED_CLASS_TYPE).list();
+        Session session = sessionManager.getSession();
+        List<T> entityList = session.createCriteria(STORED_CLASS_TYPE).list();
+        session.close();
+
+        return entityList;
     }
 
 }

@@ -14,6 +14,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -28,6 +29,7 @@ import java.util.List;
 public class TeamManager extends DatabaseManager<Team> {
 
     private static final Class TEAM_CLASS_TYPE = Team.class;
+    private static final Integer FIRST_POSITION = 1;
 
     public TeamManager(SessionManager sessionManager) {
         super(TEAM_CLASS_TYPE, sessionManager);
@@ -42,7 +44,8 @@ public class TeamManager extends DatabaseManager<Team> {
             throw new DuplicateTeamMemberException();
         }
 
-        Team newTeam = new Team(firstPlayer, secondPlayer);
+        LadderPosition newLadderPosition = generateNewLadderPosition();
+        Team newTeam = new Team(firstPlayer, secondPlayer, newLadderPosition);
 
         try {
             create(newTeam);
@@ -67,7 +70,8 @@ public class TeamManager extends DatabaseManager<Team> {
             throw new ExistingTeamException();
         }
 
-        Team newTeam = new Team(firstPlayer, secondPlayer);
+        LadderPosition newLadderPosition = generateNewLadderPosition();
+        Team newTeam = new Team(firstPlayer, secondPlayer, newLadderPosition);
 
         try {
             create(newTeam);
@@ -107,11 +111,11 @@ public class TeamManager extends DatabaseManager<Team> {
         Session session = sessionManager.getSession();
 
         Criterion playerPairCriterion = Restrictions.and(
-            Restrictions.eq(CriterionConstants.FIRST_PLAYER_USER_ID_PROPERTY, firstPlayer.getUserId()),
-            Restrictions.eq(CriterionConstants.SECOND_PLAYER_USER_ID_PROPERTY, secondPlayer.getUserId()));
+            Restrictions.eq(CriterionConstants.TEAM_FIRST_PLAYER_USER_ID_PROPERTY, firstPlayer.getUserId()),
+            Restrictions.eq(CriterionConstants.TEAM_SECOND_PLAYER_USER_ID_PROPERTY, secondPlayer.getUserId()));
         Criterion reversePlayerPairCriterion = Restrictions.and(
-            Restrictions.eq(CriterionConstants.FIRST_PLAYER_USER_ID_PROPERTY, secondPlayer.getUserId()),
-            Restrictions.eq(CriterionConstants.SECOND_PLAYER_USER_ID_PROPERTY, firstPlayer.getUserId()));
+            Restrictions.eq(CriterionConstants.TEAM_FIRST_PLAYER_USER_ID_PROPERTY, secondPlayer.getUserId()),
+            Restrictions.eq(CriterionConstants.TEAM_SECOND_PLAYER_USER_ID_PROPERTY, firstPlayer.getUserId()));
         Criteria playerPairCriteria = session.createCriteria(Team.class)
             .add(Restrictions.or(playerPairCriterion, reversePlayerPairCriterion));
 
@@ -138,9 +142,9 @@ public class TeamManager extends DatabaseManager<Team> {
     private Team findActiveTeam(User player) {
         Session session = sessionManager.getSession();
 
-        Criterion firstPlayerCriterion = Restrictions.eq(CriterionConstants.FIRST_PLAYER_USER_ID_PROPERTY,
+        Criterion firstPlayerCriterion = Restrictions.eq(CriterionConstants.TEAM_FIRST_PLAYER_USER_ID_PROPERTY,
             player.getUserId());
-        Criterion secondPlayerCriterion = Restrictions.eq(CriterionConstants.SECOND_PLAYER_USER_ID_PROPERTY,
+        Criterion secondPlayerCriterion = Restrictions.eq(CriterionConstants.TEAM_SECOND_PLAYER_USER_ID_PROPERTY,
             player.getUserId());
         Criteria playingCriteria = session.createCriteria(Team.class)
             .add(Restrictions.or(firstPlayerCriterion, secondPlayerCriterion));
@@ -157,6 +161,18 @@ public class TeamManager extends DatabaseManager<Team> {
         return null;
     }
 
+    private LadderPosition generateNewLadderPosition() {
+        Session session = sessionManager.getSession();
+        Criteria lastPositionCriteria = session.createCriteria(Team.class)
+            .setProjection(Projections.max(CriterionConstants.TEAM_LADDER_POSITION_PROPERTY));
+        Integer lastPosition = (Integer) lastPositionCriteria.uniqueResult();
 
+        if (lastPosition == null) {
+            return new LadderPosition(FIRST_POSITION);
+        } else {
+            return new LadderPosition(lastPosition + 1);
+        }
+
+    }
 
 }
