@@ -2,31 +2,23 @@ package ca.sfu.cmpt373.alpha.vrcladder.ladder;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
-
-
-
-//public enum SHIFT_DIRECTION {UP, DOWN}
-
-
 import java.util.*;
 
 
 public class Ladder {
 
-    private int teamCount;
+
     private List<Team> ladder;
-    final private int ATTENDANCE_PENALTY = 2;
-    final private int LATE_PENALTY =4;
-    final private int NO_SHOW_PENALTY =10;
+    final static private int ATTENDANCE_PENALTY = 2;
+    final static private int LATE_PENALTY =4;
+    final static private int NO_SHOW_PENALTY =10;
 
     public Ladder() {
-
         ladder = new ArrayList<>();
-        teamCount = 0;
+
     }
 
     public Ladder(List<Team> newLadder) {
-
         ladder = newLadder;
     }
 
@@ -39,26 +31,25 @@ public class Ladder {
             stringBuilder.append(ladder.get(i).toString() + "\n ");
         }
 
-        String s = stringBuilder.toString();
-        return s;
+        return stringBuilder.toString();
     }
 
 
     public Team findTeamAtPosition(int teamPosition) {
-
         return ladder.get(teamPosition);
     }
 
     public int findTeamPosition(Team team) throws NoSuchElementException {
-        for (Team t : ladder) {
-            if (t != null && team.getId().equals(t.getId())) return ladder.indexOf(team);
+        int teamPosition = ladder.indexOf(team);
+        if (teamPosition == -1) {
+            throw new NoSuchElementException();
         }
-        throw new NoSuchElementException("Team with id: " + team.getId() + " does not exist in the ladder.");
+        return teamPosition;
     }
 
 
 
-    public void pushTeam(Team team) {
+    public void addTeam(Team team) {
         ladder.add(team);
     }
 
@@ -92,7 +83,9 @@ public class Ladder {
     }
 
     public void swapTeams(int team1Position, int team2Position) {
-        if (!verifyPositions(team1Position) || !verifyPositions(team2Position)) return;
+        if (!verifyPositions(team1Position) || !verifyPositions(team2Position)) {
+            return;
+        }
 
         Team tempTeam = ladder.get(team1Position);
         ladder.remove(team1Position);
@@ -105,80 +98,85 @@ public class Ladder {
         return (position < 0 || position >= ladder.size());
     }
 
+    private int[] sortArray(int[] array){
+        for (int i=1; i < array.length; i++){
+            int index = array[i];
+            int j = i;
+            while (j > 0 && array[j-1] > index){
+                array[j] = array[j-1];
+                j--;
+            }
+            array[j] = index;
+        }
+    return array;
+    }
 
-    private void updateDatabase() {
+    //swap teams in a match based on rank
+    public void updateLadder(MatchGroup[] matchGroup){
+        arrangeMatchResults(matchGroup[0]);
 
+        for (int matchIndex =1; matchIndex<matchGroup.length; matchIndex++){
+            arrangeMatchResults(matchGroup[matchIndex]);
+        }
+        //switch highest team of match with lowest team of previous match
+        for (int matchIndex =0; matchIndex<matchGroup.length; matchIndex++) {
+            swapBetweenMatchGroup(matchGroup, matchIndex);
+        }
+
+         //TODO:  different levels of abstraction here for the penalties
+        applyAttendancePenalty();
+
+        applyNoShowPenalty();
+
+        applyLatePenalty();
 
     }
 
-    private int findLowestNumber(int[] array) {
-        int lowest = array[0];
-        for (int i=0;i<array.length;i++) {
-            if (array[i] < lowest) {
-                lowest = array[i];
-            }
-        }
-        return lowest;
-
-    }
-    private int findHighestNumber(int[] array) {
-        int highest = 0;
-        for (int i=0;i<array.length;i++) {
-            if (array[i] > highest){
-                highest = array[i];
-            }
-        }
-        return highest;
-    }
-
-    //swap teams in a match based on rank, then switch highest team of match with lowest team of previous match
-    //then, apply penalties
-    public void updateLadder(MatchGroup[] MatchGroup){
-        arrangeMatchResults(MatchGroup[0]);
-        for (int matchIndex =1; matchIndex<MatchGroup.length; matchIndex++){
-            arrangeMatchResults(MatchGroup[matchIndex]);
-        }
-        for (int matchIndex =0; matchIndex<MatchGroup.length; matchIndex++) {
-            swapBetweenMatchGroup(MatchGroup, matchIndex);
-        }
-
-        int ladderSize = this.getLadderTeamCount() - ATTENDANCE_PENALTY;
-        for (int k =0;k<ladderSize; k++){
-            if(!ladder.get(k).getAttendanceCard().willAttend()){
-                Team tempTeam = ladder.get(k);
-                ladder.remove(k);
-                ladder.add(k-ATTENDANCE_PENALTY, tempTeam);
-            }
-
-        }
-        ladderSize = this.getLadderTeamCount() - NO_SHOW_PENALTY;
-        for (int k =0;k<ladderSize; k++){
-            if(ladder.get(k).getAttendanceCard().noShow()){
-                Team tempTeam = ladder.get(k);
-                ladder.remove(k);
-                ladder.add(k-NO_SHOW_PENALTY, tempTeam);
-            }
-
-        }
-
+    private void applyLatePenalty() {
+        int ladderSize;
         ladderSize = this.getLadderTeamCount() - LATE_PENALTY;
         for (int k =0;k<ladderSize; k++){
             if(ladder.get(k).getAttendanceCard().late()){
                 Team tempTeam = ladder.get(k);
                 ladder.remove(k);
-                ladder.add(k-LATE_PENALTY, tempTeam);
+                ladder.add(k+LATE_PENALTY, tempTeam);
             }
 
         }
-
     }
 
-    private void swapBetweenMatchGroup(MatchGroup[] MatchGroup, int index) {
-        if (MatchGroup.length >= index){
+    private void applyNoShowPenalty() {
+        int ladderSize;
+        ladderSize = this.getLadderTeamCount() - NO_SHOW_PENALTY;
+        for (int k =0;k<ladderSize; k++){
+            if(ladder.get(k).getAttendanceCard().noShow()){
+                Team tempTeam = ladder.get(k);
+                ladder.remove(k);
+                ladder.add(k+NO_SHOW_PENALTY, tempTeam);
+            }
+
+        }
+    }
+
+    private void applyAttendancePenalty() {
+        int ladderSize = this.getLadderTeamCount() - ATTENDANCE_PENALTY;
+        for (int k =0;k<ladderSize; k++){
+            if(!ladder.get(k).getAttendanceCard().isAttending()){
+                Team tempTeam = ladder.get(k);
+                ladder.remove(k);
+                ladder.add(k+ATTENDANCE_PENALTY, tempTeam);
+            }
+
+        }
+    }
+
+    private void swapBetweenMatchGroup(MatchGroup[] matchGroups, int index) {
+        if (matchGroups.length >= index||index==0){
             return;
         }
-        List<Team> teamOrder1 = MatchGroup[index].getPlacement();
-        List<Team> teamOrder2 = MatchGroup[index - 1].getPlacement();
+
+        List<Team> teamOrder1 = matchGroups[index].getPlacement();
+        List<Team> teamOrder2 = matchGroups[index - 1].getPlacement();
 
         if (teamOrder1.size() > 3){
             swapTeams(teamOrder1.get(3), teamOrder2.get(0));
@@ -190,10 +188,10 @@ public class Ladder {
 
 
     private void arrangeMatchResults(MatchGroup match){
-        if (match.getTeams().size()==3){
+        if (match.getTeams().size()==match.MIN_NUM_TEAMS){
             arrange3Teams(match);
         }
-        else if(match.getTeams().size()==4){
+        else if(match.getTeams().size()==match.MAX_NUM_TEAMS){
             arrange4Teams(match);
         }
 
@@ -201,46 +199,39 @@ public class Ladder {
 
     private void arrange4Teams(MatchGroup match){
         List<Team> teamOrder = match.getPlacement();
+        int matchSize = teamOrder.size();
+
         int[] teamPos={
                 findTeamPosition(teamOrder.get(0)),
                 findTeamPosition(teamOrder.get(1)),
                 findTeamPosition(teamOrder.get(2)),
                 findTeamPosition(teamOrder.get(3))
         };
-
-        int lowTeam = findLowestNumber(teamPos);
-        int highTeam = findHighestNumber(teamPos);
-        swapTeams(highTeam,lowTeam);
-        //swap first and fourth, if applicable
-        if(findTeamPosition(teamOrder.get(1))>findTeamPosition(teamOrder.get(2))){
-            lowTeam =findTeamPosition(teamOrder.get(2));
-        }
-        else
-            lowTeam =findTeamPosition(teamOrder.get(1));
-
-        //swap second and third, if applicable
-        if(findTeamPosition(teamOrder.get(2))>findTeamPosition(teamOrder.get(2))){
-            highTeam = findTeamPosition(teamOrder.get(1));
-        }
-        else{
-            highTeam =findTeamPosition(teamOrder.get(2));
+        teamPos = sortArray(teamPos);
+        //inserts the four teams in their new positions
+        for (int i=0;i<matchSize;i++) {
+            ladder.add(teamPos[i], teamOrder.get(i));
+            ladder.remove(teamPos[i+1]);
         }
 
-        swapTeams(highTeam,lowTeam);
     }
+
     private void arrange3Teams(MatchGroup match){
-        List<Team> teamOrder = match.getPlacement();
+        List<Team> TeamOrder = match.getPlacement();
+        int matchSize = TeamOrder.size();
 
-        int[] teamPos ={
-                findTeamPosition(teamOrder.get(0)),
-                findTeamPosition(teamOrder.get(1)),
-                findTeamPosition(teamOrder.get(2))};
-
-        int lowTeam = findLowestNumber(teamPos);
-        int highTeam = findHighestNumber(teamPos);
-        swapTeams(highTeam,lowTeam);
-
-
+        int[] teamPos = new int[]{
+                findTeamPosition(TeamOrder.get(0)),
+                findTeamPosition(TeamOrder.get(1)),
+                findTeamPosition(TeamOrder.get(2))
+        };
+        //sort the teamPos array
+       teamPos = sortArray(teamPos);
+        //insert the teams at their new positions
+       for (int i=0;i<matchSize;i++) {
+           ladder.add(teamPos[i], TeamOrder.get(i));
+           ladder.remove(teamPos[i+1]);
+       }
     }
 
 }
