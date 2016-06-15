@@ -421,6 +421,8 @@ class LadderTest {
 					expectedResults.get(i).add(sourceResults1.get(1));
 					expectedResults.get(i).add(sourceResults1.get(3));
 					expectedResults.get(i).add(sourceResults1.get(5));
+				default:
+					throw new InvalidCaseException();
 			}
 		}
 
@@ -579,6 +581,8 @@ class LadderTest {
 					expectedResults.get(i).add(sourceResults1.get(3));
 					expectedResults.get(i).add(sourceResults1.get(5));
 					expectedResults.get(i).add(sourceResults1.get(7));
+				default:
+					throw new InvalidCaseException();
 			}
 		}
 
@@ -701,6 +705,8 @@ class LadderTest {
 					expectedResults.get(i).add(sourceResults1.get(0));
 					expectedResults.get(i).add(sourceResults2.get(4));
 					expectedResults.get(i).add(sourceResults1.get(2));
+				default:
+					throw new InvalidCaseException();
 			}
 		}
 
@@ -848,6 +854,8 @@ class LadderTest {
 					expectedResults.get(i).add(sourceResults1.get(0));
 					expectedResults.get(i).add(sourceResults2.get(4));
 					expectedResults.get(i).add(sourceResults2.get(6));
+				default:
+					throw new InvalidCaseException();
 			}
 		}
 
@@ -1097,6 +1105,8 @@ class LadderTest {
 					expectedResults.get(i).add(sourceResults2.get(8));
 					expectedResults.get(i).add(sourceResults2.get(10));
 					expectedResults.get(i).add(sourceResults2.get(12));
+				default:
+					throw new InvalidCaseException();
 			}
 		}
 
@@ -1386,6 +1396,8 @@ class LadderTest {
 					expectedResults.get(i).add(sourceResults2.get(8));
 					expectedResults.get(i).add(sourceResults2.get(10));
 					expectedResults.get(i).add(sourceResults2.get(12));
+				default:
+					throw new InvalidCaseException();
 			}
 		}
 
@@ -1642,6 +1654,8 @@ class LadderTest {
 					expectedResults.get(i).add(sourceResults2.get(6));
 					expectedResults.get(i).add(sourceResults2.get(8));
 					expectedResults.get(i).add(sourceResults2.get(10));
+				default:
+					throw new InvalidCaseException();
 			}
 		}
 
