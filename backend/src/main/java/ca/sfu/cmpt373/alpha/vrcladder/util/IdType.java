@@ -4,11 +4,10 @@ import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.io.Serializable;
 import java.util.UUID;
 
 @Embeddable
-public class IdType implements Serializable {
+public class IdType implements Identifier {
 
     @Column (name = PersistenceConstants.COLUMN_ID)
     private String id;
@@ -49,4 +48,5 @@ public class IdType implements Serializable {
     public int hashCode() {
         return id.hashCode();
     }
+
 }

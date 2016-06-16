@@ -48,7 +48,7 @@ public class User {
     @Id
     @Column(name = PersistenceConstants.COLUMN_ID)
     public String getUserId() {
-        return userId.getUserId();
+        return userId.getId();
     }
 
     private void setUserId(String newUserId) {

@@ -84,7 +84,7 @@ public class RestDriver {
                     response.status(HttpStatus.BAD_REQUEST_400);
                     return ERROR_MESSAGE_INVALID_JSON_OBJECT;
                 }
-                Team team = application.getTeamManager().create(newTeam.getUserId1().getUserId(), newTeam.getUserId2().getUserId());
+                Team team = application.getTeamManager().create(newTeam.getUserId1().getId(), newTeam.getUserId2().getId());
                 return team.getId();
             } catch (PropertyValueException e) {
                 //this exception happens if userIds are provided that don't exist in the database

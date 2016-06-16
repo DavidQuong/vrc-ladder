@@ -15,13 +15,13 @@ public class UserIdTest {
     @Test
     public void testValidUserId() {
         UserId userId = new UserId(VALID_USER_ID);
-        Assert.assertEquals(VALID_USER_ID, userId.getUserId());
+        Assert.assertEquals(VALID_USER_ID, userId.getId());
     }
 
     @Test
     public void testLongerValidUserId() {
         UserId userId = new UserId(VALID_USER_ID_LONGER);
-        Assert.assertEquals(VALID_USER_ID_LONGER, userId.getUserId());
+        Assert.assertEquals(VALID_USER_ID_LONGER, userId.getId());
     }
 
     @Test(expected = ValidationException.class)
