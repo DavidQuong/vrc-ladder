@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScoreCardTest {
+    private static final int LAST_INDEX_FOUR_TEAMS = 3;
+    private static final int LAST_INDEX_THREE_TEAMS = 2;
+
     private MatchGroup threeTeamMockMatchGroup;
     private MatchGroup fourTeamMockMatchGroup;
 
@@ -23,21 +26,19 @@ public class ScoreCardTest {
 
     @Test
     public void testSetValidResultsFourTeams() {
-        ScoreCard scoreCard = new ScoreCard(fourTeamMockMatchGroup);
-        List<Team> rankedResults = new ArrayList<>();
-        for (int i = 3; i >= 0; i--) {
-            rankedResults.add(fourTeamMockMatchGroup.getTeams().get(i));
-        }
-        scoreCard.setRankedTeams(rankedResults);
-        Assert.assertEquals(rankedResults, scoreCard.getRankedTeams());
+        testSetValidResults(fourTeamMockMatchGroup);
     }
 
     @Test
     public void testSetValidResultsThreeTeams() {
-        ScoreCard scoreCard = new ScoreCard(threeTeamMockMatchGroup);
+        testSetValidResults(threeTeamMockMatchGroup);
+    }
+
+    private void testSetValidResults(MatchGroup matchGroup) {
+        ScoreCard scoreCard = new ScoreCard(matchGroup);
         List<Team> rankedResults = new ArrayList<>();
-        for (int i = 2; i >= 0; i--) {
-            rankedResults.add(threeTeamMockMatchGroup.getTeams().get(i));
+        for (int i = matchGroup.getSize() - 1; i >= 0; i--) {
+            rankedResults.add(matchGroup.getTeams().get(i));
         }
         scoreCard.setRankedTeams(rankedResults);
         Assert.assertEquals(rankedResults, scoreCard.getRankedTeams());
@@ -47,7 +48,7 @@ public class ScoreCardTest {
     public void testSetIllegalResults() {
         ScoreCard scoreCard = new ScoreCard(fourTeamMockMatchGroup);
         List<Team> rankedResults = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < LAST_INDEX_FOUR_TEAMS; i++) {
             rankedResults.add(MockTeamGenerator.generateTeam());
         }
         scoreCard.setRankedTeams(rankedResults);
@@ -57,7 +58,7 @@ public class ScoreCardTest {
     public void testSetTooManyResults() {
         ScoreCard scoreCard = new ScoreCard(threeTeamMockMatchGroup);
         List<Team> rankedResults = new ArrayList<>();
-        for (int i = 2; i >= 0; i--) {
+        for (int i = LAST_INDEX_THREE_TEAMS; i >= 0; i--) {
             rankedResults.add(threeTeamMockMatchGroup.getTeams().get(i));
         }
 

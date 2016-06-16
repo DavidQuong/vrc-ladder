@@ -22,6 +22,9 @@ import java.util.List;
  * ScoreCards are created through the MatchGroupManager
  */
 public class ScoreCardDatabaseTest extends BaseTest {
+    private static final int LAST_INDEX_FOUR_TEAMS = 3;
+    private static final int LAST_INDEX_THREE_TEAMS = 2;
+
     private MatchGroupManager matchGroupManager;
     private MatchGroup threeTeamMatchGroupFixture;
     private MatchGroup fourTeamMatchGroupFixture;
@@ -95,28 +98,21 @@ public class ScoreCardDatabaseTest extends BaseTest {
 
     @Test
     public void testUpdateThreeTeams() {
-        List<Team> rankedTeams = new ArrayList<>();
-        int thirdTeamIndex = 2;
-        for (int i = thirdTeamIndex; i >= 0; i--) {
-            rankedTeams.add(threeTeamMatchGroupFixture.getTeams().get(i));
-        }
-        ScoreCard scoreCard = threeTeamMatchGroupFixture.getScoreCard();
-        scoreCard.setRankedTeams(rankedTeams);
         testUpdate(threeTeamMatchGroupFixture);
     }
 
     @Test public void testUpdateFourTeams() {
-        List<Team> rankedTeams = new ArrayList<>();
-        int fourthTeamIndex = 3;
-        for (int i = fourthTeamIndex; i >= 0; i--) {
-            rankedTeams.add(fourTeamMatchGroupFixture.getTeams().get(i));
-        }
-        ScoreCard scoreCard = fourTeamMatchGroupFixture.getScoreCard();
-        scoreCard.setRankedTeams(rankedTeams);
         testUpdate(fourTeamMatchGroupFixture);
     }
 
     private void testUpdate(MatchGroup matchGroup) {
+        List<Team> rankedTeams = new ArrayList<>();
+        for (int i = matchGroup.getSize() - 1; i >= 0; i--) {
+            rankedTeams.add(matchGroup.getTeams().get(i));
+        }
+        ScoreCard scoreCard = matchGroup.getScoreCard();
+        scoreCard.setRankedTeams(rankedTeams);
+
         matchGroupManager.updateScoreCard(matchGroup);
 
         Session session = sessionManager.getSession();

@@ -105,6 +105,11 @@ public class MatchGroup {
         this.scoreCard = scoreCard;
     }
 
+    @Transient
+    public int getSize() {
+        return teams.size();
+    }
+
     /**
      * @return the @{@link PlayTime} that the majority of the group teams want to play at.
      * In the case of a tie, it will return the preferred play time of the highest ranked player.
