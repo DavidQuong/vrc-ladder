@@ -109,10 +109,14 @@ public class Ladder {
         int ladderSize;
         ladderSize = this.getLadderTeamCount();
         for (int k =0;k<ladderSize; k++){
-            if(ladder.get(k).getAttendanceCard().late()){
+            if(ladder.get(k).getAttendanceCard().late()) {
                 Team tempTeam = ladder.get(k);
                 ladder.remove(k);
-                ladder.add(k+LATE_PENALTY, tempTeam);
+                if (k < ladderSize - LATE_PENALTY){
+                    ladder.add(k + LATE_PENALTY, tempTeam);
+                } else {
+                    ladder.add(tempTeam);
+                }
             }
 
         }
@@ -125,7 +129,11 @@ public class Ladder {
             if(ladder.get(k).getAttendanceCard().noShow()){
                 Team tempTeam = ladder.get(k);
                 ladder.remove(k);
-                ladder.add(k+NO_SHOW_PENALTY, tempTeam);
+                if (k < ladderSize - NO_SHOW_PENALTY){
+                    ladder.add(k+NO_SHOW_PENALTY, tempTeam);
+                } else {
+                    ladder.add(tempTeam);
+                }
             }
 
         }
@@ -137,7 +145,12 @@ public class Ladder {
             if(!ladder.get(k).getAttendanceCard().isAttending()){
                 Team tempTeam = ladder.get(k);
                 ladder.remove(k);
+                if (k < ladderSize - ATTENDANCE_PENALTY){
                 ladder.add(k+ATTENDANCE_PENALTY, tempTeam);
+                } else {
+                    ladder.add(tempTeam);
+                }
+                
             }
 
         }
