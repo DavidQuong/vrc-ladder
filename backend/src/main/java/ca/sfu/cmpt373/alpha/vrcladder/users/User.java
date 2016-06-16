@@ -9,6 +9,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -109,13 +110,14 @@ public class User {
         return constructedName;
     }
 
+    @Embedded
     @Column(name = PersistenceConstants.COLUMN_EMAIL_ADDRESS, nullable = false)
-    public String getEmailAddress() {
-        return emailAddress.toString();
+    public EmailAddress getEmailAddress() {
+        return emailAddress;
     }
 
-    public void setEmailAddress(String email) {
-        emailAddress = new EmailAddress(email);
+    public void setEmailAddress(EmailAddress emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     @Column(name = PersistenceConstants.COLUMN_PHONE_NUMBER, nullable = false)
