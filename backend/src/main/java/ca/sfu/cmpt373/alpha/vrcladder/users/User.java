@@ -121,12 +121,12 @@ public class User {
     }
 
     @Column(name = PersistenceConstants.COLUMN_PHONE_NUMBER, nullable = false)
-    public String getPhoneNumber() {
-        return phoneNumber.toString();
+    public PhoneNumber getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNum) {
-        phoneNumber = new PhoneNumber(phoneNum);
+    public void setPhoneNumber(PhoneNumber phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public boolean isPermittedToPerform(UserAction action) {

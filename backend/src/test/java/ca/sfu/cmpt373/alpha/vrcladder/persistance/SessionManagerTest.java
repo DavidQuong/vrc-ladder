@@ -67,7 +67,7 @@ public class SessionManagerTest {
         newUser.setMiddleName(middleName);
         newUser.setLastName(lastName);
         newUser.setEmailAddress(emailAddress);
-        newUser.setPhoneNumber(phoneNumber.getPhoneNumber());
+        newUser.setPhoneNumber(phoneNumber);
 
         Session session = sessionManager.getSession();
         User user = session.get(User.class, newUser.getUserId());
@@ -79,7 +79,7 @@ public class SessionManagerTest {
         Assert.assertEquals(middleName, newUser.getMiddleName());
         Assert.assertEquals(lastName, newUser.getLastName());
         Assert.assertEquals(emailAddress, newUser.getEmailAddress());
-        Assert.assertEquals(phoneNumber.getPhoneNumber(), newUser.getPhoneNumber());
+        Assert.assertEquals(phoneNumber, newUser.getPhoneNumber());
     }
 
     private User saveOrUpdateUser(User user) {

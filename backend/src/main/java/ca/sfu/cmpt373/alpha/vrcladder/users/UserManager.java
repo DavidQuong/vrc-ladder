@@ -6,6 +6,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
+import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.CriterionConstants;
 import org.apache.commons.lang3.StringUtils;
@@ -37,12 +38,12 @@ public class UserManager extends DatabaseManager<User> {
     }
 
     public User create(UserId userId, UserRole userRole, String firstName, String lastName, EmailAddress emailAddress,
-        String phoneNumber) {
+        PhoneNumber phoneNumber) {
         return create(userId, userRole, firstName, StringUtils.EMPTY, lastName, emailAddress, phoneNumber);
     }
 
     public User create(UserId userId, UserRole userRole, String firstName, String middleName, String lastName,
-        EmailAddress emailAddress, String phoneNumber) {
+        EmailAddress emailAddress, PhoneNumber phoneNumber) {
         User createdUser = new UserBuilder()
             .setUserId(userId)
             .setUserRole(userRole)
@@ -58,7 +59,7 @@ public class UserManager extends DatabaseManager<User> {
     }
 
     public User update(UserId userId, UserRole userRole, String firstName, String middleName, String lastName,
-        EmailAddress emailAddress, String phoneNumber) {
+        EmailAddress emailAddress, PhoneNumber phoneNumber) {
         Session session = sessionManager.getSession();
 
         User user = session.get(User.class, userId);
