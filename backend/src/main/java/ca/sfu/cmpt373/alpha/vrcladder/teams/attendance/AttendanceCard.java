@@ -46,6 +46,10 @@ public class AttendanceCard {
         preferredPlayTime = playTime;
     }
 
+    public void setAttendanceStatus(AttendanceStatus status) {
+        this.attendStatus = status;
+    }
+
     @Transient
     public boolean isAttending() {
         return  (preferredPlayTime != PlayTime.NONE);

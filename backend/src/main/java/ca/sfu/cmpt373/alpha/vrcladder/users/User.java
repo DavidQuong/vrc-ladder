@@ -51,7 +51,7 @@ public class User {
         return userId.getUserId();
     }
 
-    private void setUserId(String newUserId) {
+    public void setUserId(String newUserId) {
         userId = new UserId(newUserId);
     }
 

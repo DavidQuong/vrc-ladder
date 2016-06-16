@@ -2,6 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.teams;
 
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
@@ -62,7 +63,7 @@ public class Team {
         return attendanceCard;
     }
 
-    private void setAttendanceCard(AttendanceCard newAttendanceCard) {
+    public void setAttendanceCard(AttendanceCard newAttendanceCard) {
         attendanceCard = newAttendanceCard;
     }
 
@@ -93,6 +94,10 @@ public class Team {
 
     public void setLadderPosition(Integer position) {
         ladderPosition = new LadderPosition(position);
+    }
+
+    public void setAttendanceStatus(AttendanceStatus status) {
+        this.attendanceCard.setAttendanceStatus(status);
     }
 
     @Override

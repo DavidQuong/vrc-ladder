@@ -6,6 +6,7 @@ import java.util.List;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
@@ -15,6 +16,8 @@ import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.naming.SizeLimitExceededException;
 
 import static org.junit.Assert.assertTrue;
 
@@ -68,8 +71,7 @@ class LadderTest {
 				Team team = this.getTeam();
 
 				if(attendance == ATTENDING) {
-					//team.setAttendance(PRESENT);
-					System.out.println("Set Attendance PRESENT");
+					team.setAttendanceStatus(AttendanceStatus.PRESENT);
 				} else { //NOT_ATTENDING
 					AttendanceCard status = new AttendanceCard();
 					status.setPreferredPlayTime(PlayTime.NONE);
@@ -90,8 +92,7 @@ class LadderTest {
 				Team team = this.getTeam();
 
 				if(attendance == ATTENDING) {
-					//team.setAttendance(LATE);
-					System.out.println("Set Attendance LATE");
+					team.setAttendanceStatus(AttendanceStatus.LATE);
 				} else { //NOT_ATTENDING
 					AttendanceCard status = new AttendanceCard();
 					status.setPreferredPlayTime(PlayTime.NONE);
@@ -112,11 +113,9 @@ class LadderTest {
 				Team team = this.getTeam();
 
 				if(attendance == ATTENDING) {
-					//team.setAttendance(LATE);
-					System.out.println("Set Attendance LATE");
+					team.setAttendanceStatus(AttendanceStatus.LATE);
 				} else { //NOT_ATTENDING
-					//team.setAttendance(NO_SHOW);
-					System.out.println("Set Attendance NO_SHOW");
+					team.setAttendanceStatus(AttendanceStatus.NO_SHOW);
 				}
 				caseTeams.get(attendance).add(team);
 			}
@@ -133,11 +132,9 @@ class LadderTest {
 				Team team = this.getTeam();
 
 				if(attendance == ATTENDING) {
-					//team.setAttendance(PRESENT);
-					System.out.println("Set Attendance PRESENT");
+					team.setAttendanceStatus(AttendanceStatus.PRESENT);
 				} else { //NOT_ATTENDING
-					//team.setAttendance(NO_SHOW);
-					System.out.println("Set Attendance NO_SHOW");
+					team.setAttendanceStatus(AttendanceStatus.NO_SHOW);
 				}
 				caseTeams.get(attendance).add(team);
 			}
@@ -154,16 +151,14 @@ class LadderTest {
 				Team team = this.getTeam();
 
 				if(attendance == ATTENDING) {
-					//team.setAttendance(LATE);
-					System.out.println("Set Attendance LATE");
+					team.setAttendanceStatus(AttendanceStatus.LATE);
 				} else { //NOT_ATTENDING
 					if(i % 2 == 0) {
 						AttendanceCard status = new AttendanceCard();
 						status.setPreferredPlayTime(PlayTime.NONE);
 						team.setAttendanceCard(status);
 					} else {
-						//team.setAttendance(NO_SHOW);
-						System.out.println("Set Attendance NO_SHOW");
+						team.setAttendanceStatus(AttendanceStatus.NO_SHOW);
 					}
 				}
 				caseTeams.get(attendance).add(team);
@@ -181,16 +176,14 @@ class LadderTest {
 				Team team = this.getTeam();
 
 				if(attendance == ATTENDING) {
-					//team.setAttendance(PRESENT);
-					System.out.println("Set Attendance PRESENT");
+					team.setAttendanceStatus(AttendanceStatus.PRESENT);
 				} else { //NOT_ATTENDING
 					if(i % 2 == 0) {
 						AttendanceCard status = new AttendanceCard();
 						status.setPreferredPlayTime(PlayTime.NONE);
 						team.setAttendanceCard(status);
 					} else {
-						//team.setAttendance(NO_SHOW);
-						System.out.println("Set Attendance NO_SHOW");
+						team.setAttendanceStatus(AttendanceStatus.NO_SHOW);
 					}
 				}
 				caseTeams.get(attendance).add(team);
@@ -209,11 +202,9 @@ class LadderTest {
 
 				if(attendance == ATTENDING) {
 					if(i % 2 == 0) {
-						//team.setAttendance(PRESENT);
-						System.out.println("Set Attendance PRESENT");
+						team.setAttendanceStatus(AttendanceStatus.PRESENT);
 					} else {
-						//team.setAttendance(LATE);
-						System.out.println("Set Attendance LATE");
+						team.setAttendanceStatus(AttendanceStatus.LATE);
 					}
 				} else { //NOT_ATTENDING
 					AttendanceCard status = new AttendanceCard();
@@ -236,15 +227,12 @@ class LadderTest {
 
 				if(attendance == ATTENDING) {
 					if(i % 2 == 0) {
-						//team.setAttendance(PRESENT);
-						System.out.println("Set Attendance PRESENT");
+						team.setAttendanceStatus(AttendanceStatus.PRESENT);
 					} else {
-						//team.setAttendance(LATE);
-						System.out.println("Set Attendance LATE");
+						team.setAttendanceStatus(AttendanceStatus.LATE);
 					}
 				} else { //NOT_ATTENDING
-					//team.setAttendance(NO_SHOW);
-					System.out.println("Set Attendance NO_SHOW");
+					team.setAttendanceStatus(AttendanceStatus.NO_SHOW);
 				}
 				caseTeams.get(attendance).add(team);
 			}
@@ -262,11 +250,9 @@ class LadderTest {
 
 				if(attendance == ATTENDING) {
 					if(i % 2 == 0) {
-						//team.setAttendance(PRESENT);
-						System.out.println("Set Attendance PRESENT");
+						team.setAttendanceStatus(AttendanceStatus.PRESENT);
 					} else {
-						//team.setAttendance(LATE);
-						System.out.println("Set Attendance LATE");
+						team.setAttendanceStatus(AttendanceStatus.LATE);
 					}
 				} else { //NOT_ATTENDING
 					if(i % 2 == 0) {
@@ -274,8 +260,7 @@ class LadderTest {
 						status.setPreferredPlayTime(PlayTime.NONE);
 						team.setAttendanceCard(status);
 					} else {
-						//team.setAttendance(NO_SHOW);
-						System.out.println("Set Attendance NO_SHOW");
+						team.setAttendanceStatus(AttendanceStatus.NO_SHOW);
 					}
 				}
 				caseTeams.get(attendance).add(team);
@@ -335,7 +320,7 @@ class LadderTest {
 	}
 
 	@Test
-	private void groupSize3Adjacent() { //Case 1: Groups are directly beside one another, groups of 3 only
+	private void groupSize3Adjacent() throws SizeLimitExceededException { //Case 1: Groups are directly beside one another, groups of 3 only
 		MatchGroupGenerator getGroups = new MatchGroupGenerator();
 
 		int teamCount = 9;
@@ -399,12 +384,12 @@ class LadderTest {
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()])); //Conversion obtained from http://stackoverflow.com/questions/9572795/convert-list-to-array-in-java
 
-			assertTrue(expectedResults.get(testCase).equals(testLadder.ladderList));
+			assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
 		}
 	}
 
 	@Test
-	private void groupSize4Adjacent() { //Case 2: Groups are directly beside one another, groups of 4 only
+	private void groupSize4Adjacent() throws SizeLimitExceededException { //Case 2: Groups are directly beside one another, groups of 4 only
 		int teamCount = 12;
 		List<List<Team>> expectedResults = new ArrayList<>();
 		for(int i = 0;i < TEST_CASE_COUNT;i++) {
@@ -482,12 +467,12 @@ class LadderTest {
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
 
-			assertTrue(expectedResults.get(testCase).equals(testLadder.ladderList));
+			assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
 		}
 	}
 
 	@Test
-	private void groupSize34Adjacent() { //Case 3: Groups are directly beside one another, groups of 3/4, not predictably interchanging (At least one of each)
+	private void groupSize34Adjacent() throws SizeLimitExceededException { //Case 3: Groups are directly beside one another, groups of 3/4, not predictably interchanging (At least one of each)
 
 		int teamCount = 17;
 		List<List<Team>> expectedResults = new ArrayList<>();
@@ -590,12 +575,12 @@ class LadderTest {
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
 
-			assertTrue(expectedResults.get(testCase).equals(testLadder.ladderList));
+			assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
 		}
 	}
 
 	@Test
-	private void groupSize3NonAdjacent() { //Case 4: Groups have non-attending teams between them, groups of 3 only
+	private void groupSize3NonAdjacent() throws SizeLimitExceededException { //Case 4: Groups have non-attending teams between them, groups of 3 only
 		MatchGroupGenerator getGroups = new MatchGroupGenerator();
 
 		int teamCount = 6;
@@ -734,12 +719,12 @@ class LadderTest {
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
 
-			assertTrue(expectedResults.get(testCase).equals(testLadder.ladderList));
+			assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
 		}
 	}
 
 	@Test
-	private void groupSize4NonAdjacent() { //Case 5: Groups have non-attending teams between them, groups of 4 only
+	private void groupSize4NonAdjacent() throws SizeLimitExceededException { //Case 5: Groups have non-attending teams between them, groups of 4 only
 		MatchGroupGenerator getGroups = new MatchGroupGenerator();
 
 		int teamCount = 8;
@@ -913,12 +898,12 @@ class LadderTest {
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
 
-			assertTrue(expectedResults.get(testCase).equals(testLadder.ladderList));
+			assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
 		}
 	}
 
 	@Test
-	private void groupSize3SingleWithFriends() { //Case 6: Single group of 3, other non-attending teams around
+	private void groupSize3SingleWithFriends() throws SizeLimitExceededException { //Case 6: Single group of 3, other non-attending teams around
 		int teamCount = 5;
 		List<List<Team>> expectedResults = new ArrayList<>();
 		for(int i = 0;i < TEST_CASE_COUNT;i++) {
@@ -1040,12 +1025,12 @@ class LadderTest {
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
 
-			assertTrue(expectedResults.get(testCase).equals(testLadder.ladderList));
+			assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
 		}
 	}
 
 	@Test
-	private void groupSize4SingleWithFriends() { //Case 7: Single group of 4, other non-attending teams around
+	private void groupSize4SingleWithFriends()throws SizeLimitExceededException { //Case 7: Single group of 4, other non-attending teams around
 		int teamCount = 7;
 		List<List<Team>> expectedResults = new ArrayList<>();
 		for(int i = 0;i < TEST_CASE_COUNT;i++) {
@@ -1199,12 +1184,12 @@ class LadderTest {
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
 
-			assertTrue(expectedResults.get(testCase).equals(testLadder.ladderList));
+			assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
 		}
 	}
 
 	@Test
-	private void groupSize3NonAdjacentAllIntersecting() { //Case 8: Groups have non-attending teams beside and inside them, groups of 3 only, all overlapping
+	private void groupSize3NonAdjacentAllIntersecting() throws SizeLimitExceededException { //Case 8: Groups have non-attending teams beside and inside them, groups of 3 only, all overlapping
 		int teamCount = 13;
 		List<List<Team>> expectedResults = new ArrayList<>();
 		for(int i = 0;i < TEST_CASE_COUNT;i++) {
@@ -1482,12 +1467,12 @@ class LadderTest {
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
 
-			assertTrue(expectedResults.get(testCase).equals(testLadder.ladderList));
+			assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
 		}
 	}
 
 	@Test
-	private void groupSize4NonAdjacentAllIntersecting() { //Case 9: Groups have non-attending teams beside and inside them, groups of 4 only, all overlapping
+	private void groupSize4NonAdjacentAllIntersecting() throws SizeLimitExceededException { //Case 9: Groups have non-attending teams beside and inside them, groups of 4 only, all overlapping
 		int teamCount = 13;
 		List<List<Team>> expectedResults = new ArrayList<>();
 		for(int i = 0;i < TEST_CASE_COUNT;i++) {
@@ -1801,12 +1786,12 @@ class LadderTest {
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
 
-			assertTrue(expectedResults.get(testCase).equals(testLadder.ladderList));
+			assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
 		}
 	}
 
 	@Test
-	private void groupSize34NonAdjacentAllIntersecting() { //Case 10: Groups have non-attending teams beside and inside them, groups of 3/4, all overlapping, not predictably interchanging (At least one of each)
+	private void groupSize34NonAdjacentAllIntersecting() throws SizeLimitExceededException { //Case 10: Groups have non-attending teams beside and inside them, groups of 3/4, all overlapping, not predictably interchanging (At least one of each)
 		int teamCount = 11;
 		List<List<Team>> expectedResults = new ArrayList<>();
 		for(int i = 0;i < TEST_CASE_COUNT;i++) {
@@ -2076,7 +2061,7 @@ class LadderTest {
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
 
-			assertTrue(expectedResults.get(testCase).equals(testLadder.ladderList));
+			assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
 		}
 	}
 
