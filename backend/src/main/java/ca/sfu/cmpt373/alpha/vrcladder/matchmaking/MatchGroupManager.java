@@ -2,12 +2,11 @@ package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.DatabaseManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
-import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.exception.ConstraintViolationException;
 
 import javax.persistence.PersistenceException;
 import java.util.List;
@@ -37,29 +36,6 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
         MatchGroup matchGroup = new MatchGroup(team1, team2, team3, team4);
 
         return create(matchGroup);
-    }
-
-    /**
-     * @throws PersistenceException if there is no object stored in the database for the given id
-     */
-    public MatchGroup getMatchGroup(IdType matchGroupId) {
-        return getMatchGroup(matchGroupId.getId());
-    }
-
-    /**
-     * @throws PersistenceException if there is no object stored in the database for the given id
-     */
-    public MatchGroup getMatchGroup(String matchGroupId) {
-        MatchGroup matchGroup = getById(matchGroupId);
-        if (matchGroup == null) {
-            throw new PersistenceException(ERROR_NO_MATCH_GROUP);
-        }
-
-        return matchGroup;
-    }
-
-    public MatchGroup deleteMatchGroup(String matchGroupId) {
-        return deleteById(matchGroupId);
     }
 
     public MatchGroup updateScoreCard(MatchGroup matchGroup) {

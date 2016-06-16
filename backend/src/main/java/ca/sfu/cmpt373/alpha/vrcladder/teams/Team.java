@@ -15,8 +15,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-//@Table(name = PersistenceConstants.TABLE_TEAM, uniqueConstraints = @UniqueConstraint(columnNames =
-//    {PersistenceConstants.COLUMN_FIRST_PLAYER_ID, PersistenceConstants.COLUMN_SECOND_PLAYER_ID}))
 @Table(name = PersistenceConstants.TABLE_TEAM)
 public class Team {
 
