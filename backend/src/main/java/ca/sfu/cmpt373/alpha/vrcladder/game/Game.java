@@ -32,7 +32,7 @@ public class Game {
 
 
     private ScoreSheet findPlayerSheet(User player){
-        ScoreSheet result = new ScoreSheet();
+        ScoreSheet result = null;
         for(ScoreSheet sheet : scoreSheets) {
             if(sheet.checkTeamPlayer(player)) {
                 result = sheet;

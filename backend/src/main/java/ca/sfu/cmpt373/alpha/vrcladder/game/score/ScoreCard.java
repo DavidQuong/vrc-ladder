@@ -11,19 +11,20 @@ import java.util.List;
 public class ScoreCard {
     private static final int MAXIMUM_NUMBER_OF_MATCHES = 5;
 
-    private List<GameScore> scores = new ArrayList<>();
+    private List<GameScore> scores;
     private Team team;
 
     public ScoreCard(Team team) {
-        for(GameScore score : scores){
-            score = new GameScore();
-        }
         this.team = team;
+        scores = new ArrayList<>();
+        scores.add(new GameScore());
+        scores.add(new GameScore());
+        scores.add(new GameScore());
     }
 
     public boolean setScoreCard(int round, boolean score) throws SizeLimitExceededException {
         if(round >= MAXIMUM_NUMBER_OF_MATCHES){
-            throw new SizeLimitExceededException("You have reach the maximum number of games!");
+            throw new SizeLimitExceededException("You have reached the maximum number of games!");
         }
 
         if(this.scores.get(round).isScoreEntered()){

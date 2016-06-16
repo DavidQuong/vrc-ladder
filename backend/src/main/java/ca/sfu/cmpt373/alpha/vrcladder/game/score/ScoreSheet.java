@@ -23,13 +23,16 @@ public class ScoreSheet {
     private static final int TEAM_THIRD_PLACE_POSITION       = 3;
     private static final int INITIATING_VALUE                = 0;
 
-    public ScoreSheet() {
+    /*public ScoreSheet() {
 
-    }
+    }*/
 
     public ScoreSheet(List<Team> teams) {
         this.teams = teams;
         initScoreCards();
+        if(this.teams.size() < MatchGroup.MIN_NUM_TEAMS || this.teams.size() > MatchGroup.MAX_NUM_TEAMS) {
+            throw new RuntimeException("Unexpected group size: " + this.teams.size());
+        }
     }
 
     public ScoreCard getScoreCard(int position) {
@@ -66,13 +69,15 @@ public class ScoreSheet {
                 results = reOrderThreeTeamsResults(wins);
             }
 
-        }else{
+        } else if(this.getNumberOfTeams() == MatchGroup.MAX_NUM_TEAMS){
             int[] positions = new int[getNumberOfTeams()];
             for(int counter = INITIATING_VALUE; counter < getNumberOfTeams(); counter++){
                 positions[counter] = this.doFourTeamsCalculations(this.getScoreCard(counter));
             }
 
             results = reOrderFourTeamsResults(positions);
+        } else {
+            throw new RuntimeException("Unexpected group size: " + this.teams.size());
         }
 
         return results;

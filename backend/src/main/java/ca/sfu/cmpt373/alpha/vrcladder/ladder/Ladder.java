@@ -31,7 +31,7 @@ public class Ladder {
         return stringBuilder.toString();
     }
 
-
+    public List<Team> getLadder(){return ladder;}
     public Team findTeamAtPosition(int teamPosition) {
         return ladder.get(teamPosition);
     }
@@ -184,21 +184,22 @@ public class Ladder {
     }
 
     private void arrange4Teams(MatchGroup match){
-        List<Team> teamOrder = match.getPlacement();
-        int matchSize = teamOrder.size();
+            List<Team> teamOrder = match.getPlacement();
+            int matchSize = teamOrder.size();
 
-        int[] teamPos={
-                findTeamPosition(teamOrder.get(0)),
-                findTeamPosition(teamOrder.get(1)),
-                findTeamPosition(teamOrder.get(2)),
-                findTeamPosition(teamOrder.get(3))
-        };
-        Arrays.sort(teamPos);
-        //inserts the four teams in their new positions
-        for (int i=0;i<matchSize;i++) {
-            ladder.add(teamPos[i], teamOrder.get(i));
-            ladder.remove(teamPos[i+1]);
-        }
+            int[] teamPos={
+                    findTeamPosition(teamOrder.get(0)),
+                    findTeamPosition(teamOrder.get(1)),
+                    findTeamPosition(teamOrder.get(2)),
+                    findTeamPosition(teamOrder.get(3))
+            };
+            Arrays.sort(teamPos);
+            //inserts the four teams in their new positions
+            for (int i=0;i<matchSize;i++) {
+                ladder.add(teamPos[i], teamOrder.get(i));
+                ladder.remove(teamPos[i+1]);
+            }
+
 
     }
 
@@ -206,18 +207,20 @@ public class Ladder {
         List<Team> TeamOrder = match.getPlacement();
         int matchSize = TeamOrder.size();
 
-        int[] teamPos = new int[]{
-                findTeamPosition(TeamOrder.get(0)),
-                findTeamPosition(TeamOrder.get(1)),
-                findTeamPosition(TeamOrder.get(2))
-        };
+            int[] teamPos = {
+                    findTeamPosition(TeamOrder.get(0)),
+                    findTeamPosition(TeamOrder.get(1)),
+                    findTeamPosition(TeamOrder.get(2))
+            };
         //sort the teamPos array
-       Arrays.sort(teamPos);
+            Arrays.sort(teamPos);
         //insert the teams at their new positions
-       for (int i=0;i<matchSize;i++) {
-           ladder.add(teamPos[i], TeamOrder.get(i));
-           ladder.remove(teamPos[i+1]);
-       }
-    }
+            for (int i=0;i<matchSize;i++) {
+                ladder.add(teamPos[i], TeamOrder.get(i));
+                ladder.remove(teamPos[i+1]);
+            }
+        }
+
+
 
 }

@@ -42,18 +42,19 @@ public class MatchGroup {
 
     public MatchGroup () {
         setId(new IdType());
-        setTeams(new ArrayList<>());
-        scoreSheet = new ScoreSheet(teams);
+        setTeams(new ArrayList<>());;
     }
 
     public MatchGroup(Team team1, Team team2, Team team3) {
         this.teams = Arrays.asList(team1, team2, team3);
         setId(new IdType());
+        scoreSheet = new ScoreSheet(teams);
     }
 
     public MatchGroup(Team team1, Team team2, Team team3, Team team4) {
         this.teams = Arrays.asList(team1, team2, team3, team4);
         setId(new IdType());
+        scoreSheet = new ScoreSheet(teams);
     }
 
     /**
@@ -65,6 +66,7 @@ public class MatchGroup {
         }
         this.teams = new ArrayList<>(teams);
         setId(new IdType());
+        scoreSheet = new ScoreSheet(teams);
     }
 
     @Id
@@ -89,6 +91,7 @@ public class MatchGroup {
 
     private void setTeams(List<Team> teams) {
         this.teams = teams;
+        scoreSheet = new ScoreSheet(teams);
     }
 
     /**
