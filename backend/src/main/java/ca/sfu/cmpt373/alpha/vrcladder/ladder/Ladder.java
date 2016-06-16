@@ -6,8 +6,6 @@ import java.util.*;
 
 
 public class Ladder {
-
-
     private List<Team> ladder;
     final static private int ATTENDANCE_PENALTY = 2;
     final static private int LATE_PENALTY =4;
@@ -15,7 +13,6 @@ public class Ladder {
 
     public Ladder() {
         ladder = new ArrayList<>();
-
     }
 
     public Ladder(List<Team> newLadder) {
@@ -54,7 +51,6 @@ public class Ladder {
     }
 
     public void insertTeamAtPosition(int position, Team team) {
-
         ladder.add(position, team);
 
     }
@@ -64,8 +60,6 @@ public class Ladder {
     public int getLadderTeamCount() {
         return ladder.size();
     }
-
-
 
     public void swapTeams(Team team1, Team team2) {
         int team1Position;
@@ -86,30 +80,14 @@ public class Ladder {
         if (!verifyPositions(team1Position) || !verifyPositions(team2Position)) {
             return;
         }
+        Collections.swap(ladder, team1Position, team2Position);
 
-        Team tempTeam = ladder.get(team1Position);
-        ladder.remove(team1Position);
-        insertTeamAtPosition(team1Position, ladder.get(team2Position - 1));
-        ladder.remove(team2Position);
-        insertTeamAtPosition(team2Position, tempTeam);
     }
 
     private boolean verifyPositions(int position) {
         return (position < 0 || position >= ladder.size());
     }
 
-    private int[] sortArray(int[] array){
-        for (int i=1; i < array.length; i++){
-            int index = array[i];
-            int j = i;
-            while (j > 0 && array[j-1] > index){
-                array[j] = array[j-1];
-                j--;
-            }
-            array[j] = index;
-        }
-    return array;
-    }
 
     //swap teams in a match based on rank
     public void updateLadder(MatchGroup[] matchGroup){
@@ -122,19 +100,14 @@ public class Ladder {
         for (int matchIndex =0; matchIndex<matchGroup.length; matchIndex++) {
             swapBetweenMatchGroup(matchGroup, matchIndex);
         }
-
-         //TODO:  different levels of abstraction here for the penalties
         applyAttendancePenalty();
-
         applyNoShowPenalty();
-
         applyLatePenalty();
-
     }
 
     private void applyLatePenalty() {
         int ladderSize;
-        ladderSize = this.getLadderTeamCount() - LATE_PENALTY;
+        ladderSize = this.getLadderTeamCount();
         for (int k =0;k<ladderSize; k++){
             if(ladder.get(k).getAttendanceCard().late()){
                 Team tempTeam = ladder.get(k);
@@ -147,7 +120,7 @@ public class Ladder {
 
     private void applyNoShowPenalty() {
         int ladderSize;
-        ladderSize = this.getLadderTeamCount() - NO_SHOW_PENALTY;
+        ladderSize = this.getLadderTeamCount();
         for (int k =0;k<ladderSize; k++){
             if(ladder.get(k).getAttendanceCard().noShow()){
                 Team tempTeam = ladder.get(k);
@@ -159,7 +132,7 @@ public class Ladder {
     }
 
     private void applyAttendancePenalty() {
-        int ladderSize = this.getLadderTeamCount() - ATTENDANCE_PENALTY;
+        int ladderSize = this.getLadderTeamCount();
         for (int k =0;k<ladderSize; k++){
             if(!ladder.get(k).getAttendanceCard().isAttending()){
                 Team tempTeam = ladder.get(k);
@@ -207,7 +180,7 @@ public class Ladder {
                 findTeamPosition(teamOrder.get(2)),
                 findTeamPosition(teamOrder.get(3))
         };
-        teamPos = sortArray(teamPos);
+        Arrays.sort(teamPos);
         //inserts the four teams in their new positions
         for (int i=0;i<matchSize;i++) {
             ladder.add(teamPos[i], teamOrder.get(i));
@@ -226,7 +199,7 @@ public class Ladder {
                 findTeamPosition(TeamOrder.get(2))
         };
         //sort the teamPos array
-       teamPos = sortArray(teamPos);
+       Arrays.sort(teamPos);
         //insert the teams at their new positions
        for (int i=0;i<matchSize;i++) {
            ladder.add(teamPos[i], TeamOrder.get(i));
