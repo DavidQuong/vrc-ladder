@@ -107,7 +107,7 @@ public class ScoreCardDatabaseTest extends BaseTest {
 
     private void testUpdate(MatchGroup matchGroup) {
         List<Team> rankedTeams = new ArrayList<>();
-        for (int i = matchGroup.getSize() - 1; i >= 0; i--) {
+        for (int i = matchGroup.getTeamCount() - 1; i >= 0; i--) {
             rankedTeams.add(matchGroup.getTeams().get(i));
         }
         ScoreCard scoreCard = matchGroup.getScoreCard();

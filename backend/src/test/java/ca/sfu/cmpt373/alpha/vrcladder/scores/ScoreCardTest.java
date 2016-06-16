@@ -37,7 +37,7 @@ public class ScoreCardTest {
     private void testSetValidResults(MatchGroup matchGroup) {
         ScoreCard scoreCard = new ScoreCard(matchGroup);
         List<Team> rankedResults = new ArrayList<>();
-        for (int i = matchGroup.getSize() - 1; i >= 0; i--) {
+        for (int i = matchGroup.getTeamCount() - 1; i >= 0; i--) {
             rankedResults.add(matchGroup.getTeams().get(i));
         }
         scoreCard.setRankedTeams(rankedResults);
