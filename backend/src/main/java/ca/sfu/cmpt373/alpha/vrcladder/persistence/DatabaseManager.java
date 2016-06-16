@@ -1,5 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcladder.persistence;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
+import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
@@ -36,12 +38,24 @@ public abstract class DatabaseManager<T> {
         return obj;
     }
 
-    public T getById(String id) {
+    /**
+     * Fetches the entity of type T that is uniquely identified by the provided IdType.
+     * Returns null if no entity is found with that IdType.
+     */
+    public T getById(IdType id) {
         Session session = sessionManager.getSession();
         T obj = session.get(STORED_CLASS_TYPE, id);
         session.close();
 
         return obj;
+    }
+
+    public List<T> getAll() {
+        Session session = sessionManager.getSession();
+        List<T> entityList = session.createCriteria(STORED_CLASS_TYPE).list();
+        session.close();
+
+        return entityList;
     }
 
     protected T update(T obj) {
@@ -74,24 +88,21 @@ public abstract class DatabaseManager<T> {
         return obj;
     }
 
-    public T deleteById(String id) {
+    public T deleteById(IdType id) {
         Session session = sessionManager.getSession();
-        Transaction transaction = session.beginTransaction();
 
         T obj = session.get(STORED_CLASS_TYPE, id);
+        if (obj == null) {
+            session.close();
+            throw new EntityNotFoundException();
+        }
+
+        Transaction transaction = session.beginTransaction();
         session.delete(obj);
         transaction.commit();
         session.close();
 
         return obj;
-    }
-
-    public List<T> getAll() {
-        Session session = sessionManager.getSession();
-        List<T> entityList = session.createCriteria(STORED_CLASS_TYPE).list();
-        session.close();
-
-        return entityList;
     }
 
 }

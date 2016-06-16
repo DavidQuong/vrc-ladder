@@ -2,7 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.users.personal;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
-import ca.sfu.cmpt373.alpha.vrcladder.util.Identifier;
+import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Embeddable
-public class UserId implements Identifier {
+public class UserId implements IdType {
 
     private static final String USER_ID_FORMAT_REGEX_PATTERN = "^[0-9]+$";
     private static final String USER_ID_FORMAT_ERROR_MSG = "%s is not a valid user ID.";
@@ -18,7 +18,6 @@ public class UserId implements Identifier {
     private static final Pattern FORMAT_PATTERN = Pattern.compile(USER_ID_FORMAT_REGEX_PATTERN,
             Pattern.CASE_INSENSITIVE);
 
-    @Column(name = PersistenceConstants.COLUMN_ID)
     private String id;
 
     private UserId() {
@@ -30,9 +29,15 @@ public class UserId implements Identifier {
         id = userId;
     }
 
+    @Column(name = PersistenceConstants.COLUMN_ID)
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

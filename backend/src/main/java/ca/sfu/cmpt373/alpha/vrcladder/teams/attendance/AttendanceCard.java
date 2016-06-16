@@ -1,9 +1,10 @@
 package ca.sfu.cmpt373.alpha.vrcladder.teams.attendance;
 
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
-import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,22 +18,21 @@ public class AttendanceCard {
 
     private static final PlayTime DEFAULT_PLAYTIME = PlayTime.NONE;
 
-    private IdType id;
+    private GeneratedId id;
     private PlayTime preferredPlayTime;
 
     public AttendanceCard() {
-        this.id = new IdType();
+        this.id = new GeneratedId();
         this.preferredPlayTime = DEFAULT_PLAYTIME;
     }
 
-    @Id
-    @Column(name = PersistenceConstants.COLUMN_ID)
-    public String getId() {
-        return id.getId();
+    @EmbeddedId
+    public GeneratedId getId() {
+        return id;
     }
 
-    public void setId(String newId) {
-        id = new IdType(newId);
+    public void setId(GeneratedId newId) {
+        id = newId;
     }
 
     @Enumerated(EnumType.STRING)

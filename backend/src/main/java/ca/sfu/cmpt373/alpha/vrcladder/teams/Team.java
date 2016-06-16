@@ -3,24 +3,25 @@ package ca.sfu.cmpt373.alpha.vrcladder.teams;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
-import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = PersistenceConstants.TABLE_TEAM, uniqueConstraints = @UniqueConstraint(columnNames =
-    {PersistenceConstants.COLUMN_FIRST_PLAYER_ID, PersistenceConstants.COLUMN_SECOND_PLAYER_ID}))
+//@Table(name = PersistenceConstants.TABLE_TEAM, uniqueConstraints = @UniqueConstraint(columnNames =
+//    {PersistenceConstants.COLUMN_FIRST_PLAYER_ID, PersistenceConstants.COLUMN_SECOND_PLAYER_ID}))
+@Table(name = PersistenceConstants.TABLE_TEAM)
 public class Team {
 
-    private IdType id;
+    private GeneratedId id;
+
     private AttendanceCard attendanceCard;
     private User firstPlayer;
     private User secondPlayer;
@@ -31,7 +32,7 @@ public class Team {
     }
 
     public Team(User firstPlayer, User secondPlayer, LadderPosition ladderPosition) {
-        this.id = new IdType();
+        this.id = new GeneratedId();
         this.attendanceCard = new AttendanceCard();
         this.firstPlayer = firstPlayer;
         this.secondPlayer = secondPlayer;
@@ -39,21 +40,20 @@ public class Team {
     }
 
     public Team(User firstPlayer, User secondPlayer, int position) {
-        this.id = new IdType();
+        this.id = new GeneratedId();
         this.attendanceCard = new AttendanceCard();
         this.firstPlayer = firstPlayer;
         this.secondPlayer = secondPlayer;
         this.ladderPosition = new LadderPosition(position);
     }
 
-    @Id
-    @Column(name = PersistenceConstants.COLUMN_ID)
-    public String getId() {
-        return id.getId();
+    @EmbeddedId
+    public GeneratedId getId() {
+        return id;
     }
 
-    private void setId(String newId) {
-        id = new IdType(newId);
+    public void setId(GeneratedId id) {
+        this.id = id;
     }
 
     @OneToOne(cascade = CascadeType.ALL)

@@ -5,6 +5,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.persistence.DatabaseManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
+import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.CriterionConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
@@ -34,12 +35,12 @@ public class UserManager extends DatabaseManager<User> {
         return super.create(user);
     }
 
-    public User create(String userId, UserRole userRole, String firstName, String lastName, String emailAddress,
+    public User create(UserId userId, UserRole userRole, String firstName, String lastName, String emailAddress,
         String phoneNumber) {
         return create(userId, userRole, firstName, StringUtils.EMPTY, lastName, emailAddress, phoneNumber);
     }
 
-    public User create(String userId, UserRole userRole, String firstName, String middleName, String lastName,
+    public User create(UserId userId, UserRole userRole, String firstName, String middleName, String lastName,
         String emailAddress, String phoneNumber) {
         User createdUser = new UserBuilder()
             .setUserId(userId)
@@ -55,7 +56,7 @@ public class UserManager extends DatabaseManager<User> {
         return createdUser;
     }
 
-    public User update(String userId, UserRole userRole, String firstName, String middleName, String lastName,
+    public User update(UserId userId, UserRole userRole, String firstName, String middleName, String lastName,
         String emailAddress, String phoneNumber) {
         Session session = sessionManager.getSession();
 
@@ -90,20 +91,7 @@ public class UserManager extends DatabaseManager<User> {
         return user;
     }
 
-    @Override
-    public User deleteById(String userId) {
-        Session session = sessionManager.getSession();
-        User user = session.get(User.class, userId);
-        session.close();
-
-        if (user == null) {
-            throw new EntityNotFoundException();
-        }
-
-        return delete(user);
-    }
-
-    private List<Team> getTeamsOfPlayer(String playerId) {
+    private List<Team> getTeamsOfPlayer(UserId playerId) {
         Session session = sessionManager.getSession();
 
         Criterion firstPlayerCriterion = Restrictions.eq(CriterionConstants.TEAM_FIRST_PLAYER_USER_ID_PROPERTY,

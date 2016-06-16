@@ -4,10 +4,12 @@ import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -37,7 +39,7 @@ public class MatchGroup {
     private static final String ERROR_MESSAGE_NUM_TEAMS = "Teams list contains more or less than the min or max " +
         "number of permissible teams";
 
-    private IdType id;
+    private GeneratedId id;
     private List<Team> teams;
     private ScoreCard scoreCard;
 
@@ -68,21 +70,16 @@ public class MatchGroup {
     }
 
     private void init() {
-        setId(new IdType());
+        setId(new GeneratedId());
         scoreCard = new ScoreCard(this);
     }
 
-    @Id
-    @Column(name = PersistenceConstants.COLUMN_ID)
-    public String getId() {
-        return id.getId();
+    @EmbeddedId
+    public GeneratedId getId() {
+        return id;
     }
 
-    private void setId(String newId) {
-        this.id = new IdType(newId);
-    }
-
-    private void setId(IdType id) {
+    private void setId(GeneratedId id) {
         this.id = id;
     }
 

@@ -2,7 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.scores;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
-import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -20,7 +20,7 @@ public class ScoreCard {
 
     @Id
     @Embedded
-    private IdType id;
+    private GeneratedId id;
 
     @OneToOne
     private MatchGroup matchGroup;
@@ -30,7 +30,7 @@ public class ScoreCard {
     private List<Team> rankedTeams = new ArrayList<>();
 
     public ScoreCard(MatchGroup matchGroup) {
-        id = new IdType();
+        id = new GeneratedId();
         this.matchGroup = matchGroup;
     }
 
@@ -72,7 +72,7 @@ public class ScoreCard {
         return this.matchGroup;
     }
 
-    public IdType getId() {
+    public GeneratedId getId() {
         return id;
     }
 

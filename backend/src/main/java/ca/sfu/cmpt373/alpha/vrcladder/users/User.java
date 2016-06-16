@@ -9,6 +9,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -45,14 +46,13 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    @Id
-    @Column(name = PersistenceConstants.COLUMN_ID)
-    public String getUserId() {
-        return userId.getId();
+    @EmbeddedId
+    public UserId getUserId() {
+        return userId;
     }
 
-    private void setUserId(String newUserId) {
-        userId = new UserId(newUserId);
+    private void setUserId(UserId newUserId) {
+        userId = newUserId;
     }
 
     @Enumerated(EnumType.STRING)

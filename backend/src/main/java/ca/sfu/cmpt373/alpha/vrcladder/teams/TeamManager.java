@@ -9,8 +9,9 @@ import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.CriterionConstants;
-import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
@@ -56,7 +57,7 @@ public class TeamManager extends DatabaseManager<Team> {
         return newTeam;
     }
 
-    public Team create(String firstPlayerId, String secondPlayerId) {
+    public Team create(UserId firstPlayerId, UserId secondPlayerId) {
         Session session = sessionManager.getSession();
         User firstPlayer = session.get(User.class, firstPlayerId);
         User secondPlayer = session.get(User.class, secondPlayerId);
@@ -82,11 +83,7 @@ public class TeamManager extends DatabaseManager<Team> {
         return newTeam;
     }
 
-    public Team updateAttendance(IdType teamId, PlayTime preferredPlayTime) {
-        return updateAttendance(teamId.getId(), preferredPlayTime);
-    }
-
-    public Team updateAttendance(String teamId, PlayTime playTime) {
+    public Team updateAttendance(GeneratedId teamId, PlayTime playTime) {
         Session session = sessionManager.getSession();
 
         Team team = session.get(Team.class, teamId);
@@ -129,13 +126,17 @@ public class TeamManager extends DatabaseManager<Team> {
         User firstPlayer = team.getFirstPlayer();
         Team activeTeam = findActiveTeam(firstPlayer);
         if (activeTeam != null && !team.equals(activeTeam)) {
-            throw new MultiplePlayTimeException(firstPlayer.getUserId(), activeTeam.getId());
+            String userId = firstPlayer.getUserId().toString();
+            String teamId = activeTeam.getId().toString();
+            throw new MultiplePlayTimeException(userId, teamId);
         }
 
         User secondPlayer = team.getSecondPlayer();
         activeTeam = findActiveTeam(secondPlayer);
         if (activeTeam != null && !team.equals(activeTeam)) {
-            throw new MultiplePlayTimeException(secondPlayer.getUserId(), activeTeam.getId());
+            String userId = secondPlayer.getUserId().toString();
+            String teamId = activeTeam.getId().toString();
+            throw new MultiplePlayTimeException(userId, teamId);
         }
     }
 
