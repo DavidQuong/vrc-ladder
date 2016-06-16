@@ -39,38 +39,6 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
         return create(matchGroup);
     }
 
-    @Override
-    public MatchGroup delete(MatchGroup matchGroup) {
-        return deleteById(matchGroup.getId());
-    }
-
-    @Override
-    public MatchGroup deleteById(String id) {
-        Session session = sessionManager.getSession();
-        Transaction transaction = session.beginTransaction();
-
-        MatchGroup matchGroup = session.get(MatchGroup.class, id);
-        session.delete(matchGroup);
-        session.delete(matchGroup.getScoreCard());
-        transaction.commit();
-        session.close();
-
-        return matchGroup;
-    }
-
-    @Override
-    protected MatchGroup create(MatchGroup matchGroup) throws ConstraintViolationException {
-        Session session = sessionManager.getSession();
-        Transaction transaction = session.beginTransaction();
-
-        session.save(matchGroup);
-        session.save(matchGroup.getScoreCard());
-        transaction.commit();
-        session.close();
-
-        return matchGroup;
-    }
-
     /**
      * @throws PersistenceException if there is no object stored in the database for the given id
      */

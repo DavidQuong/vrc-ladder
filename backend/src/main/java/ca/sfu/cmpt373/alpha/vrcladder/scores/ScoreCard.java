@@ -1,19 +1,16 @@
 package ca.sfu.cmpt373.alpha.vrcladder.scores;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
-import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -22,18 +19,18 @@ public class ScoreCard {
     private static final String ERROR_ILLEGAL_SIZE = "Ranked teams list must be the same size as MatchGroup teams";
 
     @Id
-    @Column(name = PersistenceConstants.COLUMN_ID)
-    private String id;
+    @Embedded
+    private IdType id;
 
     @OneToOne
     private MatchGroup matchGroup;
 
-    @javax.persistence.ManyToMany
+    @OneToMany
     @OrderColumn
     private List<Team> rankedTeams = new ArrayList<>();
 
     public ScoreCard(MatchGroup matchGroup) {
-        id = new IdType().getId();
+        id = new IdType();
         this.matchGroup = matchGroup;
     }
 
@@ -75,7 +72,7 @@ public class ScoreCard {
         return this.matchGroup;
     }
 
-    public String getId() {
+    public IdType getId() {
         return id;
     }
 
@@ -90,7 +87,6 @@ public class ScoreCard {
         ScoreCard scoreCard = (ScoreCard) otherScoreCard;
 
         return id.equals(scoreCard.id);
-
     }
 
     @Override

@@ -96,7 +96,7 @@ public class MatchGroup {
         this.teams = teams;
     }
 
-    @OneToOne
+    @OneToOne (cascade = CascadeType.ALL)
     public ScoreCard getScoreCard() {
         return this.scoreCard;
     }
@@ -113,14 +113,16 @@ public class MatchGroup {
     public PlayTime getPreferredGroupPlayTime() {
         Map<PlayTime, Integer> preferredTimeCounts = new HashMap<>();
 
+        // Initialize counters to zero
+        for (Team team : teams) {
+            PlayTime playTime = team.getAttendanceCard().getPreferredPlayTime();
+            preferredTimeCounts.put(playTime, 0);
+        }
+
         // Count the 'votes' of preferred time slots for each team in a group.
         for (Team team : teams) {
             PlayTime playTime = team.getAttendanceCard().getPreferredPlayTime();
-            if (preferredTimeCounts.containsKey(playTime)) {
-                preferredTimeCounts.replace(playTime, preferredTimeCounts.get(playTime) + 1);
-            } else {
-                preferredTimeCounts.put(playTime, 1);
-            }
+            preferredTimeCounts.replace(playTime, preferredTimeCounts.get(playTime) + 1);
         }
 
         // Find the time slot with the max votes.
@@ -141,7 +143,7 @@ public class MatchGroup {
 
         // If there's a tie in votes, choose the highest ranked player's preference.
         if (tie) {
-            votedPlayTime = teams.get(0).getAttendanceCard().getPreferredPlayTime();
+            votedPlayTime = getTeam1().getAttendanceCard().getPreferredPlayTime();
         }
 
         return votedPlayTime;
@@ -149,17 +151,20 @@ public class MatchGroup {
 
     @Transient
     public Team getTeam1(){
-        return teams.get(0);
+        int firstTeamIndex = 0;
+        return teams.get(firstTeamIndex);
     }
 
     @Transient
     public Team getTeam2(){
-        return teams.get(1);
+        int secondTeamIndex = 1;
+        return teams.get(secondTeamIndex);
     }
 
     @Transient
     public Team getTeam3(){
-        return teams.get(2);
+        int thirdTeamIndex = 2;
+        return teams.get(thirdTeamIndex);
     }
 
     @Transient
