@@ -9,12 +9,11 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
-import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
-import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -22,99 +21,293 @@ import static org.junit.Assert.assertTrue;
 class LadderTest {
 	private final int ATTENDING = 0;
 	private final int NOT_ATTENDING = 1;
+	private final int FIRST_NON_CONSTANT_ATTENDING_CASE = 6;
 	private final int TEST_CASE_COUNT = 9;
+	private final int GENERATED_TEAMS = 25;
 	private boolean initialized = false;
+	int userId = 0;
 
 	//List of Lists of Teams, first index is Case, second is ATTENDING or NOT_ATTENDING
 	List<List<List<Team>>> testTeams;
 
-	LadderTest() {
-		this.genTeams();
+	LadderTest() {}
+
+	private Team getTeam() {
+		TeamManager teamGen = new TeamManager(new SessionManager());
+
+		User newUser1 = new User();
+		newUser1.setUserId(new Integer(this.userId).toString());
+		newUser1.setUserRole(UserRole.PLAYER);
+		newUser1.setFirstName("jimbo");
+		newUser1.setMiddleName("");
+		newUser1.setLastName("mcgaggen");
+		newUser1.setEmailAddress("jimbo@mcgaggen.net");
+		newUser1.setPhoneNumber("6041234567");
+
+		this.userId++;
+
+		User newUser2 = new User();
+		newUser2.setUserId(new Integer(this.userId).toString());
+		newUser2.setUserRole(UserRole.PLAYER);
+		newUser2.setFirstName("jimbo");
+		newUser2.setMiddleName("");
+		newUser2.setLastName("mcgaggen");
+		newUser2.setEmailAddress("jimbo@mcgaggen.net");
+		newUser2.setPhoneNumber("6041234567");
+
+		this.userId++;
+
+		return teamGen.create(newUser1, newUser2);
 	}
 
+	private List<List<Team>> genTeamCase0() { //Case 0: All non-attending teams said so,         all attending teams present
+		List<List<Team>> caseTeams = new ArrayList<>();
+
+		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
+			for(int i = 0;i < GENERATED_TEAMS;i++) {
+				Team team = this.getTeam();
+
+				if(attendance == ATTENDING) {
+					//team.setAttendance(PRESENT);
+					System.out.println("Set Attendance PRESENT");
+				} else { //NOT_ATTENDING
+					AttendanceCard status = new AttendanceCard();
+					status.setPreferredPlayTime(PlayTime.NONE);
+					team.setAttendanceCard(status);
+				}
+				caseTeams.get(attendance).add(team);
+			}
+		}
+
+		return caseTeams;
+	}
+
+	private List<List<Team>> genTeamCase1() { //Case 1: All non-attending teams said so,         all attending teams late
+		List<List<Team>> caseTeams = new ArrayList<>();
+
+		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
+			for(int i = 0;i < GENERATED_TEAMS;i++) {
+				Team team = this.getTeam();
+
+				if(attendance == ATTENDING) {
+					//team.setAttendance(LATE);
+					System.out.println("Set Attendance LATE");
+				} else { //NOT_ATTENDING
+					AttendanceCard status = new AttendanceCard();
+					status.setPreferredPlayTime(PlayTime.NONE);
+					team.setAttendanceCard(status);
+				}
+				caseTeams.get(attendance).add(team);
+			}
+		}
+
+		return caseTeams;
+	}
+
+	private List<List<Team>> genTeamCase2() { //Case 2: All non-attending teams said attendance, all attending teams late
+		List<List<Team>> caseTeams = new ArrayList<>();
+
+		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
+			for(int i = 0;i < GENERATED_TEAMS;i++) {
+				Team team = this.getTeam();
+
+				if(attendance == ATTENDING) {
+					//team.setAttendance(LATE);
+					System.out.println("Set Attendance LATE");
+				} else { //NOT_ATTENDING
+					//team.setAttendance(NO_SHOW);
+					System.out.println("Set Attendance NO_SHOW");
+				}
+				caseTeams.get(attendance).add(team);
+			}
+		}
+
+		return caseTeams;
+	}
+
+	private List<List<Team>> genTeamCase3() { //Case 3: All non-attending teams said attendance, all attending teams present
+		List<List<Team>> caseTeams = new ArrayList<>();
+
+		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
+			for(int i = 0;i < GENERATED_TEAMS;i++) {
+				Team team = this.getTeam();
+
+				if(attendance == ATTENDING) {
+					//team.setAttendance(PRESENT);
+					System.out.println("Set Attendance PRESENT");
+				} else { //NOT_ATTENDING
+					//team.setAttendance(NO_SHOW);
+					System.out.println("Set Attendance NO_SHOW");
+				}
+				caseTeams.get(attendance).add(team);
+			}
+		}
+
+		return caseTeams;
+	}
+
+	private List<List<Team>> genTeamCase4() { //Case 4: Others vary,                             all attending teams late
+		List<List<Team>> caseTeams = new ArrayList<>();
+
+		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
+			for(int i = 0;i < GENERATED_TEAMS;i++) {
+				Team team = this.getTeam();
+
+				if(attendance == ATTENDING) {
+					//team.setAttendance(LATE);
+					System.out.println("Set Attendance LATE");
+				} else { //NOT_ATTENDING
+					if(i % 2 == 0) {
+						AttendanceCard status = new AttendanceCard();
+						status.setPreferredPlayTime(PlayTime.NONE);
+						team.setAttendanceCard(status);
+					} else {
+						//team.setAttendance(NO_SHOW);
+						System.out.println("Set Attendance NO_SHOW");
+					}
+				}
+				caseTeams.get(attendance).add(team);
+			}
+		}
+
+		return caseTeams;
+	}
+
+	private List<List<Team>> genTeamCase5() { //Case 5: Others vary,                             all attending teams present
+		List<List<Team>> caseTeams = new ArrayList<>();
+
+		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
+			for(int i = 0;i < GENERATED_TEAMS;i++) {
+				Team team = this.getTeam();
+
+				if(attendance == ATTENDING) {
+					//team.setAttendance(PRESENT);
+					System.out.println("Set Attendance PRESENT");
+				} else { //NOT_ATTENDING
+					if(i % 2 == 0) {
+						AttendanceCard status = new AttendanceCard();
+						status.setPreferredPlayTime(PlayTime.NONE);
+						team.setAttendanceCard(status);
+					} else {
+						//team.setAttendance(NO_SHOW);
+						System.out.println("Set Attendance NO_SHOW");
+					}
+				}
+				caseTeams.get(attendance).add(team);
+			}
+		}
+
+		return caseTeams;
+	}
+
+	private List<List<Team>> genTeamCase6() { //Case 6: All non-attending teams said so,         others vary
+		List<List<Team>> caseTeams = new ArrayList<>();
+
+		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
+			for(int i = 0;i < GENERATED_TEAMS;i++) {
+				Team team = this.getTeam();
+
+				if(attendance == ATTENDING) {
+					if(i % 2 == 0) {
+						//team.setAttendance(PRESENT);
+						System.out.println("Set Attendance PRESENT");
+					} else {
+						//team.setAttendance(LATE);
+						System.out.println("Set Attendance LATE");
+					}
+				} else { //NOT_ATTENDING
+					AttendanceCard status = new AttendanceCard();
+					status.setPreferredPlayTime(PlayTime.NONE);
+					team.setAttendanceCard(status);
+				}
+				caseTeams.get(attendance).add(team);
+			}
+		}
+
+		return caseTeams;
+	}
+
+	private List<List<Team>> genTeamCase7() { //Case 7: All non-attending teams said attendance, others vary
+		List<List<Team>> caseTeams = new ArrayList<>();
+
+		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
+			for(int i = 0;i < GENERATED_TEAMS;i++) {
+				Team team = this.getTeam();
+
+				if(attendance == ATTENDING) {
+					if(i % 2 == 0) {
+						//team.setAttendance(PRESENT);
+						System.out.println("Set Attendance PRESENT");
+					} else {
+						//team.setAttendance(LATE);
+						System.out.println("Set Attendance LATE");
+					}
+				} else { //NOT_ATTENDING
+					//team.setAttendance(NO_SHOW);
+					System.out.println("Set Attendance NO_SHOW");
+				}
+				caseTeams.get(attendance).add(team);
+			}
+		}
+
+		return caseTeams;
+	}
+
+	private List<List<Team>> genTeamCase8() { //Case 8: All vary
+		List<List<Team>> caseTeams = new ArrayList<>();
+
+		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
+			for(int i = 0;i < GENERATED_TEAMS;i++) {
+				Team team = this.getTeam();
+
+				if(attendance == ATTENDING) {
+					if(i % 2 == 0) {
+						//team.setAttendance(PRESENT);
+						System.out.println("Set Attendance PRESENT");
+					} else {
+						//team.setAttendance(LATE);
+						System.out.println("Set Attendance LATE");
+					}
+				} else { //NOT_ATTENDING
+					if(i % 2 == 0) {
+						AttendanceCard status = new AttendanceCard();
+						status.setPreferredPlayTime(PlayTime.NONE);
+						team.setAttendanceCard(status);
+					} else {
+						//team.setAttendance(NO_SHOW);
+						System.out.println("Set Attendance NO_SHOW");
+					}
+				}
+				caseTeams.get(attendance).add(team);
+			}
+		}
+
+		return caseTeams;
+	}
+
+	@Before
 	private void genTeams() {
 		//Case 0: All non-attending teams said so,         all attending teams present
 		//Case 1: All non-attending teams said so,         all attending teams late
 		//Case 2: All non-attending teams said attendance, all attending teams late
 		//Case 3: All non-attending teams said attendance, all attending teams present
-		//Case 4: Others vary,                             all attending teams late,
+		//Case 4: Others vary,                             all attending teams late
 		//Case 5: Others vary,                             all attending teams present
 		//Case 6: All non-attending teams said so,         others vary
 		//Case 7: All non-attending teams said attendance, others vary
 		//Case 8: All vary
 
 		if(!this.initialized) {
-			TeamManager teamGen = new TeamManager(new SessionManager());
-			int userId = 0;
-
 			this.testTeams = new ArrayList<>();
-
-			for(int testCase = 1;testCase < TEST_CASE_COUNT;testCase++) { //Adding cases
-				testTeams.add(new ArrayList<>());
-
-				for(int attendance = 0;attendance < 2;attendance++) { //Adding ATTENDING/NOT_ATTENDING
-					testTeams.get(testCase).add(new ArrayList<>());
-
-					for(int i = 0;i < 25;i++) {
-						User newUser1 = new User();
-						newUser1.setUserId(new Integer(userId).toString());
-						newUser1.setUserRole(UserRole.PLAYER);
-						newUser1.setFirstName("jimbo");
-						newUser1.setMiddleName("");
-						newUser1.setLastName("mcgaggen");
-						newUser1.setEmailAddress("jimbo@mcgaggen.net");
-						newUser1.setPhoneNumber("6041234567");
-
-						userId++;
-
-						User newUser2 = new User();
-						newUser2.setUserId(new Integer(userId).toString());
-						newUser2.setUserRole(UserRole.PLAYER);
-						newUser2.setFirstName("jimbo");
-						newUser2.setMiddleName("");
-						newUser2.setLastName("mcgaggen");
-						newUser2.setEmailAddress("jimbo@mcgaggen.net");
-						newUser2.setPhoneNumber("6041234567");
-
-						userId++;
-
-						Team creation = teamGen.create(newUser1, newUser2);
-
-						if(attendance == ATTENDING) {
-							if(testCase == 0 || testCase == 3 || testCase == 5) {
-								//creation.setAttendance(PRESENT);
-								System.out.println("Set Attendance PRESENT");
-							} else if(testCase == 1 || testCase == 2 || testCase == 4) {
-								//creation.setAttendance(LATE);
-								System.out.println("Set Attendance LATE");
-							} else if(i % 2 == 0) {
-								//creation.setAttendance(PRESENT);
-								System.out.println("Set Attendance PRESENT");
-							} else {
-								//creation.setAttendance(LATE);
-								System.out.println("Set Attendance LATE");
-							}
-						} else { //NOT_ATTENDING
-							if(testCase == 0 || testCase == 1 || testCase == 6) {
-								AttendanceCard status = new AttendanceCard();
-								status.setPreferredPlayTime(PlayTime.NONE);
-								creation.setAttendanceCard(status);
-							} else if(testCase == 2 || testCase == 3 || testCase == 7) {
-								//creation.setAttendance(NO_SHOW);
-								System.out.println("Set Attendance NO_SHOW");
-							} else if(i % 2 == 0) {
-								AttendanceCard status = new AttendanceCard();
-								status.setPreferredPlayTime(PlayTime.NONE);
-								creation.setAttendanceCard(status);
-							} else {
-								//creation.setAttendance(NO_SHOW);
-								System.out.println("Set Attendance NO_SHOW");
-							}
-						}
-						testTeams.get(testCase).get(attendance).add(creation);
-					}
-				}
-			}
+			testTeams.add(genTeamCase0());
+			testTeams.add(genTeamCase1());
+			testTeams.add(genTeamCase2());
+			testTeams.add(genTeamCase3());
+			testTeams.add(genTeamCase4());
+			testTeams.add(genTeamCase5());
+			testTeams.add(genTeamCase6());
+			testTeams.add(genTeamCase7());
+			testTeams.add(genTeamCase8());
 		}
 		this.initialized = true;
 	}
@@ -150,7 +343,7 @@ class LadderTest {
 		for(int i = 0;i < TEST_CASE_COUNT;i++) {
 			List<Team> sourceResults = getTeams(teamCount, i).get(ATTENDING);
 			expectedResults.add(new ArrayList<>());
-			if(i < 6) {
+			if(i < FIRST_NON_CONSTANT_ATTENDING_CASE) {
 				expectedResults.get(i).add(sourceResults.get(2));
 				expectedResults.get(i).add(sourceResults.get(1));
 				expectedResults.get(i).add(sourceResults.get(4));
@@ -181,8 +374,27 @@ class LadderTest {
 
 			List<MatchGroup> ladderTestGroups = getGroups.generateMatchGroupings(ladderTestTeams);
 
-			//3 groups, 3-2-1, 2-1-3, 1-2-3
-			System.out.println("Add win/loss data");
+			//The following sets the 3 groups final scores to: 3-2-1, 2-1-3, 1-2-3
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(0), 0, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(0), 1, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(1), 0, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(1), 2, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(2), 1, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(2), 2, true);
+
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(3), 0, false);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(3), 1, true);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(4), 0, true);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(4), 2, true);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(5), 1, false);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(5), 2, false);
+
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(6), 0, false);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(6), 1, true);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(7), 0, true);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(7), 2, false);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(8), 1, false);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(8), 2, true);
 
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()])); //Conversion obtained from http://stackoverflow.com/questions/9572795/convert-list-to-array-in-java
@@ -198,7 +410,7 @@ class LadderTest {
 		for(int i = 0;i < TEST_CASE_COUNT;i++) {
 			List<Team> sourceResults = getTeams(teamCount, i).get(ATTENDING);
 			expectedResults.add(new ArrayList<>());
-			if(i < 6) {
+			if(i < FIRST_NON_CONSTANT_ATTENDING_CASE) {
 				expectedResults.get(i).add(sourceResults.get(0));
 				expectedResults.get(i).add(sourceResults.get(1));
 				expectedResults.get(i).add(sourceResults.get(2));
@@ -239,8 +451,33 @@ class LadderTest {
 			ladderTestGroups.add(new MatchGroup(sourceResults.get(4), sourceResults.get(5), sourceResults.get(6), sourceResults.get(7)));
 			ladderTestGroups.add(new MatchGroup(sourceResults.get(8), sourceResults.get(9), sourceResults.get(10), sourceResults.get(11)));
 
-			//1-2-3-4, 3-4-2-1, 2-1-3-4
-			System.out.println("Add win/loss data");
+			//The following sets the 3 groups final scores to: 1-2-3-4, 3-4-2-1, 2-1-3-4
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(0), 0, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(0), 2, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(1), 1, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(1), 2, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(2), 0, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(2), 3, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(3), 1, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(3), 3, false);
+
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(4), 0, false);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(4), 3, true);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(5), 1, false);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(5), 3, false);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(6), 0, true);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(6), 2, false);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(7), 1, true);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(7), 2, true);
+
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(8), 0, true);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(8), 2, false);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(9), 1, true);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(9), 3, true);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(10), 0, false);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(10), 2, true);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(11), 1, false);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(11), 3, false);
 
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
@@ -257,7 +494,7 @@ class LadderTest {
 		for(int i = 0;i < TEST_CASE_COUNT;i++) {
 			List<Team> sourceResults = getTeams(teamCount, i).get(ATTENDING);
 			expectedResults.add(new ArrayList<>());
-			if(i < 6) {
+			if(i < FIRST_NON_CONSTANT_ATTENDING_CASE) {
 				expectedResults.get(i).add(sourceResults.get(1));
 				expectedResults.get(i).add(sourceResults.get(3));
 				expectedResults.get(i).add(sourceResults.get(0));
@@ -310,8 +547,45 @@ class LadderTest {
 			ladderTestGroups.add(new MatchGroup(sourceResults.get(10), sourceResults.get(11), sourceResults.get(12), sourceResults.get(13)));
 			ladderTestGroups.add(new MatchGroup(sourceResults.get(14), sourceResults.get(15), sourceResults.get(16)));
 
-			//2-4-1-3, 3-1-2, 3-2-1, 4-3-2-1, 2-1-3
-			System.out.println("Add win/loss data");
+			//The following sets the 5 groups final scores to: 2-4-1-3, 3-1-2, 3-2-1, 4-3-2-1, 2-1-3
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(0), 0, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(0), 2, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(1), 0, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(1), 3, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(2), 1, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(2), 2, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(3), 1, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(3), 3, true);
+
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(4), 0, false);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(4), 1, false);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(5), 0, true);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(5), 2, true);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(6), 1, true);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(6), 2, false);
+
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(7), 0, false);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(7), 1, false);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(8), 2, false);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(8), 0, true);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(9), 1, true);
+			ladderTestGroups.get(2).recordTeamScore(ladderTestTeams.get(9), 2, true);
+
+			ladderTestGroups.get(3).recordTeamScore(ladderTestTeams.get(10), 0, false);
+			ladderTestGroups.get(3).recordTeamScore(ladderTestTeams.get(10), 2, false);
+			ladderTestGroups.get(3).recordTeamScore(ladderTestTeams.get(11), 1, false);
+			ladderTestGroups.get(3).recordTeamScore(ladderTestTeams.get(11), 3, true);
+			ladderTestGroups.get(3).recordTeamScore(ladderTestTeams.get(12), 0, true);
+			ladderTestGroups.get(3).recordTeamScore(ladderTestTeams.get(12), 3, false);
+			ladderTestGroups.get(3).recordTeamScore(ladderTestTeams.get(13), 1, true);
+			ladderTestGroups.get(3).recordTeamScore(ladderTestTeams.get(13), 2, true);
+
+			ladderTestGroups.get(4).recordTeamScore(ladderTestTeams.get(14), 0, true);
+			ladderTestGroups.get(4).recordTeamScore(ladderTestTeams.get(14), 1, false);
+			ladderTestGroups.get(4).recordTeamScore(ladderTestTeams.get(15), 1, true);
+			ladderTestGroups.get(4).recordTeamScore(ladderTestTeams.get(15), 2, true);
+			ladderTestGroups.get(4).recordTeamScore(ladderTestTeams.get(16), 0, false);
+			ladderTestGroups.get(4).recordTeamScore(ladderTestTeams.get(16), 2, false);
 
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
@@ -442,8 +716,20 @@ class LadderTest {
 
 			List<MatchGroup> ladderTestGroups = getGroups.generateMatchGroupings(ladderTestTeams);
 
-			//3-2-1, 1-2-3
-			System.out.println("Add win/loss data");
+			//The following sets the 2 groups final scores to: 3-2-1, 1-2-3
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(1), 0, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(1), 1, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(2), 0, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(2), 2, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(3), 1, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(3), 2, true);
+
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(5), 0, true);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(5), 2, true);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(6), 1, true);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(6), 2, false);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(7), 0, false);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(7), 1, false);
 
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
@@ -605,8 +891,24 @@ class LadderTest {
 
 			List<MatchGroup> ladderTestGroups = getGroups.generateMatchGroupings(ladderTestTeams);
 
-			//3-1-2-4, 1-2-4-3
-			System.out.println("Add win/loss data");
+			//The following sets the 2 groups final scores to: 3-1-2-4, 1-2-4-3
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(0), 0, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(0), 3, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(1), 0, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(1), 2, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(2), 1, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(2), 2, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(3), 1, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(3), 3, false);
+
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(6), 0, true);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(6), 2, true);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(7), 1, true);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(7), 2, false);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(8), 0, false);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(8), 3, false);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(9), 1, false);
+			ladderTestGroups.get(1).recordTeamScore(ladderTestTeams.get(9), 3, true);
 
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
@@ -727,8 +1029,13 @@ class LadderTest {
 			List<MatchGroup> ladderTestGroups = new ArrayList<>();
 			ladderTestGroups.add(new MatchGroup(sourceResults.get(0), sourceResults.get(1), sourceResults.get(2)));
 
-			//2-1-3
-			System.out.println("Add win/loss data");
+			//The following sets the group final scores to: 2-1-3
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(2), 0, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(2), 1, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(3), 0, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(3), 2, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(4), 1, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(4), 2, false);
 
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
@@ -879,8 +1186,15 @@ class LadderTest {
 			List<MatchGroup> ladderTestGroups = new ArrayList<>();
 			ladderTestGroups.add(new MatchGroup(sourceResults.get(0), sourceResults.get(1), sourceResults.get(2), sourceResults.get(3)));
 
-			//3-4-2-1
-			System.out.println("Add win/loss data");
+			//The following sets the groups final score to: 3-4-2-1
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(3), 0, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(3), 3, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(4), 1, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(4), 3, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(5), 0, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(5), 2, false);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(6), 1, true);
+			ladderTestGroups.get(0).recordTeamScore(ladderTestTeams.get(6), 2, true);
 
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
@@ -1143,8 +1457,27 @@ class LadderTest {
 			ladderTestGroups.add(new MatchGroup(sourceResults.get(3), sourceResults.get(5), sourceResults.get(7)));
 			ladderTestGroups.add(new MatchGroup(sourceResults.get(2), sourceResults.get(6), sourceResults.get(8)));
 
-			//3-2-1, 1-3-2, 1-2-3
-			System.out.println("Add win/loss data");
+			//The following sets the 3 groups final scores to: 3-2-1, 1-3-2, 1-2-3
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(0), 0, false);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(0), 1, false);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(1), 0, true);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(1), 2, false);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(4), 1, true);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(4), 2, true);
+
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(3), 0, true);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(3), 2, true);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(5), 0, false);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(5), 1, false);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(7), 1, true);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(7), 2, false);
+
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(2), 0, false);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(2), 1, true);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(6), 0, true);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(6), 2, false);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(8), 1, false);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(8), 2, true);
 
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
@@ -1437,8 +1770,33 @@ class LadderTest {
 			ladderTestGroups.add(new MatchGroup(sourceResults.get(1), sourceResults.get(9), sourceResults.get(10), sourceResults.get(11)));
 			ladderTestGroups.add(new MatchGroup(sourceResults.get(2), sourceResults.get(3), sourceResults.get(5), sourceResults.get(8)));
 
-			//4-1-2-3, 2-3-4-1, 4-2-3-1
-			System.out.println("Add win/loss data");
+			//The following sets the 3 groups final scores to: 4-1-2-3, 2-3-4-1, 4-2-3-1
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(0), 0, false);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(0), 3, false);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(4), 0, true);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(4), 2, true);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(6), 1, true);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(6), 2, false);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(7), 1, false);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(7), 3, true);
+
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(1), 0, true);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(1), 2, false);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(9), 0, false);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(9), 3, true);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(10), 1, false);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(10), 3, false);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(11), 1, true);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(11), 2, true);
+
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(2), 0, false);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(2), 3, false);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(3), 0, true);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(3), 2, false);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(5), 1, false);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(5), 3, true);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(8), 1, true);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(8), 2, true);
 
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
@@ -1691,8 +2049,29 @@ class LadderTest {
 			ladderTestGroups.add(new MatchGroup(sourceResults.get(2), sourceResults.get(5), sourceResults.get(6), sourceResults.get(9)));
 			ladderTestGroups.add(new MatchGroup(sourceResults.get(3), sourceResults.get(4), sourceResults.get(8)));
 
-			//1-2-3, 1-4-3-2, 3-1-2
-			System.out.println("Add win/loss data");
+			//The following sets the 3 groups final scores to: 1-2-3, 1-4-3-2, 3-1-2
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(0), 0, false);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(0), 1, true);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(1), 0, true);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(1), 2, false);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(7), 1, false);
+			ladderTestGroups.get(0).recordTeamScore(sourceResults.get(7), 2, true);
+
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(2), 0, true);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(2), 2, true);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(5), 0, false);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(5), 3, false);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(6), 1, false);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(6), 3, true);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(9), 1, true);
+			ladderTestGroups.get(1).recordTeamScore(sourceResults.get(9), 2, false);
+
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(3), 0, false);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(3), 2, false);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(4), 0, true);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(4), 1, true);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(8), 1, false);
+			ladderTestGroups.get(2).recordTeamScore(sourceResults.get(8), 2, true);
 
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups.toArray(new MatchGroup[ladderTestGroups.size()]));
