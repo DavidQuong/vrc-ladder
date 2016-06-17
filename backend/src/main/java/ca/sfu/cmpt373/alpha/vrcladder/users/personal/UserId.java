@@ -18,6 +18,7 @@ public class UserId implements IdType {
     private static final Pattern FORMAT_PATTERN = Pattern.compile(USER_ID_FORMAT_REGEX_PATTERN,
             Pattern.CASE_INSENSITIVE);
 
+    @Column(name = PersistenceConstants.COLUMN_ID)
     private String id;
 
     private UserId() {
@@ -29,15 +30,9 @@ public class UserId implements IdType {
         id = userId;
     }
 
-    @Column(name = PersistenceConstants.COLUMN_ID)
     @Override
     public String getId() {
         return id;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
     }
 
     @Override

@@ -9,6 +9,7 @@ import java.util.UUID;
 @Embeddable
 public class GeneratedId implements IdType {
 
+    @Column (name = PersistenceConstants.COLUMN_ID)
     private String id;
 
     public GeneratedId() {
@@ -19,13 +20,12 @@ public class GeneratedId implements IdType {
         this.id = id;
     }
 
-    @Column (name = PersistenceConstants.COLUMN_ID)
+    @Override
     public String getId() {
         return id;
     }
 
-    @Override
-    public void setId(String id) {
+    private void setId(String id) {
         this.id = id;
     }
 
