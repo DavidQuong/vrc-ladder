@@ -12,6 +12,7 @@ public class LadderPosition implements Comparable<LadderPosition> {
     public static final Integer FIRST_POSITION = 1;
     private static final String INVALID_POSITION_FORMAT = "Invalid valid rank ladderPosition: %s.";
 
+    @Column(name = PersistenceConstants.COLUMN_LADDER_POSITION, nullable = false, unique = true)
     private Integer ladderPosition;
 
     private LadderPosition() {
@@ -27,13 +28,8 @@ public class LadderPosition implements Comparable<LadderPosition> {
         this.ladderPosition = position;
     }
 
-    @Column(name = PersistenceConstants.COLUMN_LADDER_POSITION, nullable = false, unique = true)
     public Integer getLadderPosition() {
         return ladderPosition;
-    }
-
-    public void setLadderPosition(Integer ladderPosition) {
-        this.ladderPosition = ladderPosition;
     }
 
     @Override

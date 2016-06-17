@@ -24,8 +24,6 @@ import java.util.List;
 /**
  * Provides an interface to perform create, read, update, and delete (CRUD) operations on,
  * teams in the database.
- *
- * TODO - Ensure that a player cannot opt-in play for multiple teams in a given tournament.
  */
 public class TeamManager extends DatabaseManager<Team> {
 
@@ -174,7 +172,6 @@ public class TeamManager extends DatabaseManager<Team> {
             int nextPositionCount = lastPosition.getLadderPosition() + 1;
             return new LadderPosition(nextPositionCount);
         }
-
     }
 
 }

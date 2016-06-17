@@ -68,17 +68,12 @@ public class Team {
         return firstPlayer;
     }
 
-
     public User getSecondPlayer() {
         return secondPlayer;
     }
 
     public LadderPosition getLadderPosition() {
         return ladderPosition;
-    }
-
-    public void setLadderPosition(LadderPosition ladderPosition) {
-        this.ladderPosition = ladderPosition;
     }
 
     @Override

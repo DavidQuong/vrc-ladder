@@ -25,10 +25,6 @@ public class GeneratedId implements IdType {
         return id;
     }
 
-    private void setId(String id) {
-        this.id = id;
-    }
-
     @Override
     public String toString() {
         return getId();

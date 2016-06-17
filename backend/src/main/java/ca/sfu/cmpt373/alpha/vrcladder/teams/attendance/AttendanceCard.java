@@ -18,7 +18,11 @@ public class AttendanceCard {
 
     private static final PlayTime DEFAULT_PLAYTIME = PlayTime.NONE;
 
+    @EmbeddedId
     private GeneratedId id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = PersistenceConstants.COLUMN_PLAY_TIME, nullable = false)
     private PlayTime preferredPlayTime;
 
     public AttendanceCard() {
@@ -26,17 +30,10 @@ public class AttendanceCard {
         this.preferredPlayTime = DEFAULT_PLAYTIME;
     }
 
-    @EmbeddedId
     public GeneratedId getId() {
         return id;
     }
 
-    public void setId(GeneratedId newId) {
-        id = newId;
-    }
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = PersistenceConstants.COLUMN_PLAY_TIME, nullable = false)
     public PlayTime getPreferredPlayTime() {
         return preferredPlayTime;
     }
@@ -45,7 +42,6 @@ public class AttendanceCard {
         preferredPlayTime = playTime;
     }
 
-    @Transient
     public boolean isAttending() {
         return  (preferredPlayTime != PlayTime.NONE);
     }

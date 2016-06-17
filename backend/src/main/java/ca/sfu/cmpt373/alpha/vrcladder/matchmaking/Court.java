@@ -12,6 +12,7 @@ import java.util.Map;
  * essentially just a mapping between a PlayTime and a MatchGroup
  */
 public class Court {
+
     private static final String ERROR_MESSAGE_TIME_SLOT_FILLED = "Time slot is filled";
     private static final String ERROR_MESSAGE_NO_MATCH_SCHEDULED = "There is no match scheduled for this play time";
 
@@ -58,4 +59,5 @@ public class Court {
             throw new MatchMakingException(ERROR_MESSAGE_TIME_SLOT_FILLED);
         }
     }
+
 }
