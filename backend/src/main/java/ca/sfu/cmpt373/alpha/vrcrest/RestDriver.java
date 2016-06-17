@@ -5,6 +5,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcrest.payloads.NewTeamPayload;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -84,7 +85,7 @@ public class RestDriver {
                     response.status(HttpStatus.BAD_REQUEST_400);
                     return ERROR_MESSAGE_INVALID_JSON_OBJECT;
                 }
-                Team team = application.getTeamManager().create(newTeam.getUserId1().getUserId(), newTeam.getUserId2().getUserId());
+                Team team = application.getTeamManager().create(newTeam.getUserId1(), newTeam.getUserId2());
                 return team.getId();
             } catch (PropertyValueException e) {
                 //this exception happens if userIds are provided that don't exist in the database
@@ -102,7 +103,7 @@ public class RestDriver {
         String paramTeamId = ":teamId";
         post("/teams/attendance/" + paramTeamId, (request, response) -> {
             try {
-                String teamId = request.params(paramTeamId);
+                GeneratedId teamId = new GeneratedId(request.params(paramTeamId));
                 ObjectMapper objectMapper = new ObjectMapper();
                 PlayTime preferredPlayTime = objectMapper.readValue(request.body(), PlayTime.class);
                 application.getTeamManager().updateAttendance(teamId, preferredPlayTime);

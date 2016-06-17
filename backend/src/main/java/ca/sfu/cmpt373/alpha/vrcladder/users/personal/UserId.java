@@ -1,11 +1,16 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.personal;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
+import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class UserId {
+@Embeddable
+public class UserId implements IdType {
 
     private static final String USER_ID_FORMAT_REGEX_PATTERN = "^[0-9]+$";
     private static final String USER_ID_FORMAT_ERROR_MSG = "%s is not a valid user ID.";
@@ -13,20 +18,26 @@ public class UserId {
     private static final Pattern FORMAT_PATTERN = Pattern.compile(USER_ID_FORMAT_REGEX_PATTERN,
             Pattern.CASE_INSENSITIVE);
 
+    @Column(name = PersistenceConstants.COLUMN_ID)
     private String id;
+
+    private UserId() {
+        // For Hibernate.
+    }
 
     public UserId(String userId) {
         validateFormat(userId);
         id = userId;
     }
 
-    public String getUserId() {
+    @Override
+    public String getValue() {
         return id;
     }
 
     @Override
     public String toString() {
-        return getUserId();
+        return getValue();
     }
 
     @Override

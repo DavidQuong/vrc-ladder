@@ -2,9 +2,11 @@ package ca.sfu.cmpt373.alpha.vrcladder.scores;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
 import javax.persistence.Embedded;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -15,12 +17,12 @@ import java.util.List;
 
 @Entity
 public class ScoreCard {
+    
     private static final String ERROR_TEAM_NOT_IN_GROUP = "Team is not in match group";
     private static final String ERROR_ILLEGAL_SIZE = "Ranked teams list must be the same size as MatchGroup teams";
 
-    @Id
-    @Embedded
-    private IdType id;
+    @EmbeddedId
+    private GeneratedId id;
 
     @OneToOne
     private MatchGroup matchGroup;
@@ -29,13 +31,13 @@ public class ScoreCard {
     @OrderColumn
     private List<Team> rankedTeams = new ArrayList<>();
 
-    public ScoreCard(MatchGroup matchGroup) {
-        id = new IdType();
-        this.matchGroup = matchGroup;
+    private ScoreCard() {
+        // Required by Hibernate.
     }
 
-    private ScoreCard() {
-        //for hibernate
+    public ScoreCard(MatchGroup matchGroup) {
+        this.id = new GeneratedId();
+        this.matchGroup = matchGroup;
     }
 
     public void setRankedTeams(List<Team> rankedTeams) {
@@ -62,35 +64,38 @@ public class ScoreCard {
     }
 
     /**
-     * @return a list of teams in the order they came in in their matches
+     * @return A list of teams in the order they came in in their matches.
      */
     public List<Team> getRankedTeams() {
-        return this.rankedTeams;
+        return rankedTeams;
     }
 
     public MatchGroup getMatchGroup() {
-        return this.matchGroup;
+        return matchGroup;
     }
 
-    public IdType getId() {
+    public GeneratedId getId() {
         return id;
     }
 
     @Override
-    public boolean equals(Object otherScoreCard) {
-        if (this == otherScoreCard) return true;
+    public boolean equals(Object otherObj) {
+        if (this == otherObj) {
+            return true;
+        }
 
-        if (otherScoreCard == null || getClass() != otherScoreCard.getClass()) {
+        if (otherObj == null || getClass() != otherObj.getClass()) {
             return false;
         }
 
-        ScoreCard scoreCard = (ScoreCard) otherScoreCard;
+        ScoreCard otherScoreCard = (ScoreCard) otherObj;
 
-        return id.equals(scoreCard.id);
+        return id.equals(otherScoreCard.id);
     }
 
     @Override
     public int hashCode() {
         return id.hashCode();
     }
+
 }

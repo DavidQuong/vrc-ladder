@@ -16,7 +16,6 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
-// TODO - Refactor to use Mock<Class>Generator classes
 public class MatchGroupManagerTest extends BaseTest {
 
     private MatchGroupManager matchGroupManager;
@@ -47,7 +46,7 @@ public class MatchGroupManagerTest extends BaseTest {
 
     @Test
     public void testGetMatchGroup() {
-        MatchGroup existingMatchGroup = matchGroupManager.getMatchGroup(matchGroupFixture.getId());
+        MatchGroup existingMatchGroup = matchGroupManager.getById(matchGroupFixture.getId());
 
         Assert.assertEquals(matchGroupFixture.getTeam1(), existingMatchGroup.getTeam1());
         Assert.assertEquals(matchGroupFixture.getTeam2(), existingMatchGroup.getTeam2());
@@ -80,7 +79,7 @@ public class MatchGroupManagerTest extends BaseTest {
 
     @Test
     public void testDeleteMatchGroup() {
-        MatchGroup originalMatchGroup = matchGroupManager.deleteMatchGroup(matchGroupFixture.getId());
+        MatchGroup originalMatchGroup = matchGroupManager.deleteById(matchGroupFixture.getId());
 
         Session session = sessionManager.getSession();
         MatchGroup retrievedMatchGroup = session.get(MatchGroup.class, originalMatchGroup.getId());

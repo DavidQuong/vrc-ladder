@@ -1,9 +1,10 @@
 package ca.sfu.cmpt373.alpha.vrcladder.teams.attendance;
 
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
-import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,26 +18,22 @@ public class AttendanceCard {
 
     private static final PlayTime DEFAULT_PLAYTIME = PlayTime.NONE;
 
-    private IdType id;
-    private PlayTime preferredPlayTime;
-
-    public AttendanceCard() {
-        this.id = new IdType();
-        this.preferredPlayTime = DEFAULT_PLAYTIME;
-    }
-
-    @Id
-    @Column(name = PersistenceConstants.COLUMN_ID)
-    public String getId() {
-        return id.getId();
-    }
-
-    public void setId(String newId) {
-        id = new IdType(newId);
-    }
+    @EmbeddedId
+    private GeneratedId id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = PersistenceConstants.COLUMN_PLAY_TIME, nullable = false)
+    private PlayTime preferredPlayTime;
+
+    public AttendanceCard() {
+        this.id = new GeneratedId();
+        this.preferredPlayTime = DEFAULT_PLAYTIME;
+    }
+
+    public GeneratedId getId() {
+        return id;
+    }
+
     public PlayTime getPreferredPlayTime() {
         return preferredPlayTime;
     }
@@ -45,7 +42,6 @@ public class AttendanceCard {
         preferredPlayTime = playTime;
     }
 
-    @Transient
     public boolean isAttending() {
         return  (preferredPlayTime != PlayTime.NONE);
     }

@@ -1,11 +1,15 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.personal;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Embeddable
 public class PhoneNumber {
 
     private static final String REPLACED_CHARACTERS_REGEX_PATTERN = "[- \\(\\)]+";
@@ -15,7 +19,12 @@ public class PhoneNumber {
     private static final Pattern FORMAT_PATTERN = Pattern.compile(PHONE_NUM_FORMAT_REGEX_PATTERN,
         Pattern.CASE_INSENSITIVE);
 
+    @Column(name = PersistenceConstants.COLUMN_PHONE_NUMBER, nullable = false)
     private String phoneNumber;
+
+    public PhoneNumber() {
+        // Required by Hibernate.
+    }
 
     public PhoneNumber(String phoneNumber) throws ValidationException {
         String strippedPhoneNumber = phoneNumber.replaceAll(REPLACED_CHARACTERS_REGEX_PATTERN, StringUtils.EMPTY);
@@ -23,13 +32,13 @@ public class PhoneNumber {
         this.phoneNumber = strippedPhoneNumber;
     }
 
-    public String getPhoneNumber() {
+    public String getValue() {
         return phoneNumber;
     }
 
     @Override
     public String toString() {
-        return getPhoneNumber();
+        return getValue();
     }
 
     @Override

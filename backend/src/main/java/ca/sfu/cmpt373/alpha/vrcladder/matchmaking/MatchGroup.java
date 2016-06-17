@@ -4,10 +4,12 @@ import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -37,12 +39,18 @@ public class MatchGroup {
     private static final String ERROR_MESSAGE_NUM_TEAMS = "Teams list contains more or less than the min or max " +
         "number of permissible teams";
 
-    private IdType id;
+    @EmbeddedId
+    private GeneratedId id;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @OrderColumn
     private List<Team> teams;
+
+    @OneToOne (cascade = CascadeType.ALL)
     private ScoreCard scoreCard;
 
     private MatchGroup () {
-        setTeams(new ArrayList<>());
+        this.teams = new ArrayList<>();
         init();
     }
 
@@ -68,26 +76,14 @@ public class MatchGroup {
     }
 
     private void init() {
-        setId(new IdType());
+        id = new GeneratedId();
         scoreCard = new ScoreCard(this);
     }
 
-    @Id
-    @Column(name = PersistenceConstants.COLUMN_ID)
-    public String getId() {
-        return id.getId();
+    public GeneratedId getId() {
+        return id;
     }
 
-    private void setId(String newId) {
-        this.id = new IdType(newId);
-    }
-
-    private void setId(IdType id) {
-        this.id = id;
-    }
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @OrderColumn
     public List<Team> getTeams() {
         return Collections.unmodifiableList(teams);
     }
@@ -96,20 +92,14 @@ public class MatchGroup {
         this.teams = teams;
     }
 
-    @OneToOne (cascade = CascadeType.ALL)
     public ScoreCard getScoreCard() {
         return this.scoreCard;
-    }
-
-    private void setScoreCard(ScoreCard scoreCard) {
-        this.scoreCard = scoreCard;
     }
 
     /**
      * @return the @{@link PlayTime} that the majority of the group teams want to play at.
      * In the case of a tie, it will return the preferred play time of the highest ranked player.
      */
-    @Transient
     public PlayTime getPreferredGroupPlayTime() {
         Map<PlayTime, Integer> preferredTimeCounts = new HashMap<>();
 
@@ -149,25 +139,21 @@ public class MatchGroup {
         return votedPlayTime;
     }
 
-    @Transient
     public Team getTeam1(){
         int firstTeamIndex = 0;
         return teams.get(firstTeamIndex);
     }
 
-    @Transient
     public Team getTeam2(){
         int secondTeamIndex = 1;
         return teams.get(secondTeamIndex);
     }
 
-    @Transient
     public Team getTeam3(){
         int thirdTeamIndex = 2;
         return teams.get(thirdTeamIndex);
     }
 
-    @Transient
     public int getTeamCount() {
         return teams.size();
     }

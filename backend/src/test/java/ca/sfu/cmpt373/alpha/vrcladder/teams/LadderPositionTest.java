@@ -15,14 +15,14 @@ public class LadderPositionTest {
     public void testValidLadderPosition1() {
         LadderPosition ladderPosition = new LadderPosition(VALID_POSITION_1);
 
-        Assert.assertEquals(VALID_POSITION_1, ladderPosition.getPosition());
+        Assert.assertEquals(VALID_POSITION_1, ladderPosition.getValue());
     }
 
     @Test
     public void testValidLadderPosition2() {
         LadderPosition ladderPosition = new LadderPosition(VALID_POSITION_2);
 
-        Assert.assertEquals(VALID_POSITION_2, ladderPosition.getPosition());
+        Assert.assertEquals(VALID_POSITION_2, ladderPosition.getValue());
     }
 
     @Test(expected = ValidationException.class)

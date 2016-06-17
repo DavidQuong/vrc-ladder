@@ -25,7 +25,7 @@
         <mapping class="ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard"/>
         <mapping class="ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup"/>
         <mapping class="ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard"/>
-        <mapping class="ca.sfu.cmpt373.alpha.vrcladder.util.IdType"/>
+        <mapping class="ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId"/>
 
     </session-factory>
 
