@@ -6,7 +6,6 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -14,30 +13,43 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-// TODO - Add character limit to persistent columns of type String.
 @Entity
 @Table(name = PersistenceConstants.TABLE_USER)
 public class User {
 
     private static final String DISPLAY_NAME_INITIAL_DOT = ". ";
 
+    @EmbeddedId
     private UserId userId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = PersistenceConstants.COLUMN_USER_ROLE, nullable = false)
     private UserRole userRole;
+
+    @Column(name = PersistenceConstants.COLUMN_FIRST_NAME, nullable = false)
     private String firstName;
+
+    @Column(name = PersistenceConstants.COLUMN_MIDDLE_NAME, nullable = false)
     private String middleName;
+
+    @Column(name = PersistenceConstants.COLUMN_LAST_NAME, nullable = false)
     private String lastName;
+
+    @Embedded
+    @Column(name = PersistenceConstants.COLUMN_EMAIL_ADDRESS, nullable = false)
     private EmailAddress emailAddress;
+
+    @Column(name = PersistenceConstants.COLUMN_PHONE_NUMBER, nullable = false)
     private PhoneNumber phoneNumber;
 
-    public User() {
+    private User() {
         // Required by Hibernate.
     }
 
-    public User(UserId userId, UserRole userRole, String firstName, String middleName, String lastName, EmailAddress emailAddress, PhoneNumber phoneNumber) {
+    public User(UserId userId, UserRole userRole, String firstName, String middleName, String lastName,
+        EmailAddress emailAddress, PhoneNumber phoneNumber) {
         this.userId = userId;
         this.userRole = userRole;
         this.firstName = firstName;
@@ -47,61 +59,49 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    @EmbeddedId
     public UserId getUserId() {
         return userId;
     }
 
-    private void setUserId(UserId newUserId) {
-        userId = newUserId;
-    }
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = PersistenceConstants.COLUMN_USER_ROLE, nullable = false)
     public UserRole getUserRole() {
         return userRole;
     }
 
-    public void setUserRole(UserRole newUserRole) {
-        userRole = newUserRole;
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 
-    @Column(name = PersistenceConstants.COLUMN_FIRST_NAME, nullable = false)
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String name) {
-        firstName = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public boolean hasMiddleName() {
         return (middleName.isEmpty());
     }
 
-    @Column(name = PersistenceConstants.COLUMN_MIDDLE_NAME, nullable = false)
     public String getMiddleName() {
         return middleName;
     }
 
-    public void setMiddleName(String name) {
-        middleName = name;
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
     }
 
-    @Column(name = PersistenceConstants.COLUMN_LAST_NAME, nullable = false)
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String name) {
-        lastName = name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    @Transient
-    @JsonIgnore
     public String getDisplayName() {
         String constructedName = firstName + " ";
-        if (middleName != null && !middleName.isEmpty()) {
+        if (hasMiddleName()) {
             char middleInitial = middleName.charAt(0);
             constructedName = constructedName + middleInitial + DISPLAY_NAME_INITIAL_DOT;
         }
@@ -110,8 +110,6 @@ public class User {
         return constructedName;
     }
 
-    @Embedded
-    @Column(name = PersistenceConstants.COLUMN_EMAIL_ADDRESS, nullable = false)
     public EmailAddress getEmailAddress() {
         return emailAddress;
     }
@@ -120,7 +118,6 @@ public class User {
         this.emailAddress = emailAddress;
     }
 
-    @Column(name = PersistenceConstants.COLUMN_PHONE_NUMBER, nullable = false)
     public PhoneNumber getPhoneNumber() {
         return phoneNumber;
     }
