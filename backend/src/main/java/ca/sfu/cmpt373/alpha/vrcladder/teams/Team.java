@@ -6,7 +6,6 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -19,11 +18,22 @@ import javax.persistence.Table;
 @Table(name = PersistenceConstants.TABLE_TEAM)
 public class Team {
 
+    @EmbeddedId
     private GeneratedId id;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = PersistenceConstants.COLUMN_ATTENDANCE_CARD_ID, nullable = false)
     private AttendanceCard attendanceCard;
+
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = PersistenceConstants.COLUMN_FIRST_PLAYER_ID, nullable = false)
     private User firstPlayer;
+
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = PersistenceConstants.COLUMN_SECOND_PLAYER_ID, nullable = false)
     private User secondPlayer;
+
+    @Embedded
     private LadderPosition ladderPosition;
 
     private Team() {
@@ -46,46 +56,23 @@ public class Team {
         this.ladderPosition = new LadderPosition(position);
     }
 
-    @EmbeddedId
     public GeneratedId getId() {
         return id;
     }
 
-    public void setId(GeneratedId id) {
-        this.id = id;
-    }
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = PersistenceConstants.COLUMN_ATTENDANCE_CARD_ID, nullable = false)
     public AttendanceCard getAttendanceCard() {
         return attendanceCard;
     }
 
-    private void setAttendanceCard(AttendanceCard newAttendanceCard) {
-        attendanceCard = newAttendanceCard;
-    }
-
-    @ManyToOne(cascade = CascadeType.REFRESH)
-    @JoinColumn(name = PersistenceConstants.COLUMN_FIRST_PLAYER_ID, nullable = false)
     public User getFirstPlayer() {
         return firstPlayer;
     }
 
-    private void setFirstPlayer(User player) {
-        firstPlayer = player;
-    }
 
-    @ManyToOne(cascade = CascadeType.REFRESH)
-    @JoinColumn(name = PersistenceConstants.COLUMN_SECOND_PLAYER_ID, nullable = false)
     public User getSecondPlayer() {
         return secondPlayer;
     }
 
-    private void setSecondPlayer(User player) {
-        secondPlayer = player;
-    }
-
-    @Embedded
     public LadderPosition getLadderPosition() {
         return ladderPosition;
     }
