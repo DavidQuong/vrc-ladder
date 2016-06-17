@@ -107,10 +107,11 @@ public class TeamManagerTest extends BaseTest {
         // Account for team created in setUp().
         Assert.assertEquals(teamsCreated + 1, teams.size());
 
-        Integer position = 1;
+        Integer positionCount = LadderPosition.FIRST_POSITION;
         for (Team team : teams) {
-            Assert.assertEquals(position, team.getLadderPosition());
-            position++;
+            LadderPosition expectedLadderPosition = new LadderPosition(positionCount);
+            Assert.assertEquals(expectedLadderPosition, team.getLadderPosition());
+            positionCount++;
         }
     }
 

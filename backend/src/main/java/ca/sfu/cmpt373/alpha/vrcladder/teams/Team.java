@@ -7,6 +7,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -84,13 +85,13 @@ public class Team {
         secondPlayer = player;
     }
 
-    @Column(name = PersistenceConstants.COLUMN_LADDER_POSITION, nullable = false, unique = true)
-    public Integer getLadderPosition() {
-        return ladderPosition.getPosition();
+    @Embedded
+    public LadderPosition getLadderPosition() {
+        return ladderPosition;
     }
 
-    public void setLadderPosition(Integer position) {
-        ladderPosition = new LadderPosition(position);
+    public void setLadderPosition(LadderPosition ladderPosition) {
+        this.ladderPosition = ladderPosition;
     }
 
     @Override

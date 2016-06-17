@@ -166,12 +166,13 @@ public class TeamManager extends DatabaseManager<Team> {
         Session session = sessionManager.getSession();
         Criteria lastPositionCriteria = session.createCriteria(Team.class)
             .setProjection(Projections.max(CriterionConstants.TEAM_LADDER_POSITION_PROPERTY));
-        Integer lastPosition = (Integer) lastPositionCriteria.uniqueResult();
+        LadderPosition lastPosition = (LadderPosition) lastPositionCriteria.uniqueResult();
 
         if (lastPosition == null) {
             return new LadderPosition(FIRST_POSITION);
         } else {
-            return new LadderPosition(lastPosition + 1);
+            int nextPositionCount = lastPosition.getLadderPosition() + 1;
+            return new LadderPosition(nextPositionCount);
         }
 
     }
