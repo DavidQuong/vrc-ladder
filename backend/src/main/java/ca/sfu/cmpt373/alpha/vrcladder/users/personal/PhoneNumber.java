@@ -32,7 +32,7 @@ public class PhoneNumber {
         this.phoneNumber = strippedPhoneNumber;
     }
 
-    @Column(name = PersistenceConstants.COLUMN_PHONE_NUMBER)
+    @Column(name = PersistenceConstants.COLUMN_PHONE_NUMBER, nullable = false)
     public String getPhoneNumber() {
         return phoneNumber;
     }

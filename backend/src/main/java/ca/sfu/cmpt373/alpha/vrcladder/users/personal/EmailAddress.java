@@ -28,7 +28,7 @@ public class EmailAddress {
         this.emailAddress = emailAddress;
     }
 
-    @Column(name = PersistenceConstants.COLUMN_EMAIL_ADDRESS)
+    @Column(name = PersistenceConstants.COLUMN_EMAIL_ADDRESS, nullable = false, unique = true)
     public String getEmailAddress() {
         return emailAddress;
     }
