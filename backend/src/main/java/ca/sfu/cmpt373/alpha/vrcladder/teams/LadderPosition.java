@@ -10,7 +10,7 @@ import javax.persistence.Embeddable;
 public class LadderPosition implements Comparable<LadderPosition> {
 
     public static final Integer FIRST_POSITION = 1;
-    private static final String INVALID_POSITION_FORMAT = "Invalid valid rank ladderPosition: %s.";
+    private static final String ERROR_INVALID_POSITION = "ladderPosition must be greater than zero.";
 
     @Column(name = PersistenceConstants.COLUMN_LADDER_POSITION, nullable = false, unique = true)
     private Integer ladderPosition;
@@ -21,8 +21,7 @@ public class LadderPosition implements Comparable<LadderPosition> {
 
     public LadderPosition(Integer position) {
         if (position <= 0) {
-            String errorMsg = String.format(INVALID_POSITION_FORMAT, position);
-            throw new ValidationException(errorMsg);
+            throw new ValidationException(ERROR_INVALID_POSITION);
         }
 
         this.ladderPosition = position;

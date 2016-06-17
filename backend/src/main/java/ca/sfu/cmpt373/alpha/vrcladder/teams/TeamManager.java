@@ -12,6 +12,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.CriterionConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
+import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
@@ -81,7 +82,7 @@ public class TeamManager extends DatabaseManager<Team> {
         return newTeam;
     }
 
-    public Team updateAttendance(GeneratedId teamId, PlayTime playTime) {
+    public Team updateAttendance(IdType teamId, PlayTime playTime) {
         Session session = sessionManager.getSession();
 
         Team team = session.get(Team.class, teamId);

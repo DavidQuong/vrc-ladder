@@ -4,6 +4,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
+import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
@@ -46,14 +47,6 @@ public class Team {
         this.firstPlayer = firstPlayer;
         this.secondPlayer = secondPlayer;
         this.ladderPosition = ladderPosition;
-    }
-
-    public Team(User firstPlayer, User secondPlayer, int position) {
-        this.id = new GeneratedId();
-        this.attendanceCard = new AttendanceCard();
-        this.firstPlayer = firstPlayer;
-        this.secondPlayer = secondPlayer;
-        this.ladderPosition = new LadderPosition(position);
     }
 
     public GeneratedId getId() {

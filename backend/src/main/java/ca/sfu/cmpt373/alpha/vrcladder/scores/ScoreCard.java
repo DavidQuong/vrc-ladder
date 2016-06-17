@@ -3,6 +3,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.scores;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
+import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
 import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
