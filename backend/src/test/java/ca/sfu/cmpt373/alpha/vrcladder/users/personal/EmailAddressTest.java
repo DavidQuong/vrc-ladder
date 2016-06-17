@@ -14,13 +14,13 @@ public class EmailAddressTest {
     @Test
     public void testValidEmailAddress1() {
         EmailAddress emailAddress = new EmailAddress(VALID_EMAIL_1);
-        Assert.assertEquals(VALID_EMAIL_1, emailAddress.getEmailAddress());
+        Assert.assertEquals(VALID_EMAIL_1, emailAddress.getValue());
     }
 
     @Test
     public void testValidEmailAddress2() {
         EmailAddress emailAddress = new EmailAddress(VALID_EMAIL_2);
-        Assert.assertEquals(VALID_EMAIL_2, emailAddress.getEmailAddress());
+        Assert.assertEquals(VALID_EMAIL_2, emailAddress.getValue());
     }
 
     @Test(expected = ValidationException.class)

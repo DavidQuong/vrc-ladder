@@ -28,7 +28,7 @@ public class LadderPosition implements Comparable<LadderPosition> {
         this.ladderPosition = position;
     }
 
-    public Integer getLadderPosition() {
+    public Integer getValue() {
         return ladderPosition;
     }
 

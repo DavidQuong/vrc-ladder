@@ -31,13 +31,13 @@ public class UserId implements IdType {
     }
 
     @Override
-    public String getId() {
+    public String getValue() {
         return id;
     }
 
     @Override
     public String toString() {
-        return getId();
+        return getValue();
     }
 
     @Override

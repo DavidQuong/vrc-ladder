@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,13 +32,13 @@ public class PhoneNumber {
         this.phoneNumber = strippedPhoneNumber;
     }
 
-    public String getPhoneNumber() {
+    public String getValue() {
         return phoneNumber;
     }
 
     @Override
     public String toString() {
-        return getPhoneNumber();
+        return getValue();
     }
 
     @Override

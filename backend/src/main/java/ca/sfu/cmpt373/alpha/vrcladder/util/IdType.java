@@ -4,6 +4,6 @@ import java.io.Serializable;
 
 public interface IdType extends Serializable {
 
-    public String getId();
+    public String getValue();
 
 }

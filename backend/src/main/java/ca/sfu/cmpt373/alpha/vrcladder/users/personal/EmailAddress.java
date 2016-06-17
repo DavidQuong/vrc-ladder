@@ -29,13 +29,13 @@ public class EmailAddress {
         this.emailAddress = emailAddress;
     }
 
-    public String getEmailAddress() {
+    public String getValue() {
         return emailAddress;
     }
 
     @Override
     public String toString() {
-        return getEmailAddress();
+        return getValue();
     }
 
     @Override

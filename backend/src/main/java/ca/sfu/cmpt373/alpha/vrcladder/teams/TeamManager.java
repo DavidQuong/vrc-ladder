@@ -169,7 +169,7 @@ public class TeamManager extends DatabaseManager<Team> {
         if (lastPosition == null) {
             return new LadderPosition(FIRST_POSITION);
         } else {
-            int nextPositionCount = lastPosition.getLadderPosition() + 1;
+            int nextPositionCount = lastPosition.getValue() + 1;
             return new LadderPosition(nextPositionCount);
         }
     }
