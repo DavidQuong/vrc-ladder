@@ -20,6 +20,7 @@ public class PhoneNumber {
     private static final Pattern FORMAT_PATTERN = Pattern.compile(PHONE_NUM_FORMAT_REGEX_PATTERN,
         Pattern.CASE_INSENSITIVE);
 
+    @Column(name = PersistenceConstants.COLUMN_PHONE_NUMBER, nullable = false)
     private String phoneNumber;
 
     public PhoneNumber() {
@@ -32,13 +33,8 @@ public class PhoneNumber {
         this.phoneNumber = strippedPhoneNumber;
     }
 
-    @Column(name = PersistenceConstants.COLUMN_PHONE_NUMBER, nullable = false)
     public String getPhoneNumber() {
         return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
     }
 
     @Override

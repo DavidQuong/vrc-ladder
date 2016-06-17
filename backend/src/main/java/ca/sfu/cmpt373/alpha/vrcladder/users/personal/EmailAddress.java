@@ -17,6 +17,7 @@ public class EmailAddress {
     private static final Pattern FORMAT_PATTERN = Pattern.compile(EMAIL_FORMAT_REGEX_PATTERN,
         Pattern.CASE_INSENSITIVE);
 
+    @Column(name = PersistenceConstants.COLUMN_EMAIL_ADDRESS, nullable = false, unique = true)
     private String emailAddress;
 
     private EmailAddress() {
@@ -28,13 +29,8 @@ public class EmailAddress {
         this.emailAddress = emailAddress;
     }
 
-    @Column(name = PersistenceConstants.COLUMN_EMAIL_ADDRESS, nullable = false, unique = true)
     public String getEmailAddress() {
         return emailAddress;
-    }
-
-    private void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
     }
 
     @Override
