@@ -13,6 +13,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
+import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,41 +36,13 @@ class LadderTest {
 
 	LadderTest() {}
 
-	private Team getTeam() {
-		TeamManager teamGen = new TeamManager(new SessionManager());
-
-		User newUser1 = new User();
-		newUser1.setUserId(new Integer(this.userId).toString());
-		newUser1.setUserRole(UserRole.PLAYER);
-		newUser1.setFirstName("jimbo" + this.userId);
-		newUser1.setMiddleName("");
-		newUser1.setLastName("mcgaggen" + this.userId);
-		newUser1.setEmailAddress("jimbo" + this.userId + "@mcgaggen.net");
-		newUser1.setPhoneNumber("6041234567");
-
-		this.userId++;
-
-		User newUser2 = new User();
-		newUser2.setUserId(new Integer(this.userId).toString());
-		newUser2.setUserRole(UserRole.PLAYER);
-		newUser2.setFirstName("jimbo" + this.userId);
-		newUser2.setMiddleName("");
-		newUser2.setLastName("mcgaggen" + this.userId);
-		newUser2.setEmailAddress("jimbo" + this.userId + "@mcgaggen.net");
-		newUser2.setPhoneNumber("6041234567");
-
-		this.userId++;
-
-		return teamGen.create(newUser1, newUser2);
-	}
-
 	private List<List<Team>> genTeamCase0() { //Case 0: All non-attending teams said so,         all attending teams present
 		List<List<Team>> caseTeams = new ArrayList<>();
 
 		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
 			caseTeams.add(new ArrayList<>());
 			for(int i = 0;i < GENERATED_TEAMS;i++) {
-				Team team = this.getTeam();
+				Team team = MockTeamGenerator.generateTeam();;
 
 				if(attendance == ATTENDING) {
 					team.setAttendanceStatus(AttendanceStatus.PRESENT);
@@ -94,7 +67,7 @@ class LadderTest {
 		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
 			caseTeams.add(new ArrayList<>());
 			for(int i = 0;i < GENERATED_TEAMS;i++) {
-				Team team = this.getTeam();
+				Team team = MockTeamGenerator.generateTeam();
 
 				if(attendance == ATTENDING) {
 					team.setAttendanceStatus(AttendanceStatus.LATE);
@@ -119,7 +92,7 @@ class LadderTest {
 		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
 			caseTeams.add(new ArrayList<>());
 			for(int i = 0;i < GENERATED_TEAMS;i++) {
-				Team team = this.getTeam();
+				Team team = MockTeamGenerator.generateTeam();
 
 				if(attendance == ATTENDING) {
 					team.setAttendanceStatus(AttendanceStatus.LATE);
@@ -142,7 +115,7 @@ class LadderTest {
 		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
 			caseTeams.add(new ArrayList<>());
 			for(int i = 0;i < GENERATED_TEAMS;i++) {
-				Team team = this.getTeam();
+				Team team = MockTeamGenerator.generateTeam();
 
 				if(attendance == ATTENDING) {
 					team.setAttendanceStatus(AttendanceStatus.PRESENT);
@@ -165,7 +138,7 @@ class LadderTest {
 		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
 			caseTeams.add(new ArrayList<>());
 			for(int i = 0;i < GENERATED_TEAMS;i++) {
-				Team team = this.getTeam();
+				Team team = MockTeamGenerator.generateTeam();
 
 				if(attendance == ATTENDING) {
 					team.setAttendanceStatus(AttendanceStatus.LATE);
@@ -194,7 +167,7 @@ class LadderTest {
 		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
 			caseTeams.add(new ArrayList<>());
 			for(int i = 0;i < GENERATED_TEAMS;i++) {
-				Team team = this.getTeam();
+				Team team = MockTeamGenerator.generateTeam();
 
 				if(attendance == ATTENDING) {
 					team.setAttendanceStatus(AttendanceStatus.PRESENT);
@@ -223,7 +196,7 @@ class LadderTest {
 		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
 			caseTeams.add(new ArrayList<>());
 			for(int i = 0;i < GENERATED_TEAMS;i++) {
-				Team team = this.getTeam();
+				Team team = MockTeamGenerator.generateTeam();
 
 				if(attendance == ATTENDING) {
 					if(i % 2 == 0) {
@@ -252,7 +225,7 @@ class LadderTest {
 		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
 			caseTeams.add(new ArrayList<>());
 			for(int i = 0;i < GENERATED_TEAMS;i++) {
-				Team team = this.getTeam();
+				Team team = MockTeamGenerator.generateTeam();
 
 				if(attendance == ATTENDING) {
 					if(i % 2 == 0) {
@@ -279,7 +252,7 @@ class LadderTest {
 		for(int attendance = ATTENDING;attendance <= NOT_ATTENDING;attendance++) {
 			caseTeams.add(new ArrayList<>());
 			for(int i = 0;i < GENERATED_TEAMS;i++) {
-				Team team = this.getTeam();
+				Team team = MockTeamGenerator.generateTeam();
 
 				if(attendance == ATTENDING) {
 					if(i % 2 == 0) {
@@ -306,6 +279,7 @@ class LadderTest {
 		return caseTeams;
 	}
 
+	@Before
 	private void genTeams() {
 		//Case 0: All non-attending teams said so,         all attending teams present
 		//Case 1: All non-attending teams said so,         all attending teams late
@@ -354,6 +328,7 @@ class LadderTest {
 		}
 	}
 
+	@Test
 	private void groupSize3Adjacent() throws SizeLimitExceededException { //Case 1: Groups are directly beside one another, groups of 3 only
 		MatchGroupGenerator getGroups = new MatchGroupGenerator();
 
@@ -427,6 +402,7 @@ class LadderTest {
 		}
 	}
 
+	@Test
 	private void groupSize4Adjacent() throws SizeLimitExceededException { //Case 2: Groups are directly beside one another, groups of 4 only
 		int teamCount = 12;
 		List<List<Team>> expectedResults = new ArrayList<>();
@@ -509,6 +485,7 @@ class LadderTest {
 		}
 	}
 
+	@Test
 	private void groupSize34Adjacent() throws SizeLimitExceededException { //Case 3: Groups are directly beside one another, groups of 3/4, not predictably interchanging (At least one of each)
 
 		int teamCount = 17;
@@ -616,6 +593,7 @@ class LadderTest {
 		}
 	}
 
+	@Test
 	private void groupSize3NonAdjacent() throws SizeLimitExceededException { //Case 4: Groups have non-attending teams between them, groups of 3 only
 		MatchGroupGenerator getGroups = new MatchGroupGenerator();
 
@@ -757,6 +735,7 @@ class LadderTest {
 		}
 	}
 
+	@Test
 	private void groupSize4NonAdjacent() throws SizeLimitExceededException { //Case 5: Groups have non-attending teams between them, groups of 4 only
 		MatchGroupGenerator getGroups = new MatchGroupGenerator();
 
@@ -933,6 +912,7 @@ class LadderTest {
 		}
 	}
 
+	@Test
 	private void groupSize3SingleWithFriends() throws SizeLimitExceededException { //Case 6: Single group of 3, other non-attending teams around
 		int teamCount = 5;
 		List<List<Team>> expectedResults = new ArrayList<>();
@@ -1057,6 +1037,7 @@ class LadderTest {
 		}
 	}
 
+	@Test
 	private void groupSize4SingleWithFriends()throws SizeLimitExceededException { //Case 7: Single group of 4, other non-attending teams around
 		int teamCount = 7;
 		List<List<Team>> expectedResults = new ArrayList<>();
@@ -1213,6 +1194,7 @@ class LadderTest {
 		}
 	}
 
+	@Test
 	private void groupSize3NonAdjacentAllIntersecting() throws SizeLimitExceededException { //Case 8: Groups have non-attending teams beside and inside them, groups of 3 only, all overlapping
 		int teamCount = 13;
 		List<List<Team>> expectedResults = new ArrayList<>();
@@ -1493,6 +1475,7 @@ class LadderTest {
 		}
 	}
 
+	@Test
 	private void groupSize4NonAdjacentAllIntersecting() throws SizeLimitExceededException { //Case 9: Groups have non-attending teams beside and inside them, groups of 4 only, all overlapping
 		int teamCount = 13;
 		List<List<Team>> expectedResults = new ArrayList<>();
@@ -1809,6 +1792,7 @@ class LadderTest {
 		}
 	}
 
+	@Test
 	private void groupSize34NonAdjacentAllIntersecting() throws SizeLimitExceededException { //Case 10: Groups have non-attending teams beside and inside them, groups of 3/4, all overlapping, not predictably interchanging (At least one of each)
 		int teamCount = 11;
 		List<List<Team>> expectedResults = new ArrayList<>();

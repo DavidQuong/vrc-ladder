@@ -47,11 +47,11 @@ public class TeamManager extends DatabaseManager<Team> {
         LadderPosition newLadderPosition = generateNewLadderPosition();
         Team newTeam = new Team(firstPlayer, secondPlayer, newLadderPosition);
 
-        /*try {
+        try {
             create(newTeam);
         } catch (ConstraintViolationException exception) {
             throw new ExistingTeamException();
-        }*/
+        }
 
         return newTeam;
     }
