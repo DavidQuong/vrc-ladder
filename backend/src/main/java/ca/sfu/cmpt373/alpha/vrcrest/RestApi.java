@@ -6,12 +6,12 @@ import spark.Spark;
 
 import java.util.List;
 
-public class Restapi {
+public class RestApi {
 
     private ApplicationManager appManager;
     private List<RestRouter> routers;
 
-    public Restapi(ApplicationManager appManager, List<RestRouter> routers) {
+    public RestApi(ApplicationManager appManager, List<RestRouter> routers) {
         this.appManager = appManager;
         this.routers = routers;
         initialize();
