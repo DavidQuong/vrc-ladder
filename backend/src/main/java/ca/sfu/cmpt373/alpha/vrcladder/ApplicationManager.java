@@ -20,6 +20,14 @@ public class ApplicationManager {
         matchGroupManager = new MatchGroupManager(sessionManager);
     }
 
+    public ApplicationManager(SessionManager sessionManager, UserManager userManager, TeamManager teamManager,
+        MatchGroupManager matchGroupManager) {
+        this.sessionManager = sessionManager;
+        this.userManager = userManager;
+        this.teamManager = teamManager;
+        this.matchGroupManager = matchGroupManager;
+    }
+
     public void shutDown() {
         sessionManager.shutDown();
     }

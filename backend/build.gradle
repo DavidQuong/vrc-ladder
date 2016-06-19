@@ -5,7 +5,7 @@ apply plugin: 'java'
 sourceCompatibility = 1.8
 
 apply plugin: 'application'
-//mainClassName="ca.sfu.cmpt373.alpha.vrcladder.ApplicationDriver"
+mainClassName="ca.sfu.cmpt373.alpha.vrcrest.RestDriver"
 
 run {
     standardInput = System.in
