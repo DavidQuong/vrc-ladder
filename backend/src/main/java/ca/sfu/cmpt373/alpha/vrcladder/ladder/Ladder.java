@@ -2,6 +2,9 @@ package ca.sfu.cmpt373.alpha.vrcladder.ladder;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
+
 import java.util.*;
 
 
@@ -109,7 +112,8 @@ public class Ladder {
         int ladderSize;
         ladderSize = this.getLadderTeamCount();
         for (int k =0;k<ladderSize; k++){
-            if(ladder.get(k).getAttendanceCard().late()) {
+            AttendanceCard attendanceCard = ladder.get(k).getAttendanceCard();
+            if(attendanceCard.getAttendanceStatus() == AttendanceStatus.LATE) {
                 Team tempTeam = ladder.get(k);
                 ladder.remove(k);
                 if (k < ladderSize - LATE_PENALTY){
@@ -126,7 +130,8 @@ public class Ladder {
         int ladderSize;
         ladderSize = this.getLadderTeamCount();
         for (int k =0;k<ladderSize; k++){
-            if(ladder.get(k).getAttendanceCard().noShow()){
+            AttendanceCard attendanceCard = ladder.get(k).getAttendanceCard();
+            if(attendanceCard.getAttendanceStatus() == AttendanceStatus.NO_SHOW){
                 Team tempTeam = ladder.get(k);
                 ladder.remove(k);
                 if (k < ladderSize - NO_SHOW_PENALTY){
@@ -161,8 +166,8 @@ public class Ladder {
             return;
         }
 
-        List<Team> teamOrder1 = matchGroups[index].getPlacement();
-        List<Team> teamOrder2 = matchGroups[index - 1].getPlacement();
+        List<Team> teamOrder1 = matchGroups[index].getScoreCard().getRankedTeams();
+        List<Team> teamOrder2 = matchGroups[index - 1].getScoreCard().getRankedTeams();
 
         if (teamOrder1.size() > 3){
             swapTeams(teamOrder1.get(3), teamOrder2.get(0));
@@ -184,7 +189,7 @@ public class Ladder {
     }
 
     private void arrange4Teams(MatchGroup match){
-            List<Team> teamOrder = match.getPlacement();
+            List<Team> teamOrder = match.getScoreCard().getRankedTeams();
             int matchSize = teamOrder.size();
 
             int[] teamPos={
@@ -204,7 +209,7 @@ public class Ladder {
     }
 
     private void arrange3Teams(MatchGroup match){
-        List<Team> TeamOrder = match.getPlacement();
+        List<Team> TeamOrder = match.getScoreCard().getRankedTeams();
         int matchSize = TeamOrder.size();
 
             int[] teamPos = {

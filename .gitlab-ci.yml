@@ -25,3 +25,4 @@ backend:
   script:
     - cd backend
     - ./gradlew build
+    - ./gradlew test
