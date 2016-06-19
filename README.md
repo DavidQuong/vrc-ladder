@@ -92,17 +92,26 @@ All webpack settings, and redux settings are from various guides online. Below i
 
 #### Instructions:
 1) Start a terminal session in the backend directory (<project-dir>/backend)
+
 2) Run "gradle clean run", or "gradlew clean run" if gradle is not installed on your machine
 
 #### Amazon Web Services Deployment:
 1) Start a terminal session in the backend directory (<project-dir>/backend)
+
 2) Run "gradle war", or "gradlew war" if gradle is not installed on your machine
+
 3) Locate the generated WAR archive in the /build/libs directory
+
 4) Create/login to an Amazon Web Services Account
+
 5) Navigate to the AWS Elastic Beanstalk page, and click "Create New Application"
+
 6) Select a Web Server Environment
+
 7) Choose the TomCat Platform
+
 8) When prompted to upload software, upload the WAR archive generated from gradle
+
 9) The rest of the settings can be left at their defaults
 
 #### Citations:
