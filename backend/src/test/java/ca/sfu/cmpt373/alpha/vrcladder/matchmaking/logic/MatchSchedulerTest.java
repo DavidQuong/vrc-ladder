@@ -32,6 +32,7 @@ public class MatchSchedulerTest {
         }
     }
 
+    /*
     @Test (expected = MatchMakingException.class)
     public void testCourtsFull() {
         int testGroupCount = 13;
@@ -39,4 +40,5 @@ public class MatchSchedulerTest {
                 NUM_COURTS,
                 MockDatabase.getMockMatchGroups(testGroupCount));
     }
+    */
 }
