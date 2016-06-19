@@ -8,29 +8,62 @@ This project is split up by the individual components, the frontend and the back
 ------------
 ### Frontend
 
+#### Instructions (For Ubuntu 14.04):
+1) Start a terminal session in the frontend directory (<project-dir>/frontend)
+
+
+2) Install Node:
+
+	Check Version:
+    	nodejs --version
+
+	If version is above 5.X.X go to step 3
+
+	Delete outdated nodejs version if older version exist:
+    	sudo apt-get remove --purge nodejs
+
+	Install Node:
+    	curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
+    	sudo apt-get install nodejs
+    	sudo ln -s /usr/bin/nodejs /usr/bin/node
+
+
+3) Install dependencies:
+
+    	sudo apt-get install npm
+    	sudo apt-get install libvips
+    	npm install
+
+4) Start local development server:
+
+    	npm run dev
+
+
+5) Run the production build
+
+    	npm run build
+
 #### Instructions (For OS X):
 1) Start a terminal session in the frontend directory (<project-dir>/frontend)
+
 2) Download dependencies:
 
-   brew install vips \
-   --with-webp \
-   --without-pango \
-   --without-python \
-   --without-pygobject3 \
-   --with-graphicsmagick
+    	brew install vips \
+    	--with-webp \
+    	--without-pango \
+    	--without-python \
+    	--without-pygobject3 \
+    	--with-graphicsmagick
 
-  npm install
+    	npm install
 
 3) Start local development server:
 
-  npm run dev
-  env PORT=8080 npm run dev
+    	npm run dev
 
 4) Run the production build
 
-	npm run build
-
-TODO - Add instructions for Linux (and possibly Windows)
+    	npm run build
 
 #### Citations:
 All webpack settings, and redux settings are from various guides online. Below is a list of online resources that were read or used.
