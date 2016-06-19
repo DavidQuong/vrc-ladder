@@ -96,6 +96,10 @@ public class MatchGroup {
         return this.scoreCard;
     }
 
+	private boolean isValidIndex(int index) {
+		return 0 <= index && index < this.teams.size();
+	}
+
     /**
      * @return the @{@link PlayTime} that the majority of the group teams want to play at.
      * In the case of a tie, it will return the preferred play time of the highest ranked player.
