@@ -5,8 +5,12 @@ import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
+import ca.sfu.cmpt373.alpha.vrcrest.interfaces.RestRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.TeamRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.UserRouter;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class RestDriver {
 
@@ -20,8 +24,8 @@ public class RestDriver {
 
         UserRouter userRouter = new UserRouter(appManager.getUserManager());
         TeamRouter teamRouter = new TeamRouter(appManager.getTeamManager());
-        Restapi restapi = new Restapi(appManager, userRouter, teamRouter);
-        restapi.startUp();
+        List<RestRouter> routers = Arrays.asList(userRouter, teamRouter);
+        Restapi restapi = new Restapi(appManager, routers);
     }
 
 }

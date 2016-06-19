@@ -1,25 +1,20 @@
 package ca.sfu.cmpt373.alpha.vrcrest;
 
 import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
-import ca.sfu.cmpt373.alpha.vrcrest.routes.TeamRouter;
-import ca.sfu.cmpt373.alpha.vrcrest.routes.UserRouter;
+import ca.sfu.cmpt373.alpha.vrcrest.interfaces.RestRouter;
 import spark.Spark;
+
+import java.util.List;
 
 public class Restapi {
 
     private ApplicationManager appManager;
-    private UserRouter userRouter;
-    private TeamRouter teamRouter;
+    private List<RestRouter> routers;
 
-    public Restapi(ApplicationManager appManager, UserRouter userRouter, TeamRouter teamRouter) {
+    public Restapi(ApplicationManager appManager, List<RestRouter> routers) {
         this.appManager = appManager;
-        this.userRouter = userRouter;
-        this.teamRouter = teamRouter;
-    }
-
-    public void startUp() {
-        configure();
-        attachRouters();
+        this.routers = routers;
+        initialize();
     }
 
     public void shutDown() {
@@ -27,14 +22,17 @@ public class Restapi {
         appManager.shutDown();
     }
 
+    private void initialize() {
+        configure();
+        attachRouters();
+    }
+
     private void configure() {
         // TODO - Add specific configurations for Spark.
     }
 
-    // TODO - Add more routers
     private void attachRouters() {
-        userRouter.attachRoutes();
-        teamRouter.attachRoutes();
+        routers.forEach(RestRouter::attachRoutes);
     }
 
 }
