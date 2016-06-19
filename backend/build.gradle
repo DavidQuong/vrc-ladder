@@ -2,9 +2,11 @@ group 'ca.sfu.cmpt373.alpha'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'war'
+
 sourceCompatibility = 1.8
 
-apply plugin: 'application'
 mainClassName="ca.sfu.cmpt373.alpha.vrcrest.RestDriver"
 
 run {
@@ -20,8 +22,8 @@ dependencies {
     compile group: 'org.hibernate', name: 'hibernate-core', version: '5.1.0.Final'
     compile group: 'com.h2database', name: 'h2', version: '1.4.192'
 
-    //For Spark REST
-    compile group: 'com.sparkjava',  name: 'spark-core', version: '2.3'
+    // For Spark REST
+    compile group: 'com.sparkjava',  name: 'spark-core', version: '2.5'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.5.1'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.5.1'
 

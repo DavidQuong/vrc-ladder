@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.eclipse.jetty.http.HttpStatus;
 import org.hibernate.PropertyValueException;
+import spark.route.RouteOverview;
 
 import javax.persistence.PersistenceException;
 import java.io.IOException;
@@ -34,6 +35,8 @@ public class SparkSample {
     private static ApplicationManager application = new ApplicationManager();
 
     public static void main(String[] args) {
+        RouteOverview.enableRouteOverview();
+
         //goto http://localhost:4567/teams to see the result of this
         get("/teams", (request, response) -> {
             response.type(TYPE_JSON);
