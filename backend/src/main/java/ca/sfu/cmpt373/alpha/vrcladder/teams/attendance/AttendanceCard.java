@@ -1,9 +1,10 @@
 package ca.sfu.cmpt373.alpha.vrcladder.teams.attendance;
 
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
-import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,27 +18,23 @@ public class AttendanceCard {
 
     private static final PlayTime DEFAULT_PLAYTIME = PlayTime.NONE;
 
-    private IdType id;
+    @EmbeddedId
+    private GeneratedId id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = PersistenceConstants.COLUMN_PLAY_TIME, nullable = false)
     private PlayTime preferredPlayTime;
     private AttendanceStatus attendStatus;
 
     public AttendanceCard() {
-        this.id = new IdType();
+        this.id = new GeneratedId();
         this.preferredPlayTime = DEFAULT_PLAYTIME;
     }
 
-    @Id
-    @Column(name = PersistenceConstants.COLUMN_ID)
-    public String getId() {
-        return id.getId();
+    public GeneratedId getId() {
+        return id;
     }
 
-    public void setId(String newId) {
-        id = new IdType(newId);
-    }
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = PersistenceConstants.COLUMN_PLAY_TIME, nullable = false)
     public PlayTime getPreferredPlayTime() {
         return preferredPlayTime;
     }
@@ -50,7 +47,10 @@ public class AttendanceCard {
         this.attendStatus = status;
     }
 
-    @Transient
+    public void getAttendanceStatus() {
+        return attendanceStatus;
+    }
+
     public boolean isAttending() {
         return  (preferredPlayTime != PlayTime.NONE);
     }
@@ -74,29 +74,5 @@ public class AttendanceCard {
     public int hashCode() {
         return id.hashCode();
     }
-
-    public boolean late(){
-        switch(attendStatus){
-            case LATE:
-                return true;
-        }
-        return false;
-    }
-
-    public boolean noShow(){
-        switch(attendStatus){
-            case NO_SHOW:
-            return true;
-    }
-
-        return false;}
-    public boolean attended(){
-        switch(attendStatus){
-            case PRESENT:
-            return true;
-        }
-        return false;
-    }
-
 
 }

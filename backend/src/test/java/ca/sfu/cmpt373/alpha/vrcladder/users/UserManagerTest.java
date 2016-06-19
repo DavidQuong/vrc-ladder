@@ -78,7 +78,7 @@ public class UserManagerTest extends BaseTest {
         final EmailAddress newEmailAddress = new EmailAddress("billyj@vrc.ca");
 
         userManager.update(userFixture.getUserId(), userFixture.getUserRole(), newFirstName, newMiddleName,
-            userFixture.getLastName(), newEmailAddress.getEmailAddress(), newPhoneNumber.getPhoneNumber());
+            userFixture.getLastName(), newEmailAddress, newPhoneNumber);
 
         Session session = sessionManager.getSession();
         User user = session.get(User.class, userFixture.getUserId());
@@ -89,8 +89,8 @@ public class UserManagerTest extends BaseTest {
         Assert.assertEquals(newFirstName, user.getFirstName());
         Assert.assertEquals(newMiddleName, user.getMiddleName());
         Assert.assertEquals(userFixture.getLastName(), user.getLastName());
-        Assert.assertEquals(newEmailAddress.getEmailAddress(), user.getEmailAddress());
-        Assert.assertEquals(newPhoneNumber.getPhoneNumber(), user.getPhoneNumber());
+        Assert.assertEquals(newEmailAddress, user.getEmailAddress());
+        Assert.assertEquals(newPhoneNumber, user.getPhoneNumber());
     }
 
     @Test

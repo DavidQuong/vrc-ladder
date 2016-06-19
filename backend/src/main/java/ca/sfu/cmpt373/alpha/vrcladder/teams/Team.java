@@ -2,29 +2,39 @@ package ca.sfu.cmpt373.alpha.vrcladder.teams;
 
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
-import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = PersistenceConstants.TABLE_TEAM, uniqueConstraints = @UniqueConstraint(columnNames =
-    {PersistenceConstants.COLUMN_FIRST_PLAYER_ID, PersistenceConstants.COLUMN_SECOND_PLAYER_ID}))
+@Table(name = PersistenceConstants.TABLE_TEAM)
 public class Team {
 
-    private IdType id;
+    @EmbeddedId
+    private GeneratedId id;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = PersistenceConstants.COLUMN_ATTENDANCE_CARD_ID, nullable = false)
     private AttendanceCard attendanceCard;
+
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = PersistenceConstants.COLUMN_FIRST_PLAYER_ID, nullable = false)
     private User firstPlayer;
+
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = PersistenceConstants.COLUMN_SECOND_PLAYER_ID, nullable = false)
     private User secondPlayer;
+
+    @Embedded
     private LadderPosition ladderPosition;
 
     private Team() {
@@ -32,72 +42,31 @@ public class Team {
     }
 
     public Team(User firstPlayer, User secondPlayer, LadderPosition ladderPosition) {
-        this.id = new IdType();
+        this.id = new GeneratedId();
         this.attendanceCard = new AttendanceCard();
         this.firstPlayer = firstPlayer;
         this.secondPlayer = secondPlayer;
         this.ladderPosition = ladderPosition;
     }
 
-    public Team(User firstPlayer, User secondPlayer, int position) {
-        this.id = new IdType();
-        this.attendanceCard = new AttendanceCard();
-        this.firstPlayer = firstPlayer;
-        this.secondPlayer = secondPlayer;
-        this.ladderPosition = new LadderPosition(position);
+    public GeneratedId getId() {
+        return id;
     }
 
-    @Id
-    @Column(name = PersistenceConstants.COLUMN_ID)
-    public String getId() {
-        return id.getId();
-    }
-
-    private void setId(String newId) {
-        id = new IdType(newId);
-    }
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = PersistenceConstants.COLUMN_ATTENDANCE_CARD_ID, nullable = false)
     public AttendanceCard getAttendanceCard() {
         return attendanceCard;
     }
 
-    public void setAttendanceCard(AttendanceCard newAttendanceCard) {
-        attendanceCard = newAttendanceCard;
-    }
-
-    @ManyToOne(cascade = CascadeType.REFRESH)
-    @JoinColumn(name = PersistenceConstants.COLUMN_FIRST_PLAYER_ID, nullable = false)
     public User getFirstPlayer() {
         return firstPlayer;
     }
 
-    private void setFirstPlayer(User player) {
-        firstPlayer = player;
-    }
-
-    @ManyToOne(cascade = CascadeType.REFRESH)
-    @JoinColumn(name = PersistenceConstants.COLUMN_SECOND_PLAYER_ID, nullable = false)
     public User getSecondPlayer() {
         return secondPlayer;
     }
 
-    private void setSecondPlayer(User player) {
-        secondPlayer = player;
-    }
-
-    @Column(name = PersistenceConstants.COLUMN_LADDER_POSITION, nullable = false, unique = true)
-    public Integer getLadderPosition() {
-        return ladderPosition.getPosition();
-    }
-
-    public void setLadderPosition(Integer position) {
-        ladderPosition = new LadderPosition(position);
-    }
-
-    public void setAttendanceStatus(AttendanceStatus status) {
-        this.attendanceCard.setAttendanceStatus(status);
+    public LadderPosition getLadderPosition() {
+        return ladderPosition;
     }
 
     @Override

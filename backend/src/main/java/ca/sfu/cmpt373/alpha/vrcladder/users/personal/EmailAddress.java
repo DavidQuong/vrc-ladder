@@ -1,10 +1,14 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.personal;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Embeddable
 public class EmailAddress {
 
     private static final String EMAIL_FORMAT_REGEX_PATTERN =  "^[A-Z0-9._-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
@@ -13,20 +17,25 @@ public class EmailAddress {
     private static final Pattern FORMAT_PATTERN = Pattern.compile(EMAIL_FORMAT_REGEX_PATTERN,
         Pattern.CASE_INSENSITIVE);
 
+    @Column(name = PersistenceConstants.COLUMN_EMAIL_ADDRESS, nullable = false, unique = true)
     private String emailAddress;
+
+    private EmailAddress() {
+        // Required by Hibernate.
+    }
 
     public EmailAddress(String emailAddress) throws ValidationException {
         validateFormat(emailAddress);
         this.emailAddress = emailAddress;
     }
 
-    public String getEmailAddress() {
+    public String getValue() {
         return emailAddress;
     }
 
     @Override
     public String toString() {
-        return getEmailAddress();
+        return getValue();
     }
 
     @Override
@@ -51,4 +60,5 @@ public class EmailAddress {
             throw new ValidationException(errorMsg);
         }
     }
+
 }
