@@ -44,7 +44,7 @@ public class MatchGroup {
 
     @OneToMany(cascade = CascadeType.ALL)
     @OrderColumn
-    private List<Team> teams;
+	private ArrayList<Team> teams;
 
     @OneToOne (cascade = CascadeType.ALL)
     private ScoreCard scoreCard;
@@ -55,12 +55,12 @@ public class MatchGroup {
     }
 
     public MatchGroup(Team team1, Team team2, Team team3) {
-        this.teams = Arrays.asList(team1, team2, team3);
+        this.teams = new ArrayList<>(Arrays.asList(team1, team2, team3));
         init();
     }
 
     public MatchGroup(Team team1, Team team2, Team team3, Team team4) {
-        this.teams = Arrays.asList(team1, team2, team3, team4);
+        this.teams = new ArrayList<>(Arrays.asList(team1, team2, team3, team4));
         init();
     }
 
@@ -88,7 +88,7 @@ public class MatchGroup {
         return Collections.unmodifiableList(teams);
     }
 
-    private void setTeams(List<Team> teams) {
+    private void setTeams(ArrayList<Team> teams) {
         this.teams = teams;
     }
 
@@ -193,35 +193,39 @@ public class MatchGroup {
 	void addTeam(Team newTeam) {
 		if(this.teams.size() == this.MIN_NUM_TEAMS) {
 			this.teams.add(newTeam);
+		} else {
+			throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
 		}
-		throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
 	}
 
 	void removeTeam(Team leavingTeam) {
 		if(this.teams.size() == this.MAX_NUM_TEAMS) {
 			this.teams.remove(leavingTeam);
+		} else {
+			throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
 		}
-		throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
 	}
 
 	void removeTeam(int leavingTeamIndex) {
 		if(this.teams.size() == this.MAX_NUM_TEAMS) {
 			this.teams.remove(leavingTeamIndex);
+		} else {
+			throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
 		}
-		throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
 	}
 
 	void tradeTeams(Team money, MatchGroup merchant, Team goods) { //Swap two teams between their respective MatchGroups
 		if(this.teams.contains(money) && merchant.teams.contains(goods)) {
-			List<Team> possessions = new ArrayList<>(this.teams); //A new list is created to ensure that this.teams ALWAYS contains a valid number of teams
-			List<Team> storeStock = new ArrayList<>(merchant.teams);
+			ArrayList<Team> possessions = new ArrayList<>(this.teams); //A new list is created to ensure that this.teams ALWAYS contains a valid number of teams
+			ArrayList<Team> storeStock = new ArrayList<>(merchant.teams);
 			possessions.remove(money);
 			storeStock.remove(goods);
 			possessions.add(goods);
 			storeStock.add(money);
 			this.teams = possessions;
 			merchant.teams = storeStock;
+		} else {
+			throw new TeamNotFoundException();
 		}
-		throw new TeamNotFoundException();
 	}
 }

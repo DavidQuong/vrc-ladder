@@ -89,7 +89,7 @@ public class MatchGroupTest {
 		testGroup1.tradeTeams(thirdTeam, testGroup2, fifthTeam);
 
 		MatchGroup expectedResults1 = new MatchGroup(firstTeam, secondTeam, fifthTeam);
-		MatchGroup expectedResults2 = new MatchGroup(fourthTeam, thirdTeam, sixthTeam, seventhTeam);
+		MatchGroup expectedResults2 = new MatchGroup(fourthTeam, sixthTeam, seventhTeam, thirdTeam);
 
 		Assert.assertEquals(testGroup1.getTeams(), expectedResults1.getTeams());
 		Assert.assertEquals(testGroup2.getTeams(), expectedResults2.getTeams());
@@ -108,8 +108,8 @@ public class MatchGroupTest {
 		MatchGroup testGroup2 = new MatchGroup(fourthTeam, fifthTeam, sixthTeam);
 		testGroup1.tradeTeams(0, testGroup2, 0);
 
-		MatchGroup expectedResults1 = new MatchGroup(fourthTeam, secondTeam, thirdTeam);
-		MatchGroup expectedResults2 = new MatchGroup(firstTeam, fifthTeam, sixthTeam);
+		MatchGroup expectedResults1 = new MatchGroup(secondTeam, thirdTeam, fourthTeam);
+		MatchGroup expectedResults2 = new MatchGroup(fifthTeam, sixthTeam, firstTeam);
 
 		Assert.assertEquals(testGroup1.getTeams(), expectedResults1.getTeams());
 		Assert.assertEquals(testGroup2.getTeams(), expectedResults2.getTeams());

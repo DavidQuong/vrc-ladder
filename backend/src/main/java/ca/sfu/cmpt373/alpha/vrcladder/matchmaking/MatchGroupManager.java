@@ -3,13 +3,10 @@ package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.DatabaseManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
-<<<<<<< HEAD
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-=======
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import java.util.ArrayList;
->>>>>>> 3841e33... Integrate MatchGroup manual override into database
 
 import java.util.List;
 
@@ -50,7 +47,7 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
 
         return matchGroup;
     }
-	
+
     public MatchGroup deleteMatchGroup(String matchGroupId) {
         return deleteById(matchGroupId);
     }
