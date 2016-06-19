@@ -3,11 +3,10 @@ package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.Waitlist;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class WaitListManager {
+public class WaitlistManager {
 
     private static List<Waitlist> waitlist;
 

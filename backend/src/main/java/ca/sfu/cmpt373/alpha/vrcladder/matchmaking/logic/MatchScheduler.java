@@ -3,14 +3,14 @@ package ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MatchMakingException;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
-import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.WaitListManager;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.WaitlistManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MatchScheduler {
-    private static WaitListManager waitListManager = new WaitListManager();
+    private static WaitlistManager waitListManager = new WaitlistManager();
 
     /**
      * @throws MatchMakingException if Courts are full, and matches cannot be scheduled
@@ -59,7 +59,7 @@ public class MatchScheduler {
         return courts;
     }
 
-    public WaitListManager getWaitlist(){
+    public WaitlistManager getWaitlist(){
         return waitListManager;
     }
 
