@@ -158,6 +158,14 @@ public class MatchGroup {
         return teams.size();
     }
 
+	/*@Transient
+	public Team getTeam4(){
+		if(teams.size() == this.MAX_NUM_TEAMS) {
+			return teams.get(3);
+		}
+		throw new IndexOutOfBoundsException();
+	}*/
+
     @Override
     public boolean equals(Object otherObj) {
         if (this == otherObj) {
@@ -178,4 +186,38 @@ public class MatchGroup {
         return id.hashCode();
     }
 
+	public void addTeam(Team newTeam) {
+		if(this.teams.size() == this.MIN_NUM_TEAMS) {
+			this.teams.add(newTeam);
+		}
+		throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
+	}
+
+	public void removeTeam(Team leavingTeam) {
+		if(this.teams.size() == this.MAX_NUM_TEAMS) {
+			this.teams.remove(leavingTeam);
+		}
+		throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
+	}
+
+	public void removeTeam(int leavingTeamIndex) {
+		if(this.teams.size() == this.MAX_NUM_TEAMS) {
+			this.teams.remove(leavingTeamIndex);
+		}
+		throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
+	}
+
+	public void tradeTeams(Team money, MatchGroup merchant, Team goods) { //Swap two teams between their respective MatchGroups
+		if(this.teams.contains(money) && merchant.teams.contains(goods)) {
+			List<Team> possessions = new ArrayList<>(this.teams); //A new list is created to ensure that this.teams ALWAYS contains a valid number of teams
+			List<Team> storeStock = new ArrayList<>(merchant.teams);
+			possessions.remove(money);
+			storeStock.remove(goods);
+			possessions.add(goods);
+			storeStock.add(money);
+			this.teams = possessions;
+			merchant.teams = storeStock;
+		}
+		throw new TeamNotFoundException();
+	}
 }
