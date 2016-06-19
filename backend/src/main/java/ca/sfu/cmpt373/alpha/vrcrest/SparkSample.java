@@ -1,6 +1,8 @@
+// TODO - Delete this file later, it's purpose is to merely was to merely demonstrate how to use Spark.
+
 package ca.sfu.cmpt373.alpha.vrcrest;
 
-import ca.sfu.cmpt373.alpha.vrcladder.Application;
+import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
@@ -23,13 +25,13 @@ import static com.fasterxml.jackson.annotation.PropertyAccessor.FIELD;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
-public class RestDriver {
+public class SparkSample {
     private static final String TYPE_JSON = "application/json";
     private static final String ERROR_MESSAGE_JSON_PARSE = "There was an error parsing your JSON request";
     private static final String ERROR_MESSAGE_INVALID_JSON_OBJECT = "The JSON object provided was not well-formed";
     private static final String ERROR_MESSAGE_NONEXISTENT_USER_ID = "user ID does not exist";
 
-    private static Application application = new Application();
+    private static ApplicationManager application = new ApplicationManager();
 
     public static void main(String[] args) {
         //goto http://localhost:4567/teams to see the result of this
