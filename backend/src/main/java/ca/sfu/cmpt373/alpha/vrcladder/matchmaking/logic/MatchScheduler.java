@@ -3,19 +3,20 @@ package ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MatchMakingException;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.WaitListManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MatchScheduler {
-    private static final String ERROR_MESSAGE_COURTS_FULL = "There were not enough courts available to schedule all matches";
+    private static WaitListManager waitListManager = new WaitListManager();
 
     /**
      * @throws MatchMakingException if Courts are full, and matches cannot be scheduled
      */
     public static List<Court> scheduleMatches(int numCourts, List<MatchGroup> matchGroups) {
-        //generate courts to schedule matches in
+        // Schedule matches into the courts.
         List<Court> courts = new ArrayList<>();
         for (int i = 0; i < numCourts; i++) {
             courts.add(new Court());
@@ -51,10 +52,15 @@ public class MatchScheduler {
                     }
                 }
                 if (!isAnyPlayTimeScheduled) {
-                    throw new MatchMakingException(ERROR_MESSAGE_COURTS_FULL);
+                    waitListManager.addToWaitlist(matchGroup, preferredPlayTime);
                 }
             }
         }
         return courts;
     }
+
+    public WaitListManager getWaitlist(){
+        return waitListManager;
+    }
+
 }

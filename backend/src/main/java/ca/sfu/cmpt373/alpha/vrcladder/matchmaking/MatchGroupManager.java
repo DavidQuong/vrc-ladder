@@ -5,7 +5,6 @@ import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-
 import java.util.List;
 
 public class MatchGroupManager extends DatabaseManager<MatchGroup> {
