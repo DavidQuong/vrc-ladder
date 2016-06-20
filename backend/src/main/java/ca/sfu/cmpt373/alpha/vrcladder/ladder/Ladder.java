@@ -2,6 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.ladder;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 
 import java.util.*;
@@ -9,10 +10,13 @@ import java.util.function.Predicate;
 
 
 public class Ladder {
-    private List<Team> ladder;
+    private static final String ERROR_MATCHGROUP_TEAM_NOT_ATTENDING = "Teams that did not attend should not change rankings within their matchgroups";
     final static private int NOT_ATTENDING_PENALTY = 2;
     final static private int LATE_PENALTY =4;
     final static private int NO_SHOW_PENALTY =10;
+
+
+    private List<Team> ladder;
 
     public Ladder() {
         ladder = new ArrayList<>();
@@ -83,10 +87,8 @@ public class Ladder {
 
     //swap teams in a match based on rank
     public void updateLadder(List<MatchGroup> matchGroups){
-        arrangeMatchResults(matchGroups.get(0));
-
-        for (int matchIndex = 1; matchIndex<matchGroups.size(); matchIndex++){
-            arrangeMatchResults(matchGroups.get(matchIndex));
+        for (MatchGroup matchGroup : matchGroups){
+            applyRankingsWithinMatchGroup(matchGroup);
         }
 
         //switch highest team of match with lowest team of previous match
@@ -150,56 +152,28 @@ public class Ladder {
 
     }
 
-
-    private void arrangeMatchResults(MatchGroup match){
-        //TODO: fix this
-//        if (match.getTeams().size()==match.MIN_NUM_TEAMS){
-//            arrange3Teams(match);
-//        }
-//        else if(match.getTeams().size()==match.MAX_NUM_TEAMS){
-//            arrange4Teams(match);
-//        }
-
-    }
-
-    private void arrange4Teams(MatchGroup match){
-            List<Team> teamOrder = match.getScoreCard().getRankedTeams();
-            int matchSize = teamOrder.size();
-
-            int[] teamPos={
-                    findTeamPosition(teamOrder.get(0)),
-                    findTeamPosition(teamOrder.get(1)),
-                    findTeamPosition(teamOrder.get(2)),
-                    findTeamPosition(teamOrder.get(3))
-            };
-            Arrays.sort(teamPos);
-            //inserts the four teams in their new positions
-            for (int i=0;i<matchSize;i++) {
-                ladder.add(teamPos[i], teamOrder.get(i));
-                ladder.remove(teamPos[i+1]);
-            }
-
-
-    }
-
-    private void arrange3Teams(MatchGroup match){
-        List<Team> TeamOrder = match.getScoreCard().getRankedTeams();
-        int matchSize = TeamOrder.size();
-
-            int[] teamPos = {
-                    findTeamPosition(TeamOrder.get(0)),
-                    findTeamPosition(TeamOrder.get(1)),
-                    findTeamPosition(TeamOrder.get(2))
-            };
-        //sort the teamPos array
-            Arrays.sort(teamPos);
-        //insert the teams at their new positions
-            for (int i=0;i<matchSize;i++) {
-                ladder.add(teamPos[i], TeamOrder.get(i));
-                ladder.remove(teamPos[i+1]);
-            }
+    private void applyRankingsWithinMatchGroup(MatchGroup matchGroup){
+        //find the ladder indices for 1st, 2nd, 3rd, 4th... positions
+        //these need to be found before, because we will be overwriting teams below
+        List<Integer> rankedIndexes = new ArrayList<>();
+        for (Team team : matchGroup.getTeams()) {
+            rankedIndexes.add(findTeamPosition(team) - 1);
         }
 
-
-
+        //overwrite the team in each position with the teams specified in the ScoreCard
+        List<Team> rankedTeams = matchGroup.getScoreCard().getRankedTeams();
+        for (int i = 0; i < matchGroup.getTeamCount(); i++) {
+            Team team = matchGroup.getTeams().get(i);
+            AttendanceCard attendanceCard = team.getAttendanceCard();
+            if (attendanceCard.isAttending() && attendanceCard.attended()) {
+                ladder.set(rankedIndexes.get(i), rankedTeams.get(i));
+            } else {
+                //if a team does not attend, its position within its group should remain the same
+                boolean hasTeamMovedWithinGroup = !team.equals(rankedTeams.get(i));
+                if (hasTeamMovedWithinGroup) {
+                    throw new IllegalStateException(ERROR_MATCHGROUP_TEAM_NOT_ATTENDING);
+                }
+            }
+        }
+    }
 }

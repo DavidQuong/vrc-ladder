@@ -1,13 +1,11 @@
 package ca.sfu.cmpt373.alpha.vrcladder.ladder;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
-import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
-import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -154,5 +152,55 @@ public class LadderMethodsTest {
                 Assert.assertEquals(expectedLadderPosition, newLadderPosition);
             }
         }
+    }
+
+    @Test
+    public void testRankingsWithinMatchGroups() {
+        testRankingsWithinMatchGroup(MockMatchGroupGenerator.generateThreeTeamMatchGroup());
+        testRankingsWithinMatchGroup(MockMatchGroupGenerator.generateFourTeamMatchGroup());
+    }
+
+    private void testRankingsWithinMatchGroup(MatchGroup matchGroup) {
+        List<MatchGroup> matchGroups = new ArrayList<>();
+        matchGroups.add(matchGroup);
+
+        //create a new list of the teams in the MatchGroup that's modifiable
+        List<Team> matchGroupTeams = new ArrayList<>();
+        matchGroupTeams.addAll(matchGroup.getTeams());
+
+        //make sure everyone's set to attend
+        for (Team team : matchGroupTeams) {
+            team.getAttendanceCard().setPreferredPlayTime(PlayTime.TIME_SLOT_A);
+        }
+
+        List<List<Team>> permutations = generatePermutations(matchGroupTeams);
+
+        for (List<Team> teamPermutation : permutations) {
+            ladder = new Ladder(matchGroup.getTeams());
+            matchGroup.getScoreCard().setRankedTeams(teamPermutation);
+            ladder.updateLadder(matchGroups);
+            Assert.assertEquals(ladder.getLadder(), teamPermutation);
+        }
+    }
+
+    //TODO: cite this
+    //from http://stackoverflow.com/questions/10305153/generating-all-possible-permutations-of-a-list-recursively
+    private List<List<Team>> generatePermutations(List<Team> original) {
+        if (original.size() == 0) {
+            List<List<Team>> result = new ArrayList<List<Team>>();
+            result.add(new ArrayList<Team>());
+            return result;
+        }
+        Team firstElement = original.remove(0);
+        List<List<Team>> returnValue = new ArrayList<List<Team>>();
+        List<List<Team>> permutations = generatePermutations(original);
+        for (List<Team> smallerPermutated : permutations) {
+            for (int index=0; index <= smallerPermutated.size(); index++) {
+                List<Team> temp = new ArrayList<Team>(smallerPermutated);
+                temp.add(index, firstElement);
+                returnValue.add(temp);
+            }
+        }
+        return returnValue;
     }
 }

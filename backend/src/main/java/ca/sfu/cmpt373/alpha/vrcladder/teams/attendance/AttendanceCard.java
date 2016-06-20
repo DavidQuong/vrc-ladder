@@ -15,6 +15,7 @@ import javax.persistence.Table;
 public class AttendanceCard {
 
     private static final PlayTime DEFAULT_PLAYTIME = PlayTime.NONE;
+    private static final AttendanceStatus DEFAULT_ATTENDANCE_STATUS = AttendanceStatus.PRESENT;
 
     @EmbeddedId
     private GeneratedId id;
@@ -22,11 +23,14 @@ public class AttendanceCard {
     @Enumerated(EnumType.STRING)
     @Column(name = PersistenceConstants.COLUMN_PLAY_TIME, nullable = false)
     private PlayTime preferredPlayTime;
+
+    //TODO: add this to the database
     private AttendanceStatus attendanceStatus;
 
     public AttendanceCard() {
         this.id = new GeneratedId();
         this.preferredPlayTime = DEFAULT_PLAYTIME;
+        this.attendanceStatus = DEFAULT_ATTENDANCE_STATUS;
     }
 
     public GeneratedId getId() {
@@ -51,6 +55,13 @@ public class AttendanceCard {
 
     public boolean isAttending() {
         return  (preferredPlayTime != PlayTime.NONE);
+    }
+
+    /**
+     * @return whether or not the team did show up
+     */
+    public boolean attended() {
+        return attendanceStatus == AttendanceStatus.PRESENT;
     }
 
     @Override
