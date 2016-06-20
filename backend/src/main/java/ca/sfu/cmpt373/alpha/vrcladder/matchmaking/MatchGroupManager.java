@@ -48,38 +48,38 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
         return matchGroup;
     }
 
-    public MatchGroup deleteMatchGroup(String matchGroupId) {
+    public MatchGroup deleteMatchGroup(IdType matchGroupId) {
         return deleteById(matchGroupId);
     }
 
-	public MatchGroup addTeamToMatchGroup(String matchGroupId, Team newTeam) {
+	public MatchGroup addTeamToMatchGroup(IdType matchGroupId, Team newTeam) {
 		MatchGroup matchGroup = getById(matchGroupId);
 		if (matchGroup == null) {
-			throw new PersistenceException(ERROR_NO_MATCH_GROUP);
+			throw new RuntimeException(ERROR_NO_MATCH_GROUP);
 		}
 		matchGroup.addTeam(newTeam);
 
 		return update(matchGroup);
 	}
 
-	public MatchGroup removeTeamFromMatchGroup(String matchGroupId, Team leavingTeam) {
+	public MatchGroup removeTeamFromMatchGroup(IdType matchGroupId, Team leavingTeam) {
 		MatchGroup matchGroup = getById(matchGroupId);
 		if (matchGroup == null) {
-			throw new PersistenceException(ERROR_NO_MATCH_GROUP);
+			throw new RuntimeException(ERROR_NO_MATCH_GROUP);
 		}
 		matchGroup.removeTeam(leavingTeam);
 
 		return update(matchGroup);
 	}
 
-	public List<MatchGroup> tradeTeamsInMatchGroups(String matchGroupId1, Team first, String matchGroupId2, Team second) {
+	public List<MatchGroup> tradeTeamsInMatchGroups(IdType matchGroupId1, Team first, String matchGroupId2, Team second) {
 		MatchGroup matchGroup1 = getById(matchGroupId1);
 		if (matchGroup1 == null) {
-			throw new PersistenceException(ERROR_NO_MATCH_GROUP);
+			throw new RuntimeException(ERROR_NO_MATCH_GROUP);
 		}
 		MatchGroup matchGroup2 = getById(matchGroupId1);
 		if (matchGroup2 == null) {
-			throw new PersistenceException(ERROR_NO_MATCH_GROUP);
+			throw new RuntimeException(ERROR_NO_MATCH_GROUP);
 		}
 		matchGroup1.tradeTeams(first, matchGroup2, second);
 
