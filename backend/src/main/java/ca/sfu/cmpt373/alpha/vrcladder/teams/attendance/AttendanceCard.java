@@ -60,7 +60,7 @@ public class AttendanceCard {
     /**
      * @return whether or not the team did show up
      */
-    public boolean attended() {
+    public boolean isPresent() {
         return attendanceStatus == AttendanceStatus.PRESENT;
     }
 

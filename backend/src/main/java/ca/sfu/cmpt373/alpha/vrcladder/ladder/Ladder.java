@@ -7,14 +7,15 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 
 public class Ladder {
     private static final String ERROR_MATCHGROUP_TEAM_NOT_ATTENDING = "Teams that did not attend should not change rankings within their matchgroups";
-    final static private int NOT_ATTENDING_PENALTY = 2;
-    final static private int LATE_PENALTY =4;
-    final static private int NO_SHOW_PENALTY =10;
+    private static final String ERROR_MATCHGROUPS_NOT_RANKED = "MatchGroups are not in ranked order";
+    private static final String ERROR_DUPLICATE_TEAM = "The Ladder already contains this team. The ladder may not hold duplicate elements";
 
+    private static final int NOT_ATTENDING_PENALTY = 2;
 
     private List<Team> ladder;
 
@@ -22,20 +23,14 @@ public class Ladder {
         ladder = new ArrayList<>();
     }
 
-    public Ladder(List<Team> newLadder) {
-        ladder = new ArrayList<>(newLadder);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder("");
-
-        for (int i = 0; i < ladder.size(); i++) {
-            stringBuilder.append(i + " :");
-            stringBuilder.append(ladder.get(i).toString() + "\n ");
+    public Ladder(List<Team> teams) {
+        ladder = new ArrayList<>();
+        for (Team team : teams) {
+            if (ladder.contains(team)) {
+                throw new IllegalStateException(ERROR_DUPLICATE_TEAM);
+            }
+            ladder.add(team);
         }
-
-        return stringBuilder.toString();
     }
 
     public List<Team> getLadder() {
@@ -57,6 +52,9 @@ public class Ladder {
     }
 
     public void addTeam(Team team) {
+        if (ladder.contains(team)) {
+            throw new IllegalStateException(ERROR_DUPLICATE_TEAM);
+        }
         ladder.add(team);
     }
 
@@ -92,15 +90,12 @@ public class Ladder {
         }
 
         //switch highest team of match with lowest team of previous match
-        for (int matchIndex = 0; matchIndex<matchGroups.size(); matchIndex++) {
-            //TODO: enable this
-//            swapBetweenMatchGroup(matchGroups, matchIndex);
-        }
+        swapTeamsBetweenMatchGroup(matchGroups);
 
         //TODO: check if it matters which order these are called in
         applyNotAttendingPenalty();
-        applyAttendanceStatusPenalty(AttendanceStatus.NO_SHOW);
         applyAttendanceStatusPenalty(AttendanceStatus.LATE);
+        applyAttendanceStatusPenalty(AttendanceStatus.NO_SHOW);
     }
 
     private void applyNotAttendingPenalty() {
@@ -136,20 +131,44 @@ public class Ladder {
         }
     }
 
-    private void swapBetweenMatchGroup(List<MatchGroup> matchGroups, int index) {
-        if (matchGroups.size() >= index||index==0){
-            return;
+    private void swapTeamsBetweenMatchGroup(List<MatchGroup> matchGroups) {
+        for (int i = 0; i < matchGroups.size() - 1; i++) {
+            List<Team> rankedMatchGroupTeams1 = matchGroups.get(i).getScoreCard().getRankedTeams();
+            List<Team> rankedMatchGroupTeams2 = matchGroups.get(i + 1).getScoreCard().getRankedTeams();
+
+            // we must only consider teams within MatchGroups that are attending.
+            // Teams that are not attending should not be considered in any ranking changes within/between MatchGroups
+            // Instead, these teams are penalized separately after everything else is done
+            Team lastPlaceAttendingTeamInMatchGroup1 = getLastAttendingTeam(rankedMatchGroupTeams1);
+            Team firstPlaceAttendingTeamInMatchGroup2 = getFirstAttendingTeam(rankedMatchGroupTeams2);
+
+            if (findTeamPosition(lastPlaceAttendingTeamInMatchGroup1) > findTeamPosition(firstPlaceAttendingTeamInMatchGroup2)) {
+                throw new IllegalStateException(ERROR_MATCHGROUPS_NOT_RANKED);
+            }
+
+            swapTeams(lastPlaceAttendingTeamInMatchGroup1, firstPlaceAttendingTeamInMatchGroup2);
         }
+    }
 
-        List<Team> teamOrder1 = matchGroups.get(index).getScoreCard().getRankedTeams();
-        List<Team> teamOrder2 = matchGroups.get(index - 1).getScoreCard().getRankedTeams();
-
-        if (teamOrder1.size() > 3){
-            swapTeams(teamOrder1.get(3), teamOrder2.get(0));
+    private Team getLastAttendingTeam(List<Team> teams) {
+        for (int i = teams.size() - 1; i >= 0; i--) {
+            AttendanceCard attendanceCard = teams.get(i).getAttendanceCard();
+            if (attendanceCard.isAttending() && attendanceCard.isPresent()) {
+                return teams.get(i);
+            }
         }
-        else
-            swapTeams(teamOrder1.get(2), teamOrder2.get(0));
+        throw new IllegalStateException(ERROR_MATCHGROUP_NO_TEAMS_PRESENT);
+    }
 
+    private static final String ERROR_MATCHGROUP_NO_TEAMS_PRESENT = "No teams were present in this MatchGroup";
+    private Team getFirstAttendingTeam(List<Team> teams) {
+        for (Team team : teams) {
+            AttendanceCard attendanceCard = team.getAttendanceCard();
+            if (attendanceCard.isAttending() && attendanceCard.isPresent()) {
+                return team;
+            }
+        }
+        throw new IllegalStateException(ERROR_MATCHGROUP_NO_TEAMS_PRESENT);
     }
 
     private void applyRankingsWithinMatchGroup(MatchGroup matchGroup){
@@ -165,7 +184,7 @@ public class Ladder {
         for (int i = 0; i < matchGroup.getTeamCount(); i++) {
             Team team = matchGroup.getTeams().get(i);
             AttendanceCard attendanceCard = team.getAttendanceCard();
-            if (attendanceCard.isAttending() && attendanceCard.attended()) {
+            if (attendanceCard.isAttending() && attendanceCard.isPresent()) {
                 ladder.set(rankedIndexes.get(i), rankedTeams.get(i));
             } else {
                 //if a team does not attend, its position within its group should remain the same
@@ -175,5 +194,17 @@ public class Ladder {
                 }
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder("");
+
+        for (int i = 0; i < ladder.size(); i++) {
+            stringBuilder.append(i + " :");
+            stringBuilder.append(ladder.get(i).toString() + "\n ");
+        }
+
+        return stringBuilder.toString();
     }
 }

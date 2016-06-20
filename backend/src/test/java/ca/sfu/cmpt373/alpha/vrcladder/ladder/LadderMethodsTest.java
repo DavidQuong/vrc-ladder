@@ -6,37 +6,44 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class LadderMethodsTest {
-    private Ladder ladder;
     private List<MatchGroup> threeTeamMatchGroups;
     private List<MatchGroup> fourTeamMatchGroups;
-    private List<Team> threeTeamMatchGroupTeams;
-    private List<Team> fourTeamMatchGroupTeams;
-    private static final int MATCHGROUP_COUNT = 1;
+    private static final int MATCHGROUP_COUNT = 3;
 
     @Before
     public void startUp() {
-        ladder = new Ladder();
-        fourTeamMatchGroups = new ArrayList<>();
         threeTeamMatchGroups = new ArrayList<>();
-        threeTeamMatchGroupTeams = new ArrayList<>();
-        fourTeamMatchGroupTeams = new ArrayList<>();
-
+        fourTeamMatchGroups = new ArrayList<>();
         for (int i = 0; i < MATCHGROUP_COUNT; i++) {
             threeTeamMatchGroups.add(MockMatchGroupGenerator.generateThreeTeamMatchGroup());
         }
         for (int i = 0; i < MATCHGROUP_COUNT; i++) {
             fourTeamMatchGroups.add(MockMatchGroupGenerator.generateFourTeamMatchGroup());
         }
-        threeTeamMatchGroupTeams = convertMatchGroupListToTeamList(threeTeamMatchGroups);
-        fourTeamMatchGroupTeams = convertMatchGroupListToTeamList(fourTeamMatchGroups);
+
+        setAllMatchGroupTeamsPresent(threeTeamMatchGroups);
+        setAllMatchGroupTeamsPresent(fourTeamMatchGroups);
+    }
+
+    private void setAllMatchGroupTeamsPresent(List<MatchGroup> matchGroups) {
+        for (MatchGroup matchGroup : matchGroups) {
+            for (Team team : matchGroup.getTeams()) {
+                AttendanceCard attendanceCard = team.getAttendanceCard();
+                attendanceCard.setPreferredPlayTime(PlayTime.TIME_SLOT_A);
+                attendanceCard.setAttendanceStatus(AttendanceStatus.PRESENT);
+            }
+        }
     }
 
     private List<Team> convertMatchGroupListToTeamList(List<MatchGroup> matchGroups) {
@@ -50,8 +57,8 @@ public class LadderMethodsTest {
 
     @Test
     public void testSwapTeams() {
-        testSwapAllTeams(threeTeamMatchGroupTeams);
-        testSwapAllTeams(fourTeamMatchGroupTeams);
+        testSwapAllTeams(convertMatchGroupListToTeamList(threeTeamMatchGroups));
+        testSwapAllTeams(convertMatchGroupListToTeamList(fourTeamMatchGroups));
     }
 
     private void testSwapAllTeams(List<Team> teams) {
@@ -64,7 +71,7 @@ public class LadderMethodsTest {
     }
 
     private void testSwap(List<Team> teams, int team1Index, int team2Index) {
-        ladder = new Ladder(teams);
+        Ladder ladder = new Ladder(teams);
         List<Team> rankedTeams = ladder.getLadder();
 
         //make sure teams are in the correct order to begin with
@@ -81,21 +88,22 @@ public class LadderMethodsTest {
 
     @Test
     public void testApplyPenalties() {
+        // TODO: add case for testing NOT_ATTENDING penalty
+        // TODO: clarify requirements for when multiple teams are penalized
         testApplyPenalties(threeTeamMatchGroups);
         testApplyPenalties(fourTeamMatchGroups);
     }
 
     private void testApplyPenalties(List<MatchGroup> matchGroups) {
-        //TODO: add case for testing NOT_ATTENDING penalty
         List<Team> matchGroupTeamList = convertMatchGroupListToTeamList(matchGroups);
         for (int i = 0; i < matchGroups.size(); i++) {
             testApplyPenalties(
                     matchGroups,
-                    matchGroupTeamList.subList(0, i),
+                    matchGroupTeamList.get(i),
                     AttendanceStatus.NO_SHOW);
             testApplyPenalties(
                     matchGroups,
-                    matchGroupTeamList.subList(0, i),
+                    matchGroupTeamList.get(i),
                     AttendanceStatus.LATE);
         }
     }
@@ -103,54 +111,36 @@ public class LadderMethodsTest {
     /**
      * iterates through all the teams in each matchgroup, and applies the specified penalty
      * to all the teams that are also in the teamsToApplyPenalties list
-     * @param teamsToApplyPenalties should be a list of teams in RANKED order
      */
-    private void testApplyPenalties(List<MatchGroup> matchGroups, List<Team> teamsToApplyPenalties, AttendanceStatus penaltyToApply) {
-        ladder = new Ladder(convertMatchGroupListToTeamList(matchGroups));
+    private void testApplyPenalties(List<MatchGroup> matchGroups, Team penalizedTeam, AttendanceStatus penaltyToApply) {
+        Ladder ladder = new Ladder(convertMatchGroupListToTeamList(matchGroups));
 
         //set ranks within MatchGroups to be unchanged in order to test penalties in isolation
         for (MatchGroup matchGroup : matchGroups) {
             matchGroup.getScoreCard().setRankedTeams(matchGroup.getTeams());
         }
 
-        //set all teams to attending to test penalties in isolation
-        for (MatchGroup matchGroup : matchGroups) {
-            for (Team team : matchGroup.getTeams()) {
-                AttendanceCard attendanceCard = team.getAttendanceCard();
-                attendanceCard.setPreferredPlayTime(PlayTime.TIME_SLOT_A);
-                attendanceCard.setAttendanceStatus(AttendanceStatus.PRESENT);
-            }
-        }
+        //reinitialize all teams to present
+        setAllMatchGroupTeamsPresent(matchGroups);
 
-        //apply penalty to all teams being tested
-        for (Team team : teamsToApplyPenalties) {
-            AttendanceCard firstTeamAttendanceCard = team.getAttendanceCard();
-            firstTeamAttendanceCard.setAttendanceStatus(AttendanceStatus.NO_SHOW);
-        }
+        //apply penalty just to the team being tested
+        AttendanceCard firstTeamAttendanceCard = penalizedTeam.getAttendanceCard();
+        firstTeamAttendanceCard.setAttendanceStatus(penaltyToApply);
 
-        //save the original positions before updating ladder
-        List<Integer> originalLadderPositions = new ArrayList<>();
-        for (Team team : teamsToApplyPenalties) {
-            originalLadderPositions.add(ladder.findTeamPosition(team));
-        }
+        int originalLadderPosition = ladder.findTeamPosition(penalizedTeam);
 
         ladder.updateLadder(matchGroups);
 
-        //verify teams are in their correct positions
-        for (int i = 0; i < teamsToApplyPenalties.size(); i++) {
-            int originalLadderPosition = originalLadderPositions.get(i);
-            int newLadderPosition = ladder.findTeamPosition(teamsToApplyPenalties.get(i));
-            int penalty = penaltyToApply.getPenalty();
-            boolean isTeamPenaltyWithinLadderBounds =
-                    (newLadderPosition + penalty <= ladder.getTeamCount());
-            if (isTeamPenaltyWithinLadderBounds) {
-                Assert.assertTrue(newLadderPosition == originalLadderPosition + penalty);
-            } else {
-                //all the teams that come after the current team should be beneath the current team
-                int numPenalizedTeamsAfterCurrentTeam = (teamsToApplyPenalties.size() - 1) - i;
-                int expectedLadderPosition = ladder.getTeamCount() - numPenalizedTeamsAfterCurrentTeam;
-                Assert.assertEquals(expectedLadderPosition, newLadderPosition);
-            }
+        //verify the team is in the correct position
+        int newLadderPosition = ladder.findTeamPosition(penalizedTeam);
+        int penalty = penaltyToApply.getPenalty();
+        boolean isTeamPenaltyWithinLadderBounds =
+                (originalLadderPosition + penalty <= ladder.getTeamCount());
+        if (isTeamPenaltyWithinLadderBounds) {
+            Assert.assertEquals(newLadderPosition, originalLadderPosition + penalty);
+        } else {
+            int lastPosition = ladder.getTeamCount();
+            Assert.assertEquals(lastPosition, newLadderPosition);
         }
     }
 
@@ -176,7 +166,7 @@ public class LadderMethodsTest {
         List<List<Team>> permutations = generatePermutations(matchGroupTeams);
 
         for (List<Team> teamPermutation : permutations) {
-            ladder = new Ladder(matchGroup.getTeams());
+            Ladder ladder = new Ladder(matchGroup.getTeams());
             matchGroup.getScoreCard().setRankedTeams(teamPermutation);
             ladder.updateLadder(matchGroups);
             Assert.assertEquals(ladder.getLadder(), teamPermutation);
@@ -187,20 +177,67 @@ public class LadderMethodsTest {
     //from http://stackoverflow.com/questions/10305153/generating-all-possible-permutations-of-a-list-recursively
     private List<List<Team>> generatePermutations(List<Team> original) {
         if (original.size() == 0) {
-            List<List<Team>> result = new ArrayList<List<Team>>();
-            result.add(new ArrayList<Team>());
+            List<List<Team>> result = new ArrayList<>();
+            result.add(new ArrayList<>());
             return result;
         }
         Team firstElement = original.remove(0);
-        List<List<Team>> returnValue = new ArrayList<List<Team>>();
+        List<List<Team>> returnValue = new ArrayList<>();
         List<List<Team>> permutations = generatePermutations(original);
         for (List<Team> smallerPermutated : permutations) {
             for (int index=0; index <= smallerPermutated.size(); index++) {
-                List<Team> temp = new ArrayList<Team>(smallerPermutated);
+                List<Team> temp = new ArrayList<
+                        >(smallerPermutated);
                 temp.add(index, firstElement);
                 returnValue.add(temp);
             }
         }
         return returnValue;
+    }
+
+    @Test
+    public void testSwapTeamsBetweenMatchGroup() {
+        testSwapTeamsBetweenMatchGroups(threeTeamMatchGroups);
+        testSwapTeamsBetweenMatchGroups(fourTeamMatchGroups);
+    }
+
+    private void testSwapTeamsBetweenMatchGroups(List<MatchGroup> matchGroups) {
+        Ladder ladder = new Ladder(convertMatchGroupListToTeamList(matchGroups));
+
+        for (MatchGroup matchGroup : matchGroups) {
+            matchGroup.getScoreCard().setRankedTeams(matchGroup.getTeams());
+        }
+
+        List<Pair<Integer, Integer>> lastFirstGroupPositionPairs = new ArrayList<>();
+        for (int i = 0; i < matchGroups.size() - 1; i++) {
+            MatchGroup currMatchGroup = matchGroups.get(i);
+            MatchGroup nextMatchGroup = matchGroups.get(i + 1);
+            lastFirstGroupPositionPairs.add(getLastFirstTeamIndexPair(ladder, currMatchGroup, nextMatchGroup));
+        }
+
+        ladder.updateLadder(matchGroups);
+
+        for (int i = 0; i < matchGroups.size() - 1; i++) {
+            MatchGroup currMatchGroup = matchGroups.get(i);
+            MatchGroup nextMatchGroup = matchGroups.get(i + 1);
+            Pair<Integer, Integer> lastFirstGroupPositionPair = getLastFirstTeamIndexPair(ladder, currMatchGroup, nextMatchGroup);
+
+            Assert.assertEquals(lastFirstGroupPositionPairs.get(i).getLeft(), lastFirstGroupPositionPair.getRight());
+            Assert.assertEquals(lastFirstGroupPositionPairs.get(i).getRight(), lastFirstGroupPositionPair.getLeft());
+        }
+    }
+
+    /**
+     * @return the current ladder positions of the lowest ranked team in the firstMatchGroup,
+     * and the highest ranked team in the nextMatchGroup
+     */
+    private Pair<Integer, Integer> getLastFirstTeamIndexPair(Ladder ladder, MatchGroup firstMatchGroup, MatchGroup nextMatchGroup) {
+        List<Team> firstMatchGroupRankedTeams = firstMatchGroup.getScoreCard().getRankedTeams();
+        int positionLastTeamOfFirstMatchGroup = ladder.findTeamPosition(firstMatchGroupRankedTeams.get(firstMatchGroupRankedTeams.size() - 1));
+
+        List<Team> nextMatchGroupRankedTeams = nextMatchGroup.getScoreCard().getRankedTeams();
+        int positionFirstTeamOfNextMatchGroup = ladder.findTeamPosition(nextMatchGroupRankedTeams.get(0));
+
+        return new ImmutablePair<>(positionLastTeamOfFirstMatchGroup, positionFirstTeamOfNextMatchGroup);
     }
 }

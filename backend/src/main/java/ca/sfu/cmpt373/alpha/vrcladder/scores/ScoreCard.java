@@ -20,6 +20,7 @@ public class ScoreCard {
     
     private static final String ERROR_TEAM_NOT_IN_GROUP = "Team is not in match group";
     private static final String ERROR_ILLEGAL_SIZE = "Ranked teams list must be the same size as MatchGroup teams";
+    private static final String ERROR_NO_RESULTS_SET = "There are no results recorded on this score card";
 
     @EmbeddedId
     private GeneratedId id;
@@ -67,6 +68,9 @@ public class ScoreCard {
      * @return A list of teams in the order they came in in their matches.
      */
     public List<Team> getRankedTeams() {
+        if (rankedTeams.size() != matchGroup.getTeamCount()) {
+            throw new IllegalStateException(ERROR_NO_RESULTS_SET);
+        }
         return rankedTeams;
     }
 
