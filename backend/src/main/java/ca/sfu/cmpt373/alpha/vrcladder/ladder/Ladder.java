@@ -5,12 +5,16 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 
 public class Ladder {
+
+    private static final String ERROR_MATCHGROUP_NO_TEAMS_PRESENT = "No teams were present in this MatchGroup";
     private static final String ERROR_MATCHGROUP_TEAM_NOT_ATTENDING = "Teams that did not attend should not change rankings within their matchgroups";
     private static final String ERROR_MATCHGROUPS_NOT_RANKED = "MatchGroups are not in ranked order";
     private static final String ERROR_DUPLICATE_TEAM = "The Ladder already contains this team. The ladder may not hold duplicate elements";
@@ -83,7 +87,10 @@ public class Ladder {
         Collections.swap(ladder, team1Index, team2Index);
     }
 
-    //swap teams in a match based on rank
+    /**
+     * @param matchGroups should be ranked in the same order as the ladder itself
+     * @throws IllegalStateException if @matchGroups are not in ranked order
+     */
     public void updateLadder(List<MatchGroup> matchGroups){
         for (MatchGroup matchGroup : matchGroups){
             applyRankingsWithinMatchGroup(matchGroup);
@@ -160,7 +167,6 @@ public class Ladder {
         throw new IllegalStateException(ERROR_MATCHGROUP_NO_TEAMS_PRESENT);
     }
 
-    private static final String ERROR_MATCHGROUP_NO_TEAMS_PRESENT = "No teams were present in this MatchGroup";
     private Team getFirstAttendingTeam(List<Team> teams) {
         for (Team team : teams) {
             AttendanceCard attendanceCard = team.getAttendanceCard();
