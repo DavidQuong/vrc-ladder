@@ -5,18 +5,14 @@ import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
-import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,8 +32,9 @@ public class MatchGroup {
     public static final int MIN_NUM_TEAMS = 3;
     public static final int MAX_NUM_TEAMS = 4;
 
-    private static final String ERROR_MESSAGE_NUM_TEAMS = "Teams list contains more or less than the min or max " +
+    private static final String ERROR_NUM_TEAMS = "Teams list contains more or less than the min or max " +
         "number of permissible teams";
+    private static final String ERROR_DUPLICATE_TEAMS = "MatchGroup cannot contain duplicate teams";
 
     @EmbeddedId
     private GeneratedId id;
@@ -69,15 +66,26 @@ public class MatchGroup {
      */
     public MatchGroup(List<Team> teams) {
         if (teams.size() < MIN_NUM_TEAMS || teams.size() > MAX_NUM_TEAMS) {
-            throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
+            throw new IllegalStateException(ERROR_NUM_TEAMS);
         }
         this.teams = new ArrayList<>(teams);
         init();
     }
 
     private void init() {
+        checkDuplicateTeams();
         id = new GeneratedId();
         scoreCard = new ScoreCard(this);
+    }
+
+    private void checkDuplicateTeams() {
+        for (int i = 0; i < teams.size(); i++) {
+            for (int j = i + 1; j < teams.size(); j++) {
+                if (teams.get(i).equals(teams.get(j))) {
+                    throw new IllegalStateException(ERROR_DUPLICATE_TEAMS);
+                }
+            }
+        }
     }
 
     public GeneratedId getId() {
