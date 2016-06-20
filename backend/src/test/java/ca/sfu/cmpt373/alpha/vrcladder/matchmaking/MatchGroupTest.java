@@ -37,21 +37,6 @@ public class MatchGroupTest {
 		Assert.assertEquals(testGroup.getTeams(), expectedResults.getTeams());
 	}
 
-	@Test
-	public void testRemoveTeamByIndex() {
-		Team firstTeam = MockTeamGenerator.generateTeam();
-		Team secondTeam = MockTeamGenerator.generateTeam();
-		Team thirdTeam = MockTeamGenerator.generateTeam();
-		Team fourthTeam = MockTeamGenerator.generateTeam();
-
-		MatchGroup testGroup = new MatchGroup(firstTeam, secondTeam, thirdTeam, fourthTeam);
-		testGroup.removeTeam(0);
-
-		MatchGroup expectedResults = new MatchGroup(secondTeam, thirdTeam, fourthTeam);
-
-		Assert.assertEquals(testGroup.getTeams(), expectedResults.getTeams());
-	}
-
 	@Test(expected = IllegalStateException.class)
 	public void testAddTeamError() {
 		Team firstTeam = MockTeamGenerator.generateTeam();
@@ -90,26 +75,6 @@ public class MatchGroupTest {
 
 		MatchGroup expectedResults1 = new MatchGroup(firstTeam, secondTeam, fifthTeam);
 		MatchGroup expectedResults2 = new MatchGroup(fourthTeam, sixthTeam, seventhTeam, thirdTeam);
-
-		Assert.assertEquals(testGroup1.getTeams(), expectedResults1.getTeams());
-		Assert.assertEquals(testGroup2.getTeams(), expectedResults2.getTeams());
-	}
-
-	@Test
-	public void testTradeTeamByIndex() {
-		Team firstTeam = MockTeamGenerator.generateTeam();
-		Team secondTeam = MockTeamGenerator.generateTeam();
-		Team thirdTeam = MockTeamGenerator.generateTeam();
-		Team fourthTeam = MockTeamGenerator.generateTeam();
-		Team fifthTeam = MockTeamGenerator.generateTeam();
-		Team sixthTeam = MockTeamGenerator.generateTeam();
-
-		MatchGroup testGroup1 = new MatchGroup(firstTeam, secondTeam, thirdTeam);
-		MatchGroup testGroup2 = new MatchGroup(fourthTeam, fifthTeam, sixthTeam);
-		testGroup1.tradeTeams(0, testGroup2, 0);
-
-		MatchGroup expectedResults1 = new MatchGroup(secondTeam, thirdTeam, fourthTeam);
-		MatchGroup expectedResults2 = new MatchGroup(fifthTeam, sixthTeam, firstTeam);
 
 		Assert.assertEquals(testGroup1.getTeams(), expectedResults1.getTeams());
 		Assert.assertEquals(testGroup2.getTeams(), expectedResults2.getTeams());

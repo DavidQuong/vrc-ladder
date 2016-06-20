@@ -206,14 +206,6 @@ public class MatchGroup {
 		}
 	}
 
-	void removeTeam(int leavingTeamIndex) {
-		if(this.teams.size() == this.MAX_NUM_TEAMS) {
-			this.teams.remove(leavingTeamIndex);
-		} else {
-			throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
-		}
-	}
-
 	void tradeTeams(Team money, MatchGroup merchant, Team goods) { //Swap two teams between their respective MatchGroups
 		if(this.teams.contains(money) && merchant.teams.contains(goods)) {
 			ArrayList<Team> possessions = new ArrayList<>(this.teams); //A new list is created to ensure that this.teams ALWAYS contains a valid number of teams

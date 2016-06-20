@@ -72,16 +72,6 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
 		return update(matchGroup);
 	}
 
-	public MatchGroup removeTeamFromMatchGroup(String matchGroupId, int leavingTeamIndex) {
-		MatchGroup matchGroup = getById(matchGroupId);
-		if (matchGroup == null) {
-			throw new PersistenceException(ERROR_NO_MATCH_GROUP);
-		}
-		matchGroup.removeTeam(leavingTeamIndex);
-
-		return update(matchGroup);
-	}
-
 	public List<MatchGroup> tradeTeamsInMatchGroups(String matchGroupId1, Team first, String matchGroupId2, Team second) {
 		MatchGroup matchGroup1 = getById(matchGroupId1);
 		if (matchGroup1 == null) {
@@ -92,24 +82,6 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
 			throw new PersistenceException(ERROR_NO_MATCH_GROUP);
 		}
 		matchGroup1.tradeTeams(first, matchGroup2, second);
-
-		List<MatchGroup> results = new ArrayList<>();
-		results.add(update(matchGroup1));
-		results.add(update(matchGroup2));
-
-		return results;
-	}
-
-	public List<MatchGroup> tradeTeamsInMatchGroups(String matchGroupId1, int firstIndex, String matchGroupId2, int secondIndex) {
-		MatchGroup matchGroup1 = getById(matchGroupId1);
-		if (matchGroup1 == null) {
-			throw new PersistenceException(ERROR_NO_MATCH_GROUP);
-		}
-		MatchGroup matchGroup2 = getById(matchGroupId1);
-		if (matchGroup2 == null) {
-			throw new PersistenceException(ERROR_NO_MATCH_GROUP);
-		}
-		matchGroup1.tradeTeams(firstIndex, matchGroup2, secondIndex);
 
 		List<MatchGroup> results = new ArrayList<>();
 		results.add(update(matchGroup1));
