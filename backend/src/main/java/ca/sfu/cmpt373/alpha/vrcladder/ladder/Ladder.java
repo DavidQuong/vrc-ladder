@@ -60,7 +60,7 @@ public class Ladder {
         return ladder.size();
     }
 
-    public void swapTeams(Team team1, Team team2) {
+    private void swapTeams(Team team1, Team team2) {
         int team1Position;
         int team2Position;
         try {

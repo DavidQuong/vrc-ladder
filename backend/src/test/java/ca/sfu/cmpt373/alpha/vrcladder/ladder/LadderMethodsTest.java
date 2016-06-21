@@ -6,6 +6,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
+import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
@@ -27,6 +28,7 @@ public class LadderMethodsTest {
         for (int i = 0; i < MATCHGROUP_COUNT; i++) {
             threeTeamMatchGroups.add(MockMatchGroupGenerator.generateThreeTeamMatchGroup());
         }
+
         for (int i = 0; i < MATCHGROUP_COUNT; i++) {
             fourTeamMatchGroups.add(MockMatchGroupGenerator.generateFourTeamMatchGroup());
         }
@@ -36,13 +38,14 @@ public class LadderMethodsTest {
     }
 
     private void setAllMatchGroupTeamsPresent(List<MatchGroup> matchGroups) {
-        for (MatchGroup matchGroup : matchGroups) {
-            for (Team team : matchGroup.getTeams()) {
+        setAllTeamsPresent(convertMatchGroupListToTeamList(matchGroups));
+    }
+    private void setAllTeamsPresent(List<Team> teams) {
+            for (Team team : teams) {
                 AttendanceCard attendanceCard = team.getAttendanceCard();
                 attendanceCard.setPreferredPlayTime(PlayTime.TIME_SLOT_A);
                 attendanceCard.setAttendanceStatus(AttendanceStatus.PRESENT);
             }
-        }
     }
 
     private List<Team> convertMatchGroupListToTeamList(List<MatchGroup> matchGroups) {
@@ -53,82 +56,56 @@ public class LadderMethodsTest {
         return teams;
     }
 
-
     @Test
-    public void testSwapTeams() {
-        testSwapAllTeams(convertMatchGroupListToTeamList(threeTeamMatchGroups));
-        testSwapAllTeams(convertMatchGroupListToTeamList(fourTeamMatchGroups));
+    public void testApplySinglePenalty() {
+        testApplySinglePenalty(threeTeamMatchGroups);
+        testApplySinglePenalty(fourTeamMatchGroups);
     }
 
-    private void testSwapAllTeams(List<Team> teams) {
-        for (int i = 0; i < teams.size() - 1; i++) {
-            int team1Index = i;
-            int team2Index = i + 1;
-            testSwap(teams, team1Index, team2Index);
-            testSwap(teams, team2Index, team1Index);
-        }
-    }
-
-    private void testSwap(List<Team> teams, int team1Index, int team2Index) {
-        Ladder ladder = new Ladder(teams);
-        List<Team> rankedTeams = ladder.getLadder();
-
-        //make sure teams are in the correct order to begin with
-        for (int i = 0; i < teams.size(); i++) {
-            Assert.assertEquals(teams.get(i), rankedTeams.get(i));
-        }
-
-        ladder.swapTeams(teams.get(team1Index), teams.get(team2Index));
-
-        rankedTeams = ladder.getLadder();
-        Assert.assertEquals(rankedTeams.get(team1Index), teams.get(team2Index));
-        Assert.assertEquals(rankedTeams.get(team2Index), teams.get(team1Index));
-    }
-
-    @Test
-    public void testApplyPenalties() {
-        // TODO: Add case for testing NOT_ATTENDING penalty
-        // TODO: Clarify requirements for when multiple teams are penalized, right now tests only penalize one team at a time
-        testApplyPenalties(threeTeamMatchGroups);
-        testApplyPenalties(fourTeamMatchGroups);
-    }
-
-    private void testApplyPenalties(List<MatchGroup> matchGroups) {
+    private void testApplySinglePenalty(List<MatchGroup> matchGroups) {
         List<Team> matchGroupTeamList = convertMatchGroupListToTeamList(matchGroups);
         for (int i = 0; i < matchGroups.size(); i++) {
-            testApplyPenalties(
-                    matchGroups,
+            testApplySingleNotAttendingPenalty(
+                    convertMatchGroupListToTeamList(matchGroups),
+                    matchGroupTeamList.get(i));
+            testApplySinglePenalty(
+                    convertMatchGroupListToTeamList(matchGroups),
                     matchGroupTeamList.get(i),
                     AttendanceStatus.NO_SHOW);
-            testApplyPenalties(
-                    matchGroups,
+            testApplySinglePenalty(
+                    convertMatchGroupListToTeamList(matchGroups),
                     matchGroupTeamList.get(i),
                     AttendanceStatus.LATE);
         }
     }
 
-    private void testApplyPenalties(List<MatchGroup> matchGroups, Team penalizedTeam, AttendanceStatus penaltyToApply) {
-        Ladder ladder = new Ladder(convertMatchGroupListToTeamList(matchGroups));
+    private void testApplySingleNotAttendingPenalty(List<Team> teamsList, Team penalizedTeam) {
+        setAllTeamsPresent(teamsList);
 
-        //set ranks within MatchGroups to be unchanged in order to test penalties in isolation
-        for (MatchGroup matchGroup : matchGroups) {
-            matchGroup.getScoreCard().setRankedTeams(matchGroup.getTeams());
-        }
+        AttendanceCard penalizedTeamAttendanceCard = penalizedTeam.getAttendanceCard();
+        penalizedTeamAttendanceCard.setPreferredPlayTime(PlayTime.NONE);
 
-        //reinitialize all teams to present
-        setAllMatchGroupTeamsPresent(matchGroups);
+        testApplySinglePenalty(teamsList, penalizedTeam, AttendanceCard.NOT_ATTENDING_PENALTY);
+    }
 
-        //apply penalty just to the team being tested
-        AttendanceCard firstTeamAttendanceCard = penalizedTeam.getAttendanceCard();
-        firstTeamAttendanceCard.setAttendanceStatus(penaltyToApply);
+    private void testApplySinglePenalty(List<Team> teamsList, Team penalizedTeam, AttendanceStatus penaltyToApply) {
+        setAllTeamsPresent(teamsList);
+
+        AttendanceCard penalizedTeamAttendanceCard = penalizedTeam.getAttendanceCard();
+        penalizedTeamAttendanceCard.setAttendanceStatus(penaltyToApply);
+
+        testApplySinglePenalty(teamsList, penalizedTeam, penaltyToApply.getPenalty());
+    }
+
+    private void testApplySinglePenalty(List<Team> teamsList, Team penalizedTeam, int penalty) {
+        Ladder ladder = new Ladder(teamsList);
 
         int originalLadderPosition = ladder.findTeamPosition(penalizedTeam);
 
-        ladder.updateLadder(matchGroups);
+        // test with no MatchGroups to isolate attendance penalties
+        ladder.updateLadder(new ArrayList<>());
 
-        //verify the team is in the correct position
         int newLadderPosition = ladder.findTeamPosition(penalizedTeam);
-        int penalty = penaltyToApply.getPenalty();
         boolean isTeamPenaltyWithinLadderBounds =
                 (originalLadderPosition + penalty <= ladder.getTeamCount());
         if (isTeamPenaltyWithinLadderBounds) {
@@ -136,6 +113,38 @@ public class LadderMethodsTest {
         } else {
             int lastPosition = ladder.getTeamCount();
             Assert.assertEquals(lastPosition, newLadderPosition);
+        }
+    }
+
+    @Test
+    public void testApplyMultiplePenalties() {
+        List<Team> teamTestData = new ArrayList<>();
+        int teamCount = 9;
+        for (int i = 0; i < teamCount; i++) {
+            Team team = MockTeamGenerator.generateTeam();
+            team.getAttendanceCard().setPreferredPlayTime(PlayTime.TIME_SLOT_A);
+            teamTestData.add(team);
+        }
+        teamTestData.get(0).getAttendanceCard().setAttendanceStatus(AttendanceStatus.LATE);
+        teamTestData.get(2).getAttendanceCard().setPreferredPlayTime(PlayTime.NONE);
+        teamTestData.get(4).getAttendanceCard().setAttendanceStatus(AttendanceStatus.LATE);
+
+        //TODO: add more test data
+        testApplyMultiplePenalties(teamTestData, new Integer[] {1, 3, 5, 6, 2, 0, 7, 8, 4});
+    }
+
+    private void testApplyMultiplePenalties(List<Team> inputTeams, Integer[] resultsIndices) {
+        List<Team> expectedResults = new ArrayList<>();
+        for (Integer resultIndex : resultsIndices) {
+            expectedResults.add(inputTeams.get(resultIndex));
+        }
+
+        // test with no MatchGroups to isolate attendance penalties
+        Ladder ladder = new Ladder(inputTeams);
+        ladder.updateLadder(new ArrayList<>());
+
+        for (int i = 0; i < inputTeams.size(); i++) {
+            Assert.assertEquals(expectedResults.get(i), ladder.getLadder().get(i));
         }
     }
 
