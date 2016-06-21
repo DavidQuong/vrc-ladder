@@ -5,7 +5,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
-import ca.sfu.cmpt373.alpha.vrcrest.interfaces.RestRouter;
+import ca.sfu.cmpt373.alpha.vrcrest.routes.RestRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.TeamRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.UserRouter;
 import spark.servlet.SparkApplication;
@@ -29,7 +29,7 @@ public class RestApplication implements SparkApplication {
         TeamManager teamManager = new TeamManager(sessionManager);
         MatchGroupManager matchGroupManager = new MatchGroupManager(sessionManager);
         ApplicationManager appManager = new ApplicationManager(sessionManager, userManager, teamManager,
-                matchGroupManager);
+            matchGroupManager);
 
         UserRouter userRouter = new UserRouter(appManager.getUserManager());
         TeamRouter teamRouter = new TeamRouter(appManager.getTeamManager());
