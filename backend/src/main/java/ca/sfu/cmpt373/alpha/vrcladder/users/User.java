@@ -80,7 +80,7 @@ public class User {
     }
 
     public boolean hasMiddleName() {
-        return (middleName.isEmpty());
+        return (!middleName.isEmpty());
     }
 
     public String getMiddleName() {
