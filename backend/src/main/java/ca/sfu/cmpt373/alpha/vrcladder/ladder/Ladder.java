@@ -213,7 +213,7 @@ public class Ladder {
         //these need to be found before, because we will be overwriting teams below
         List<Integer> rankedIndexes = new ArrayList<>();
         for (Team team : matchGroup.getTeams()) {
-            rankedIndexes.add(findTeamPosition(team) - 1);
+            rankedIndexes.add(findAttendingTeamPosition(team) - 1);
         }
 
         //overwrite the team in each position with the teams specified in the ScoreCard
