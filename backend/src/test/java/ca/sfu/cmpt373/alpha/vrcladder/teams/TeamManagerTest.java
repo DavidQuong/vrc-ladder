@@ -5,10 +5,10 @@ import ca.sfu.cmpt373.alpha.vrcladder.exceptions.DuplicateTeamMemberException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MultiplePlayTimeException;
-import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockUserGenerator;
 import org.hibernate.Session;
@@ -107,10 +107,11 @@ public class TeamManagerTest extends BaseTest {
         // Account for team created in setUp().
         Assert.assertEquals(teamsCreated + 1, teams.size());
 
-        Integer position = 1;
+        Integer positionCount = LadderPosition.FIRST_POSITION;
         for (Team team : teams) {
-            Assert.assertEquals(position, team.getLadderPosition());
-            position++;
+            LadderPosition expectedLadderPosition = new LadderPosition(positionCount);
+            Assert.assertEquals(expectedLadderPosition, team.getLadderPosition());
+            positionCount++;
         }
     }
 
@@ -175,7 +176,7 @@ public class TeamManagerTest extends BaseTest {
 
     @Test(expected = EntityNotFoundException.class)
     public void testUpdateNonExistentTeamAttendance() {
-        final String nonExistentTeamId = "nonExistentTeamId";
+        final GeneratedId nonExistentTeamId = new GeneratedId();
         teamManager.updateAttendance(nonExistentTeamId, PlayTime.TIME_SLOT_A);
     }
 

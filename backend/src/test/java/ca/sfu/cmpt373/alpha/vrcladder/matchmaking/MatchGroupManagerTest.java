@@ -1,6 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
 import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
+import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
@@ -15,7 +16,6 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
-// TODO - Refactor to use Mock<Class>Generator classes
 public class MatchGroupManagerTest extends BaseTest {
 
     private MatchGroupManager matchGroupManager;
@@ -46,7 +46,7 @@ public class MatchGroupManagerTest extends BaseTest {
 
     @Test
     public void testGetMatchGroup() {
-        MatchGroup existingMatchGroup = matchGroupManager.getMatchGroup(matchGroupFixture.getId());
+        MatchGroup existingMatchGroup = matchGroupManager.getById(matchGroupFixture.getId());
 
         Assert.assertEquals(matchGroupFixture.getTeam1(), existingMatchGroup.getTeam1());
         Assert.assertEquals(matchGroupFixture.getTeam2(), existingMatchGroup.getTeam2());
@@ -79,15 +79,18 @@ public class MatchGroupManagerTest extends BaseTest {
 
     @Test
     public void testDeleteMatchGroup() {
-        MatchGroup originalMatchGroup = matchGroupManager.deleteMatchGroup(matchGroupFixture.getId());
+        MatchGroup originalMatchGroup = matchGroupManager.deleteById(matchGroupFixture.getId());
 
         Session session = sessionManager.getSession();
-        MatchGroup matchGroup = session.get(MatchGroup.class, originalMatchGroup.getId());
+        MatchGroup retrievedMatchGroup = session.get(MatchGroup.class, originalMatchGroup.getId());
+        ScoreCard retrievedScoreCard = session.get(ScoreCard.class, originalMatchGroup.getScoreCard().getId());
         session.close();
 
         Assert.assertNotNull(originalMatchGroup);
+        Assert.assertNotNull(originalMatchGroup.getScoreCard());
         // Ensure that the match group is deleted.
-        Assert.assertNull(matchGroup);
+        Assert.assertNull(retrievedMatchGroup);
+        Assert.assertNull(retrievedScoreCard);
 
         // Ensure that the individual teams are not deleted.
         Assert.assertNotNull(originalMatchGroup.getTeam1());

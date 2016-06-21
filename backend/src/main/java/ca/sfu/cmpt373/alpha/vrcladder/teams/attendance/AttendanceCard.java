@@ -1,43 +1,42 @@
 package ca.sfu.cmpt373.alpha.vrcladder.teams.attendance;
 
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
-import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Table(name = PersistenceConstants.TABLE_ATTENDANCE_CARD)
 public class AttendanceCard {
 
     private static final PlayTime DEFAULT_PLAYTIME = PlayTime.NONE;
+    private static final AttendanceStatus DEFAULT_ATTENDANCE_STATUS = AttendanceStatus.PRESENT;
 
-    private IdType id;
-    private PlayTime preferredPlayTime;
-    private AttendanceStatus attendStatus;
-
-    public AttendanceCard() {
-        this.id = new IdType();
-        this.preferredPlayTime = DEFAULT_PLAYTIME;
-    }
-
-    @Id
-    @Column(name = PersistenceConstants.COLUMN_ID)
-    public String getId() {
-        return id.getId();
-    }
-
-    public void setId(String newId) {
-        id = new IdType(newId);
-    }
+    @EmbeddedId
+    private GeneratedId id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = PersistenceConstants.COLUMN_PLAY_TIME, nullable = false)
+    private PlayTime preferredPlayTime;
+
+    //TODO: add this to the database
+    private AttendanceStatus attendanceStatus;
+
+    public AttendanceCard() {
+        this.id = new GeneratedId();
+        this.preferredPlayTime = DEFAULT_PLAYTIME;
+        this.attendanceStatus = DEFAULT_ATTENDANCE_STATUS;
+    }
+
+    public GeneratedId getId() {
+        return id;
+    }
+
     public PlayTime getPreferredPlayTime() {
         return preferredPlayTime;
     }
@@ -46,13 +45,23 @@ public class AttendanceCard {
         preferredPlayTime = playTime;
     }
 
-    public void setAttendanceStatus(AttendanceStatus status) {
-        this.attendStatus = status;
+    public void setAttendanceStatus(AttendanceStatus attendanceStatus) {
+        this.attendanceStatus = attendanceStatus;
     }
 
-    @Transient
+    public AttendanceStatus getAttendanceStatus() {
+        return attendanceStatus;
+    }
+
     public boolean isAttending() {
         return  (preferredPlayTime != PlayTime.NONE);
+    }
+
+    /**
+     * @return whether or not the team did show up
+     */
+    public boolean isPresent() {
+        return attendanceStatus == AttendanceStatus.PRESENT;
     }
 
     @Override
@@ -74,29 +83,5 @@ public class AttendanceCard {
     public int hashCode() {
         return id.hashCode();
     }
-
-    public boolean late(){
-        switch(attendStatus){
-            case LATE:
-                return true;
-        }
-        return false;
-    }
-
-    public boolean noShow(){
-        switch(attendStatus){
-            case NO_SHOW:
-            return true;
-    }
-
-        return false;}
-    public boolean attended(){
-        switch(attendStatus){
-            case PRESENT:
-            return true;
-        }
-        return false;
-    }
-
 
 }

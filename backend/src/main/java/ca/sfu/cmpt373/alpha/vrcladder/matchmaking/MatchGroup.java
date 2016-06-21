@@ -1,19 +1,18 @@
 package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
-import ca.sfu.cmpt373.alpha.vrcladder.game.score.ScoreSheet;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
+import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
-import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 
-import javax.naming.SizeLimitExceededException;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,28 +32,33 @@ public class MatchGroup {
     public static final int MIN_NUM_TEAMS = 3;
     public static final int MAX_NUM_TEAMS = 4;
 
-    private static final String ERROR_MESSAGE_NUM_TEAMS = "Teams list contains more or less than the min or max " +
+    private static final String ERROR_NUM_TEAMS = "Teams list contains more or less than the min or max " +
         "number of permissible teams";
+    private static final String ERROR_DUPLICATE_TEAMS = "MatchGroup cannot contain duplicate teams";
 
-    private IdType id;
+    @EmbeddedId
+    private GeneratedId id;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @OrderColumn
     private List<Team> teams;
-    private ScoreSheet scoreSheet;
 
-    public MatchGroup () {
-        setId(new IdType());
-        setTeams(new ArrayList<>());
+    @OneToOne (cascade = CascadeType.ALL)
+    private ScoreCard scoreCard;
+
+    private MatchGroup () {
+        this.teams = new ArrayList<>();
+        init();
     }
 
     public MatchGroup(Team team1, Team team2, Team team3) {
         this.teams = Arrays.asList(team1, team2, team3);
-        setId(new IdType());
-        scoreSheet = new ScoreSheet(teams);
+        init();
     }
 
     public MatchGroup(Team team1, Team team2, Team team3, Team team4) {
         this.teams = Arrays.asList(team1, team2, team3, team4);
-        setId(new IdType());
-        scoreSheet = new ScoreSheet(teams);
+        init();
     }
 
     /**
@@ -62,54 +66,61 @@ public class MatchGroup {
      */
     public MatchGroup(List<Team> teams) {
         if (teams.size() < MIN_NUM_TEAMS || teams.size() > MAX_NUM_TEAMS) {
-            throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
+            throw new IllegalStateException(ERROR_NUM_TEAMS);
         }
         this.teams = new ArrayList<>(teams);
-        setId(new IdType());
-        scoreSheet = new ScoreSheet(teams);
+        init();
     }
 
-    @Id
-    @Column(name = PersistenceConstants.COLUMN_ID)
-    public String getId() {
-        return id.getId();
+    private void init() {
+        checkDuplicateTeams();
+        id = new GeneratedId();
+        scoreCard = new ScoreCard(this);
     }
 
-    private void setId(String newId) {
-        this.id = new IdType(newId);
+    private void checkDuplicateTeams() {
+        for (int i = 0; i < teams.size(); i++) {
+            for (int j = i + 1; j < teams.size(); j++) {
+                if (teams.get(i).equals(teams.get(j))) {
+                    throw new IllegalStateException(ERROR_DUPLICATE_TEAMS);
+                }
+            }
+        }
     }
 
-    //TODO: research how to avoid requiring private setters
-    private void setId(IdType id) {
-        this.id = id;
+    public GeneratedId getId() {
+        return id;
     }
 
-    @OneToMany(cascade = CascadeType.ALL)
     public List<Team> getTeams() {
         return Collections.unmodifiableList(teams);
     }
 
     private void setTeams(List<Team> teams) {
         this.teams = teams;
-        scoreSheet = new ScoreSheet(teams);
+    }
+
+    public ScoreCard getScoreCard() {
+        return this.scoreCard;
     }
 
     /**
      * @return the @{@link PlayTime} that the majority of the group teams want to play at.
      * In the case of a tie, it will return the preferred play time of the highest ranked player.
      */
-    @Transient
     public PlayTime getPreferredGroupPlayTime() {
         Map<PlayTime, Integer> preferredTimeCounts = new HashMap<>();
+
+        // Initialize counters to zero
+        for (Team team : teams) {
+            PlayTime playTime = team.getAttendanceCard().getPreferredPlayTime();
+            preferredTimeCounts.put(playTime, 0);
+        }
 
         // Count the 'votes' of preferred time slots for each team in a group.
         for (Team team : teams) {
             PlayTime playTime = team.getAttendanceCard().getPreferredPlayTime();
-            if (preferredTimeCounts.containsKey(playTime)) {
-                preferredTimeCounts.replace(playTime, preferredTimeCounts.get(playTime) + 1);
-            } else {
-                preferredTimeCounts.put(playTime, 1);
-            }
+            preferredTimeCounts.replace(playTime, preferredTimeCounts.get(playTime) + 1);
         }
 
         // Find the time slot with the max votes.
@@ -130,33 +141,30 @@ public class MatchGroup {
 
         // If there's a tie in votes, choose the highest ranked player's preference.
         if (tie) {
-            votedPlayTime = teams.get(0).getAttendanceCard().getPreferredPlayTime();
+            votedPlayTime = getTeam1().getAttendanceCard().getPreferredPlayTime();
         }
 
         return votedPlayTime;
     }
-    @Transient
-    public void recordTeamScore(Team team, int round, boolean score) throws SizeLimitExceededException {
-        scoreSheet.recordTeamScore(team, round, score);
-    }
-    @Transient
+
     public Team getTeam1(){
-        return teams.get(0);
+        int firstTeamIndex = 0;
+        return teams.get(firstTeamIndex);
     }
 
-    @Transient
     public Team getTeam2(){
-        return teams.get(1);
+        int secondTeamIndex = 1;
+        return teams.get(secondTeamIndex);
     }
 
-    @Transient
     public Team getTeam3(){
-        return teams.get(2);
+        int thirdTeamIndex = 2;
+        return teams.get(thirdTeamIndex);
     }
 
-    @Transient
-    public Team getTeam (int num){
-        return teams.get(num); }
+    public int getTeamCount() {
+        return teams.size();
+    }
 
     @Override
     public boolean equals(Object otherObj) {
@@ -177,15 +185,5 @@ public class MatchGroup {
     public int hashCode() {
         return id.hashCode();
     }
-
-    @Transient
-    public Team getTeam4() {
-            if(teams.size() >3) {
-                return teams.get(4);
-            }
-        return null;
-    }
-    @Transient
-    public List<Team> getPlacement(){return scoreSheet.getScores();}
 
 }

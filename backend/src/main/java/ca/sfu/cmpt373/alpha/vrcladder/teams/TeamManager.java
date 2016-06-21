@@ -9,7 +9,9 @@ import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.CriterionConstants;
+import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -23,8 +25,6 @@ import java.util.List;
 /**
  * Provides an interface to perform create, read, update, and delete (CRUD) operations on,
  * teams in the database.
- *
- * TODO - Ensure that a player cannot opt-in play for multiple teams in a given tournament.
  */
 public class TeamManager extends DatabaseManager<Team> {
 
@@ -56,7 +56,7 @@ public class TeamManager extends DatabaseManager<Team> {
         return newTeam;
     }
 
-    public Team create(String firstPlayerId, String secondPlayerId) {
+    public Team create(UserId firstPlayerId, UserId secondPlayerId) {
         Session session = sessionManager.getSession();
         User firstPlayer = session.get(User.class, firstPlayerId);
         User secondPlayer = session.get(User.class, secondPlayerId);
@@ -73,20 +73,16 @@ public class TeamManager extends DatabaseManager<Team> {
         LadderPosition newLadderPosition = generateNewLadderPosition();
         Team newTeam = new Team(firstPlayer, secondPlayer, newLadderPosition);
 
-        /*try {
+        try {
             create(newTeam);
         } catch (ConstraintViolationException exception) {
             throw new ExistingTeamException();
-        }*/
+        }
 
         return newTeam;
     }
 
-    public Team updateAttendance(IdType teamId, PlayTime preferredPlayTime) {
-        return updateAttendance(teamId.getId(), preferredPlayTime);
-    }
-
-    public Team updateAttendance(String teamId, PlayTime playTime) {
+    public Team updateAttendance(IdType teamId, PlayTime playTime) {
         Session session = sessionManager.getSession();
 
         Team team = session.get(Team.class, teamId);
@@ -129,13 +125,17 @@ public class TeamManager extends DatabaseManager<Team> {
         User firstPlayer = team.getFirstPlayer();
         Team activeTeam = findActiveTeam(firstPlayer);
         if (activeTeam != null && !team.equals(activeTeam)) {
-            throw new MultiplePlayTimeException(firstPlayer.getUserId(), activeTeam.getId());
+            String userId = firstPlayer.getUserId().toString();
+            String teamId = activeTeam.getId().toString();
+            throw new MultiplePlayTimeException(userId, teamId);
         }
 
         User secondPlayer = team.getSecondPlayer();
         activeTeam = findActiveTeam(secondPlayer);
         if (activeTeam != null && !team.equals(activeTeam)) {
-            throw new MultiplePlayTimeException(secondPlayer.getUserId(), activeTeam.getId());
+            String userId = secondPlayer.getUserId().toString();
+            String teamId = activeTeam.getId().toString();
+            throw new MultiplePlayTimeException(userId, teamId);
         }
     }
 
@@ -165,14 +165,14 @@ public class TeamManager extends DatabaseManager<Team> {
         Session session = sessionManager.getSession();
         Criteria lastPositionCriteria = session.createCriteria(Team.class)
             .setProjection(Projections.max(CriterionConstants.TEAM_LADDER_POSITION_PROPERTY));
-        Integer lastPosition = (Integer) lastPositionCriteria.uniqueResult();
+        LadderPosition lastPosition = (LadderPosition) lastPositionCriteria.uniqueResult();
 
         if (lastPosition == null) {
             return new LadderPosition(FIRST_POSITION);
         } else {
-            return new LadderPosition(lastPosition + 1);
+            int nextPositionCount = lastPosition.getValue() + 1;
+            return new LadderPosition(nextPositionCount);
         }
-
     }
 
 }
