@@ -7,7 +7,6 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -18,8 +17,6 @@ public class Ladder {
     private static final String ERROR_MATCHGROUP_TEAM_NOT_ATTENDING = "Teams that did not attend should not change rankings within their matchgroups";
     private static final String ERROR_MATCHGROUPS_NOT_RANKED = "MatchGroups are not in ranked order";
     private static final String ERROR_DUPLICATE_TEAM = "The Ladder already contains this team. The ladder may not hold duplicate elements";
-
-    private static final int NOT_ATTENDING_PENALTY = 2;
 
     private List<Team> ladder;
 
@@ -66,7 +63,7 @@ public class Ladder {
         return ladder.size();
     }
 
-    public void swapTeams(Team team1, Team team2) {
+    private void swapTeams(Team team1, Team team2) {
         int team1Position;
         int team2Position;
         try {
@@ -166,66 +163,75 @@ public class Ladder {
     }
 
     private void applyPenalties() {
-        List<TeamIndexPenaltyTuple> teamsToApplyPenaltiesTo = getAndRemoveTeamsToApplyPenaltiesTo();
+        List<TeamIndexPenaltyTuple> teamsToApplyPenaltiesTo = getTeamsToApplyPenaltiesTo();
+        removePenalizedTeams(teamsToApplyPenaltiesTo);
 
         //sort so that highest ranked teams are re-added first
         //this way, we don't have to worry about the list indices shifting around
+        //which guarantees that a team has shifted down the correct amount
         Collections.sort(teamsToApplyPenaltiesTo, TeamIndexPenaltyTuple.getNewIndexComparator());
 
         //re-add penalized teams at their new indices
-        for (TeamIndexPenaltyTuple tuple : teamsToApplyPenaltiesTo) {
-            //if more than one team is supposed to be positioned at the same new index, resolve the conflict between them.
-            List<TeamIndexPenaltyTuple> tuplesWithSameNewIndex = findTuplesWithSameNewIndex(teamsToApplyPenaltiesTo, tuple);
-            insertTuplesAtSameNewIndex(tuplesWithSameNewIndex);
+        for (int i = 0; i < teamsToApplyPenaltiesTo.size(); i++) {
+            TeamIndexPenaltyTuple team = teamsToApplyPenaltiesTo.get(i);
+            List<TeamIndexPenaltyTuple> teamsWithSameNewIndex = findTeamsWithSameNewIndex(teamsToApplyPenaltiesTo, team);
+            insertTeamsAtSameNewIndex(teamsWithSameNewIndex);
+            teamsWithSameNewIndex
+                    .stream()
+                    .forEach(teamsToApplyPenaltiesTo::remove);
+            //roll back an index since we just removed the team at the current index
+            i--;
         }
     }
 
-    private List<TeamIndexPenaltyTuple> getAndRemoveTeamsToApplyPenaltiesTo() {
+    private List<TeamIndexPenaltyTuple> getTeamsToApplyPenaltiesTo() {
         List<TeamIndexPenaltyTuple> teamsToApplyPenaltiesTo = new ArrayList<>();
 
         for (int i = 0; i < ladder.size(); i++) {
             Team team = ladder.get(i);
             AttendanceCard attendanceCard = team.getAttendanceCard();
             if (!attendanceCard.isAttending()) {
-                teamsToApplyPenaltiesTo.add(new TeamIndexPenaltyTuple(team, i, NOT_ATTENDING_PENALTY));
+                teamsToApplyPenaltiesTo.add(new TeamIndexPenaltyTuple(team, i, AttendanceCard.NOT_ATTENDING_PENALTY));
             } else if (attendanceCard.getAttendanceStatus() == AttendanceStatus.LATE) {
                 teamsToApplyPenaltiesTo.add(new TeamIndexPenaltyTuple(team, i, AttendanceStatus.LATE.getPenalty()));
             } else if (attendanceCard.getAttendanceStatus() == AttendanceStatus.NO_SHOW) {
                 teamsToApplyPenaltiesTo.add(new TeamIndexPenaltyTuple(team, i, AttendanceStatus.NO_SHOW.getPenalty()));
-            } else {
-                continue;
             }
-            ladder.remove(i);
-            i--;
         }
+
         return teamsToApplyPenaltiesTo;
     }
 
-    private List<TeamIndexPenaltyTuple> findTuplesWithSameNewIndex(List<TeamIndexPenaltyTuple> tuples, TeamIndexPenaltyTuple indexTuple) {
-        List<TeamIndexPenaltyTuple> tuplesWithSameNewIndex = new ArrayList<>();
-        for (TeamIndexPenaltyTuple currTuple : tuples) {
-            if (indexTuple.getNewIndex() == currTuple.getNewIndex()) {
-                tuplesWithSameNewIndex.add(currTuple);
-            }
+    private void removePenalizedTeams(List<TeamIndexPenaltyTuple> teamsToApplyPenalties) {
+        for (TeamIndexPenaltyTuple team : teamsToApplyPenalties) {
+            ladder.remove(team.getTeam());
         }
-        return tuplesWithSameNewIndex;
     }
 
-    private void insertTuplesAtSameNewIndex(List<TeamIndexPenaltyTuple> tuplesWithSameNewIndex) {
-        //sort tuples by penalty so that for conflicting teams, the teams with the lowest penalty get priority
-        Collections.sort(tuplesWithSameNewIndex, TeamIndexPenaltyTuple.getPenaltyComparator());
+    private List<TeamIndexPenaltyTuple> findTeamsWithSameNewIndex(List<TeamIndexPenaltyTuple> teams, TeamIndexPenaltyTuple indexTeam) {
+        List<TeamIndexPenaltyTuple> teamsWithSameNewIndex = new ArrayList<>();
+        for (TeamIndexPenaltyTuple currTeam : teams) {
+            if (indexTeam.getNewIndex() == currTeam.getNewIndex()) {
+                teamsWithSameNewIndex.add(currTeam);
+            }
+        }
+        return teamsWithSameNewIndex;
+    }
 
-        for (int i = 0; i < tuplesWithSameNewIndex.size(); i++) {
-            TeamIndexPenaltyTuple currTuple = tuplesWithSameNewIndex.get(i);
-            int newIndex = currTuple.getNewIndex();
+    private void insertTeamsAtSameNewIndex(List<TeamIndexPenaltyTuple> teamsWithSameNewIndex) {
+        //sort teams by penalty so that for conflicting teams, the teams with the lowest penalty get priority
+        Collections.sort(teamsWithSameNewIndex, TeamIndexPenaltyTuple.getPenaltyComparator());
+
+        for (int i = 0; i < teamsWithSameNewIndex.size(); i++) {
+            TeamIndexPenaltyTuple currTeam = teamsWithSameNewIndex.get(i);
+            // for each following team, the index must be offset to
+            // compensate for prior teams in the tuples list being added to the ladder
+            int newIndex = currTeam.getNewIndex() + i;
             if (newIndex < ladder.size()) {
-                // for each following team, the index must be offset to
-                // compensate for prior teams in the tuples list being added to the ladder
-                ladder.add(newIndex + i, currTuple.getTeam());
+                ladder.add(newIndex, currTeam.getTeam());
             } else {
                 //if the new index is beyond the ladder bounds, add the element to the end of the list
-                //
-                ladder.add(currTuple.getTeam());
+                ladder.add(currTeam.getTeam());
             }
         }
     }

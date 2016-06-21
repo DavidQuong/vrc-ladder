@@ -3,7 +3,13 @@ package ca.sfu.cmpt373.alpha.vrcladder.ladder;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import java.util.Comparator;
 
+/**
+ * A helper class for Ladder that stores useful information
+ * about Teams and their Ladder positions to help apply
+ * Team Penalties when updating the Ladder
+ */
 class TeamIndexPenaltyTuple {
+
     private Team team;
     private int originalIndex;
     private int penalty;

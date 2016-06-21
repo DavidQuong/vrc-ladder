@@ -14,6 +14,8 @@ import javax.persistence.Table;
 @Table(name = PersistenceConstants.TABLE_ATTENDANCE_CARD)
 public class AttendanceCard {
 
+    public static final int NOT_ATTENDING_PENALTY = 2;
+
     private static final PlayTime DEFAULT_PLAYTIME = PlayTime.NONE;
     private static final AttendanceStatus DEFAULT_ATTENDANCE_STATUS = AttendanceStatus.PRESENT;
 
