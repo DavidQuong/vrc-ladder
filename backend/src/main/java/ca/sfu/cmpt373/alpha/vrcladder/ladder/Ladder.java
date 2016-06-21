@@ -7,9 +7,9 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.function.Predicate;
 
 
 public class Ladder {
@@ -96,44 +96,32 @@ public class Ladder {
             applyRankingsWithinMatchGroup(matchGroup);
         }
 
-        //switch highest team of match with lowest team of previous match
         swapTeamsBetweenMatchGroup(matchGroups);
 
-        //TODO: check if it matters which order these are called in
-        applyNotAttendingPenalty();
-        applyAttendanceStatusPenalty(AttendanceStatus.LATE);
-        applyAttendanceStatusPenalty(AttendanceStatus.NO_SHOW);
+        applyPenalties();
     }
 
-    private void applyNotAttendingPenalty() {
-        applyPenalty(
-                (team -> !team.getAttendanceCard().isAttending()),
-                NOT_ATTENDING_PENALTY);
-    }
-
-    private void applyAttendanceStatusPenalty(AttendanceStatus attendanceStatus) {
-        applyPenalty(
-                (team -> team.getAttendanceCard().getAttendanceStatus() == attendanceStatus),
-                attendanceStatus.getPenalty());
-    }
-
-    private void applyPenalty(Predicate<Team> condition, int penalty) {
-        List<Team> teamsToApplyPenaltiesTo = new ArrayList<>();
-        for (Team team : ladder) {
-            if (condition.test(team)) {
-                teamsToApplyPenaltiesTo.add(team);
-            }
+    private void applyRankingsWithinMatchGroup(MatchGroup matchGroup){
+        //find the ladder indices for 1st, 2nd, 3rd, 4th... positions
+        //these need to be found before, because we will be overwriting teams below
+        List<Integer> rankedIndices = new ArrayList<>();
+        for (Team team : matchGroup.getTeams()) {
+            rankedIndices.add(findTeamPosition(team) - 1);
         }
 
-        for (Team team : teamsToApplyPenaltiesTo) {
-            // we need to get the index at the moment of swapping
-            // because other team penalties being applied shift the indices around
-            int ladderIndex = findTeamPosition(team) - 1;
-            ladder.remove(ladderIndex);
-            if (ladderIndex < ladder.size() - penalty) {
-                ladder.add(ladderIndex + penalty, team);
+        //overwrite the team in each position with the teams specified in the ScoreCard
+        List<Team> rankedTeams = matchGroup.getScoreCard().getRankedTeams();
+        for (int i = 0; i < matchGroup.getTeamCount(); i++) {
+            Team team = matchGroup.getTeams().get(i);
+            AttendanceCard attendanceCard = team.getAttendanceCard();
+            if (attendanceCard.isPresent()) {
+                ladder.set(rankedIndices.get(i), rankedTeams.get(i));
             } else {
-                ladder.add(team);
+                //if a team does not attend, its position within its group should remain the same
+                boolean hasTeamMovedWithinGroup = !team.equals(rankedTeams.get(i));
+                if (hasTeamMovedWithinGroup) {
+                    throw new IllegalStateException(ERROR_MATCHGROUP_TEAM_NOT_ATTENDING);
+                }
             }
         }
     }
@@ -177,27 +165,67 @@ public class Ladder {
         throw new IllegalStateException(ERROR_MATCHGROUP_NO_TEAMS_PRESENT);
     }
 
-    private void applyRankingsWithinMatchGroup(MatchGroup matchGroup){
-        //find the ladder indices for 1st, 2nd, 3rd, 4th... positions
-        //these need to be found before, because we will be overwriting teams below
-        List<Integer> rankedIndexes = new ArrayList<>();
-        for (Team team : matchGroup.getTeams()) {
-            rankedIndexes.add(findTeamPosition(team) - 1);
-        }
+    private void applyPenalties() {
+        List<TeamIndexPenaltyTuple> teamsToApplyPenaltiesTo = getAndRemoveTeamsToApplyPenaltiesTo();
 
-        //overwrite the team in each position with the teams specified in the ScoreCard
-        List<Team> rankedTeams = matchGroup.getScoreCard().getRankedTeams();
-        for (int i = 0; i < matchGroup.getTeamCount(); i++) {
-            Team team = matchGroup.getTeams().get(i);
+        //sort so that highest ranked teams are re-added first
+        //this way, we don't have to worry about the list indices shifting around
+        Collections.sort(teamsToApplyPenaltiesTo, TeamIndexPenaltyTuple.getNewIndexComparator());
+
+        //re-add penalized teams at their new indices
+        for (TeamIndexPenaltyTuple tuple : teamsToApplyPenaltiesTo) {
+            //if more than one team is supposed to be positioned at the same new index, resolve the conflict between them.
+            List<TeamIndexPenaltyTuple> tuplesWithSameNewIndex = findTuplesWithSameNewIndex(teamsToApplyPenaltiesTo, tuple);
+            insertTuplesAtSameNewIndex(tuplesWithSameNewIndex);
+        }
+    }
+
+    private List<TeamIndexPenaltyTuple> getAndRemoveTeamsToApplyPenaltiesTo() {
+        List<TeamIndexPenaltyTuple> teamsToApplyPenaltiesTo = new ArrayList<>();
+
+        for (int i = 0; i < ladder.size(); i++) {
+            Team team = ladder.get(i);
             AttendanceCard attendanceCard = team.getAttendanceCard();
-            if (attendanceCard.isPresent()) {
-                ladder.set(rankedIndexes.get(i), rankedTeams.get(i));
+            if (!attendanceCard.isAttending()) {
+                teamsToApplyPenaltiesTo.add(new TeamIndexPenaltyTuple(team, i, NOT_ATTENDING_PENALTY));
+            } else if (attendanceCard.getAttendanceStatus() == AttendanceStatus.LATE) {
+                teamsToApplyPenaltiesTo.add(new TeamIndexPenaltyTuple(team, i, AttendanceStatus.LATE.getPenalty()));
+            } else if (attendanceCard.getAttendanceStatus() == AttendanceStatus.NO_SHOW) {
+                teamsToApplyPenaltiesTo.add(new TeamIndexPenaltyTuple(team, i, AttendanceStatus.NO_SHOW.getPenalty()));
             } else {
-                //if a team does not attend, its position within its group should remain the same
-                boolean hasTeamMovedWithinGroup = !team.equals(rankedTeams.get(i));
-                if (hasTeamMovedWithinGroup) {
-                    throw new IllegalStateException(ERROR_MATCHGROUP_TEAM_NOT_ATTENDING);
-                }
+                continue;
+            }
+            ladder.remove(i);
+            i--;
+        }
+        return teamsToApplyPenaltiesTo;
+    }
+
+    private List<TeamIndexPenaltyTuple> findTuplesWithSameNewIndex(List<TeamIndexPenaltyTuple> tuples, TeamIndexPenaltyTuple indexTuple) {
+        List<TeamIndexPenaltyTuple> tuplesWithSameNewIndex = new ArrayList<>();
+        for (TeamIndexPenaltyTuple currTuple : tuples) {
+            if (indexTuple.getNewIndex() == currTuple.getNewIndex()) {
+                tuplesWithSameNewIndex.add(currTuple);
+            }
+        }
+        return tuplesWithSameNewIndex;
+    }
+
+    private void insertTuplesAtSameNewIndex(List<TeamIndexPenaltyTuple> tuplesWithSameNewIndex) {
+        //sort tuples by penalty so that for conflicting teams, the teams with the lowest penalty get priority
+        Collections.sort(tuplesWithSameNewIndex, TeamIndexPenaltyTuple.getPenaltyComparator());
+
+        for (int i = 0; i < tuplesWithSameNewIndex.size(); i++) {
+            TeamIndexPenaltyTuple currTuple = tuplesWithSameNewIndex.get(i);
+            int newIndex = currTuple.getNewIndex();
+            if (newIndex < ladder.size()) {
+                // for each following team, the index must be offset to
+                // compensate for prior teams in the tuples list being added to the ladder
+                ladder.add(newIndex + i, currTuple.getTeam());
+            } else {
+                //if the new index is beyond the ladder bounds, add the element to the end of the list
+                //
+                ladder.add(currTuple.getTeam());
             }
         }
     }
