@@ -33,6 +33,7 @@ public class ScoreSheet {
         if(this.teams.size() < MatchGroup.MIN_NUM_TEAMS || this.teams.size() > MatchGroup.MAX_NUM_TEAMS) {
             throw new RuntimeException("Unexpected group size: " + this.teams.size());
         }
+
     }
 
     public ScoreCard getScoreCard(int position) {
@@ -77,7 +78,7 @@ public class ScoreSheet {
 
             results = reOrderFourTeamsResults(positions);
         } else {
-            throw new RuntimeException("Unexpected group size: " + this.teams.size());
+            throw new RuntimeException("Unexpected group size: " + this.teams.size()+", "+results.size());
         }
 
         return results;

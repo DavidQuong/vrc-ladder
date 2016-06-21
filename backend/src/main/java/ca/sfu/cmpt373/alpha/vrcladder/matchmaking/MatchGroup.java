@@ -42,7 +42,7 @@ public class MatchGroup {
 
     public MatchGroup () {
         setId(new IdType());
-        setTeams(new ArrayList<>());;
+        setTeams(new ArrayList<>());
     }
 
     public MatchGroup(Team team1, Team team2, Team team3) {

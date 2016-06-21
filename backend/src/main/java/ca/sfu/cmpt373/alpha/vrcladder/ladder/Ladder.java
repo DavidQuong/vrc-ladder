@@ -7,6 +7,7 @@ import java.util.*;
 
 public class Ladder {
     private List<Team> ladder;
+    private List <Team> attendingLadder;
     final static private int ATTENDANCE_PENALTY = 2;
     final static private int LATE_PENALTY =4;
     final static private int NO_SHOW_PENALTY =10;
@@ -91,6 +92,7 @@ public class Ladder {
 
     //swap teams in a match based on rank
     public void updateLadder(MatchGroup[] matchGroup){
+        setupAttendance();
         arrangeMatchResults(matchGroup[0]);
 
         for (int matchIndex =1; matchIndex<matchGroup.length; matchIndex++){
@@ -104,7 +106,34 @@ public class Ladder {
         applyNoShowPenalty();
         applyLatePenalty();
     }
+    private void setupAttendance(){
+        attendingLadder.clear();
+        int nullLocation = 0;
+        for (Team team: ladder){
 
+            if(!team.getAttendanceCard().late()){
+                nullLocation = ladder.indexOf(team);
+                attendingLadder.add(team);
+                ladder.add(nullLocation, null);
+                nullLocation++;//increment to remove the
+                ladder.remove(nullLocation);
+            }
+
+        }
+    }
+
+    private void combineLadders() {
+        int i = 0;
+        for (Team teams: ladder ){
+            if(teams==null){
+                ladder.add(i, teams);
+                ladder.remove(i+1);
+            }
+            i++;
+
+        }
+
+    }
     private void applyLatePenalty() {
         int ladderSize;
         ladderSize = this.getLadderTeamCount();
