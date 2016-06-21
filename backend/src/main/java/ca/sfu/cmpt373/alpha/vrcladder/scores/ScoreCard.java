@@ -73,7 +73,7 @@ public class ScoreCard {
     private void checkNonAttendingTeamsStayedTheSame() {
         for (int i = 0; i < rankedTeams.size(); i++) {
             AttendanceCard attendanceCard = rankedTeams.get(i).getAttendanceCard();
-            boolean isTeamPresent = attendanceCard.isAttending() && attendanceCard.isPresent();
+            boolean isTeamPresent = attendanceCard.isPresent();
             if (!isTeamPresent) {
                 boolean isTeamPositionDifferent = !rankedTeams.get(i).equals(matchGroup.getTeams().get(i));
                 if (isTeamPositionDifferent) {

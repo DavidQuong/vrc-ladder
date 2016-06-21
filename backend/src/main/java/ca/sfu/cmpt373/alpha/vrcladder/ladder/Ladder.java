@@ -160,7 +160,7 @@ public class Ladder {
     private Team getLastAttendingTeam(List<Team> teams) {
         for (int i = teams.size() - 1; i >= 0; i--) {
             AttendanceCard attendanceCard = teams.get(i).getAttendanceCard();
-            if (attendanceCard.isAttending() && attendanceCard.isPresent()) {
+            if (attendanceCard.isPresent()) {
                 return teams.get(i);
             }
         }
@@ -170,7 +170,7 @@ public class Ladder {
     private Team getFirstAttendingTeam(List<Team> teams) {
         for (Team team : teams) {
             AttendanceCard attendanceCard = team.getAttendanceCard();
-            if (attendanceCard.isAttending() && attendanceCard.isPresent()) {
+            if (attendanceCard.isPresent()) {
                 return team;
             }
         }
@@ -190,7 +190,7 @@ public class Ladder {
         for (int i = 0; i < matchGroup.getTeamCount(); i++) {
             Team team = matchGroup.getTeams().get(i);
             AttendanceCard attendanceCard = team.getAttendanceCard();
-            if (attendanceCard.isAttending() && attendanceCard.isPresent()) {
+            if (attendanceCard.isPresent()) {
                 ladder.set(rankedIndexes.get(i), rankedTeams.get(i));
             } else {
                 //if a team does not attend, its position within its group should remain the same

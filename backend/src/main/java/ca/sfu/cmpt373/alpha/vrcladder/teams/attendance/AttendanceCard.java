@@ -61,7 +61,8 @@ public class AttendanceCard {
      * @return whether or not the team did show up
      */
     public boolean isPresent() {
-        return attendanceStatus == AttendanceStatus.PRESENT;
+        return isAttending() && (attendanceStatus == AttendanceStatus.PRESENT ||
+                attendanceStatus == AttendanceStatus.LATE);
     }
 
     @Override
