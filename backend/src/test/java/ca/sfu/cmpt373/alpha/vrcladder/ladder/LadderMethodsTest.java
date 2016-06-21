@@ -78,7 +78,7 @@ public class LadderMethodsTest {
             Assert.assertEquals(teams.get(i), rankedTeams.get(i));
         }
 
-        ladder.swapTeams(teams.get(team1Index), teams.get(team2Index));
+        ladder.swapAttendingTeams(teams.get(team1Index), teams.get(team2Index));
 
         rankedTeams = ladder.getLadder();
         Assert.assertEquals(rankedTeams.get(team1Index), teams.get(team2Index));
