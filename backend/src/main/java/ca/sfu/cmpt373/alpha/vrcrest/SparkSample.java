@@ -26,6 +26,7 @@ import static com.fasterxml.jackson.annotation.PropertyAccessor.FIELD;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
+@Deprecated
 public class SparkSample {
     private static final String TYPE_JSON = "application/json";
     private static final String ERROR_MESSAGE_JSON_PARSE = "There was an error parsing your JSON request";

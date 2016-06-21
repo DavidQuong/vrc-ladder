@@ -3,6 +3,7 @@ package ca.sfu.cmpt373.alpha.vrcrest.payloads;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcrest.interfaces.Validateable;
 
+@Deprecated
 public class NewTeamPayload implements Validateable {
     private UserId userId1;
     private UserId userId2;
