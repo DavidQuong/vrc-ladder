@@ -1,7 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcrest;
 
 import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
-import ca.sfu.cmpt373.alpha.vrcrest.interfaces.RestRouter;
+import ca.sfu.cmpt373.alpha.vrcrest.routes.RestRouter;
 import spark.Spark;
 
 import java.util.List;
