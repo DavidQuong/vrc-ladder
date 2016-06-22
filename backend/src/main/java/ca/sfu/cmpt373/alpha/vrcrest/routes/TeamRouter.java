@@ -6,6 +6,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonConstants;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.TeamSerializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,12 +15,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.eclipse.jetty.http.HttpStatus;
 import org.hibernate.exception.ConstraintViolationException;
-import org.omg.IOP.ExceptionDetailMessage;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
 
 import java.util.List;
+
+import static ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonConstants.JSON_PROPERTY_FIRST_PLAYER_ID;
+import static ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonConstants.JSON_PROPERTY_SECOND_PLAYER_ID;
 
 // TODO - Implement private route methods.
 public class TeamRouter extends RestRouter {
@@ -27,6 +30,10 @@ public class TeamRouter extends RestRouter {
     public static final String ROUTE_TEAMS = "/teams";
     public static final String ROUTE_TEAM_ID = "/team/:id";
     public static final String ROUTE_TEAM_ID_ATTENDANCE = "/team/:id/attendance";
+
+    private static final String ERROR_PLAYER_ID_NOT_FOUND = "One of the provided player ID's cannot be found.";
+    private static final String ERROR_EXISTING_TEAM = "The provided pair of player's already form a team.";
+    private static final String ERROR_IDENTICAL_PLAYER_ID = "Cannot create a team consisting of the two same players.";
 
     private TeamManager teamManager;
 
@@ -63,10 +70,10 @@ public class TeamRouter extends RestRouter {
         for (Team team : teams) {
             jsonTeams.add(getGson().toJsonTree(team));
         }
-        responseBody.add("teams", jsonTeams);
+        responseBody.add(JsonConstants.JSON_PROPERTY_TEAMS, jsonTeams);
 
         response.status(HttpStatus.OK_200);
-        response.type("application/json");
+        response.type(JsonConstants.RESPONSE_TYPE);
         return responseBody.toString();
     }
 
@@ -78,41 +85,43 @@ public class TeamRouter extends RestRouter {
             newTeam = createTeam(request.body());
             JsonElement jsonTeam = getGson().toJsonTree(newTeam);
 
-            responseBody.add("team", jsonTeam);
+            responseBody.add(JsonConstants.JSON_PROPERTY_TEAM, jsonTeam);
             response.status(HttpStatus.CREATED_201);
         } catch (RuntimeException ex) {
-            responseBody.addProperty("error", ex.getMessage());
+            responseBody.addProperty(JsonConstants.JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type("application/json");
+        response.type(JsonConstants.RESPONSE_TYPE);
         return responseBody.toString();
     }
 
     private Team createTeam(String requestBody) {
         JsonObject jsonBody = getGson().fromJson(requestBody, JsonObject.class);
 
-        if (!jsonBody.has("firstPlayerId")) {
-            throw new RuntimeException("firstPlayerId property is missing.");
+        if (!jsonBody.has(JSON_PROPERTY_FIRST_PLAYER_ID)) {
+            String errorMsg = String.format(ERROR_PROPERTY_MISSING_FORMAT, JSON_PROPERTY_FIRST_PLAYER_ID);
+            throw new RuntimeException(errorMsg);
         }
-        String firstPlayerIdValue = jsonBody.get("firstPlayerId").getAsString();
+        String firstPlayerIdValue = jsonBody.get(JSON_PROPERTY_FIRST_PLAYER_ID).getAsString();
         UserId firstPlayerId = new UserId(firstPlayerIdValue);
 
-        if (!jsonBody.has("secondPlayerId")) {
-            throw new RuntimeException("secondPlayerId property is missing.");
+        if (!jsonBody.has(JSON_PROPERTY_SECOND_PLAYER_ID)) {
+            String errorMsg = String.format(ERROR_PROPERTY_MISSING_FORMAT, JSON_PROPERTY_SECOND_PLAYER_ID);
+            throw new RuntimeException(errorMsg);
         }
-        String secondPlayerIdValue = jsonBody.get("secondPlayerId").getAsString();
+        String secondPlayerIdValue = jsonBody.get(JSON_PROPERTY_SECOND_PLAYER_ID).getAsString();
         UserId secondPlayerId = new UserId(secondPlayerIdValue);
 
         Team createdTeam;
         try {
             createdTeam = teamManager.create(firstPlayerId, secondPlayerId);
         } catch(EntityNotFoundException ex) {
-            throw new RuntimeException("One of the provided player ID's cannot be found.");
+            throw new RuntimeException(ERROR_PLAYER_ID_NOT_FOUND);
         } catch(ExistingTeamException | ConstraintViolationException ex) {
-            throw new RuntimeException("The provided pair of player's already form a team.");
+            throw new RuntimeException(ERROR_EXISTING_TEAM);
         } catch(DuplicateTeamMemberException ex) {
-            throw new RuntimeException("Cannot create a team consisting of the two same players.");
+            throw new RuntimeException(ERROR_IDENTICAL_PLAYER_ID);
         }
 
         return createdTeam;
