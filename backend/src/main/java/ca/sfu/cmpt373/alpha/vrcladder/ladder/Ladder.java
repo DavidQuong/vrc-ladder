@@ -190,15 +190,28 @@ public class Ladder {
         Collections.sort(teamsToApplyPenaltiesTo, TeamIndexPenaltyTuple.getNewIndexComparator());
 
         //re-add penalized teams at their new indices
+        int prevNewIndex = 0;
+        int previousConflictOffset = 0;
         for (int i = 0; i < teamsToApplyPenaltiesTo.size(); i++) {
             TeamIndexPenaltyTuple team = teamsToApplyPenaltiesTo.get(i);
             List<TeamIndexPenaltyTuple> teamsWithSameNewIndex = findTeamsWithSameNewIndex(teamsToApplyPenaltiesTo, team);
-            insertTeamsAtSameNewIndex(teamsWithSameNewIndex);
+            boolean isConflictCompensationNeeded = previousConflictOffset + prevNewIndex >= team.getNewIndex();
+            if (isConflictCompensationNeeded) {
+                insertTeamsAtSameNewIndex(teamsWithSameNewIndex, previousConflictOffset);
+            } else {
+                insertTeamsAtSameNewIndex(teamsWithSameNewIndex, 0);
+                previousConflictOffset = 0;
+            }
             teamsWithSameNewIndex
                     .stream()
                     .forEach(teamsToApplyPenaltiesTo::remove);
             //roll back an index since we just removed the team at the current index
             i--;
+
+            //if there was more than one team at an index, then record the conflict's offset
+            //so that the next group of teams to be added can compensate appropriately
+            previousConflictOffset += teamsWithSameNewIndex.size() - 1;
+            prevNewIndex = team.getNewIndex();
         }
     }
 
@@ -236,17 +249,18 @@ public class Ladder {
         return teamsWithSameNewIndex;
     }
 
-    private void insertTeamsAtSameNewIndex(List<TeamIndexPenaltyTuple> teamsWithSameNewIndex) {
+    private void insertTeamsAtSameNewIndex(List<TeamIndexPenaltyTuple> teamsWithSameNewIndex, int previousConflictOffset) {
         //sort teams by penalty so that for conflicting teams, the teams with the lowest penalty get priority
         Collections.sort(teamsWithSameNewIndex, TeamIndexPenaltyTuple.getPenaltyComparator());
 
-        for (int i = 0; i < teamsWithSameNewIndex.size(); i++) {
-            TeamIndexPenaltyTuple currTeam = teamsWithSameNewIndex.get(i);
-            // for each following team, the index must be offset to
+        for (int conflictOffset = 0; conflictOffset < teamsWithSameNewIndex.size(); conflictOffset++) {
+            TeamIndexPenaltyTuple currTeam = teamsWithSameNewIndex.get(conflictOffset);
+            // for each following team, the index must be offset by i to
             // compensate for prior teams in the tuples list being added to the ladder
-            int newIndex = currTeam.getNewIndex() + i;
-            if (newIndex < ladder.size()) {
-                ladder.add(newIndex, currTeam.getTeam());
+            //additionally, conflictOffset is needed if a previous
+            int newOffsetIndex = currTeam.getNewIndex() + previousConflictOffset + conflictOffset;
+            if (newOffsetIndex < ladder.size()) {
+                ladder.add(newOffsetIndex, currTeam.getTeam());
             } else {
                 //if the new index is beyond the ladder bounds, add the element to the end of the list
                 ladder.add(currTeam.getTeam());
