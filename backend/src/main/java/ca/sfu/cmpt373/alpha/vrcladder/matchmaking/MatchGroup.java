@@ -44,7 +44,7 @@ public class MatchGroup {
 
     @OneToMany(cascade = CascadeType.ALL)
     @OrderColumn
-	private ArrayList<Team> teams;
+	private List<Team> teams;
 
     @OneToOne (cascade = CascadeType.ALL)
     private ScoreCard scoreCard;
@@ -88,7 +88,7 @@ public class MatchGroup {
         return Collections.unmodifiableList(teams);
     }
 
-    private void setTeams(ArrayList<Team> teams) {
+    private void setTeams(List<Team> teams) {
         this.teams = teams;
     }
 
