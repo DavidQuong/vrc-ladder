@@ -1,12 +1,18 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
 import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
+import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
+import ca.sfu.cmpt373.alpha.vrcladder.util.Log;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.eclipse.jetty.http.HttpStatus;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
+
+import java.io.IOException;
 
 // TODO - Implement private route methods.
 //      - Update buildGson method if necessary.
@@ -35,11 +41,15 @@ public class UserRouter extends RestRouter {
 
     @Override
     protected Gson buildGson() {
-        return new Gson();
+        GsonBuilder gson = new GsonBuilder();
+        gson.registerTypeAdapter(User.class, new UserGsonSerializer());
+        return gson.create();
+
     }
 
+
     private String handleGetUsers(Request request, Response response) {
-        Gson userGson = buildGson();
+        Gson userGson = new Gson();
         String json;
         try{
             json = userGson.toJson(application.getUserManager().getAll());
@@ -50,10 +60,24 @@ public class UserRouter extends RestRouter {
             return userGson.toJson("Unable to pull users:\n" + e.getMessage());
         }
     }
-    
+
 
     private String handleCreateUser(Request request, Response response) {
-        return null;
+        Gson userGson = new Gson();
+        String json = request.body();
+        try{
+            ObjectMapper objectMapper = new ObjectMapper();
+            User newUser = objectMapper.readValue(json, User.class);
+            application.getUserManager().create(newUser);
+            Log.info("New User has been created!");
+            Log.info(userGson.toJson(newUser));
+            Log.info(buildGson().toJson(newUser));
+            return userGson.toJson(newUser);
+        }catch (IOException e){
+            e.printStackTrace();
+            response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
+            return userGson.toJson("Unable to create user");
+        }
     }
 
     private String handleGetUserById(Request request, Response response) {
