@@ -18,8 +18,11 @@ public class Ladder {
     private static final String ERROR_MATCHGROUPS_NOT_RANKED = "MatchGroups are not in ranked order";
     private static final String ERROR_DUPLICATE_TEAM = "The Ladder already contains this team. The ladder may not hold duplicate elements";
 
-    private List<Team> ladder=new ArrayList<>();
+    private List<Team> ladder;
 
+    public Ladder() {
+        ladder = new ArrayList<>();
+    }
 
     public Ladder(List<Team> teams) {
         ladder = new ArrayList<>();
