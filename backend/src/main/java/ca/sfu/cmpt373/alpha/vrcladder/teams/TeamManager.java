@@ -8,6 +8,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.persistence.DatabaseManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.CriterionConstants;
@@ -82,7 +83,7 @@ public class TeamManager extends DatabaseManager<Team> {
         return newTeam;
     }
 
-    public Team updateAttendance(IdType teamId, PlayTime playTime) {
+    public Team updateAttendancePlaytime(IdType teamId, PlayTime playTime) {
         Session session = sessionManager.getSession();
 
         Team team = session.get(Team.class, teamId);
@@ -97,12 +98,24 @@ public class TeamManager extends DatabaseManager<Team> {
         AttendanceCard attendanceCard = team.getAttendanceCard();
         attendanceCard.setPreferredPlayTime(playTime);
 
+
         team = update(team, session);
         session.close();
 
         return team;
     }
 
+    public Team updateAttendanceStatus(IdType teamId, AttendanceStatus status) {
+        Session session = sessionManager.getSession();
+        Team team = session.get(Team.class, teamId);
+        if (team == null) {
+            throw new EntityNotFoundException();
+        }
+        AttendanceCard attendanceCard = team.getAttendanceCard();
+        attendanceCard.setAttendanceStatus(status);
+
+        return team;
+    }
     private boolean isExistingTeam(User firstPlayer, User secondPlayer) {
         Session session = sessionManager.getSession();
 

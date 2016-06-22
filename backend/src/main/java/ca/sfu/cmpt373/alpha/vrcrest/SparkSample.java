@@ -112,7 +112,7 @@ public class SparkSample {
                 GeneratedId teamId = new GeneratedId(request.params(paramTeamId));
                 ObjectMapper objectMapper = new ObjectMapper();
                 PlayTime preferredPlayTime = objectMapper.readValue(request.body(), PlayTime.class);
-                application.getTeamManager().updateAttendance(teamId, preferredPlayTime);
+                application.getTeamManager().updateAttendancePlaytime(teamId, preferredPlayTime);
                 return "";
             } catch (JsonMappingException e) {
                 response.status(HttpStatus.BAD_REQUEST_400);
