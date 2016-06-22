@@ -191,16 +191,16 @@ public class Ladder {
 
         //re-add penalized teams at their new indices
         int prevNewIndex = 0;
-        int previousConflictOffset = 0;
+        int prevConflictOffset = 0;
         for (int i = 0; i < teamsToApplyPenaltiesTo.size(); i++) {
             TeamIndexPenaltyTuple team = teamsToApplyPenaltiesTo.get(i);
             List<TeamIndexPenaltyTuple> teamsWithSameNewIndex = findTeamsWithSameNewIndex(teamsToApplyPenaltiesTo, team);
-            boolean isConflictCompensationNeeded = previousConflictOffset + prevNewIndex >= team.getNewIndex();
+            boolean isConflictCompensationNeeded = prevConflictOffset + prevNewIndex >= team.getNewIndex();
             if (isConflictCompensationNeeded) {
-                insertTeamsAtSameNewIndex(teamsWithSameNewIndex, previousConflictOffset);
+                insertTeamsAtSameNewIndex(teamsWithSameNewIndex, prevConflictOffset);
             } else {
                 insertTeamsAtSameNewIndex(teamsWithSameNewIndex, 0);
-                previousConflictOffset = 0;
+                prevConflictOffset = 0;
             }
             teamsWithSameNewIndex
                     .stream()
@@ -210,7 +210,7 @@ public class Ladder {
 
             //if there was more than one team at an index, then record the conflict's offset
             //so that the next group of teams to be added can compensate appropriately
-            previousConflictOffset += teamsWithSameNewIndex.size() - 1;
+            prevConflictOffset += teamsWithSameNewIndex.size() - 1;
             prevNewIndex = team.getNewIndex();
         }
     }
@@ -257,7 +257,8 @@ public class Ladder {
             TeamIndexPenaltyTuple currTeam = teamsWithSameNewIndex.get(conflictOffset);
             // for each following team, the index must be offset by i to
             // compensate for prior teams in the tuples list being added to the ladder
-            //additionally, conflictOffset is needed if a previous
+            // additionally, previousConflictOffset is needed if a previous conflict occurred, and the
+            // current teams being re-added need to shift down to compensate for the previous conflict
             int newOffsetIndex = currTeam.getNewIndex() + previousConflictOffset + conflictOffset;
             if (newOffsetIndex < ladder.size()) {
                 ladder.add(newOffsetIndex, currTeam.getTeam());
