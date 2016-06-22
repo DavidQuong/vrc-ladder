@@ -1,13 +1,27 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.DuplicateTeamMemberException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
+import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.TeamSerializer;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import org.eclipse.jetty.http.HttpStatus;
+import org.hibernate.exception.ConstraintViolationException;
+import org.omg.IOP.ExceptionDetailMessage;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
 
+import java.util.List;
+
 // TODO - Implement private route methods.
-//      - Update buildGson method if necessary.
 public class TeamRouter extends RestRouter {
 
     public static final String ROUTE_TEAMS = "/teams";
@@ -34,16 +48,76 @@ public class TeamRouter extends RestRouter {
 
     @Override
     protected Gson buildGson() {
-        return new Gson();
+        return new GsonBuilder()
+            .registerTypeAdapter(Team.class, new TeamSerializer())
+            .setPrettyPrinting()
+            .create();
     }
 
+    // TODO - Refactor
     private String handleGetAllTeams(Request request, Response response) {
-        return null;
+        JsonObject responseBody = new JsonObject();
+        JsonArray jsonTeams = new JsonArray();
+
+        List<Team> teams = teamManager.getAll();
+        for (Team team : teams) {
+            jsonTeams.add(getGson().toJsonTree(team));
+        }
+        responseBody.add("teams", jsonTeams);
+
+        response.status(HttpStatus.OK_200);
+        response.type("application/json");
+        return responseBody.toString();
     }
 
     private String handleCreateTeam(Request request, Response response) {
-        return null;
+        Team newTeam;
+        JsonObject responseBody = new JsonObject();
+
+        try {
+            newTeam = createTeam(request.body());
+            JsonElement jsonTeam = getGson().toJsonTree(newTeam);
+
+            responseBody.add("team", jsonTeam);
+            response.status(HttpStatus.CREATED_201);
+        } catch (RuntimeException ex) {
+            responseBody.addProperty("error", ex.getMessage());
+            response.status(HttpStatus.BAD_REQUEST_400);
+        }
+
+        response.type("application/json");
+        return responseBody.toString();
     }
+
+    private Team createTeam(String requestBody) {
+        JsonObject jsonBody = getGson().fromJson(requestBody, JsonObject.class);
+
+        if (!jsonBody.has("firstPlayerId")) {
+            throw new RuntimeException("firstPlayerId property is missing.");
+        }
+        String firstPlayerIdValue = jsonBody.get("firstPlayerId").getAsString();
+        UserId firstPlayerId = new UserId(firstPlayerIdValue);
+
+        if (!jsonBody.has("secondPlayerId")) {
+            throw new RuntimeException("secondPlayerId property is missing.");
+        }
+        String secondPlayerIdValue = jsonBody.get("secondPlayerId").getAsString();
+        UserId secondPlayerId = new UserId(secondPlayerIdValue);
+
+        Team createdTeam;
+        try {
+            createdTeam = teamManager.create(firstPlayerId, secondPlayerId);
+        } catch(EntityNotFoundException ex) {
+            throw new RuntimeException("One of the provided player ID's cannot be found.");
+        } catch(ExistingTeamException | ConstraintViolationException ex) {
+            throw new RuntimeException("The provided pair of player's already form a team.");
+        } catch(DuplicateTeamMemberException ex) {
+            throw new RuntimeException("Cannot create a team consisting of the two same players.");
+        }
+
+        return createdTeam;
+    }
+
 
     private String handleGetTeamById(Request request, Response response) {
         return null;
