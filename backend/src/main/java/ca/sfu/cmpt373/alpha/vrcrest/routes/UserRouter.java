@@ -1,7 +1,9 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
+import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import com.google.gson.Gson;
+import org.eclipse.jetty.http.HttpStatus;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
@@ -14,6 +16,8 @@ public class UserRouter extends RestRouter {
     public static final String ROUTE_USER_ID = "/user/:id";
 
     private UserManager userManager;
+    private static ApplicationManager application = new ApplicationManager();
+
 
     public UserRouter(UserManager userManager) {
         super();
@@ -35,8 +39,18 @@ public class UserRouter extends RestRouter {
     }
 
     private String handleGetUsers(Request request, Response response) {
-        return null;
+        Gson userGson = buildGson();
+        String json;
+        try{
+            json = userGson.toJson(application.getUserManager().getAll());
+            return json;
+        }catch (Exception e){
+            e.printStackTrace();
+            response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
+            return userGson.toJson("Unable to pull users:\n" + e.getMessage());
+        }
     }
+    
 
     private String handleCreateUser(Request request, Response response) {
         return null;
