@@ -20,44 +20,34 @@ public class MatchGroupGenerator {
      * @throws MatchMakingException if teams cannot be sorted into groups
      */
     public static List<MatchGroup> generateMatchGroupings(List<Team> teams) {
-        List<MatchGroup> matchGroupings = new ArrayList<>();
+        List<MatchGroup> results = new ArrayList<>();
 
         List<Team> attendingTeams = getAttendingTeams(teams);
         List<Team> teamsToGroup = new ArrayList<>();
 
-        //figure out how many teams won't fit into groups of three
-        int groupCount = MatchGroup.MIN_NUM_TEAMS;
-        int extraTeams = attendingTeams.size() % groupCount;
-
-        //while there are teams that won't fit into groups of three, make groups of four instead
-        if (extraTeams > 0) {
-            groupCount = MatchGroup.MAX_NUM_TEAMS;
-        }
-
-        //make groups starting from the bottom of the list so that groups of four are created from the lowest ranked players
-        for (int i = attendingTeams.size() - 1; i >= 0; i--) {
-            teamsToGroup.add(attendingTeams.get(i));
-            if (teamsToGroup.size() == groupCount) {
-                //reverse teamsToGroup before adding them to a group, so that they are in ranked order
-                Collections.reverse(teamsToGroup);
-                matchGroupings.add(new MatchGroup(teamsToGroup));
+        int currentGroupSize = decideCurrentGroupSize(attendingTeams.size());
+        for(int counter = 0; counter < attendingTeams.size(); counter++) {
+            teamsToGroup.add(attendingTeams.get(counter));
+            if(teamsToGroup.size() == currentGroupSize) {
+                results.add(new MatchGroup( teamsToGroup));
+                int remainingTeams = attendingTeams.size() - (counter + 1);
+                currentGroupSize = decideCurrentGroupSize(remainingTeams);
                 teamsToGroup.clear();
-                extraTeams--;
-                if (extraTeams == 0) {
-                    //switch back to groups of three
-                    groupCount = MatchGroup.MIN_NUM_TEAMS;
-                }
             }
         }
 
-        //put match groupings in sorted order, since they were generated backwards
-        Collections.reverse(matchGroupings);
-
-        //this only happens if there are less than three teams, or five teams
-        if (extraTeams > 0) {
+        if(!teamsToGroup.isEmpty()){
             throw new MatchMakingException(ERROR_MESSAGE);
         }
-        return matchGroupings;
+
+        return results;
+    }
+
+    private static int decideCurrentGroupSize(int teamSize){
+        if( (teamSize % MatchGroup.MAX_NUM_TEAMS) == 0 || teamSize > MatchGroup.MAX_NUM_TEAMS){
+            return MatchGroup.MAX_NUM_TEAMS;
+        }
+        return MatchGroup.MIN_NUM_TEAMS;
     }
 
     private static List<Team> getAttendingTeams (List<Team> teams) {
