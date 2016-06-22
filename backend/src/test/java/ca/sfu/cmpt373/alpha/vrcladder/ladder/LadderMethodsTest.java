@@ -41,11 +41,11 @@ public class LadderMethodsTest {
         setAllTeamsPresent(convertMatchGroupListToTeamList(matchGroups));
     }
     private void setAllTeamsPresent(List<Team> teams) {
-            for (Team team : teams) {
-                AttendanceCard attendanceCard = team.getAttendanceCard();
-                attendanceCard.setPreferredPlayTime(PlayTime.TIME_SLOT_A);
-                attendanceCard.setAttendanceStatus(AttendanceStatus.PRESENT);
-            }
+        for (Team team : teams) {
+            AttendanceCard attendanceCard = team.getAttendanceCard();
+            attendanceCard.setPreferredPlayTime(PlayTime.TIME_SLOT_A);
+            attendanceCard.setAttendanceStatus(AttendanceStatus.PRESENT);
+        }
     }
 
     private List<Team> convertMatchGroupListToTeamList(List<MatchGroup> matchGroups) {

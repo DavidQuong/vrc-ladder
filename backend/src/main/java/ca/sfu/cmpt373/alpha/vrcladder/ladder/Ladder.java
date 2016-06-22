@@ -20,10 +20,6 @@ public class Ladder {
 
     private List<Team> ladder;
 
-    public Ladder() {
-        ladder = new ArrayList<>();
-    }
-
     public Ladder(List<Team> teams) {
         ladder = new ArrayList<>();
         for (Team team : teams) {
@@ -89,6 +85,9 @@ public class Ladder {
      * @throws IllegalStateException if @matchGroups are not in ranked order
      */
     public void updateLadder(List<MatchGroup> matchGroups){
+        //MatchGroups with no teams attending will cause problems
+        removeNonAttendingMatchGroups(matchGroups);
+
         for (MatchGroup matchGroup : matchGroups){
             applyRankingsWithinMatchGroup(matchGroup);
         }
@@ -97,6 +96,23 @@ public class Ladder {
 
         applyPenalties();
     }
+
+    private void removeNonAttendingMatchGroups(List<MatchGroup> matchGroups) {
+        for (int i = 0; i < matchGroups.size(); i++) {
+            MatchGroup matchGroup = matchGroups.get(i);
+            int nonAttendingTeamCount = 0;
+            for (Team team : matchGroup.getTeams()) {
+                if (!team.getAttendanceCard().isPresent()) {
+                    nonAttendingTeamCount++;
+                }
+            }
+            if (nonAttendingTeamCount == matchGroup.getTeamCount()) {
+                matchGroups.remove(i);
+                i--;
+            }
+        }
+    }
+
 
     private void applyRankingsWithinMatchGroup(MatchGroup matchGroup){
         //find the ladder indices for 1st, 2nd, 3rd, 4th... positions
@@ -128,37 +144,39 @@ public class Ladder {
             List<Team> rankedMatchGroupTeams1 = matchGroups.get(i).getScoreCard().getRankedTeams();
             List<Team> rankedMatchGroupTeams2 = matchGroups.get(i + 1).getScoreCard().getRankedTeams();
 
-            // we must only consider teams within MatchGroups that are attending.
+            // we must only consider teams within MatchGroups that are present.
             // Teams that are not attending should not be considered in any ranking changes within/between MatchGroups
             // Instead, these teams are penalized separately after everything else is done
-            Team lastPlaceAttendingTeamInMatchGroup1 = getLastAttendingTeam(rankedMatchGroupTeams1);
-            Team firstPlaceAttendingTeamInMatchGroup2 = getFirstAttendingTeam(rankedMatchGroupTeams2);
+            Team lastPlacePresentTeamInMatchGroup1 = getLastPresentTeam(rankedMatchGroupTeams1);
+            Team firstPlacePresentTeamInMatchGroup2 = getFirstPresentTeam(rankedMatchGroupTeams2);
 
-            if (findTeamPosition(lastPlaceAttendingTeamInMatchGroup1) > findTeamPosition(firstPlaceAttendingTeamInMatchGroup2)) {
+            if (findTeamPosition(lastPlacePresentTeamInMatchGroup1) > findTeamPosition(firstPlacePresentTeamInMatchGroup2)) {
                 throw new IllegalStateException(ERROR_MATCHGROUPS_NOT_RANKED);
             }
 
-            swapTeams(lastPlaceAttendingTeamInMatchGroup1, firstPlaceAttendingTeamInMatchGroup2);
+            swapTeams(lastPlacePresentTeamInMatchGroup1, firstPlacePresentTeamInMatchGroup2);
         }
     }
 
-    private Team getLastAttendingTeam(List<Team> teams) {
+    private Team getLastPresentTeam(List<Team> teams) {
         for (int i = teams.size() - 1; i >= 0; i--) {
             AttendanceCard attendanceCard = teams.get(i).getAttendanceCard();
             if (attendanceCard.isPresent()) {
                 return teams.get(i);
             }
         }
+        //this should never be called since we removed all MatchGroups that were completely not attending
         throw new IllegalStateException(ERROR_MATCHGROUP_NO_TEAMS_PRESENT);
     }
 
-    private Team getFirstAttendingTeam(List<Team> teams) {
+    private Team getFirstPresentTeam(List<Team> teams) {
         for (Team team : teams) {
             AttendanceCard attendanceCard = team.getAttendanceCard();
             if (attendanceCard.isPresent()) {
                 return team;
             }
         }
+        //this should never be called since we removed all MatchGroups that were completely not attending
         throw new IllegalStateException(ERROR_MATCHGROUP_NO_TEAMS_PRESENT);
     }
 
