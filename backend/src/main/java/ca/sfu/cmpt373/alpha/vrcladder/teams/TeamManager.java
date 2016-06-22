@@ -11,7 +11,6 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.CriterionConstants;
-import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -68,6 +67,10 @@ public class TeamManager extends DatabaseManager<Team> {
 
         if (isExistingTeam(firstPlayer, secondPlayer)) {
             throw new ExistingTeamException();
+        }
+
+        if (firstPlayer.getUserId().equals(secondPlayer.getUserId())) {
+            throw new DuplicateTeamMemberException();
         }
 
         LadderPosition newLadderPosition = generateNewLadderPosition();
