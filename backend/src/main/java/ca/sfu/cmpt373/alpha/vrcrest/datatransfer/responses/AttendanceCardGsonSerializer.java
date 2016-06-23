@@ -1,4 +1,4 @@
-package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests;
+package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses;
 
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
