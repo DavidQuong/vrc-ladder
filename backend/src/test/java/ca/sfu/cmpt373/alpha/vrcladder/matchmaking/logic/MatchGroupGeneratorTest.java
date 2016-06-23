@@ -30,9 +30,10 @@ public class MatchGroupGeneratorTest {
     @Test
     public void testIdealGroupSize() {
         //there should only be groups of MatchGroup.MIN_NUM_TEAMS for teamCounts that are evenly divisible by MatchGroup.MIN_NUM_TEAMS
-        int idealGroupSize = MatchGroup.MAX_NUM_TEAMS;
+        int idealGroupSize = MatchGroup.MIN_NUM_TEAMS;
         //arbitrary number of test runs, could be any multiple of MIN_NUM_TEAMS
         for (int teamCount = idealGroupSize; teamCount < MAX_TEST_TEAM_COUNT; teamCount += idealGroupSize) {
+            Assert.assertTrue(teamCount % MatchGroup.MIN_NUM_TEAMS == 0);
             List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount));
             for (MatchGroup matchGroup : matchGroups) {
                 Assert.assertTrue(matchGroup.getTeams().size() == idealGroupSize);
@@ -45,15 +46,15 @@ public class MatchGroupGeneratorTest {
         //this could be any number, but we've got to stop testing somewhere!
         //start after corner cases
         for (int teamCount = IMPOSSIBLE_TEAM_COUNT + 1; teamCount < MAX_TEST_TEAM_COUNT; teamCount++) {
-            boolean isUndesiredGroupSize = teamCount % MatchGroup.MAX_NUM_TEAMS != 0;
+            boolean isUndesiredGroupSize = teamCount % MatchGroup.MIN_NUM_TEAMS != 0;
             if (isUndesiredGroupSize) {
                 int undesiredGroupCount = 0;
                 List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount));
                 for (MatchGroup matchGroup : matchGroups) {
                     int matchGroupSize = matchGroup.getTeams().size();
-                    boolean isNotIdealSize = matchGroupSize != MatchGroup.MAX_NUM_TEAMS;
+                    boolean isNotIdealSize = matchGroupSize != MatchGroup.MIN_NUM_TEAMS;
                     if (isNotIdealSize) {
-                        Assert.assertTrue(matchGroupSize == MatchGroup.MIN_NUM_TEAMS);
+                        Assert.assertTrue(matchGroupSize == MatchGroup.MAX_NUM_TEAMS);
                         undesiredGroupCount++;
                     }
                 }
