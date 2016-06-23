@@ -123,9 +123,9 @@ public class TeamRouter extends RestRouter {
         GeneratedId generatedId = new GeneratedId(paramId);
 
         try {
-            Team team = teamManager.getById(generatedId);
+            Team existingTeam = teamManager.getById(generatedId);
 
-            responseBody.add(JSON_PROPERTY_TEAM, getGson().toJsonTree(team));
+            responseBody.add(JSON_PROPERTY_TEAM, getGson().toJsonTree(existingTeam));
             response.status(HttpStatus.OK_200);
         } catch (JsonSyntaxException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
@@ -149,7 +149,27 @@ public class TeamRouter extends RestRouter {
     }
 
     private String handleDeleteTeamById(Request request, Response response) {
-        return null;
+        JsonObject responseBody = new JsonObject();
+
+        String paramId = request.params(ROUTE_ID);
+        GeneratedId generatedId = new GeneratedId(paramId);
+
+        try {
+            Team deletedTeam = teamManager.deleteById(generatedId);
+
+            responseBody.add(JSON_PROPERTY_TEAM, getGson().toJsonTree(deletedTeam));
+            response.status(HttpStatus.OK_200);
+        } catch (EntityNotFoundException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_TEAM);
+            response.status(HttpStatus.NOT_FOUND_404);
+
+        } catch (RuntimeException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        }
+
+        response.type(JSON_RESPONSE_TYPE);
+        return responseBody.toString();
     }
 
     private String handleGetTeamAttendance(Request request, Response response) {
