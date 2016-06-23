@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 
 public abstract class RestRouter {
 
+    public static final String RESPONSE_TYPE = "application/json";
+    public static final String JSON_PROPERTY_ERROR = "error";
+
     private Gson gson;
 
     public RestRouter() {

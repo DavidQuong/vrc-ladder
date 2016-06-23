@@ -5,7 +5,6 @@ import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
-import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonConstants;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.TeamSerializer;
 import ca.sfu.cmpt373.alpha.vrcrest.payloads.NewTeamPayload;
 import com.google.gson.Gson;
@@ -27,6 +26,9 @@ public class TeamRouter extends RestRouter {
     public static final String ROUTE_TEAMS = "/teams";
     public static final String ROUTE_TEAM_ID = "/team/:id";
     public static final String ROUTE_TEAM_ID_ATTENDANCE = "/team/:id/attendance";
+
+    public static final String JSON_PROPERTY_TEAMS = "teams";
+    public static final String JSON_PROPERTY_TEAM = "team";
 
     private static final String ERROR_PLAYER_ID_NOT_FOUND = "One of the provided player ID's cannot be found.";
     private static final String ERROR_EXISTING_TEAM = "The provided pair of player's already form a team.";
@@ -59,7 +61,6 @@ public class TeamRouter extends RestRouter {
             .create();
     }
 
-    // TODO - Refactor
     private String handleGetAllTeams(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
         JsonArray jsonTeams = new JsonArray();
@@ -68,10 +69,10 @@ public class TeamRouter extends RestRouter {
         for (Team team : teams) {
             jsonTeams.add(getGson().toJsonTree(team));
         }
-        responseBody.add(JsonConstants.JSON_PROPERTY_TEAMS, jsonTeams);
+        responseBody.add(JSON_PROPERTY_TEAMS, jsonTeams);
 
         response.status(HttpStatus.OK_200);
-        response.type(JsonConstants.RESPONSE_TYPE);
+        response.type(RESPONSE_TYPE);
         return responseBody.toString();
     }
 
@@ -83,14 +84,14 @@ public class TeamRouter extends RestRouter {
             newTeam = createTeam(request.body());
             JsonElement jsonTeam = getGson().toJsonTree(newTeam);
 
-            responseBody.add(JsonConstants.JSON_PROPERTY_TEAM, jsonTeam);
+            responseBody.add(JSON_PROPERTY_TEAM, jsonTeam);
             response.status(HttpStatus.CREATED_201);
         } catch (RuntimeException ex) {
-            responseBody.addProperty(JsonConstants.JSON_PROPERTY_ERROR, ex.getMessage());
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JsonConstants.RESPONSE_TYPE);
+        response.type(RESPONSE_TYPE);
         return responseBody.toString();
     }
 
