@@ -16,24 +16,24 @@ public class TeamSerializer implements JsonSerializer<Team> {
     public JsonElement serialize(Team team, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonTeam = new JsonObject();
 
-        jsonTeam.addProperty("teamId", team.getId().getValue());
+        jsonTeam.addProperty(JsonConstants.JSON_PROPERTY_TEAM_ID, team.getId().getValue());
 
-        jsonTeam.addProperty("ladderPosition", team.getLadderPosition().getValue());
+        jsonTeam.addProperty(JsonConstants.JSON_PROPERTY_LADDER_POSITION, team.getLadderPosition().getValue());
 
         PlayTime playTime = team.getAttendanceCard().getPreferredPlayTime();
-        jsonTeam.addProperty("playTime", playTime.getDisplayTime());
+        jsonTeam.addProperty(JsonConstants.JSON_PROPERTY_PLAY_TIME, playTime.getDisplayTime());
 
         User firstPlayer = team.getFirstPlayer();
         JsonObject jsonFirstPlayer = new JsonObject();
-        jsonFirstPlayer.addProperty("userId", firstPlayer.getUserId().getValue());
-        jsonFirstPlayer.addProperty("name", firstPlayer.getDisplayName());
-        jsonTeam.add("firstPlayer", jsonFirstPlayer);
+        jsonFirstPlayer.addProperty(JsonConstants.JSON_PROPERTY_USER_ID, firstPlayer.getUserId().getValue());
+        jsonFirstPlayer.addProperty(JsonConstants.JSON_PROPERTY_NAME, firstPlayer.getDisplayName());
+        jsonTeam.add(JsonConstants.JSON_PROPERTY_FIRST_PLAYER, jsonFirstPlayer);
 
         User secondPlayer = team.getSecondPlayer();
         JsonObject jsonSecondPlayer = new JsonObject();
-        jsonSecondPlayer.addProperty("userId", secondPlayer.getUserId().getValue());
-        jsonSecondPlayer.addProperty("name", secondPlayer.getDisplayName());
-        jsonTeam.add("secondPlayer", jsonSecondPlayer);
+        jsonSecondPlayer.addProperty(JsonConstants.JSON_PROPERTY_USER_ID, secondPlayer.getUserId().getValue());
+        jsonSecondPlayer.addProperty(JsonConstants.JSON_PROPERTY_NAME, secondPlayer.getDisplayName());
+        jsonTeam.add(JsonConstants.JSON_PROPERTY_SECOND_PLAYER, jsonSecondPlayer);
 
         return jsonTeam;
     }
