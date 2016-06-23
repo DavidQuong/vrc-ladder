@@ -5,9 +5,9 @@ import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
-import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonConstants;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.TeamSerializer;
+import ca.sfu.cmpt373.alpha.vrcrest.payloads.NewTeamPayload;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -20,9 +20,6 @@ import spark.Response;
 import spark.Spark;
 
 import java.util.List;
-
-import static ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonConstants.JSON_PROPERTY_FIRST_PLAYER_ID;
-import static ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonConstants.JSON_PROPERTY_SECOND_PLAYER_ID;
 
 // TODO - Implement private route methods.
 public class TeamRouter extends RestRouter {
@@ -57,6 +54,7 @@ public class TeamRouter extends RestRouter {
     protected Gson buildGson() {
         return new GsonBuilder()
             .registerTypeAdapter(Team.class, new TeamSerializer())
+            .registerTypeAdapter(NewTeamPayload.class, new NewTeamPayload.GsonDeserializer())
             .setPrettyPrinting()
             .create();
     }
@@ -97,25 +95,11 @@ public class TeamRouter extends RestRouter {
     }
 
     private Team createTeam(String requestBody) {
-        JsonObject jsonBody = getGson().fromJson(requestBody, JsonObject.class);
-
-        if (!jsonBody.has(JSON_PROPERTY_FIRST_PLAYER_ID)) {
-            String errorMsg = String.format(ERROR_PROPERTY_MISSING_FORMAT, JSON_PROPERTY_FIRST_PLAYER_ID);
-            throw new RuntimeException(errorMsg);
-        }
-        String firstPlayerIdValue = jsonBody.get(JSON_PROPERTY_FIRST_PLAYER_ID).getAsString();
-        UserId firstPlayerId = new UserId(firstPlayerIdValue);
-
-        if (!jsonBody.has(JSON_PROPERTY_SECOND_PLAYER_ID)) {
-            String errorMsg = String.format(ERROR_PROPERTY_MISSING_FORMAT, JSON_PROPERTY_SECOND_PLAYER_ID);
-            throw new RuntimeException(errorMsg);
-        }
-        String secondPlayerIdValue = jsonBody.get(JSON_PROPERTY_SECOND_PLAYER_ID).getAsString();
-        UserId secondPlayerId = new UserId(secondPlayerIdValue);
+        NewTeamPayload newTeamPayload = getGson().fromJson(requestBody, NewTeamPayload.class);
 
         Team createdTeam;
         try {
-            createdTeam = teamManager.create(firstPlayerId, secondPlayerId);
+            createdTeam = teamManager.create(newTeamPayload.getFirstPlayerId(), newTeamPayload.getSecondPlayerId());
         } catch(EntityNotFoundException ex) {
             throw new RuntimeException(ERROR_PLAYER_ID_NOT_FOUND);
         } catch(ExistingTeamException | ConstraintViolationException ex) {
@@ -126,7 +110,6 @@ public class TeamRouter extends RestRouter {
 
         return createdTeam;
     }
-
 
     private String handleGetTeamById(Request request, Response response) {
         return null;

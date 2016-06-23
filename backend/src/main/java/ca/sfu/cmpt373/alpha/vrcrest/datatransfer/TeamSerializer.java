@@ -3,6 +3,7 @@ package ca.sfu.cmpt373.alpha.vrcrest.datatransfer;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonConstants;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;

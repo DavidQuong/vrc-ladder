@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 
 public abstract class RestRouter {
 
-    protected static final String ERROR_PROPERTY_MISSING_FORMAT = "%s property is missing";
-
     private Gson gson;
 
     public RestRouter() {
