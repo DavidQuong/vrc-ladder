@@ -1,4 +1,4 @@
-package ca.sfu.cmpt373.alpha.vrcrest.datatransfer;
+package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses;
 
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonParseException;

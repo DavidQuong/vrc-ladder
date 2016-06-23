@@ -1,4 +1,4 @@
-package ca.sfu.cmpt373.alpha.vrcrest.datatransfer;
+package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests;
 
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;

@@ -1,7 +1,6 @@
-package ca.sfu.cmpt373.alpha.vrcrest.payloads;
+package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses;
 
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
-import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.BaseGsonDeserializer;
 import ca.sfu.cmpt373.alpha.vrcrest.interfaces.Validateable;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;

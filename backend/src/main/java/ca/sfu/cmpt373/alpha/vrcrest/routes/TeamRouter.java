@@ -5,11 +5,10 @@ import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
-import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.TeamSerializer;
-import ca.sfu.cmpt373.alpha.vrcrest.payloads.NewTeamPayload;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.TeamSerializer;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.NewTeamPayload;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.eclipse.jetty.http.HttpStatus;
@@ -63,13 +62,9 @@ public class TeamRouter extends RestRouter {
 
     private String handleGetAllTeams(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        JsonArray jsonTeams = new JsonArray();
 
         List<Team> teams = teamManager.getAll();
-        for (Team team : teams) {
-            jsonTeams.add(getGson().toJsonTree(team));
-        }
-        responseBody.add(JSON_PROPERTY_TEAMS, jsonTeams);
+        responseBody.add(JSON_PROPERTY_TEAMS, getGson().toJsonTree(teams));
 
         response.status(HttpStatus.OK_200);
         response.type(RESPONSE_TYPE);
