@@ -2,20 +2,23 @@ package ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic;
 
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 
-public class Waitlist {
+import java.util.Objects;
 
-    private MatchGroup matchGroup;
+public class Waitlist<T> {
+
+    private T content;
     private PlayTime playTime;
 
-    public Waitlist(MatchGroup group, PlayTime time){
-        this.matchGroup = group;
+    public Waitlist(T content, PlayTime time){
+        this.content = content;
         this.playTime = time;
     }
 
-    public MatchGroup getMatchGroup(){
-        return this.matchGroup;
+    public T getContent(){
+        return this.content;
     }
 
     public PlayTime getPlayTime(){

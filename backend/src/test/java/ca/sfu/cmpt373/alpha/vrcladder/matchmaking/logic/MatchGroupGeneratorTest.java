@@ -14,7 +14,7 @@ public class MatchGroupGeneratorTest {
     //could be any number, but we've got to stop testing somewhere
     private static final int MAX_TEST_TEAM_COUNT = 49;
 
-    @Test(expected = MatchMakingException.class)
+    @Test
     public void testGroupSizes() {
         List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(MAX_TEST_TEAM_COUNT));
         for (MatchGroup matchGroup : matchGroups) {

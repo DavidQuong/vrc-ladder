@@ -6,20 +6,20 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WaitlistManager {
+public class WaitlistManager<T> {
 
-    private static List<Waitlist> waitlist;
+    private List<Waitlist> waitlist;
 
-    public static void addToWaitlist(MatchGroup group, PlayTime time){
-        Waitlist current = new Waitlist(group, time);
+    public void addToWaitlist(T content, PlayTime time){
+        Waitlist<T> current = new Waitlist<>(content, time);
         waitlist.add(current);
     }
 
-    public static List<Waitlist> getWaitlist(){
+    public List<Waitlist> getWaitlist(){
         return waitlist;
     }
 
-    public static List<Waitlist> getWaitlistByTime(PlayTime time){
+    public List<Waitlist> getWaitlistByTime(PlayTime time){
         List<Waitlist> results = new ArrayList<>();
         for(Waitlist current : waitlist){
             if(current.getPlayTime().equals(time)){
@@ -29,10 +29,10 @@ public class WaitlistManager {
         return results;
     }
 
-    public void RemoveFromWaitlist(MatchGroup group) {
+    public void RemoveFromWaitlist(T content) {
         for(int i = 0; i < waitlist.size(); i++) {
-            MatchGroup waitlistGroup = waitlist.get(i).getMatchGroup();
-            if(waitlistGroup.equals(group)){
+            Waitlist waitlistContent = waitlist.get(i);
+            if(waitlistContent.equals(content)){
                 waitlist.remove(i);
             }
         }
