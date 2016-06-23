@@ -72,20 +72,29 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
 		return update(matchGroup);
 	}
 
-	public List<MatchGroup> tradeTeamsInMatchGroups(IdType matchGroupId1, Team first, String matchGroupId2, Team second) {
+	public List<MatchGroup> tradeTeamsInMatchGroups(IdType matchGroupId1, Team first, IdType matchGroupId2, Team second) {
 		MatchGroup matchGroup1 = getById(matchGroupId1);
 		if (matchGroup1 == null) {
 			throw new RuntimeException(ERROR_NO_MATCH_GROUP);
 		}
-		MatchGroup matchGroup2 = getById(matchGroupId1);
+		MatchGroup matchGroup2 = getById(matchGroupId2);
 		if (matchGroup2 == null) {
 			throw new RuntimeException(ERROR_NO_MATCH_GROUP);
 		}
 		matchGroup1.tradeTeams(first, matchGroup2, second);
 
+		Session session = sessionManager.getSession();
+		Transaction transaction = session.beginTransaction();
+
+		session.update(matchGroup1);
+		session.update(matchGroup2);
+
+		transaction.commit();
+		session.close();
+
 		List<MatchGroup> results = new ArrayList<>();
-		results.add(update(matchGroup1));
-		results.add(update(matchGroup2));
+		results.add(matchGroup1);
+		results.add(matchGroup2);
 
 		return results;
 	}
