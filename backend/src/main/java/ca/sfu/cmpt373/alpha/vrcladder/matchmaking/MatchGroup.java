@@ -162,14 +162,6 @@ public class MatchGroup {
         return teams.size();
     }
 
-	/*@Transient
-	public Team getTeam4(){
-		if(teams.size() == this.MAX_NUM_TEAMS) {
-			return teams.get(3);
-		}
-		throw new IndexOutOfBoundsException();
-	}*/
-
     @Override
     public boolean equals(Object otherObj) {
         if (this == otherObj) {
