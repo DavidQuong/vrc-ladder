@@ -2,10 +2,11 @@ package ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MatchMakingException;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.WaitlistManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,21 +17,26 @@ public class MatchGroupGenerator {
     private static final int MIN_REMAINING_TEAMS = 1;
     private static final int MAX_REMAINING_TEAMS = 2;
 
+    private static WaitlistManager<Team> waitListManager = new WaitlistManager<>();
+
     /**
      * preconditions: teams are assumed to be in sorted ranked order
      * Generates groups of three or four teams to play matches against one another
      * @throws MatchMakingException if teams cannot be sorted into groups
      */
-    public static List<MatchGroup> generateMatchGroupings(List<Team> teams) {
+    public static List<MatchGroup> generateMatchGroupings(List<Team> teams, int maxTeams) {
         List<MatchGroup> results = new ArrayList<>();
         List<Team> attendingTeams = getAttendingTeams(teams);
         List<Team> teamsToGroup = new ArrayList<>();
 
-        int currentGroupSize = decideCurrentGroupSize(attendingTeams.size());
+        int currentGroupSize = decideCurrentGroupSize(maxTeams);
         int remainingTeams;
+        boolean addToWaitlist = false;
         for(int counter = 0; counter < attendingTeams.size(); counter++) {
+
+            addToWaitlist = (counter >= maxTeams);
             teamsToGroup.add(attendingTeams.get(counter));
-            if(teamsToGroup.size() == currentGroupSize) {
+            if(teamsToGroup.size() == currentGroupSize && !addToWaitlist) {
                 results.add(new MatchGroup( teamsToGroup));
                 remainingTeams = attendingTeams.size() - (counter + 1);
                 currentGroupSize = decideCurrentGroupSize(remainingTeams);
@@ -39,7 +45,14 @@ public class MatchGroupGenerator {
         }
 
         if(!teamsToGroup.isEmpty()){
-            throw new MatchMakingException(ERROR_MESSAGE);
+            if(addToWaitlist){
+                for(Team team : teamsToGroup){
+                    PlayTime time = team.getAttendanceCard().getPreferredPlayTime();
+                    waitListManager.addToWaitlist(team, time);
+                }
+            }else{
+                throw new MatchMakingException(ERROR_MESSAGE);
+            }
         }
         return results;
     }

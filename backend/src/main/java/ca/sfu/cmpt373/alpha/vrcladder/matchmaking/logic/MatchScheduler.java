@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MatchScheduler {
-    private static WaitlistManager<MatchGroup> waitListManager = new WaitlistManager();
+    private static WaitlistManager<MatchGroup> waitListManager = new WaitlistManager<>();
 
     /**
      * @throws MatchMakingException if Courts are full, and matches cannot be scheduled

@@ -16,7 +16,7 @@ public class MatchGroupGeneratorTest {
 
     @Test
     public void testGroupSizes() {
-        List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(MAX_TEST_TEAM_COUNT));
+        List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(MAX_TEST_TEAM_COUNT), MAX_TEST_TEAM_COUNT);
         for (MatchGroup matchGroup : matchGroups) {
             List<Team> teams = matchGroup.getTeams();
             Assert.assertTrue(teams.size() == MatchGroup.MAX_NUM_TEAMS || teams.size() == MatchGroup.MIN_NUM_TEAMS);
@@ -34,7 +34,7 @@ public class MatchGroupGeneratorTest {
         //arbitrary number of test runs, could be any multiple of MIN_NUM_TEAMS
         for (int teamCount = idealGroupSize; teamCount < MAX_TEST_TEAM_COUNT; teamCount += idealGroupSize) {
             Assert.assertTrue(teamCount % MatchGroup.MIN_NUM_TEAMS == 0);
-            List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount));
+            List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount), teamCount);
             for (MatchGroup matchGroup : matchGroups) {
                 Assert.assertTrue(matchGroup.getTeams().size() == idealGroupSize);
             }
@@ -49,7 +49,7 @@ public class MatchGroupGeneratorTest {
             boolean isUndesiredGroupSize = teamCount % MatchGroup.MIN_NUM_TEAMS != 0;
             if (isUndesiredGroupSize) {
                 int undesiredGroupCount = 0;
-                List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount));
+                List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount), teamCount);
                 for (MatchGroup matchGroup : matchGroups) {
                     int matchGroupSize = matchGroup.getTeams().size();
                     boolean isNotIdealSize = matchGroupSize != MatchGroup.MIN_NUM_TEAMS;
@@ -71,7 +71,7 @@ public class MatchGroupGeneratorTest {
         int teamCount;
         for (teamCount = 0; teamCount < MatchGroup.MIN_NUM_TEAMS; teamCount++) {
             try {
-                MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount));
+                MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount), teamCount);
             } catch (IllegalStateException e) {
                 failureCount++;
             }
@@ -81,6 +81,6 @@ public class MatchGroupGeneratorTest {
         Assert.assertTrue(teamCount - 1 == failureCount);
 
         //it's impossible to sort 5 teams into groups of 3 or 4
-        MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(IMPOSSIBLE_TEAM_COUNT));
+        MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(IMPOSSIBLE_TEAM_COUNT), IMPOSSIBLE_TEAM_COUNT);
     }
 }
