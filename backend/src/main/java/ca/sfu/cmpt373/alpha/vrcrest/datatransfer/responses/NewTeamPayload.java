@@ -10,11 +10,11 @@ import com.google.gson.JsonParseException;
 import java.lang.reflect.Type;
 
 public class NewTeamPayload implements Validateable {
-
+    
     public static class GsonDeserializer extends BaseGsonDeserializer<NewTeamPayload> {
 
-        private static final String JSON_PROPERTY_FIRST_PLAYER_ID = "firstPlayerId";
-        private static final String JSON_PROPERTY_SECOND_PLAYER_ID = "secondPlayerId";
+        public static final String JSON_PROPERTY_FIRST_PLAYER_ID = "firstPlayerId";
+        public static final String JSON_PROPERTY_SECOND_PLAYER_ID = "secondPlayerId";
 
         @Override
         public NewTeamPayload deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
