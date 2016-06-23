@@ -12,6 +12,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.MalformedJsonException;
 import org.eclipse.jetty.http.HttpStatus;
 import org.hibernate.exception.ConstraintViolationException;
 import spark.Request;
@@ -78,35 +81,39 @@ public class TeamRouter extends RestRouter {
         JsonObject responseBody = new JsonObject();
 
         try {
-            newTeam = createTeam(request.body());
-            JsonElement jsonTeam = getGson().toJsonTree(newTeam);
+            NewTeamPayload newTeamPayload = getGson().fromJson(request.body(), NewTeamPayload.class);
+            newTeam = teamManager.create(newTeamPayload.getFirstPlayerId(), newTeamPayload.getSecondPlayerId());
 
+            JsonElement jsonTeam = getGson().toJsonTree(newTeam);
             responseBody.add(JSON_PROPERTY_TEAM, jsonTeam);
             response.status(HttpStatus.CREATED_201);
-        } catch (RuntimeException ex) {
+        } catch (JsonSyntaxException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
+            response.status(HttpStatus.BAD_REQUEST_400);
+
+        } catch (JsonParseException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
+            response.status(HttpStatus.UNPROCESSABLE_ENTITY_422);
+
+        } catch (EntityNotFoundException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_PLAYER_ID_NOT_FOUND);
+            response.status(HttpStatus.NOT_FOUND_404);
+
+        } catch(ExistingTeamException | ConstraintViolationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_TEAM);
+            response.status(HttpStatus.CONFLICT_409);
+
+        } catch(DuplicateTeamMemberException ex)  {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_IDENTICAL_PLAYER_ID);
+            response.status(HttpStatus.BAD_REQUEST_400);
+
+        } catch (RuntimeException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
-    }
-
-    private Team createTeam(String requestBody) {
-        NewTeamPayload newTeamPayload = getGson().fromJson(requestBody, NewTeamPayload.class);
-
-        Team createdTeam;
-        try {
-            createdTeam = teamManager.create(newTeamPayload.getFirstPlayerId(), newTeamPayload.getSecondPlayerId());
-        } catch(EntityNotFoundException ex) {
-            throw new RuntimeException(ERROR_PLAYER_ID_NOT_FOUND);
-        } catch(ExistingTeamException | ConstraintViolationException ex) {
-            throw new RuntimeException(ERROR_EXISTING_TEAM);
-        } catch(DuplicateTeamMemberException ex) {
-            throw new RuntimeException(ERROR_IDENTICAL_PLAYER_ID);
-        }
-
-        return createdTeam;
     }
 
     private String handleGetTeamById(Request request, Response response) {
@@ -120,9 +127,14 @@ public class TeamRouter extends RestRouter {
 
             responseBody.add(JSON_PROPERTY_TEAM, getGson().toJsonTree(team));
             response.status(HttpStatus.OK_200);
+        } catch (JsonSyntaxException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
+            response.status(HttpStatus.BAD_REQUEST_400);
+
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_TEAM);
             response.status(HttpStatus.NOT_FOUND_404);
+
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.BAD_REQUEST_400);
