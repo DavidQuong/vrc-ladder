@@ -1,15 +1,15 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
+
+private Gson gson;
+
+public RestRouter() {
+        gson = buildGson();
+        }
+
 import com.google.gson.Gson;
 
 public abstract class RestRouter {
-
-    private Gson gson;
-
-    public RestRouter() {
-        gson = buildGson();
-    }
-
     protected Gson getGson() {
         return gson;
     }

@@ -201,6 +201,7 @@ public class TeamManagerTest extends BaseTest {
         teamManager.updateAttendancePlaytime(newTeam.getId(), PlayTime.TIME_SLOT_B);
     }
 
+
     @Test(expected = EntityNotFoundException.class)
     public void testUpdateNonExistentTeamAttendance() {
         final GeneratedId nonExistentTeamId = new GeneratedId();
