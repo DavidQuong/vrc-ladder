@@ -25,7 +25,6 @@ import spark.Spark;
 
 import java.util.List;
 
-// TODO - Implement updating a team's players
 public class TeamRouter extends RestRouter {
 
     public static final String ROUTE_TEAMS = "/teams";
@@ -55,7 +54,6 @@ public class TeamRouter extends RestRouter {
         Spark.get(ROUTE_TEAMS, (request, response) -> handleGetAllTeams(request, response));
         Spark.post(ROUTE_TEAMS, (request, response) -> handleCreateTeam(request, response));
         Spark.get(ROUTE_TEAM_ID, (request, response) -> handleGetTeamById(request, response));
-        Spark.get(ROUTE_TEAM_ID, (request, response) -> handleUpdateTeamById(request, response));
         Spark.delete(ROUTE_TEAM_ID, (request, response) -> handleDeleteTeamById(request, response));
         Spark.get(ROUTE_TEAM_ID_ATTENDANCE, (request, response) -> handleGetTeamAttendance(request, response));
         Spark.put(ROUTE_TEAM_ID_ATTENDANCE_PLAYTIME, (request, response) -> handleUpdatePlayTime(request, response));
@@ -152,11 +150,6 @@ public class TeamRouter extends RestRouter {
 
         response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
-    }
-
-    // TODO - Enable updating the players on a Team.
-    private String handleUpdateTeamById(Request request, Response response) {
-        return null;
     }
 
     private String handleDeleteTeamById(Request request, Response response) {
