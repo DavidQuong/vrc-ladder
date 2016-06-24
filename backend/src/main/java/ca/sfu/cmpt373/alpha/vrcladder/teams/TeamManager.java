@@ -12,11 +12,11 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.CriterionConstants;
-import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
@@ -31,6 +31,7 @@ public class TeamManager extends DatabaseManager<Team> {
 
     private static final Class TEAM_CLASS_TYPE = Team.class;
     private static final Integer FIRST_POSITION = 1;
+    private static final Order ASCENDING_POSITION_ORDER = Order.asc(CriterionConstants.TEAM_LADDER_POSITION_PROPERTY);
 
     public TeamManager(SessionManager sessionManager) {
         super(TEAM_CLASS_TYPE, sessionManager);
@@ -71,6 +72,10 @@ public class TeamManager extends DatabaseManager<Team> {
             throw new ExistingTeamException();
         }
 
+        if (firstPlayer.getUserId().equals(secondPlayer.getUserId())) {
+            throw new DuplicateTeamMemberException();
+        }
+
         LadderPosition newLadderPosition = generateNewLadderPosition();
         Team newTeam = new Team(firstPlayer, secondPlayer, newLadderPosition);
 
@@ -81,6 +86,20 @@ public class TeamManager extends DatabaseManager<Team> {
         }
 
         return newTeam;
+    }
+
+    /**
+     * @return A List of Team's stored in the database in ascending LadderPosition order.
+     */
+    @Override
+    public List<Team> getAll() {
+        Session session = sessionManager.getSession();
+        List<Team> teams = session.createCriteria(Team.class)
+                .addOrder(ASCENDING_POSITION_ORDER)
+                .list();
+        session.close();
+
+        return teams;
     }
 
     public Team updateAttendancePlaytime(IdType teamId, PlayTime playTime) {
