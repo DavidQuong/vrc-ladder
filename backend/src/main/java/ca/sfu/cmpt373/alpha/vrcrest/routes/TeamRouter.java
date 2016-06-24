@@ -98,23 +98,18 @@ public class TeamRouter extends RestRouter {
         } catch (JsonSyntaxException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
             response.status(HttpStatus.BAD_REQUEST_400);
-
         } catch (JsonParseException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
-            response.status(HttpStatus.UNPROCESSABLE_ENTITY_422);
-
+            response.status(HttpStatus.BAD_REQUEST_400);
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_PLAYER_ID_NOT_FOUND);
             response.status(HttpStatus.NOT_FOUND_404);
-
         } catch(ExistingTeamException | ConstraintViolationException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_TEAM);
             response.status(HttpStatus.CONFLICT_409);
-
         } catch(DuplicateTeamMemberException ex)  {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_IDENTICAL_PLAYER_ID);
             response.status(HttpStatus.BAD_REQUEST_400);
-
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.BAD_REQUEST_400);
@@ -138,11 +133,9 @@ public class TeamRouter extends RestRouter {
         } catch (JsonSyntaxException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
             response.status(HttpStatus.BAD_REQUEST_400);
-
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_TEAM);
             response.status(HttpStatus.NOT_FOUND_404);
-
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.BAD_REQUEST_400);
@@ -166,7 +159,6 @@ public class TeamRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_TEAM);
             response.status(HttpStatus.NOT_FOUND_404);
-
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.BAD_REQUEST_400);
@@ -191,7 +183,6 @@ public class TeamRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_TEAM);
             response.status(HttpStatus.NOT_FOUND_404);
-
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.BAD_REQUEST_400);
@@ -217,15 +208,12 @@ public class TeamRouter extends RestRouter {
         } catch (JsonSyntaxException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
             response.status(HttpStatus.BAD_REQUEST_400);
-
         } catch (JsonParseException | IllegalArgumentException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
-            response.status(HttpStatus.UNPROCESSABLE_ENTITY_422);
-
+            response.status(HttpStatus.BAD_REQUEST_400);
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_TEAM);
             response.status(HttpStatus.NOT_FOUND_404);
-
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.BAD_REQUEST_400);
