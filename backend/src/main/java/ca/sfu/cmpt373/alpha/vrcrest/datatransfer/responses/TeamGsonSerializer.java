@@ -1,4 +1,4 @@
-package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests;
+package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses;
 
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
@@ -10,7 +10,7 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
-public class TeamSerializer implements JsonSerializer<Team> {
+public class TeamGsonSerializer implements JsonSerializer<Team> {
 
     public static final String JSON_PROPERTY_TEAM_ID = "teamId";
     public static final String JSON_PROPERTY_LADDER_POSITION = "ladderPosition";
@@ -29,7 +29,7 @@ public class TeamSerializer implements JsonSerializer<Team> {
         jsonTeam.addProperty(JSON_PROPERTY_LADDER_POSITION, team.getLadderPosition().getValue());
 
         PlayTime playTime = team.getAttendanceCard().getPreferredPlayTime();
-        jsonTeam.addProperty(JSON_PROPERTY_PLAY_TIME, playTime.getDisplayTime());
+        jsonTeam.addProperty(JSON_PROPERTY_PLAY_TIME, playTime.toString());
 
         User firstPlayer = team.getFirstPlayer();
         JsonObject jsonFirstPlayer = new JsonObject();
