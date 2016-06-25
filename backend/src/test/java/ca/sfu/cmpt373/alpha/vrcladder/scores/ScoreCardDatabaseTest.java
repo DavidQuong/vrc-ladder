@@ -88,7 +88,7 @@ public class ScoreCardDatabaseTest extends BaseTest {
         session.close();
 
         MatchGroupManager matchGroupManager = new MatchGroupManager(sessionManager);
-        ScoreCard newScoreCard = matchGroupManager.createMatchGroup(teams).getScoreCard();
+        ScoreCard newScoreCard = matchGroupManager.create(teams).getScoreCard();
         session = sessionManager.getSession();
         ScoreCard retrievedScoreCard = session.get(ScoreCard.class, newScoreCard.getId());
         session.close();

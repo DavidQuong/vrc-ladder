@@ -3,11 +3,14 @@ package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.DatabaseManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import java.util.ArrayList;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 public class MatchGroupManager extends DatabaseManager<MatchGroup> {
@@ -19,19 +22,19 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
         super(MATCH_CLASS_TYPE, sessionManager);
     }
 
-    public MatchGroup createMatchGroup(List<Team> teams) {
+    public MatchGroup create(List<Team> teams) {
         MatchGroup matchGroup = new MatchGroup(teams);
 
         return create(matchGroup);
     }
 
-    public MatchGroup createMatchGroup(Team team1, Team team2, Team team3) {
+    public MatchGroup create(Team team1, Team team2, Team team3) {
         MatchGroup matchGroup = new MatchGroup(team1, team2, team3);
 
         return create(matchGroup);
     }
 
-    public MatchGroup createMatchGroup(Team team1, Team team2, Team team3, Team team4) {
+    public MatchGroup create(Team team1, Team team2, Team team3, Team team4) {
         MatchGroup matchGroup = new MatchGroup(team1, team2, team3, team4);
 
         return create(matchGroup);
@@ -98,4 +101,22 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
 
 		return results;
 	}
+    @Override
+    public List<MatchGroup> getAll() {
+        //Criteria.DISTINCT_ROOT_ENTITY is needed so duplicates of results aren't returned
+        //FETCHTYPE.EAGER results in duplicate MatchGroups being returned, because of the way the data
+        //is represented in sql tables. For instance, a table representing one MatchGroup may have several
+        //rows for each MatchGroup since it has to store different tuples representing the relationship between
+        //a MatchGroup and its teams. Ex: (matchGroup1Id, team1Id), (matchGroup1Id, team2Id), (matchGroup1Id, team3Id)
+        //are all distinct tuples/rows in the sql table, so by default, listing all the items will return three instances
+        //of MatchGroup1. We have to tell Hibernate to just give us one instance of matchGroup1, using DISTINCT_ROOT_ENTITY
+        Session session = sessionManager.getSession();
+        List<MatchGroup> entityList = session
+                .createCriteria(MatchGroup.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .list();
+        session.close();
+
+        return entityList;
+    }
 }

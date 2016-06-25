@@ -72,7 +72,7 @@ public class MatchGroupManagerTest extends BaseTest {
         transaction.commit();
         session.close();
 
-        MatchGroup newMatchGroup = matchGroupManager.createMatchGroup(teams);
+        MatchGroup newMatchGroup = matchGroupManager.create(teams);
         Assert.assertEquals(team1, newMatchGroup.getTeam1());
         Assert.assertEquals(team2, newMatchGroup.getTeam2());
         Assert.assertEquals(team3, newMatchGroup.getTeam3());

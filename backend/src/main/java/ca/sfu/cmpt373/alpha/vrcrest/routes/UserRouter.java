@@ -25,7 +25,7 @@ import java.util.List;
 public class UserRouter extends RestRouter {
 
     public static final String ROUTE_USERS = "/users";
-    public static final String ROUTE_USER_ID = "/user/" + ROUTE_ID;
+    public static final String ROUTE_USER_ID = "/user/" + PARAM_ID;
 
     public static final String JSON_PROPERTY_USERS = "users";
     public static final String JSON_PROPERTY_USER = "user";
@@ -122,7 +122,7 @@ public class UserRouter extends RestRouter {
     private String handleGetUserById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
-        String requestedId = request.params(ROUTE_ID);
+        String requestedId = request.params(PARAM_ID);
         UserId userId = new UserId(requestedId);
 
         try {
@@ -182,7 +182,7 @@ public class UserRouter extends RestRouter {
     private String handleDeleteUserById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
-        String requestedId = request.params(ROUTE_ID);
+        String requestedId = request.params(PARAM_ID);
         UserId userId = new UserId(requestedId);
 
         try {

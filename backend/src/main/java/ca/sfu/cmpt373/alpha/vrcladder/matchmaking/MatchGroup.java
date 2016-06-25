@@ -9,6 +9,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
@@ -39,7 +40,7 @@ public class MatchGroup {
     @EmbeddedId
     private GeneratedId id;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderColumn
 	private List<Team> teams;
 

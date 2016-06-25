@@ -29,8 +29,8 @@ import java.util.List;
 public class TeamRouter extends RestRouter {
 
     public static final String ROUTE_TEAMS = "/teams";
-    public static final String ROUTE_TEAM_ID = "/team/" + ROUTE_ID;
-    public static final String ROUTE_TEAM_ID_ATTENDANCE = "/team/" + ROUTE_ID + "/attendance";
+    public static final String ROUTE_TEAM_ID = "/team/" + PARAM_ID;
+    public static final String ROUTE_TEAM_ID_ATTENDANCE = "/team/" + PARAM_ID + "/attendance";
     public static final String ROUTE_TEAM_ID_ATTENDANCE_PLAYTIME = ROUTE_TEAM_ID_ATTENDANCE + "/playtime";
     public static final String ROUTE_TEAM_ID_ATTENDANCE_STATUS = ROUTE_TEAM_ID_ATTENDANCE + "/status";
 
@@ -122,7 +122,7 @@ public class TeamRouter extends RestRouter {
     private String handleGetTeamById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
-        String paramId = request.params(ROUTE_ID);
+        String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
 
         try {
@@ -148,7 +148,7 @@ public class TeamRouter extends RestRouter {
     private String handleDeleteTeamById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
-        String paramId = request.params(ROUTE_ID);
+        String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
 
         try {
@@ -171,7 +171,7 @@ public class TeamRouter extends RestRouter {
     private String handleGetTeamAttendance(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
-        String paramId = request.params(ROUTE_ID);
+        String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
 
         try {
@@ -195,7 +195,7 @@ public class TeamRouter extends RestRouter {
     private String handleUpdatePlayTime(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
-        String paramId = request.params(ROUTE_ID);
+        String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
 
         try {
