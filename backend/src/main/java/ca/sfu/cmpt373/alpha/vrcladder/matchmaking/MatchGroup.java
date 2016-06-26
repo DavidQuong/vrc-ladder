@@ -32,7 +32,7 @@ public class MatchGroup {
     public static final int MIN_NUM_TEAMS = 3;
     public static final int MAX_NUM_TEAMS = 4;
 
-    private static final String ERROR_NUM_TEAMS = "Teams list contains more or less than the min or max " +
+    private static final String ERROR_MESSAGE_NUM_TEAMS = "Teams list contains more or less than the min or max " +
         "number of permissible teams";
     private static final String ERROR_DUPLICATE_TEAMS = "MatchGroup cannot contain duplicate teams";
 
@@ -66,7 +66,7 @@ public class MatchGroup {
      */
     public MatchGroup(List<Team> teams) {
         if (teams.size() < MIN_NUM_TEAMS || teams.size() > MAX_NUM_TEAMS) {
-            throw new IllegalStateException(ERROR_NUM_TEAMS);
+            throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
         }
         this.teams = new ArrayList<>(teams);
         init();
