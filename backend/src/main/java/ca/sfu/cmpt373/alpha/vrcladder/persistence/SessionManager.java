@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.persistence;
 
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
@@ -55,7 +56,8 @@ public class SessionManager {
             .addAnnotatedClass(MatchGroup.class)
             .addAnnotatedClass(ScoreCard.class)
             .addAnnotatedClass(Team.class)
-            .addAnnotatedClass(User.class);
+            .addAnnotatedClass(User.class)
+            .addAnnotatedClass(Court.class);
 
         return metadataSources;
     }

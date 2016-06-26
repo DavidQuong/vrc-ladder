@@ -26,5 +26,6 @@ public class PersistenceConstants {
 
     public static final String TABLE_MATCH_GROUP = "MATCH_GROUP";
 
+    public static final String TABLE_COURT = "COURT";
 
 }

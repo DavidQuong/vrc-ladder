@@ -25,7 +25,9 @@ import java.util.List;
 
 /**
  * A class for deploying Spark on Servers/Servlet containers such as TomCat or GlassFish
- * This is used primarily for Amazon Web Services Deployment
+ * This is used primarily for Amazon Web Services Deployment.
+ * This class also contains all the initialization logic for the REST API. As such,
+ * it is called in RestDriver to initialize the API even when using Spark's embedded Jetty server
  */
 public class RestApplication implements SparkApplication {
 
