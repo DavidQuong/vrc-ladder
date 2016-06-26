@@ -41,7 +41,7 @@ public class MatchGroup {
 
     @OneToMany(cascade = CascadeType.ALL)
     @OrderColumn
-    private List<Team> teams;
+	private List<Team> teams;
 
     @OneToOne (cascade = CascadeType.ALL)
     private ScoreCard scoreCard;
@@ -52,12 +52,12 @@ public class MatchGroup {
     }
 
     public MatchGroup(Team team1, Team team2, Team team3) {
-        this.teams = Arrays.asList(team1, team2, team3);
+        this.teams = new ArrayList<>(Arrays.asList(team1, team2, team3));
         init();
     }
 
     public MatchGroup(Team team1, Team team2, Team team3, Team team4) {
-        this.teams = Arrays.asList(team1, team2, team3, team4);
+        this.teams = new ArrayList<>(Arrays.asList(team1, team2, team3, team4));
         init();
     }
 
@@ -103,6 +103,10 @@ public class MatchGroup {
     public ScoreCard getScoreCard() {
         return this.scoreCard;
     }
+
+	private boolean isValidIndex(int index) {
+		return 0 <= index && index < this.teams.size();
+	}
 
     /**
      * @return the @{@link PlayTime} that the majority of the group teams want to play at.
@@ -186,4 +190,34 @@ public class MatchGroup {
         return id.hashCode();
     }
 
+	void addTeam(Team newTeam) {
+		if(this.teams.size() == this.MIN_NUM_TEAMS) {
+			this.teams.add(newTeam);
+		} else {
+			throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
+		}
+	}
+
+	void removeTeam(Team leavingTeam) {
+		if(this.teams.size() == this.MAX_NUM_TEAMS) {
+			this.teams.remove(leavingTeam);
+		} else {
+			throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
+		}
+	}
+
+	void tradeTeams(Team teamToRemove, MatchGroup otherMatchGroup, Team teamToAdd) { //Swap two teams between their respective MatchGroups
+		if(this.teams.contains(teamToRemove) && otherMatchGroup.teams.contains(teamToAdd)) {
+			ArrayList<Team> possessions = new ArrayList<>(this.teams); //A new list is created to ensure that this.teams ALWAYS contains a valid number of teams
+			ArrayList<Team> storeStock = new ArrayList<>(otherMatchGroup.teams);
+			possessions.remove(teamToRemove);
+			storeStock.remove(teamToAdd);
+			possessions.add(teamToAdd);
+			storeStock.add(teamToRemove);
+			this.teams = possessions;
+			otherMatchGroup.teams = storeStock;
+		} else {
+			throw new TeamNotFoundException();
+		}
+	}
 }
