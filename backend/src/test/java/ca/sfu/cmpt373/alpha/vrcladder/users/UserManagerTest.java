@@ -40,7 +40,7 @@ public class UserManagerTest extends BaseTest {
         User newUser = MockUserGenerator.generatePlayer();
 
         userManager.create(newUser.getUserId(), newUser.getUserRole(), newUser.getFirstName(), newUser.getMiddleName(),
-            newUser.getLastName(), newUser.getEmailAddress(), newUser.getPhoneNumber());
+            newUser.getLastName(), newUser.getEmailAddress(), newUser.getPhoneNumber(), newUser.getPassword());
 
         Session session = sessionManager.getSession();
         User user = session.get(User.class, newUser.getUserId());
@@ -54,6 +54,7 @@ public class UserManagerTest extends BaseTest {
         Assert.assertEquals(newUser.getLastName(), user.getLastName());
         Assert.assertEquals(newUser.getEmailAddress(), user.getEmailAddress());
         Assert.assertEquals(newUser.getPhoneNumber(), user.getPhoneNumber());
+        Assert.assertEquals(newUser.getPassword(), user.getPassword());
     }
 
     @Test

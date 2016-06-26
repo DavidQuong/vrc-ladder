@@ -3,6 +3,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.users;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.DatabaseManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
@@ -37,12 +38,12 @@ public class UserManager extends DatabaseManager<User> {
     }
 
     public User create(UserId userId, UserRole userRole, String firstName, String lastName, EmailAddress emailAddress,
-        PhoneNumber phoneNumber) {
-        return create(userId, userRole, firstName, StringUtils.EMPTY, lastName, emailAddress, phoneNumber);
+        PhoneNumber phoneNumber, Password password) {
+        return create(userId, userRole, firstName, StringUtils.EMPTY, lastName, emailAddress, phoneNumber, password);
     }
 
     public User create(UserId userId, UserRole userRole, String firstName, String middleName, String lastName,
-        EmailAddress emailAddress, PhoneNumber phoneNumber) {
+        EmailAddress emailAddress, PhoneNumber phoneNumber, Password password) {
         User createdUser = new UserBuilder()
             .setUserId(userId)
             .setUserRole(userRole)
@@ -51,6 +52,7 @@ public class UserManager extends DatabaseManager<User> {
             .setLastName(lastName)
             .setEmailAddress(emailAddress)
             .setPhoneNumber(phoneNumber)
+            .setPassword(password)
             .buildUser();
         create(createdUser);
 

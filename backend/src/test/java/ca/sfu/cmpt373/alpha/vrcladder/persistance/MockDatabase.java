@@ -6,6 +6,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserBuilder;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class MockDatabase {
                     .setLastName("LastName")
                     .setPhoneNumber("778-235-4841")
                     .setUserRole(UserRole.PLAYER)
+                    .setPassword(new Password("testHash", "testSalt"))
                     .buildUser());
         }
         return users;
