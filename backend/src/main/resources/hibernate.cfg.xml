@@ -1,9 +1,44 @@
-<?xml version='1.0' encoding='utf-8'?>
-
+<?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE hibernate-configuration PUBLIC
         "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
-        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd" >
 
+<hibernate-configuration>
+    <session-factory>
+        <!--  Database connection settings
+        -->
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.username">espuresy_clubconnect</property>
+        <property name="hibernate.connection.password">VfT4J?g=r6_J</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://173.254.28.124:5432/espuresy_vrc</property>
+        <!--  JDBC connection pool (use the built-in)
+        -->
+        <property name="connection.pool_size">1</property>
+
+        <!--  Disable the second-level cache
+        -->
+        <property name="cache.provider_class">org.hibernate.cache.internal.CollectionCacheInvalidator
+        </property>
+        <!--  Echo all executed SQL to stdout
+        -->
+        <property name="show_sql">true</property>
+        <!--  Drop and re-create the database schema on startup
+        -->
+        <property name="hbm2ddl.auto">create</property>
+
+        <!--  SQL dialect
+        -->
+        <property name="dialect">org.hibernate.dialect.H2Dialect</property>
+
+        <!--  Names the annotated entity class
+        -->
+        <mapping class="firsthibernateproj.UserDetails" />
+
+    </session-factory>
+</hibernate-configuration>
+
+<!--
 <hibernate-configuration>
 
     <session-factory>
@@ -22,3 +57,5 @@
     </session-factory>
 
 </hibernate-configuration>
+
+-->
