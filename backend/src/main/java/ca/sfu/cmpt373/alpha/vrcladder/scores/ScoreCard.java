@@ -9,6 +9,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -31,7 +32,7 @@ public class ScoreCard {
     @OneToOne
     private MatchGroup matchGroup;
 
-    @OneToMany
+    @OneToMany (fetch = FetchType.EAGER)
     @OrderColumn
     private List<Team> rankedTeams = new ArrayList<>();
 

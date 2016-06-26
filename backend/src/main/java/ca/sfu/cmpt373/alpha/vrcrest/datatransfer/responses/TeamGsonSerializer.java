@@ -3,6 +3,7 @@ package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonProperties;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -12,7 +13,6 @@ import java.lang.reflect.Type;
 
 public class TeamGsonSerializer implements JsonSerializer<Team> {
 
-    public static final String JSON_PROPERTY_TEAM_ID = "teamId";
     public static final String JSON_PROPERTY_LADDER_POSITION = "ladderPosition";
     public static final String JSON_PROPERTY_PLAY_TIME = "playTime";
     public static final String JSON_PROPERTY_USER_ID = "userId";
@@ -24,7 +24,7 @@ public class TeamGsonSerializer implements JsonSerializer<Team> {
     public JsonElement serialize(Team team, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonTeam = new JsonObject();
 
-        jsonTeam.addProperty(JSON_PROPERTY_TEAM_ID, team.getId().getValue());
+        jsonTeam.addProperty(JsonProperties.JSON_PROPERTY_TEAM_ID, team.getId().getValue());
 
         jsonTeam.addProperty(JSON_PROPERTY_LADDER_POSITION, team.getLadderPosition().getValue());
 

@@ -2,6 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonProperties;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -12,7 +13,6 @@ import java.lang.reflect.Type;
 public class MatchGroupSerializer implements JsonSerializer<MatchGroup> {
 
     private static final String JSON_PROPERTY_MATCHGROUP_ID = "matchGroupId";
-    private static final String JSON_PROPERTY_TEAM_ID = "teamId";
 
     @Override
     public JsonElement serialize(MatchGroup src, Type typeOfSrc, JsonSerializationContext context) {
@@ -22,7 +22,7 @@ public class MatchGroupSerializer implements JsonSerializer<MatchGroup> {
 
         for (int i = 0; i < src.getTeams().size(); i++) {
             Team team = src.getTeams().get(i);
-            jsonMatchGroup.addProperty(JSON_PROPERTY_TEAM_ID + (i + 1), team.getId().getValue());
+            jsonMatchGroup.addProperty(JsonProperties.JSON_PROPERTY_TEAM_ID + (i + 1), team.getId().getValue());
         }
 
         return jsonMatchGroup;
