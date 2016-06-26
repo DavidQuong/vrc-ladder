@@ -16,10 +16,16 @@ import java.util.List;
 public class MatchGroupManager extends DatabaseManager<MatchGroup> {
 
     private static final Class MATCH_CLASS_TYPE = MatchGroup.class;
+
     private static final String ERROR_NO_MATCH_GROUP = "There was no match group found for the given id";
 
     public MatchGroupManager(SessionManager sessionManager) {
         super(MATCH_CLASS_TYPE, sessionManager);
+    }
+
+    @Override
+    public MatchGroup create(MatchGroup matchGroup) {
+        return super.create(matchGroup);
     }
 
     public MatchGroup create(List<Team> teams) {
@@ -118,5 +124,10 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
         session.close();
 
         return entityList;
+    }
+
+    @Override
+    public List<MatchGroup> deleteAll() {
+        return super.deleteAll();
     }
 }

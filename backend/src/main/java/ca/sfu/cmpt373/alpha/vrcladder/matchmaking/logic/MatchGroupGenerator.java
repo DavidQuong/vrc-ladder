@@ -12,7 +12,7 @@ import java.util.List;
  * A class for generating the groups of teams that will play matches against each other each week
  */
 public class MatchGroupGenerator {
-    private static final String ERROR_MESSAGE = "There are not enough teams to sort into groups of 3 or 4";
+    private static final String ERROR_MESSAGE = "There are not enough attending teams to sort into groups of 3 or 4";
 
     /**
      * preconditions: teams are assumed to be in sorted ranked order
@@ -66,6 +66,9 @@ public class MatchGroupGenerator {
             if (team.getAttendanceCard().isAttending()) {
                 attendingTeams.add(team);
             }
+        }
+        if (attendingTeams.size() == 0) {
+            throw new MatchMakingException(ERROR_MESSAGE);
         }
         return attendingTeams;
     }

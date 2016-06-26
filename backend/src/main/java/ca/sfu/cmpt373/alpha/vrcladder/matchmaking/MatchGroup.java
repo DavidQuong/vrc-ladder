@@ -40,7 +40,7 @@ public class MatchGroup {
     @EmbeddedId
     private GeneratedId id;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER)
     @OrderColumn
 	private List<Team> teams;
 

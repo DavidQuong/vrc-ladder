@@ -6,6 +6,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserBuilder;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
@@ -37,14 +38,20 @@ public class RestApplication implements SparkApplication {
         UserManager userManager = new UserManager(sessionManager);
         TeamManager teamManager = new TeamManager(sessionManager);
         MatchGroupManager matchGroupManager = new MatchGroupManager(sessionManager);
-        ApplicationManager appManager = new ApplicationManager(sessionManager, passwordManager, userManager,
-            teamManager, matchGroupManager);
+        ApplicationManager appManager = new ApplicationManager(
+                sessionManager,
+                passwordManager,
+                userManager,
+                teamManager,
+                matchGroupManager);
 
         createDummyData(userManager, teamManager, matchGroupManager);
 
         UserRouter userRouter = new UserRouter(appManager.getPasswordManager(), appManager.getUserManager());
         TeamRouter teamRouter = new TeamRouter(appManager.getTeamManager());
-        MatchGroupRouter matchGroupRouter = new MatchGroupRouter(appManager.getMatchGroupManager());
+        MatchGroupRouter matchGroupRouter = new MatchGroupRouter(
+                appManager.getMatchGroupManager(),
+                appManager.getTeamManager());
         List<RestRouter> routers = Arrays.asList(userRouter, teamRouter, matchGroupRouter);
         restApi = new RestApi(appManager, routers);
     }
@@ -108,6 +115,9 @@ public class RestApplication implements SparkApplication {
         Team team1 = teamManager.create(user1, user2);
         Team team2 = teamManager.create(user3, user4);
         Team team3 = teamManager.create(user5, user6);
+        teamManager.updateAttendancePlaytime(team1.getId(), PlayTime.TIME_SLOT_A);
+        teamManager.updateAttendancePlaytime(team2.getId(), PlayTime.TIME_SLOT_A);
+        teamManager.updateAttendancePlaytime(team3.getId(), PlayTime.TIME_SLOT_A);
         List<MatchGroup> matchGroups = matchGroupManager.getAll();
         MatchGroup matchGroup1 = matchGroupManager.create(Arrays.asList(team1, team2, team3));
         matchGroups = matchGroupManager.getAll();
