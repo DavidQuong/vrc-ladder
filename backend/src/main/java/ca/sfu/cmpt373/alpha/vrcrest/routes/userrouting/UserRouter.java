@@ -1,9 +1,11 @@
-package ca.sfu.cmpt373.alpha.vrcrest.routes;
+package ca.sfu.cmpt373.alpha.vrcrest.routes.userrouting;
 
 import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.util.Log;
+import ca.sfu.cmpt373.alpha.vrcrest.routes.RestRouter;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -43,6 +45,7 @@ public class UserRouter extends RestRouter {
     protected Gson buildGson() {
         GsonBuilder gson = new GsonBuilder();
         gson.registerTypeAdapter(User.class, new UserGsonSerializer());
+        //gson.registerTypeAdapter(User.class, new UserGsonDeserializer());
         return gson.create();
 
     }
@@ -61,19 +64,16 @@ public class UserRouter extends RestRouter {
         }
     }
 
-
     private String handleCreateUser(Request request, Response response) {
-        Gson userGson = new Gson();
-        String json = request.body();
+        Gson userGson = buildGson();
         try{
-            ObjectMapper objectMapper = new ObjectMapper();
-            User newUser = objectMapper.readValue(json, User.class);
+            String json = request.body();
+            User newUser = userGson.fromJson(json, User.class);
             application.getUserManager().create(newUser);
             Log.info("New User has been created!");
             Log.info(userGson.toJson(newUser));
-            Log.info(buildGson().toJson(newUser));
             return userGson.toJson(newUser);
-        }catch (IOException e){
+        }catch (Exception e){
             e.printStackTrace();
             response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
             return userGson.toJson("Unable to create user");

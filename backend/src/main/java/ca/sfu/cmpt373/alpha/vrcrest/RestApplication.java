@@ -7,7 +7,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.RestRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.TeamRouter;
-import ca.sfu.cmpt373.alpha.vrcrest.routes.UserRouter;
+import ca.sfu.cmpt373.alpha.vrcrest.routes.userrouting.UserRouter;
 import spark.servlet.SparkApplication;
 
 import java.util.Arrays;

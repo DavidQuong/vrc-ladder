@@ -1,4 +1,4 @@
-package ca.sfu.cmpt373.alpha.vrcrest.routes;
+package ca.sfu.cmpt373.alpha.vrcrest.routes.userrouting;
 
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import com.google.gson.*;
