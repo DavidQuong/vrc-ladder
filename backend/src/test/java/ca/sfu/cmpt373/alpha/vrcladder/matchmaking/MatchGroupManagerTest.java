@@ -20,23 +20,46 @@ import java.util.ArrayList;
 public class MatchGroupManagerTest extends BaseTest {
 
     private MatchGroupManager matchGroupManager;
-    private MatchGroup matchGroupFixture;
+    private MatchGroup threeTeamMatchGroupFixture;
+    private List<Team> threeTeamsFixture;
+    private MatchGroup fourTeamMatchGroupFixture;
+    private List<Team> fourTeamsFixture;
+
+    private static final int FOURTH_TEAM_INDEX = 3;
 
     @Before
     public void setUp() {
         matchGroupManager = new MatchGroupManager(sessionManager);
-        matchGroupFixture = MockMatchGroupGenerator.generateFourTeamMatchGroup();
+        fourTeamMatchGroupFixture = MockMatchGroupGenerator.generateFourTeamMatchGroup();
+        threeTeamMatchGroupFixture = MockMatchGroupGenerator.generateThreeTeamMatchGroup();
+        int threeTeamsCount = 3;
+        threeTeamsFixture = MockTeamGenerator.generateTeams(threeTeamsCount);
+        int fourTeamsCount = 4;
+        fourTeamsFixture = MockTeamGenerator.generateTeams(fourTeamsCount);
 
+        // Store Users, Teams, and MatchGroups in database.
         Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
-        for (Team team: matchGroupFixture.getTeams()) {
+
+        saveTeams(threeTeamMatchGroupFixture.getTeams(), session);
+        session.save(threeTeamMatchGroupFixture);
+
+        saveTeams(fourTeamMatchGroupFixture.getTeams(), session);
+        session.save(fourTeamMatchGroupFixture);
+
+        saveTeams(threeTeamsFixture, session);
+        saveTeams(fourTeamsFixture, session);
+
+        transaction.commit();
+        session.close();
+    }
+
+    private void saveTeams(List<Team> teams, Session session) {
+        for (Team team : teams) {
             session.save(team.getFirstPlayer());
             session.save(team.getSecondPlayer());
             session.save(team);
         }
-        session.save(matchGroupFixture);
-        transaction.commit();
-        session.close();
     }
 
     @After
@@ -47,11 +70,11 @@ public class MatchGroupManagerTest extends BaseTest {
 
     @Test
     public void testGetMatchGroup() {
-        MatchGroup existingMatchGroup = matchGroupManager.getById(matchGroupFixture.getId());
+        MatchGroup existingMatchGroup = matchGroupManager.getById(fourTeamMatchGroupFixture.getId());
 
-        Assert.assertEquals(matchGroupFixture.getTeam1(), existingMatchGroup.getTeam1());
-        Assert.assertEquals(matchGroupFixture.getTeam2(), existingMatchGroup.getTeam2());
-        Assert.assertEquals(matchGroupFixture.getTeam3(), existingMatchGroup.getTeam3());
+        Assert.assertEquals(fourTeamMatchGroupFixture.getTeam1(), existingMatchGroup.getTeam1());
+        Assert.assertEquals(fourTeamMatchGroupFixture.getTeam2(), existingMatchGroup.getTeam2());
+        Assert.assertEquals(fourTeamMatchGroupFixture.getTeam3(), existingMatchGroup.getTeam3());
     }
 
     @Test
@@ -61,7 +84,7 @@ public class MatchGroupManagerTest extends BaseTest {
         Team team3 = MockTeamGenerator.generateTeam();
         List<Team> teams = Arrays.asList(team1, team2, team3);
 
-        // Store users and teams in database.
+        // Store Users and Teams in database.
         Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
         for (Team team : teams) {
@@ -83,7 +106,7 @@ public class MatchGroupManagerTest extends BaseTest {
 
     @Test
     public void testDeleteMatchGroup() {
-        MatchGroup originalMatchGroup = matchGroupManager.deleteById(matchGroupFixture.getId());
+        MatchGroup originalMatchGroup = matchGroupManager.deleteById(fourTeamMatchGroupFixture.getId());
 
         Session session = sessionManager.getSession();
         MatchGroup retrievedMatchGroup = session.get(MatchGroup.class, originalMatchGroup.getId());
@@ -107,105 +130,59 @@ public class MatchGroupManagerTest extends BaseTest {
 
 	@Test
 	public void testAddTeamToMatchGroup() {
-		Team team1 = MockTeamGenerator.generateTeam();
-		Team team2 = MockTeamGenerator.generateTeam();
-		Team team3 = MockTeamGenerator.generateTeam();
-		Team team4 = MockTeamGenerator.generateTeam();
-		List<Team> teams1 = Arrays.asList(team1, team2, team3);
-		List<Team> teams2 = Arrays.asList(team1, team2, team3, team4);
+        List<Team> resultTeams = new ArrayList<>(threeTeamMatchGroupFixture.getTeams());
+        Team teamToAdd = fourTeamsFixture.get(FOURTH_TEAM_INDEX);
+        resultTeams.add(teamToAdd);
 
-		// Store users and teams in database.
-		Session session = sessionManager.getSession();
-		Transaction transaction = session.beginTransaction();
-		for (Team team : teams2) { //Uses teams2 because it contains all 4 teams, and so is able to add them all to the database
-			session.save(team.getFirstPlayer());
-			session.save(team.getSecondPlayer());
-			session.save(team);
-		}
-		transaction.commit();
+		matchGroupManager.addTeamToMatchGroup(threeTeamMatchGroupFixture.getId(), teamToAdd);
 
-		MatchGroup matchGroup1 = matchGroupManager.create(teams1);
-		MatchGroup matchGroup2 = new MatchGroup(teams2);
-		matchGroupManager.addTeamToMatchGroup(matchGroup1.getId(), team4);
-
-        MatchGroup retrievedMatchGroup1 = session.get(MatchGroup.class, matchGroup1.getId());
+        Session session = sessionManager.getSession();
+        MatchGroup retrievedMatchGroup = session.get(MatchGroup.class, threeTeamMatchGroupFixture.getId());
 		session.close();
 
-		Assert.assertEquals(retrievedMatchGroup1.getTeams(), matchGroup2.getTeams());
+		Assert.assertEquals(retrievedMatchGroup.getTeams(), resultTeams);
 	}
 
 	@Test
 	public void testRemoveTeamFromMatchGroup() {
-		Team team1 = MockTeamGenerator.generateTeam();
-		Team team2 = MockTeamGenerator.generateTeam();
-		Team team3 = MockTeamGenerator.generateTeam();
-		Team team4 = MockTeamGenerator.generateTeam();
-		List<Team> teams1 = Arrays.asList(team1, team2, team3, team4);
-		List<Team> teams2 = Arrays.asList(team1, team2, team3);
+        Team teamToRemove = fourTeamMatchGroupFixture.getTeams().get(FOURTH_TEAM_INDEX);
 
-		// Store users and teams in database.
-		Session session = sessionManager.getSession();
-		Transaction transaction = session.beginTransaction();
-		for (Team team : teams1) {
-			session.save(team.getFirstPlayer());
-			session.save(team.getSecondPlayer());
-			session.save(team);
-		}
-		transaction.commit();
+        List<Team> expectedResults = new ArrayList<>(fourTeamMatchGroupFixture.getTeams());
+        expectedResults.remove(teamToRemove);
 
-		MatchGroup matchGroup1 = matchGroupManager.create(teams1);
-		MatchGroup matchGroup2 = new MatchGroup(teams2);
-		matchGroupManager.removeTeamFromMatchGroup(matchGroup1.getId(), team4);
+		matchGroupManager.removeTeamFromMatchGroup(fourTeamMatchGroupFixture.getId(), teamToRemove);
 
-        MatchGroup retrievedMatchGroup1 = session.get(MatchGroup.class, matchGroup1.getId());
+        Session session = sessionManager.getSession();
+        MatchGroup retrievedMatchGroup = session.get(MatchGroup.class, fourTeamMatchGroupFixture.getId());
 		session.close();
 
-		Assert.assertEquals(retrievedMatchGroup1.getTeams(), matchGroup2.getTeams());
+		Assert.assertEquals(retrievedMatchGroup.getTeams(), expectedResults);
 	}
 
 	@Test
 	public void testTradeTeamsInMatchGroups() {
-		Team team1 = MockTeamGenerator.generateTeam();
-		Team team2 = MockTeamGenerator.generateTeam();
-		Team team3 = MockTeamGenerator.generateTeam();
-		Team team4 = MockTeamGenerator.generateTeam();
-		Team team5 = MockTeamGenerator.generateTeam();
-		Team team6 = MockTeamGenerator.generateTeam();
-		Team team7 = MockTeamGenerator.generateTeam();
-		List<Team> teams1 = Arrays.asList(team1, team2, team3, team4);
-		List<Team> teams2 = Arrays.asList(team5, team6, team7);
-		List<Team> teams3 = Arrays.asList(team1, team2, team3, team6);
-		List<Team> teams4 = Arrays.asList(team5, team7, team4);
+        List<Team> expectedThreeTeamMatchGroupTeams = Arrays.asList(
+                threeTeamMatchGroupFixture.getTeam1(),
+                threeTeamMatchGroupFixture.getTeam2(),
+                fourTeamMatchGroupFixture.getTeams().get(FOURTH_TEAM_INDEX));
+        List<Team> expectedFourTeamMatchGroupTeams = Arrays.asList(
+                fourTeamMatchGroupFixture.getTeam1(),
+                fourTeamMatchGroupFixture.getTeam2(),
+                fourTeamMatchGroupFixture.getTeam3(),
+                threeTeamMatchGroupFixture.getTeam3());
 
-		// Store users and teams in database.
-		Session session = sessionManager.getSession();
-		Transaction transaction = session.beginTransaction();
-		for (Team team : teams1) {
-			session.save(team.getFirstPlayer());
-			session.save(team.getSecondPlayer());
-			session.save(team);
-		}
+        matchGroupManager.tradeTeamsInMatchGroups(
+                threeTeamMatchGroupFixture.getId(),
+                threeTeamMatchGroupFixture.getTeam3(),
+                fourTeamMatchGroupFixture.getId(),
+                fourTeamMatchGroupFixture.getTeams().get(FOURTH_TEAM_INDEX));
 
-		for (Team team : teams2) {
-			session.save(team.getFirstPlayer());
-			session.save(team.getSecondPlayer());
-			session.save(team);
-		}
-		transaction.commit();
-
-		MatchGroup matchGroup1 = matchGroupManager.create(teams1);
-		MatchGroup matchGroup2 = matchGroupManager.create(teams2);
-
-		List<MatchGroup> expectedResults = new ArrayList<>();
-		expectedResults.add(new MatchGroup(teams3));
-		expectedResults.add(new MatchGroup(teams4));
-
-        matchGroupManager.tradeTeamsInMatchGroups(matchGroup1.getId(), team4, matchGroup2.getId(), team6);
-        MatchGroup retrievedMatchGroup1 = session.get(MatchGroup.class, matchGroup1.getId());
-        MatchGroup retrievedMatchGroup2 = session.get(MatchGroup.class, matchGroup2.getId());
+        Session session = sessionManager.getSession();
+        MatchGroup retrievedThreeTeamMatchGroup = session.get(MatchGroup.class, threeTeamMatchGroupFixture.getId());
+        MatchGroup retrievedFourTeamMatchGroup = session.get(MatchGroup.class, fourTeamMatchGroupFixture.getId());
 		session.close();
 
-        Assert.assertEquals(retrievedMatchGroup1.getTeams(), expectedResults.get(0).getTeams());
-		Assert.assertEquals(retrievedMatchGroup2.getTeams(), expectedResults.get(1).getTeams());
+        Assert.assertEquals(retrievedThreeTeamMatchGroup.getTeams(), expectedThreeTeamMatchGroupTeams);
+		Assert.assertEquals(retrievedFourTeamMatchGroup.getTeams(), expectedFourTeamMatchGroupTeams);
 	}
 }
