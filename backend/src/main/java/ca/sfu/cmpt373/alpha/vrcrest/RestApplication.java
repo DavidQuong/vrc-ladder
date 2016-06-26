@@ -1,6 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcrest;
 
 import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.CourtManager;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
@@ -40,12 +41,14 @@ public class RestApplication implements SparkApplication {
         UserManager userManager = new UserManager(sessionManager);
         TeamManager teamManager = new TeamManager(sessionManager);
         MatchGroupManager matchGroupManager = new MatchGroupManager(sessionManager);
+        CourtManager courtManager = new CourtManager(sessionManager);
         ApplicationManager appManager = new ApplicationManager(
                 sessionManager,
                 passwordManager,
                 userManager,
                 teamManager,
-                matchGroupManager);
+                matchGroupManager,
+                courtManager);
 
         createDummyData(userManager, teamManager, matchGroupManager);
 
@@ -53,7 +56,8 @@ public class RestApplication implements SparkApplication {
         TeamRouter teamRouter = new TeamRouter(appManager.getTeamManager());
         MatchGroupRouter matchGroupRouter = new MatchGroupRouter(
                 appManager.getMatchGroupManager(),
-                appManager.getTeamManager());
+                appManager.getTeamManager(),
+                appManager.getCourtManager());
         List<RestRouter> routers = Arrays.asList(userRouter, teamRouter, matchGroupRouter);
         restApi = new RestApi(appManager, routers);
     }

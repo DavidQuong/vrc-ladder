@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder;
 
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.CourtManager;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
@@ -14,14 +15,16 @@ public class ApplicationManager {
     private UserManager userManager;
     private TeamManager teamManager;
     private MatchGroupManager matchGroupManager;
+    private CourtManager courtManager;
 
     public ApplicationManager(SessionManager sessionManager, PasswordManager passwordManager, UserManager userManager,
-        TeamManager teamManager, MatchGroupManager matchGroupManager) {
+        TeamManager teamManager, MatchGroupManager matchGroupManager, CourtManager courtManager) {
         this.sessionManager = sessionManager;
         this.passwordManager = passwordManager;
         this.userManager = userManager;
         this.teamManager = teamManager;
         this.matchGroupManager = matchGroupManager;
+        this.courtManager = courtManager;
     }
 
     public void shutDown() {
@@ -42,6 +45,10 @@ public class ApplicationManager {
 
     public MatchGroupManager getMatchGroupManager() {
         return matchGroupManager;
+    }
+
+    public CourtManager getCourtManager() {
+        return courtManager;
     }
 
 }

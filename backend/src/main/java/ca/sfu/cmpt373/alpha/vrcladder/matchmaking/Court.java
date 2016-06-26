@@ -12,6 +12,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyColumn;
@@ -35,7 +36,7 @@ public class Court {
     @EmbeddedId
     private GeneratedId id;
 
-    @OneToMany
+    @OneToMany (fetch = FetchType.EAGER)
     private Map<PlayTime, MatchGroup> scheduledMatches = new HashMap<>();
 
     public Court() {

@@ -113,4 +113,35 @@ public class CourtManagerTest extends BaseTest {
         Court retrievedCourt = courtManager.getById(courtFixture.getId());
         Assert.assertEquals(retrievedCourt, courtFixture);
     }
+
+    @Test
+    public void testDeleteAllCourts() {
+        Court newCourt = new Court();
+
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+        session.save(newCourt);
+        transaction.commit();
+
+        transaction = session.beginTransaction();
+        Court retrievedNewCourt = session.get(Court.class, newCourt.getId());
+        Court retrievedCourtFixture = session.get(Court.class, courtFixture.getId());
+        transaction.commit();
+        Assert.assertEquals(retrievedNewCourt, newCourt);
+        Assert.assertEquals(retrievedCourtFixture, courtFixture);
+
+        courtManager.deleteAll();
+
+
+        Assert.assertEquals(0, courtManager.getAll().size());
+        //TODO: make this work without depending on courtManager.getAll()
+//        transaction = session.beginTransaction();
+//        retrievedNewCourt = session.get(Court.class, newCourt.getId());
+//        retrievedCourtFixture = session.get(Court.class, courtFixture.getId());
+//        transaction.commit();
+//        Assert.assertNull(retrievedNewCourt);
+//        Assert.assertNull(retrievedCourtFixture);
+
+        session.close();
+    }
 }

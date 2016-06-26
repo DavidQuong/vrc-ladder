@@ -1,4 +1,4 @@
-package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests;
+package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
