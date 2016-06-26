@@ -194,7 +194,7 @@ public class MatchGroup {
 		if(this.teams.size() == this.MIN_NUM_TEAMS) {
 			this.teams.add(newTeam);
 		} else {
-			throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
+			throw new IllegalStateException(ERROR_NUM_TEAMS);
 		}
 	}
 
@@ -202,7 +202,7 @@ public class MatchGroup {
 		if(this.teams.size() == this.MAX_NUM_TEAMS) {
 			this.teams.remove(leavingTeam);
 		} else {
-			throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
+			throw new IllegalStateException(ERROR_NUM_TEAMS);
 		}
 	}
 
