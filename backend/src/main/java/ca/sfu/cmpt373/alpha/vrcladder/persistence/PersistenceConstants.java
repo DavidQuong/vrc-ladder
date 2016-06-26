@@ -12,7 +12,6 @@ public class PersistenceConstants {
     public static final String COLUMN_EMAIL_ADDRESS = "EMAIL_ADDRESS";
     public static final String COLUMN_PHONE_NUMBER = "PHONE_NUMBER";
     public static final String COLUMN_PASSWORD_HASH = "PASSWORD_HASH";
-    public static final String COLUMN_PASSWORD_SALT = "PASSWORD_SALT";
 
     public static final String TABLE_TEAM = "TEAM";
     public static final String COLUMN_ATTENDANCE_CARD_ID = "ATTENDANCE_CARD_ID";

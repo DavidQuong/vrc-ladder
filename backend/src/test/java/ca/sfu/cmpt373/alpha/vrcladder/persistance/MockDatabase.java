@@ -31,7 +31,7 @@ public class MockDatabase {
                     .setLastName("LastName")
                     .setPhoneNumber("778-235-4841")
                     .setUserRole(UserRole.PLAYER)
-                    .setPassword(new Password("testHash", "testSalt"))
+                    .setPassword(new Password("testHash"))
                     .buildUser());
         }
         return users;

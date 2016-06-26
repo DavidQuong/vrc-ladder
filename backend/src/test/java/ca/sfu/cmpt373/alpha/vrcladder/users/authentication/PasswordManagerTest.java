@@ -6,6 +6,8 @@ import org.junit.Test;
 
 public class PasswordManagerTest {
 
+    private static final String TEST_PASSWORD = "vrcpass1234";
+
     private PasswordManager passwordManager;
 
     @Before
@@ -15,15 +17,19 @@ public class PasswordManagerTest {
 
     @Test
     public void testHashPassword() {
-        final String testPassword = "vrcpass1234";
-
-        Password password = passwordManager.hashPassword(testPassword);
+        Password password = passwordManager.hashPassword(TEST_PASSWORD);
 
         String hash = password.getHash();
+        Assert.assertNotEquals(TEST_PASSWORD, hash);
         Assert.assertEquals(PasswordManager.HASH_WIDTH, hash.length());
+    }
 
-        String salt = password.getSalt();
-        Assert.assertEquals(PasswordManager.SALT_WIDTH, salt.length());
+    @Test
+    public void testMatchPassword() {
+        Password password = passwordManager.hashPassword(TEST_PASSWORD);
+
+        boolean doesPasswordMatch = passwordManager.doesPasswordMatch(TEST_PASSWORD, password);
+        Assert.assertTrue(doesPasswordMatch);
     }
 
 }
