@@ -2,9 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MatchMakingException;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
-import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.WaitlistManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
-import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +14,6 @@ public class MatchGroupGenerator {
     private static final String ERROR_MESSAGE    = "There are not enough teams to sort into groups of 3 or 4";
     private static final int MIN_REMAINING_TEAMS = 1;
     private static final int MAX_REMAINING_TEAMS = 2;
-
-    private static WaitlistManager<Team> waitListManager = new WaitlistManager<>();
 
     /**
      * preconditions: teams are assumed to be in sorted ranked order
@@ -32,11 +28,10 @@ public class MatchGroupGenerator {
         int currentGroupSize = decideCurrentGroupSize(maxTeams);
         int remainingTeams;
         boolean addToWaitlist = false;
-        for(int counter = 0; counter < attendingTeams.size(); counter++) {
-
-            addToWaitlist = (counter >= maxTeams);
+        for(int counter = 0; counter < maxTeams; counter++) {
+            addToWaitlist = (counter >= attendingTeams.size());
             teamsToGroup.add(attendingTeams.get(counter));
-            if(teamsToGroup.size() == currentGroupSize && !addToWaitlist) {
+            if(teamsToGroup.size() == currentGroupSize) {
                 results.add(new MatchGroup( teamsToGroup));
                 remainingTeams = attendingTeams.size() - (counter + 1);
                 currentGroupSize = decideCurrentGroupSize(remainingTeams);
@@ -45,14 +40,7 @@ public class MatchGroupGenerator {
         }
 
         if(!teamsToGroup.isEmpty()){
-            if(addToWaitlist){
-                for(Team team : teamsToGroup){
-                    PlayTime time = team.getAttendanceCard().getPreferredPlayTime();
-                    waitListManager.addToWaitlist(team, time);
-                }
-            }else{
-                throw new MatchMakingException(ERROR_MESSAGE);
-            }
+            throw new MatchMakingException(ERROR_MESSAGE);
         }
         return results;
     }
