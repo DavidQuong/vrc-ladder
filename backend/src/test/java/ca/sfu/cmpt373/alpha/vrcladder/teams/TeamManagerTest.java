@@ -2,7 +2,6 @@ package ca.sfu.cmpt373.alpha.vrcladder.teams;
 
 import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.DuplicateTeamMemberException;
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MultiplePlayTimeException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
@@ -18,6 +17,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 // TODO: Add more tests, testing the following:
