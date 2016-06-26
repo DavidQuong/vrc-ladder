@@ -70,12 +70,15 @@ public class MatchGroupManagerTest extends BaseTest {
             session.save(team);
         }
         transaction.commit();
-        session.close();
 
         MatchGroup newMatchGroup = matchGroupManager.create(teams);
-        Assert.assertEquals(team1, newMatchGroup.getTeam1());
-        Assert.assertEquals(team2, newMatchGroup.getTeam2());
-        Assert.assertEquals(team3, newMatchGroup.getTeam3());
+
+		MatchGroup retrievedNewMatchGroup = session.get(MatchGroup.class, newMatchGroup.getId());
+        session.close();
+
+        Assert.assertEquals(team1, retrievedNewMatchGroup.getTeam1());
+        Assert.assertEquals(team2, retrievedNewMatchGroup.getTeam2());
+        Assert.assertEquals(team3, retrievedNewMatchGroup.getTeam3());
     }
 
     @Test
@@ -85,6 +88,9 @@ public class MatchGroupManagerTest extends BaseTest {
         Session session = sessionManager.getSession();
         MatchGroup retrievedMatchGroup = session.get(MatchGroup.class, originalMatchGroup.getId());
         ScoreCard retrievedScoreCard = session.get(ScoreCard.class, originalMatchGroup.getScoreCard().getId());
+        Team retrievedTeam1 = session.get(Team.class, originalMatchGroup.getTeam1().getId());
+        Team retrievedTeam2 = session.get(Team.class, originalMatchGroup.getTeam2().getId());
+        Team retrievedTeam3 = session.get(Team.class, originalMatchGroup.getTeam3().getId());
         session.close();
 
         Assert.assertNotNull(originalMatchGroup);
@@ -94,9 +100,9 @@ public class MatchGroupManagerTest extends BaseTest {
         Assert.assertNull(retrievedScoreCard);
 
         // Ensure that the individual teams are not deleted.
-        Assert.assertNotNull(originalMatchGroup.getTeam1());
-        Assert.assertNotNull(originalMatchGroup.getTeam2());
-        Assert.assertNotNull(originalMatchGroup.getTeam3());
+        Assert.assertNotNull(retrievedTeam1);
+        Assert.assertNotNull(retrievedTeam2);
+        Assert.assertNotNull(retrievedTeam3);
     }
 
 	@Test
@@ -117,12 +123,15 @@ public class MatchGroupManagerTest extends BaseTest {
 			session.save(team);
 		}
 		transaction.commit();
+
+		MatchGroup matchGroup1 = matchGroupManager.create(teams1);
+		MatchGroup matchGroup2 = new MatchGroup(teams2);
+		matchGroupManager.addTeamToMatchGroup(matchGroup1.getId(), team4);
+
+        MatchGroup retrievedMatchGroup1 = session.get(MatchGroup.class, matchGroup1.getId());
 		session.close();
 
-		MatchGroup matchGroup1 = matchGroupManager.createMatchGroup(teams1);
-		MatchGroup matchGroup2 = new MatchGroup(teams2);
-		matchGroup1 = matchGroupManager.addTeamToMatchGroup(matchGroup1.getId(), team4);
-		Assert.assertEquals(matchGroup1.getTeams(), matchGroup2.getTeams());
+		Assert.assertEquals(retrievedMatchGroup1.getTeams(), matchGroup2.getTeams());
 	}
 
 	@Test
@@ -143,12 +152,15 @@ public class MatchGroupManagerTest extends BaseTest {
 			session.save(team);
 		}
 		transaction.commit();
+
+		MatchGroup matchGroup1 = matchGroupManager.create(teams1);
+		MatchGroup matchGroup2 = new MatchGroup(teams2);
+		matchGroupManager.removeTeamFromMatchGroup(matchGroup1.getId(), team4);
+
+        MatchGroup retrievedMatchGroup1 = session.get(MatchGroup.class, matchGroup1.getId());
 		session.close();
 
-		MatchGroup matchGroup1 = matchGroupManager.createMatchGroup(teams1);
-		MatchGroup matchGroup2 = new MatchGroup(teams2);
-		matchGroup1 = matchGroupManager.removeTeamFromMatchGroup(matchGroup1.getId(), team4);
-		Assert.assertEquals(matchGroup1.getTeams(), matchGroup2.getTeams());
+		Assert.assertEquals(retrievedMatchGroup1.getTeams(), matchGroup2.getTeams());
 	}
 
 	@Test
@@ -180,15 +192,20 @@ public class MatchGroupManagerTest extends BaseTest {
 			session.save(team);
 		}
 		transaction.commit();
-		session.close();
 
-		MatchGroup matchGroup1 = matchGroupManager.createMatchGroup(teams1);
-		MatchGroup matchGroup2 = matchGroupManager.createMatchGroup(teams2);
+		MatchGroup matchGroup1 = matchGroupManager.create(teams1);
+		MatchGroup matchGroup2 = matchGroupManager.create(teams2);
+
 		List<MatchGroup> expectedResults = new ArrayList<>();
 		expectedResults.add(new MatchGroup(teams3));
 		expectedResults.add(new MatchGroup(teams4));
-		List<MatchGroup> results = matchGroupManager.tradeTeamsInMatchGroups(matchGroup1.getId(), team4, matchGroup2.getId(), team6);
-		Assert.assertEquals(results.get(0).getTeams(), expectedResults.get(0).getTeams());
-		Assert.assertEquals(results.get(1).getTeams(), expectedResults.get(1).getTeams());
+
+        matchGroupManager.tradeTeamsInMatchGroups(matchGroup1.getId(), team4, matchGroup2.getId(), team6);
+        MatchGroup retrievedMatchGroup1 = session.get(MatchGroup.class, matchGroup1.getId());
+        MatchGroup retrievedMatchGroup2 = session.get(MatchGroup.class, matchGroup2.getId());
+		session.close();
+
+        Assert.assertEquals(retrievedMatchGroup1.getTeams(), expectedResults.get(0).getTeams());
+		Assert.assertEquals(retrievedMatchGroup2.getTeams(), expectedResults.get(1).getTeams());
 	}
 }
