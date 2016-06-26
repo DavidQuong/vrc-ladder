@@ -25,6 +25,16 @@ public class PasswordManagerTest {
     }
 
     @Test
+    public void testHashPasswordTwice() {
+        Password firstPassword = passwordManager.hashPassword(TEST_PASSWORD);
+        Password secondPassword = passwordManager.hashPassword(TEST_PASSWORD);
+
+        Assert.assertNotEquals(firstPassword, secondPassword);
+    }
+
+
+
+    @Test
     public void testMatchPassword() {
         Password password = passwordManager.hashPassword(TEST_PASSWORD);
 
