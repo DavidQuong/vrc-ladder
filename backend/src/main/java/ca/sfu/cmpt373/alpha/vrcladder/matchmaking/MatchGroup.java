@@ -198,16 +198,16 @@ public class MatchGroup {
 		}
 	}
 
-	void tradeTeams(Team money, MatchGroup merchant, Team goods) { //Swap two teams between their respective MatchGroups
-		if(this.teams.contains(money) && merchant.teams.contains(goods)) {
+	void tradeTeams(Team teamToRemove, MatchGroup otherMatchGroup, Team teamToAdd) { //Swap two teams between their respective MatchGroups
+		if(this.teams.contains(teamToRemove) && otherMatchGroup.teams.contains(teamToAdd)) {
 			ArrayList<Team> possessions = new ArrayList<>(this.teams); //A new list is created to ensure that this.teams ALWAYS contains a valid number of teams
-			ArrayList<Team> storeStock = new ArrayList<>(merchant.teams);
-			possessions.remove(money);
-			storeStock.remove(goods);
-			possessions.add(goods);
-			storeStock.add(money);
+			ArrayList<Team> storeStock = new ArrayList<>(otherMatchGroup.teams);
+			possessions.remove(teamToRemove);
+			storeStock.remove(teamToAdd);
+			possessions.add(teamToAdd);
+			storeStock.add(teamToRemove);
 			this.teams = possessions;
-			merchant.teams = storeStock;
+			otherMatchGroup.teams = storeStock;
 		} else {
 			throw new TeamNotFoundException();
 		}
