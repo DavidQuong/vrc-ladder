@@ -5,22 +5,27 @@ import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.CourtManager;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.TeamNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchScheduler;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
+import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.ScoreCardPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.CourtSerializer;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.MatchGroupSerializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import org.eclipse.jetty.http.HttpStatus;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
 
+import java.util.ArrayList;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
@@ -69,6 +74,8 @@ public class MatchGroupRouter extends RestRouter {
     private static final String JSON_PROPERTY_COURTS = "courts";
 
     private static final String ERROR_MATCHGROUP_ID_NOT_FOUND = "No MatchGroup was found for the given ID.";
+    private static final String ERROR_TEAM_NOT_FOUND = "The provided Team does not belong to the provided MatchGroup";
+    private static final String ERROR_NO_MATCHGROUP_FOUND = "There was no MatchGroup found for the given Id";
 
     @Override
     public void attachRoutes() {
@@ -88,6 +95,7 @@ public class MatchGroupRouter extends RestRouter {
         return new GsonBuilder()
                 .registerTypeAdapter(MatchGroup.class, new MatchGroupSerializer())
                 .registerTypeAdapter(Court.class, new CourtSerializer())
+                .registerTypeAdapter(ScoreCardPayload.class, new ScoreCardPayload.GsonDeserializer())
                 .setPrettyPrinting()
                 .create();
     }
@@ -120,11 +128,9 @@ public class MatchGroupRouter extends RestRouter {
         } catch (JsonSyntaxException e) {
             response.status(HttpStatus.BAD_REQUEST_400);
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
-            return responseBody.toString();
         } catch (EntityNotFoundException e) {
             response.status(HttpStatus.NOT_FOUND_404);
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MATCHGROUP_ID_NOT_FOUND);
-            return responseBody.toString();
         }
         return responseBody.toString();
     }
@@ -149,14 +155,42 @@ public class MatchGroupRouter extends RestRouter {
         } catch (MatchMakingException e) {
             response.status(HttpStatus.BAD_REQUEST_400);
             responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
-            return responseBody.toString();
         }
         //returns an empty response
         return responseBody.toString();
     }
 
     private String handleUpdateMatchGroupScores(Request request, Response response) {
-        return null;
+        JsonObject responseBody = new JsonObject();
+        try {
+            //TODO: catch database errors
+            ScoreCardPayload scoreCardPayload = getGson().fromJson(request.body(), ScoreCardPayload.class);
+            MatchGroup matchGroup = matchGroupManager.getById(scoreCardPayload.getMatchGroupId());
+
+            List<Team> matchGroupTeams = matchGroup.getTeams();
+            List<Team> rankedTeams = new ArrayList<>();
+            for (IdType teamId : scoreCardPayload.getTeamIds()) {
+                for (Team team : matchGroupTeams) {
+                    if (team.getId().equals(teamId)) {
+                        rankedTeams.add(team);
+                        break;
+                    }
+                }
+            }
+
+            //the ScoreCard will check if the teams are in the MatchGroup,
+            //if all MatchGroup teams are in the ScoreCard,
+            //and make sure there are no duplicate teams
+            matchGroup.getScoreCard().setRankedTeams(rankedTeams);
+            matchGroupManager.updateScoreCard(matchGroup);
+        } catch (JsonParseException | IllegalStateException e) {
+            response.status(HttpStatus.BAD_REQUEST_400);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
+        } catch (EntityNotFoundException e) {
+            response.status(HttpStatus.BAD_REQUEST_400);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_MATCHGROUP_FOUND);
+        }
+        return responseBody.toString();
     }
 
     private String handleDeleteMatchGroup(Request request, Response response) {
@@ -173,7 +207,31 @@ public class MatchGroupRouter extends RestRouter {
     }
 
     private String handleSwapMatchGroupTeams(Request request, Response response) {
-        return null;
+        //TODO: test this
+        JsonObject responseBody = new JsonObject();
+        try {
+            String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_1);
+            String paramMatchGroupId2 = request.params(PARAM_MATCHGROUP_2);
+            String paramTeamId1 = request.params(PARAM_TEAM_1);
+            String paramTeamId2 = request.params(PARAM_TEAM_2);
+
+            MatchGroup matchGroup1 = matchGroupManager.getById(new GeneratedId(paramMatchGroupId1));
+            MatchGroup matchGroup2 = matchGroupManager.getById(new GeneratedId(paramMatchGroupId2));
+            Team team1 = teamManager.getById(new GeneratedId(paramTeamId1));
+            Team team2 = teamManager.getById(new GeneratedId(paramTeamId2));
+
+            matchGroupManager.tradeTeamsInMatchGroups(matchGroup1.getId(), team1, matchGroup2.getId(), team2);
+        } catch (EntityNotFoundException e) {
+            //TODO: update this error message to be more specific about what wasn't found
+            response.status(HttpStatus.BAD_REQUEST_400);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MATCHGROUP_ID_NOT_FOUND);
+            return responseBody.toString();
+        } catch (TeamNotFoundException e) {
+            response.status(HttpStatus.BAD_REQUEST_400);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_TEAM_NOT_FOUND);
+            return responseBody.toString();
+        }
+        return responseBody.toString();
     }
 
     private String handleAddMatchGroupTeam(Request request, Response response) {

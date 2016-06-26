@@ -23,6 +23,7 @@ public class ScoreCard {
     private static final String ERROR_TEAM_NOT_IN_GROUP = "Team is not in match group";
     private static final String ERROR_ILLEGAL_SIZE = "Ranked teams list must be the same size as MatchGroup teams";
     private static final String ERROR_NO_RESULTS_SET = "There are no results recorded on this score card";
+    private static final String ERROR_DUPLICATE_TEAMS = "There cannot be duplicate teams in the ScoreCard";
 
     @EmbeddedId
     private GeneratedId id;
@@ -48,12 +49,13 @@ public class ScoreCard {
             checkTeamInMatchGroup(team);
         }
 
-        if (rankedTeams.size() > matchGroup.getTeamCount()
-                || rankedTeams.size() < matchGroup.getTeamCount()) {
+        checkTeamsUnique(rankedTeams);
+
+        if (rankedTeams.size() != matchGroup.getTeamCount()) {
             throw new IllegalStateException(ERROR_ILLEGAL_SIZE);
         }
 
-        checkNonAttendingTeamsStayedTheSame();
+        checkNonAttendingTeamsStayedTheSame(rankedTeams);
 
         this.rankedTeams = rankedTeams;
     }
@@ -70,7 +72,7 @@ public class ScoreCard {
         }
     }
 
-    private void checkNonAttendingTeamsStayedTheSame() {
+    private void checkNonAttendingTeamsStayedTheSame(List<Team> rankedTeams) {
         for (int i = 0; i < rankedTeams.size(); i++) {
             AttendanceCard attendanceCard = rankedTeams.get(i).getAttendanceCard();
             boolean isTeamPresent = attendanceCard.isPresent();
@@ -83,7 +85,17 @@ public class ScoreCard {
         }
     }
 
-
+    private void checkTeamsUnique(List<Team> teams) {
+        for (int i = 0; i < teams.size(); i++) {
+            Team currTeam = teams.get(i);
+            for (int j = i + 1; j < teams.size(); j++) {
+                Team otherTeam = teams.get(j);
+                if (currTeam.equals(otherTeam)) {
+                    throw new IllegalStateException(ERROR_DUPLICATE_TEAMS);
+                }
+            }
+        }
+    }
 
     /**
      * @return A list of teams in the order they came in in their matches.
