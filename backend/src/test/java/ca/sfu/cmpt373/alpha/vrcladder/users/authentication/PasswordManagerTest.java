@@ -1,7 +1,5 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.authentication;
 
-import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.mgt.SecurityManager;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,11 +24,6 @@ public class PasswordManagerTest {
 
         String salt = password.getSalt();
         Assert.assertEquals(PasswordManager.SALT_WIDTH, salt.length());
-    }
-
-    @Test
-    public void testShiro() {
-        SecurityManager securityManager = new IniSecurityManagerFactory().getInstance();
     }
 
 }
