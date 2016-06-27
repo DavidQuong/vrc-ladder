@@ -5,10 +5,12 @@ import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.CourtManager;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.LadderRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.MatchGroupRouter;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.PasswordManager;
+import ca.sfu.cmpt373.alpha.vrcrest.routes.LoginRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.RestRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.TeamRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.UserRouter;
@@ -44,6 +46,7 @@ public class RestApplication implements SparkApplication {
                 matchGroupManager,
                 courtManager);
 
+        LoginRouter loginRouter = new LoginRouter(appManager.getPasswordManager());
         UserRouter userRouter = new UserRouter(appManager.getPasswordManager(), appManager.getUserManager());
         TeamRouter teamRouter = new TeamRouter(appManager.getTeamManager());
         MatchGroupRouter matchGroupRouter = new MatchGroupRouter(
@@ -53,7 +56,7 @@ public class RestApplication implements SparkApplication {
         LadderRouter ladderRouter = new LadderRouter(
                 appManager.getTeamManager(),
                 appManager.getMatchGroupManager());
-        List<RestRouter> routers = Arrays.asList(userRouter, teamRouter, matchGroupRouter, ladderRouter);
+        List<RestRouter> routers = Arrays.asList(loginRouter, userRouter, teamRouter, matchGroupRouter, ladderRouter);
         restApi = new RestApi(appManager, routers);
     }
 

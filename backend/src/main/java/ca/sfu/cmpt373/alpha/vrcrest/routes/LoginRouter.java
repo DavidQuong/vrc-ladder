@@ -1,8 +1,10 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.PasswordManager;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.LoginPayload;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
@@ -25,12 +27,16 @@ public class LoginRouter extends RestRouter {
     @Override
     protected Gson buildGson() {
         return new GsonBuilder()
+            .registerTypeAdapter(LoginPayload.class, new LoginPayload.GsonDeserializer())
             .setPrettyPrinting()
             .create();
     }
 
     private String handleLogin(Request request, Response response) {
-        return null;
+        JsonObject responseBody = new JsonObject();
+
+        response.type(JSON_RESPONSE_TYPE);
+        return responseBody.toString();
     }
 
 }
