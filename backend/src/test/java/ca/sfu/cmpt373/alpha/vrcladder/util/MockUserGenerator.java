@@ -3,6 +3,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.util;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserBuilder;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.PasswordManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
@@ -17,11 +18,12 @@ public class MockUserGenerator {
     private static final String FIRST_NAME_BASE = "firstName";
     private static final String LAST_NAME_BASE = "lastName";
     private static final String HASH_BASE = "hash";
-    private static final String SALT_BASE = "salt";
 
+    private static PasswordManager passwordManager;
     private static int userCount;
 
     static {
+        passwordManager = new PasswordManager();
         userCount = 0;
     }
 
@@ -35,7 +37,7 @@ public class MockUserGenerator {
         String lastName = LAST_NAME_BASE + userId;
         EmailAddress emailAddress = generateEmailAddress(userCountStr);
         PhoneNumber phoneNumber = generatePhoneNumber(userCountStr);
-        Password password = new Password(HASH_BASE + userId);
+        Password password = passwordManager.hashPassword(HASH_BASE + userId);
 
         User newUser = new UserBuilder()
             .setUserId(userId)

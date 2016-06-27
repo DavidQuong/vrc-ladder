@@ -1,22 +1,13 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.authentication;
 
 import org.apache.shiro.authc.credential.DefaultPasswordService;
-import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.authc.credential.HashingPasswordService;
-import org.apache.shiro.crypto.hash.DefaultHashService;
-import org.apache.shiro.crypto.hash.Hash;
-import org.apache.shiro.crypto.hash.HashService;
-import org.apache.shiro.crypto.hash.Sha256Hash;
-import org.apache.shiro.crypto.hash.SimpleHash;
-import org.apache.shiro.crypto.hash.format.DefaultHashFormatFactory;
-import org.apache.shiro.crypto.hash.format.HashFormat;
-import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.authc.credential.PasswordService;
 
 public class PasswordManager {
 
     public static final int HASH_WIDTH = 92;
 
-    private HashingPasswordService passwordService;
+    private PasswordService passwordService;
 
     public PasswordManager() {
         passwordService = new DefaultPasswordService();

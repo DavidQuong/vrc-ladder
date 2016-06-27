@@ -11,11 +11,11 @@ public class Password {
     @Column(name = PersistenceConstants.COLUMN_PASSWORD_HASH, nullable = false)
     private String hash;
 
-    public Password() {
+    private Password() {
         // Required by Hibernate.
     }
 
-    public Password(String hash) {
+    Password(String hash) {
         this.hash = hash;
     }
 
@@ -42,4 +42,5 @@ public class Password {
     public int hashCode() {
         return hash.hashCode();
     }
+
 }

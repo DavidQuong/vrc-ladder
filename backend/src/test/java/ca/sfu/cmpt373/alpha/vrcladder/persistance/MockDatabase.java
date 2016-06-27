@@ -7,6 +7,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserBuilder;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.PasswordManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ import java.util.List;
  * TODO - Delete this as it is being replaced by the Mock<Object>Generator classes.
  */
 public class MockDatabase {
+
+    private static PasswordManager passwordManager = new PasswordManager();
 
 
     private static List<User> generateMockUsers (int numUsers) {
@@ -31,7 +34,7 @@ public class MockDatabase {
                     .setLastName("LastName")
                     .setPhoneNumber("778-235-4841")
                     .setUserRole(UserRole.PLAYER)
-                    .setPassword(new Password("testHash"))
+                    .setPassword(passwordManager.hashPassword("testHash"))
                     .buildUser());
         }
         return users;
