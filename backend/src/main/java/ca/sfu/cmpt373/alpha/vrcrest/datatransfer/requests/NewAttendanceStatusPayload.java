@@ -21,7 +21,7 @@ public class NewAttendanceStatusPayload {
         @Override
         public NewAttendanceStatusPayload deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
                 throws JsonParseException {
-            JsonObject jsonObject = (JsonObject) json;
+            JsonObject jsonObject = json.getAsJsonObject();
 
             if (!jsonObject.has(JSON_PROPERTY_ATTENDANCE_STATUS)) {
                 throwMissingPropertyException(JSON_PROPERTY_ATTENDANCE_STATUS);
