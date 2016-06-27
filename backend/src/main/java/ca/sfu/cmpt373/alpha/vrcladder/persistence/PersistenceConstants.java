@@ -17,7 +17,7 @@ public class PersistenceConstants {
     public static final String COLUMN_FIRST_PLAYER_ID = "FIRST_PLAYER_ID";
     public static final String COLUMN_SECOND_PLAYER_ID = "SECOND_PLAYER_ID";
     public static final String COLUMN_LADDER_POSITION = "LADDER_POSITION";
-    public static final String COLUMN_ATTENDANCE_STATUS = "STTENDANCE_STATUS";
+    public static final String COLUMN_ATTENDANCE_STATUS = "ATTENDANCE_STATUS";
 
 
     public static final String TABLE_ATTENDANCE_CARD = "ATTENDANCE_CARD";
