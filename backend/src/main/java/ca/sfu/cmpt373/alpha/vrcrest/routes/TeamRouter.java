@@ -1,7 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.DuplicateTeamMemberException;
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
@@ -24,6 +23,7 @@ import spark.Request;
 import spark.Response;
 import spark.Spark;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 public class TeamRouter extends RestRouter {
