@@ -17,7 +17,7 @@ public class NewUserPayload {
     public static final String JSON_PROPERTY_USERID = "userId";
     public static final String JSON_PROPERTY_USERROLE = "userRole";
     public static final String JSON_PROPERTY_FIRSTNAME = "firstName";
-    public static final String JSON_PROPERTY_MIDDLENAME = "firstName";
+    public static final String JSON_PROPERTY_MIDDLENAME = "middleName";
     public static final String JSON_PROPERTY_LASTNAME = "lastName";
     public static final String JSON_PROPERTY_EMAILADDRESS = "emailAddress";
     public static final String JSON_PROPERTY_PHONENUMBER= "phoneNumber";

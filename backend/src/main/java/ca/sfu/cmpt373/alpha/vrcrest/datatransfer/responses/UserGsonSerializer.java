@@ -22,7 +22,7 @@ public class UserGsonSerializer implements JsonSerializer<User>{
             jsonObject.addProperty("firstName", user.getFirstName());
             jsonObject.addProperty("middleName", user.getMiddleName());
             jsonObject.addProperty("lastName", user.getLastName());
-            jsonObject.addProperty("emailAddress", user.getUserId().getValue());
+            jsonObject.addProperty("emailAddress", user.getEmailAddress().getValue());
             jsonObject.addProperty("phoneNumber", user.getPhoneNumber().getValue());
 
             return jsonObject;
