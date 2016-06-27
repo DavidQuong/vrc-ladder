@@ -77,9 +77,9 @@ public class MatchGroupRouter extends RestRouter {
     private static final String JSON_PROPERTY_COURTS = "courts";
     private static final String JSON_PROPERTY_SCORES = "scores";
 
-    private static final String ERROR_MATCHGROUP_ID_NOT_FOUND = "No MatchGroup was found for the given ID.";
     private static final String ERROR_TEAM_NOT_FOUND = "The provided Team does not belong to the provided MatchGroup";
     private static final String ERROR_NO_MATCHGROUP_FOUND = "There was no MatchGroup found for the given Id";
+    private static final String ERROR_NO_TEAM_MATCHGROUP_FOUND = "The Team or the MatchGroup couldn't be found";
 
     @Override
     public void attachRoutes() {
@@ -89,10 +89,10 @@ public class MatchGroupRouter extends RestRouter {
         Spark.put(ROUTE_MATCHGROUP_SCORES, this::handleUpdateMatchGroupScores);
         Spark.delete(ROUTE_MATCHGROUP_ID, this::handleDeleteMatchGroup);
         Spark.post(ROUTE_MATCHGROUP_GENERATION, this::handleGenerateMatchGroups);
-        Spark.put(ROUTE_MATCHGROUPS_SWAP_TEAMS, this::handleSwapMatchGroupTeams);
         Spark.put(ROUTE_MATCHGROUP_ADD_TEAM, this::handleAddMatchGroupTeam);
-        Spark.put(ROUTE_MATCHGROUP_REMOVE_TEAM, this::handleRemoveMatchGroupTeam);
         Spark.get(ROUTE_MATCHGROUP_SCORES, this::handleGetMatchGroupScores);
+//        Spark.put(ROUTE_MATCHGROUPS_SWAP_TEAMS, this::handleSwapMatchGroupTeams);
+//        Spark.put(ROUTE_MATCHGROUP_REMOVE_TEAM, this::handleRemoveMatchGroupTeam);
     }
 
     @Override
@@ -136,7 +136,7 @@ public class MatchGroupRouter extends RestRouter {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
         } catch (EntityNotFoundException e) {
             response.status(HttpStatus.NOT_FOUND_404);
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MATCHGROUP_ID_NOT_FOUND);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_MATCHGROUP_FOUND);
         }
         return responseBody.toString();
     }
@@ -152,8 +152,6 @@ public class MatchGroupRouter extends RestRouter {
                     MatchGroupGenerator.generateMatchGroupings(teams));
             for (Court court : courts) {
                 for (MatchGroup matchGroup : court.getScheduledMatches().values()) {
-                    //TODO: catch any exceptions that occur as a result of this creation
-                    //ex: matchGroup already exists for these teams
                     matchGroupManager.create(matchGroup);
                 }
                 courtManager.create(court);
@@ -161,8 +159,10 @@ public class MatchGroupRouter extends RestRouter {
         } catch (MatchMakingException e) {
             response.status(HttpStatus.BAD_REQUEST_400);
             responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
+        } catch (ConstraintViolationException e) {
+            response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
         }
-        //returns an empty response
         return responseBody.toString();
     }
 
@@ -174,6 +174,7 @@ public class MatchGroupRouter extends RestRouter {
 
             ScoreCardPayload scoreCardPayload = getGson().fromJson(request.body(), ScoreCardPayload.class);
 
+            //get ranked teams without querying the database again
             List<Team> matchGroupTeams = matchGroup.getTeams();
             List<Team> rankedTeams = new ArrayList<>();
             for (IdType teamId : scoreCardPayload.getTeamIds()) {
@@ -189,7 +190,6 @@ public class MatchGroupRouter extends RestRouter {
             //if all MatchGroup teams are in the ScoreCard,
             //and make sure there are no duplicate teams
             matchGroup.getScoreCard().setRankedTeams(rankedTeams);
-            //TODO: catch database errors
             matchGroupManager.updateScoreCard(matchGroup);
         } catch (JsonParseException | IllegalStateException e) {
             response.status(HttpStatus.BAD_REQUEST_400);
@@ -197,6 +197,9 @@ public class MatchGroupRouter extends RestRouter {
         } catch (EntityNotFoundException e) {
             response.status(HttpStatus.NOT_FOUND_404);
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_MATCHGROUP_FOUND);
+        } catch (ConstraintViolationException e) {
+            response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
         }
         return responseBody.toString();
     }
@@ -226,35 +229,7 @@ public class MatchGroupRouter extends RestRouter {
             matchGroupManager.deleteById(new GeneratedId(matchGroupIdParam));
         } catch (EntityNotFoundException e) {
             response.status(HttpStatus.NOT_FOUND_404);
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MATCHGROUP_ID_NOT_FOUND);
-            return responseBody.toString();
-        }
-        return responseBody.toString();
-    }
-
-    private String handleSwapMatchGroupTeams(Request request, Response response) {
-        //TODO: test this
-        JsonObject responseBody = new JsonObject();
-        try {
-            String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_1);
-            String paramMatchGroupId2 = request.params(PARAM_MATCHGROUP_2);
-            String paramTeamId1 = request.params(PARAM_TEAM_1);
-            String paramTeamId2 = request.params(PARAM_TEAM_2);
-
-            MatchGroup matchGroup1 = matchGroupManager.getById(new GeneratedId(paramMatchGroupId1));
-            MatchGroup matchGroup2 = matchGroupManager.getById(new GeneratedId(paramMatchGroupId2));
-            Team team1 = teamManager.getById(new GeneratedId(paramTeamId1));
-            Team team2 = teamManager.getById(new GeneratedId(paramTeamId2));
-
-            matchGroupManager.tradeTeamsInMatchGroups(matchGroup1.getId(), team1, matchGroup2.getId(), team2);
-        } catch (EntityNotFoundException e) {
-            //TODO: update this error message to be more specific about what wasn't found
-            response.status(HttpStatus.BAD_REQUEST_400);
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MATCHGROUP_ID_NOT_FOUND);
-            return responseBody.toString();
-        } catch (TeamNotFoundException e) {
-            response.status(HttpStatus.BAD_REQUEST_400);
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_TEAM_NOT_FOUND);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_MATCHGROUP_FOUND);
             return responseBody.toString();
         }
         return responseBody.toString();
@@ -270,41 +245,65 @@ public class MatchGroupRouter extends RestRouter {
             matchGroupManager.addTeamToMatchGroup(new GeneratedId(paramMatchGroupId1), teamToAdd);
         } catch (EntityNotFoundException e) {
             response.status(HttpStatus.NOT_FOUND_404);
-            //TODO: change this error to specify that either the Team or the MatchGroup was not found instead of just the MatchGroup
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_MATCHGROUP_FOUND);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_TEAM_MATCHGROUP_FOUND);
         } catch (IllegalStateException e) {
             //This occurs if a Team is added, and there's already the max # of players
             response.status(HttpStatus.BAD_REQUEST_400);
             responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
-        } catch (ConstraintViolationException e) {
-            //TODO: don't let these constraint violations happen!
-            response.status(HttpStatus.BAD_REQUEST_400);
-            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
         }
         return responseBody.toString();
     }
 
-    private String handleRemoveMatchGroupTeam(Request request, Response response) {
-        JsonObject responseBody = new JsonObject();
-        try {
-            String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_1);
-            String paramTeamId1 = request.params(PARAM_TEAM_1);
+    //TODO: test this
+//    private String handleSwapMatchGroupTeams(Request request, Response response) {
+//        JsonObject responseBody = new JsonObject();
+//        try {
+//            String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_1);
+//            String paramMatchGroupId2 = request.params(PARAM_MATCHGROUP_2);
+//            String paramTeamId1 = request.params(PARAM_TEAM_1);
+//            String paramTeamId2 = request.params(PARAM_TEAM_2);
+//
+//            MatchGroup matchGroup1 = matchGroupManager.getById(new GeneratedId(paramMatchGroupId1));
+//            MatchGroup matchGroup2 = matchGroupManager.getById(new GeneratedId(paramMatchGroupId2));
+//            Team team1 = teamManager.getById(new GeneratedId(paramTeamId1));
+//            Team team2 = teamManager.getById(new GeneratedId(paramTeamId2));
+//
+//            matchGroupManager.tradeTeamsInMatchGroups(matchGroup1.getId(), team1, matchGroup2.getId(), team2);
+//        } catch (EntityNotFoundException e) {
+//            //TODO: update this error message to be more specific about what wasn't found
+//            response.status(HttpStatus.BAD_REQUEST_400);
+//            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MATCHGROUP_ID_NOT_FOUND);
+//            return responseBody.toString();
+//        } catch (TeamNotFoundException e) {
+//            response.status(HttpStatus.BAD_REQUEST_400);
+//            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_TEAM_NOT_FOUND);
+//            return responseBody.toString();
+//        }
+//        return responseBody.toString();
+//    }
 
-            Team teamToRemove = teamManager.getById(new GeneratedId(paramTeamId1));
-            matchGroupManager.removeTeamFromMatchGroup(new GeneratedId(paramMatchGroupId1), teamToRemove);
-        } catch (EntityNotFoundException e) {
-            //TODO: change this error to specify that either the Team or the MatchGroup was not found
-            response.status(HttpStatus.NOT_FOUND_404);
-            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
-        } catch (IllegalStateException e) {
-            //this occurs if a team is removed and there's already the minimum number of players
-            response.status(HttpStatus.BAD_REQUEST_400);
-            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
-        } catch (ConstraintViolationException e) {
-            //TODO: don't let these constraint violations happen!
-            response.status(HttpStatus.BAD_REQUEST_400);
-            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
-        }
-        return responseBody.toString();
-    }
+    //TODO: make this work. It is currently failing when attempting to remove certain teams
+//    private String handleRemoveMatchGroupTeam(Request request, Response response) {
+//        JsonObject responseBody = new JsonObject();
+//        try {
+//            String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_1);
+//            String paramTeamId1 = request.params(PARAM_TEAM_1);
+//
+//            Team teamToRemove = teamManager.getById(new GeneratedId(paramTeamId1));
+//            matchGroupManager.removeTeamFromMatchGroup(new GeneratedId(paramMatchGroupId1), teamToRemove);
+//        } catch (EntityNotFoundException e) {
+//            //TODO: change this error to specify that either the Team or the MatchGroup was not found
+//            response.status(HttpStatus.NOT_FOUND_404);
+//            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
+//        } catch (IllegalStateException e) {
+//            //this occurs if a team is removed and there's already the minimum number of players
+//            response.status(HttpStatus.BAD_REQUEST_400);
+//            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
+//        } catch (ConstraintViolationException e) {
+//            //TODO: don't let these constraint violations happen!
+//            response.status(HttpStatus.BAD_REQUEST_400);
+//            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
+//        }
+//        return responseBody.toString();
+//    }
 }
