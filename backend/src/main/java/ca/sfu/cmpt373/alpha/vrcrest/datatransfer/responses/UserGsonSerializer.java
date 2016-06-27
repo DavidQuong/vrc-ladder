@@ -1,31 +1,35 @@
 package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses;
 
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
-/**
- * Created by Samus on 22/06/2016.
- */
-public class UserGsonSerializer implements JsonSerializer<User>{
+public class UserGsonSerializer implements JsonSerializer<User> {
+
+    public static final String JSON_PROPERTY_USERID = "userId";
+    public static final String JSON_PROPERTY_USERROLE = "userRole";
+    public static final String JSON_PROPERTY_FIRSTNAME = "firstName";
+    public static final String JSON_PROPERTY_MIDDLENAME = "middleName";
+    public static final String JSON_PROPERTY_LASTNAME = "lastName";
+    public static final String JSON_PROPERTY_EMAILADDRESS = "emailAddress";
+    public static final String JSON_PROPERTY_PHONENUMBER= "phoneNumber";
 
     @Override
     public JsonElement serialize(User user, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonUser = new JsonObject();
 
-        jsonUser.addProperty("userId", user.getUserId().getValue().toString());
-        jsonUser.addProperty("userRole", user.getUserRole().name());
-        jsonUser.addProperty("firstName", user.getFirstName());
-        jsonUser.addProperty("middleName", user.getMiddleName());
-        jsonUser.addProperty("lastName", user.getLastName());
-        jsonUser.addProperty("emailAddress", user.getEmailAddress().getValue());
-        jsonUser.addProperty("phoneNumber", user.getPhoneNumber().getValue());
+        jsonUser.addProperty(JSON_PROPERTY_USERID, user.getUserId().getValue().toString());
+        jsonUser.addProperty(JSON_PROPERTY_USERROLE, user.getUserRole().name());
+        jsonUser.addProperty(JSON_PROPERTY_FIRSTNAME, user.getFirstName());
+        jsonUser.addProperty(JSON_PROPERTY_MIDDLENAME, user.getMiddleName());
+        jsonUser.addProperty(JSON_PROPERTY_LASTNAME, user.getLastName());
+        jsonUser.addProperty(JSON_PROPERTY_EMAILADDRESS, user.getEmailAddress().getValue());
+        jsonUser.addProperty(JSON_PROPERTY_PHONENUMBER, user.getPhoneNumber().getValue());
 
         return jsonUser;
     }
-
-
-
-
 }

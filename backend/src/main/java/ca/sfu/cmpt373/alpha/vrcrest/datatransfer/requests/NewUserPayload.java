@@ -20,13 +20,15 @@ public class NewUserPayload {
     public static final String JSON_PROPERTY_MIDDLENAME = "middleName";
     public static final String JSON_PROPERTY_LASTNAME = "lastName";
     public static final String JSON_PROPERTY_EMAILADDRESS = "emailAddress";
-    public static final String JSON_PROPERTY_PHONENUMBER= "phoneNumber";
+    public static final String JSON_PROPERTY_PHONENUMBER = "phoneNumber";
 
     public static class UserGsonDeserializer extends BaseGsonDeserializer<NewUserPayload> {
         @Override
         public NewUserPayload deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
                 throws JsonParseException {
             JsonObject jsonObject = json.getAsJsonObject();
+            checkForMissingProperties(jsonObject);
+
             UserId userId = new UserId(jsonObject.get(JSON_PROPERTY_USERID).getAsString());
 
             String userRolseAsString = jsonObject.get(JSON_PROPERTY_USERROLE).getAsString();
@@ -45,7 +47,36 @@ public class NewUserPayload {
             return new NewUserPayload(userId, userRole, firstName,
                     middleName, lastName, emailAddress, phoneNumber);
         }
+
+        private void checkForMissingProperties(JsonObject jsonObject) {
+            if (!jsonObject.has(JSON_PROPERTY_USERID)) {
+                throwMissingPropertyException(JSON_PROPERTY_USERID);
+            }
+
+            if (!jsonObject.has(JSON_PROPERTY_USERROLE)) {
+                throwMissingPropertyException(JSON_PROPERTY_USERROLE);
+            }
+
+            if (!jsonObject.has(JSON_PROPERTY_FIRSTNAME)) {
+                throwMissingPropertyException(JSON_PROPERTY_FIRSTNAME);
+            }
+
+            if (!jsonObject.has(JSON_PROPERTY_MIDDLENAME)) {
+                throwMissingPropertyException(JSON_PROPERTY_MIDDLENAME);
+            }
+
+            if (!jsonObject.has(JSON_PROPERTY_LASTNAME)) {
+                throwMissingPropertyException(JSON_PROPERTY_LASTNAME);
+            }
+            if (!jsonObject.has(JSON_PROPERTY_EMAILADDRESS)) {
+                throwMissingPropertyException(JSON_PROPERTY_EMAILADDRESS);
+            }
+            if (!jsonObject.has(JSON_PROPERTY_PHONENUMBER)) {
+                throwMissingPropertyException(JSON_PROPERTY_PHONENUMBER);
+            }
+        }
     }
+
 
     private UserId userId;
     private UserRole userRole;

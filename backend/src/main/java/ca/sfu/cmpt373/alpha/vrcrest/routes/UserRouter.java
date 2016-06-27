@@ -1,6 +1,5 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
@@ -13,6 +12,7 @@ import spark.Request;
 import spark.Response;
 import spark.Spark;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 public class UserRouter extends RestRouter {
@@ -151,7 +151,7 @@ public class UserRouter extends RestRouter {
         } catch (JsonSyntaxException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
             response.status(HttpStatus.BAD_REQUEST_400);
-        }  catch (JsonParseException | IllegalArgumentException ex) {
+        } catch (JsonParseException | IllegalArgumentException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
         } catch (EntityNotFoundException ex) {
@@ -174,7 +174,7 @@ public class UserRouter extends RestRouter {
             User deletedUser = userManager.deleteById(userId);
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(deletedUser));
             response.status(HttpStatus.OK_200);
-        }  catch (EntityNotFoundException ex) {
+        } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
         } catch (RuntimeException ex) {
