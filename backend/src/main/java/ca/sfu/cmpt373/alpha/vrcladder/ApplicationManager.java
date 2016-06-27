@@ -28,7 +28,9 @@ public class ApplicationManager {
         sessionManager.shutDown();
     }
 
-    public PasswordManager getPasswordManager() { return passwordManager; }
+    public PasswordManager getPasswordManager() {
+        return passwordManager;
+    }
 
     public UserManager getUserManager() {
         return userManager;

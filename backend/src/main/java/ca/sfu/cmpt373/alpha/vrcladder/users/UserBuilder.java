@@ -134,7 +134,6 @@ public class UserBuilder {
 
         if (password == null) {
             throw new IllegalStateException(ERROR_MSG_NULL_PASSWORD);
-
         }
 
         return new User(userId, userRole, firstName, middleName, lastName, emailAddress, phoneNumber, password);

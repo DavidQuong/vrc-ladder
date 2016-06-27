@@ -18,21 +18,27 @@ public class NewTeamPayload {
         @Override
         public NewTeamPayload deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
-            JsonObject jsonObject = (JsonObject) json;
+            JsonObject jsonObject = json.getAsJsonObject();
+            checkForMissingProperties(jsonObject);
 
-            if (!jsonObject.has(JSON_PROPERTY_FIRST_PLAYER_ID)) {
-                throwMissingPropertyException(JSON_PROPERTY_FIRST_PLAYER_ID);
-            }
             JsonElement jsonFirstPlayerId = jsonObject.get(JSON_PROPERTY_FIRST_PLAYER_ID);
             UserId firstPlayerId = new UserId(jsonFirstPlayerId.getAsString());
 
-            if (!jsonObject.has(JSON_PROPERTY_SECOND_PLAYER_ID)) {
-                throwMissingPropertyException(JSON_PROPERTY_SECOND_PLAYER_ID);
-            }
             JsonElement jsonSecondPlayerId = jsonObject.get(JSON_PROPERTY_SECOND_PLAYER_ID);
             UserId secondPlayerId = new UserId(jsonSecondPlayerId.getAsString());
 
             return new NewTeamPayload(firstPlayerId, secondPlayerId);
+        }
+
+        @Override
+        protected void checkForMissingProperties(JsonObject jsonObject) {
+            if (!jsonObject.has(JSON_PROPERTY_FIRST_PLAYER_ID)) {
+                throwMissingPropertyException(JSON_PROPERTY_FIRST_PLAYER_ID);
+            }
+
+            if (!jsonObject.has(JSON_PROPERTY_SECOND_PLAYER_ID)) {
+                throwMissingPropertyException(JSON_PROPERTY_SECOND_PLAYER_ID);
+            }
         }
 
     }

@@ -32,8 +32,6 @@ public class PasswordManagerTest {
         Assert.assertNotEquals(firstPassword, secondPassword);
     }
 
-
-
     @Test
     public void testMatchPassword() {
         Password password = passwordManager.hashPassword(TEST_PASSWORD);
