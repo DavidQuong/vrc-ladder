@@ -11,8 +11,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Collections;
 import java.util.List;
 
 public class MatchGroupManager extends DatabaseManager<MatchGroup> {
@@ -125,6 +124,9 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .list();
         session.close();
+
+        //return MatchGroups in sorted order
+        Collections.sort(entityList);
 
         return entityList;
     }

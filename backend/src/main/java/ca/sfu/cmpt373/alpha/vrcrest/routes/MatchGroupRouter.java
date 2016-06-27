@@ -212,7 +212,7 @@ public class MatchGroupRouter extends RestRouter {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_MATCHGROUP_FOUND);
         } catch (IllegalStateException e) {
             //this occurs if there's no recorded scores in the ScoreCard
-            //It's triggered by the ScoreCardSeriaizer when calling scoreCard.getRankedTeams()
+            //It's triggered by the ScoreCardSerializer when calling scoreCard.getRankedTeams()
             response.status(HttpStatus.BAD_REQUEST_400);
             responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
         }

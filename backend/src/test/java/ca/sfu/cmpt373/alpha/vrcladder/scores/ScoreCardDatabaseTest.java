@@ -4,6 +4,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
 import org.hibernate.Session;
@@ -22,8 +23,6 @@ import java.util.List;
  * ScoreCards are created through the MatchGroupManager
  */
 public class ScoreCardDatabaseTest extends BaseTest {
-    private static final int LAST_INDEX_FOUR_TEAMS = 3;
-    private static final int LAST_INDEX_THREE_TEAMS = 2;
 
     private MatchGroupManager matchGroupManager;
     private MatchGroup threeTeamMatchGroupFixture;
@@ -37,28 +36,29 @@ public class ScoreCardDatabaseTest extends BaseTest {
 
         Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
-        List<Team> mockMatchGroupTeams = threeTeamMatchGroupFixture.getTeams();
-        for (Team team : mockMatchGroupTeams) {
-            session.save(team.getFirstPlayer());
-            session.save(team.getSecondPlayer());
-            session.save(team);
-        }
+        List<Team> threeTeamMatchGroupTeams = threeTeamMatchGroupFixture.getTeams();
+        saveTeams(threeTeamMatchGroupTeams, session);
         session.save(threeTeamMatchGroupFixture);
         session.save(threeTeamMatchGroupFixture.getScoreCard());
 
         fourTeamMatchGroupFixture = MockMatchGroupGenerator.generateFourTeamMatchGroup();
 
-        List<Team> mockFourMatchGroupTeams = fourTeamMatchGroupFixture.getTeams();
-        for (Team team : mockFourMatchGroupTeams) {
-            session.save(team.getFirstPlayer());
-            session.save(team.getSecondPlayer());
-            session.save(team);
-        }
+        List<Team> fourTeamMatchGroupTeams = fourTeamMatchGroupFixture.getTeams();
+        saveTeams(fourTeamMatchGroupTeams, session);
         session.save(fourTeamMatchGroupFixture);
         session.save(fourTeamMatchGroupFixture.getScoreCard());
 
         transaction.commit();
         session.close();
+    }
+
+    private void saveTeams(List<Team> teams, Session session) {
+        for (Team team : teams) {
+            team.getAttendanceCard().setPreferredPlayTime(PlayTime.TIME_SLOT_A);
+            session.save(team.getFirstPlayer());
+            session.save(team.getSecondPlayer());
+            session.save(team);
+        }
     }
 
     @Test

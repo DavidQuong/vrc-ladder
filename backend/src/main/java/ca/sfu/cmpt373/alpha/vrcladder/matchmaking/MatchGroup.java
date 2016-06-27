@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ import java.util.Map;
  */
 @Entity
 @Table(name = PersistenceConstants.TABLE_MATCH_GROUP)
-public class MatchGroup {
+public class MatchGroup implements Comparable<MatchGroup> {
 
     public static final int MIN_NUM_TEAMS = 3;
     public static final int MAX_NUM_TEAMS = 4;
@@ -80,6 +81,7 @@ public class MatchGroup {
         checkDuplicateTeams();
         id = new GeneratedId();
         scoreCard = new ScoreCard(this);
+        Collections.sort(teams, getTeamLadderPositionComparator());
     }
 
     private void checkDuplicateTeams() {
@@ -192,6 +194,7 @@ public class MatchGroup {
                 throw new IllegalStateException(ERROR_TEAM_ALREADY_EXISTS);
             }
 			this.teams.add(newTeam);
+            Collections.sort(teams, getTeamLadderPositionComparator());
 		} else {
 			throw new IllegalStateException(ERROR_TOO_MANY_TEAMS);
 		}
@@ -208,9 +211,10 @@ public class MatchGroup {
 		}
 	}
 
-	void tradeTeams(Team teamToRemove, MatchGroup otherMatchGroup, Team teamToAdd) { //Swap two teams between their respective MatchGroups
+	void tradeTeams(Team teamToRemove, MatchGroup otherMatchGroup, Team teamToAdd) {
 		if(this.teams.contains(teamToRemove) && otherMatchGroup.teams.contains(teamToAdd)) {
-			ArrayList<Team> thisMatchGroupTeams = new ArrayList<>(this.teams); //A new list is created to ensure that this.teams ALWAYS contains a valid number of teams
+            //A new list is created to ensure that this.teams ALWAYS contains a valid number of teams
+			ArrayList<Team> thisMatchGroupTeams = new ArrayList<>(this.teams);
 			ArrayList<Team> otherMatchGroupTeams = new ArrayList<>(otherMatchGroup.teams);
 			thisMatchGroupTeams.remove(teamToRemove);
 			otherMatchGroupTeams.remove(teamToAdd);
@@ -218,8 +222,22 @@ public class MatchGroup {
 			otherMatchGroupTeams.add(teamToRemove);
 			this.teams = thisMatchGroupTeams;
 			otherMatchGroup.teams = otherMatchGroupTeams;
+
+            Collections.sort(this.teams, getTeamLadderPositionComparator());
+            Collections.sort(otherMatchGroup.teams, getTeamLadderPositionComparator());
 		} else {
 			throw new TeamNotFoundException();
 		}
 	}
+
+    private Comparator<Team> getTeamLadderPositionComparator() {
+        return (team1, team2) -> team1.getLadderPosition().compareTo(team2.getLadderPosition());
+    }
+
+    @Override
+    public int compareTo(MatchGroup otherMatchGroup) {
+        Team thisLowestRankedTeam = teams.get(teams.size() - 1);
+        Team otherLowestRankedTeam = otherMatchGroup.teams.get(otherMatchGroup.teams.size() - 1);
+        return thisLowestRankedTeam.getLadderPosition().compareTo(otherLowestRankedTeam.getLadderPosition());
+    }
 }
