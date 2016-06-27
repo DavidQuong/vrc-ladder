@@ -2,6 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.Log;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewUserPayload;
@@ -25,14 +26,15 @@ public class UserRouter extends RestRouter {
     public static final String ROUTE_USERS = "/users";
     public static final String ROUTE_USER_ID = "/user/:id";
 
+    public static final String JSON_PROPERTY_USERS = "users";
     public static final String JSON_PROPERTY_USER = "user";
-    public static final String JSON_PROPERTY_ALLUSERS = "users";
 
     private static final String ERROR_PLAYER_ID_NOT_FOUND = "The provided player ID cannot be found.";
     private static final String ERROR_NONEXISTENT_USER = "This user does not exist.";
     private static final String ERROR_EXISTING_USER = "Cannot create user as a user with this ID already exists.";
     private static final String ERROR_GET_USERS_FAILURE = "Unable to pull all users";
-    private final UserManager userManager;
+
+    private UserManager userManager;
 
     public UserRouter(UserManager userManager) {
         super();
@@ -51,9 +53,9 @@ public class UserRouter extends RestRouter {
     @Override
     protected Gson buildGson() {
         GsonBuilder gson = new GsonBuilder()
-                .registerTypeAdapter(User.class, new UserGsonSerializer())
-                .registerTypeAdapter(NewUserPayload.class, new NewUserPayload.UserGsonDeserializer())
-                .setPrettyPrinting();
+            .registerTypeAdapter(User.class, new UserGsonSerializer())
+            .registerTypeAdapter(NewUserPayload.class, new NewUserPayload.GsonDeserializer())
+            .setPrettyPrinting();
         return gson.create();
     }
 
@@ -63,13 +65,13 @@ public class UserRouter extends RestRouter {
         JsonObject responseBody = new JsonObject();
 
         try {
-            responseBody.add(JSON_PROPERTY_ALLUSERS, getGson().toJsonTree(users));
+            responseBody.add(JSON_PROPERTY_USERS, getGson().toJsonTree(users));
             response.type(JSON_RESPONSE_TYPE);
             response.status(HttpStatus.OK_200);
             return responseBody.toString();
         } catch (Exception e) {
             e.printStackTrace();
-            responseBody.add(JSON_PROPERTY_ALLUSERS, getGson().toJsonTree(ERROR_GET_USERS_FAILURE));
+            responseBody.add(JSON_PROPERTY_USERS, getGson().toJsonTree(ERROR_GET_USERS_FAILURE));
             response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
             return responseBody.toString();
         }
@@ -81,14 +83,17 @@ public class UserRouter extends RestRouter {
 
         try {
             NewUserPayload newUserPayload = getGson().fromJson(request.body(), NewUserPayload.class);
+
+            Password hashedPassword = null;
             newUser = userManager.create(
-                    newUserPayload.getUserId(),
-                    newUserPayload.getUserRole(),
-                    newUserPayload.getFirstName(),
-                    newUserPayload.getMiddleName(),
-                    newUserPayload.getLastName(),
-                    newUserPayload.getEmailAddress(),
-                    newUserPayload.getPhoneNumber());
+                newUserPayload.getUserId(),
+                newUserPayload.getUserRole(),
+                newUserPayload.getFirstName(),
+                newUserPayload.getMiddleName(),
+                newUserPayload.getLastName(),
+                newUserPayload.getEmailAddress(),
+                newUserPayload.getPhoneNumber(),
+                hashedPassword);
 
             JsonElement jsonUser = getGson().toJsonTree(newUser);
 

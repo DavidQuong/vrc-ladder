@@ -8,71 +8,88 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import org.apache.commons.lang3.EnumUtils;
 
 import java.lang.reflect.Type;
 
 
 public class NewUserPayload {
 
-    public static final String JSON_PROPERTY_USERID = "userId";
-    public static final String JSON_PROPERTY_USERROLE = "userRole";
-    public static final String JSON_PROPERTY_FIRSTNAME = "firstName";
-    public static final String JSON_PROPERTY_MIDDLENAME = "middleName";
-    public static final String JSON_PROPERTY_LASTNAME = "lastName";
-    public static final String JSON_PROPERTY_EMAILADDRESS = "emailAddress";
-    public static final String JSON_PROPERTY_PHONENUMBER = "phoneNumber";
+    public static final String JSON_PROPERTY_USER_ID = "userId";
+    public static final String JSON_PROPERTY_USER_ROLE = "userRole";
+    public static final String JSON_PROPERTY_FIRST_NAME = "firstName";
+    public static final String JSON_PROPERTY_MIDDLE_NAME = "middleName";
+    public static final String JSON_PROPERTY_LAST_NAME = "lastName";
+    public static final String JSON_PROPERTY_EMAIL_ADDRESS = "emailAddress";
+    public static final String JSON_PROPERTY_PHONE_NUMBER = "phoneNumber";
+    public static final String JSON_PROPERTY_PASSWORD = "password";
 
-    public static class UserGsonDeserializer extends BaseGsonDeserializer<NewUserPayload> {
+    private static final String ERROR_INVALID_USER_ROLE = "Invalid userRole.";
+
+    public static class GsonDeserializer extends BaseGsonDeserializer<NewUserPayload> {
         @Override
         public NewUserPayload deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
                 throws JsonParseException {
             JsonObject jsonObject = json.getAsJsonObject();
             checkForMissingProperties(jsonObject);
 
-            UserId userId = new UserId(jsonObject.get(JSON_PROPERTY_USERID).getAsString());
+            JsonElement jsonUserId = jsonObject.get(JSON_PROPERTY_USER_ID);
+            UserId userId = new UserId(jsonUserId.getAsString());
 
-            String userRolseAsString = jsonObject.get(JSON_PROPERTY_USERROLE).getAsString();
-            UserRole userRole = UserRole.valueOf(userRolseAsString);
+            JsonElement jsonUserRole = jsonObject.get(JSON_PROPERTY_USER_ROLE);
+            UserRole userRole = EnumUtils.getEnum(UserRole.class, jsonUserRole.getAsString());
+            if (userRole == null) {
+                throw new IllegalArgumentException(ERROR_INVALID_USER_ROLE);
+            }
 
-            String firstName = jsonObject.get(JSON_PROPERTY_FIRSTNAME).getAsString();
-            String middleName = jsonObject.get(JSON_PROPERTY_MIDDLENAME).getAsString();
-            String lastName = jsonObject.get(JSON_PROPERTY_LASTNAME).getAsString();
+            String firstName = jsonObject.get(JSON_PROPERTY_FIRST_NAME).getAsString();
+            String middleName = jsonObject.get(JSON_PROPERTY_MIDDLE_NAME).getAsString();
+            String lastName = jsonObject.get(JSON_PROPERTY_LAST_NAME).getAsString();
 
-            String emailAddressAsString = jsonObject.get(JSON_PROPERTY_EMAILADDRESS).getAsString();
-            EmailAddress emailAddress = new EmailAddress(emailAddressAsString);
+            JsonElement jsonEmailAddress = jsonObject.get(JSON_PROPERTY_EMAIL_ADDRESS);
+            EmailAddress emailAddress = new EmailAddress(jsonEmailAddress.getAsString());
 
-            String phoneNumberAsString = jsonObject.get(JSON_PROPERTY_PHONENUMBER).getAsString();
-            PhoneNumber phoneNumber = new PhoneNumber(phoneNumberAsString);
+            JsonElement jsonPhoneNumber = jsonObject.get(JSON_PROPERTY_PHONE_NUMBER);
+            PhoneNumber phoneNumber = new PhoneNumber(jsonPhoneNumber.getAsString());
 
-            return new NewUserPayload(userId, userRole, firstName,
-                    middleName, lastName, emailAddress, phoneNumber);
+            JsonElement jsonPassword = jsonObject.get(JSON_PROPERTY_PASSWORD);
+            String plaintextPassword = jsonPassword.getAsString();
+
+            return new NewUserPayload(userId, userRole, firstName, middleName, lastName, emailAddress, phoneNumber,
+                plaintextPassword);
         }
 
-        private void checkForMissingProperties(JsonObject jsonObject) {
-            if (!jsonObject.has(JSON_PROPERTY_USERID)) {
-                throwMissingPropertyException(JSON_PROPERTY_USERID);
+        protected void checkForMissingProperties(JsonObject jsonObject) {
+            if (!jsonObject.has(JSON_PROPERTY_USER_ID)) {
+                throwMissingPropertyException(JSON_PROPERTY_USER_ID);
             }
 
-            if (!jsonObject.has(JSON_PROPERTY_USERROLE)) {
-                throwMissingPropertyException(JSON_PROPERTY_USERROLE);
+            if (!jsonObject.has(JSON_PROPERTY_USER_ROLE)) {
+                throwMissingPropertyException(JSON_PROPERTY_USER_ROLE);
             }
 
-            if (!jsonObject.has(JSON_PROPERTY_FIRSTNAME)) {
-                throwMissingPropertyException(JSON_PROPERTY_FIRSTNAME);
+            if (!jsonObject.has(JSON_PROPERTY_FIRST_NAME)) {
+                throwMissingPropertyException(JSON_PROPERTY_FIRST_NAME);
             }
 
-            if (!jsonObject.has(JSON_PROPERTY_MIDDLENAME)) {
-                throwMissingPropertyException(JSON_PROPERTY_MIDDLENAME);
+            if (!jsonObject.has(JSON_PROPERTY_MIDDLE_NAME)) {
+                throwMissingPropertyException(JSON_PROPERTY_MIDDLE_NAME);
             }
 
-            if (!jsonObject.has(JSON_PROPERTY_LASTNAME)) {
-                throwMissingPropertyException(JSON_PROPERTY_LASTNAME);
+            if (!jsonObject.has(JSON_PROPERTY_LAST_NAME)) {
+                throwMissingPropertyException(JSON_PROPERTY_LAST_NAME);
             }
-            if (!jsonObject.has(JSON_PROPERTY_EMAILADDRESS)) {
-                throwMissingPropertyException(JSON_PROPERTY_EMAILADDRESS);
+
+            if (!jsonObject.has(JSON_PROPERTY_EMAIL_ADDRESS)) {
+                throwMissingPropertyException(JSON_PROPERTY_EMAIL_ADDRESS);
             }
-            if (!jsonObject.has(JSON_PROPERTY_PHONENUMBER)) {
-                throwMissingPropertyException(JSON_PROPERTY_PHONENUMBER);
+
+            if (!jsonObject.has(JSON_PROPERTY_PHONE_NUMBER)) {
+                throwMissingPropertyException(JSON_PROPERTY_PHONE_NUMBER);
+            }
+
+            if (!jsonObject.has(JSON_PROPERTY_PASSWORD)) {
+                throwMissingPropertyException(JSON_PROPERTY_PASSWORD);
             }
         }
     }
@@ -85,14 +102,10 @@ public class NewUserPayload {
     private String lastName;
     private EmailAddress emailAddress;
     private PhoneNumber phoneNumber;
+    private String password;
 
-    public NewUserPayload(UserId userId,
-                          UserRole userRole,
-                          String firstName,
-                          String middleName,
-                          String lastName,
-                          EmailAddress emailAddress,
-                          PhoneNumber phoneNumber) {
+    public NewUserPayload(UserId userId, UserRole userRole, String firstName, String middleName, String lastName,
+                          EmailAddress emailAddress, PhoneNumber phoneNumber, String password) {
         this.userId = userId;
         this.userRole = userRole;
         this.firstName = firstName;
@@ -100,6 +113,7 @@ public class NewUserPayload {
         this.lastName = lastName;
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
+        this.password = password;
     }
 
     public UserId getUserId() {
@@ -129,4 +143,9 @@ public class NewUserPayload {
     public PhoneNumber getPhoneNumber() {
         return phoneNumber;
     }
+
+    public String getPassword() {
+        return password;
+    }
+
 }
