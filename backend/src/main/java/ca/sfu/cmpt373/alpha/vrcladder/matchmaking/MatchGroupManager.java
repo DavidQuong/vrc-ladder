@@ -5,6 +5,8 @@ import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import java.util.ArrayList;
 
 import java.util.List;
 
@@ -46,4 +48,54 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
         return matchGroup;
     }
 
+    public MatchGroup deleteMatchGroup(IdType matchGroupId) {
+        return deleteById(matchGroupId);
+    }
+
+	public MatchGroup addTeamToMatchGroup(IdType matchGroupId, Team newTeam) {
+		MatchGroup matchGroup = getById(matchGroupId);
+		if (matchGroup == null) {
+			throw new RuntimeException(ERROR_NO_MATCH_GROUP);
+		}
+		matchGroup.addTeam(newTeam);
+
+		return update(matchGroup);
+	}
+
+	public MatchGroup removeTeamFromMatchGroup(IdType matchGroupId, Team leavingTeam) {
+		MatchGroup matchGroup = getById(matchGroupId);
+		if (matchGroup == null) {
+			throw new RuntimeException(ERROR_NO_MATCH_GROUP);
+		}
+		matchGroup.removeTeam(leavingTeam);
+
+		return update(matchGroup);
+	}
+
+	public List<MatchGroup> tradeTeamsInMatchGroups(IdType matchGroupId1, Team first, IdType matchGroupId2, Team second) {
+		MatchGroup matchGroup1 = getById(matchGroupId1);
+		if (matchGroup1 == null) {
+			throw new RuntimeException(ERROR_NO_MATCH_GROUP);
+		}
+		MatchGroup matchGroup2 = getById(matchGroupId2);
+		if (matchGroup2 == null) {
+			throw new RuntimeException(ERROR_NO_MATCH_GROUP);
+		}
+		matchGroup1.tradeTeams(first, matchGroup2, second);
+
+		Session session = sessionManager.getSession();
+		Transaction transaction = session.beginTransaction();
+
+		session.update(matchGroup1);
+		session.update(matchGroup2);
+
+		transaction.commit();
+		session.close();
+
+		List<MatchGroup> results = new ArrayList<>();
+		results.add(matchGroup1);
+		results.add(matchGroup2);
+
+		return results;
+	}
 }

@@ -1,7 +1,6 @@
-package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses;
+package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests;
 
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
-import ca.sfu.cmpt373.alpha.vrcrest.interfaces.Validateable;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,12 +8,12 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-public class NewTeamPayload implements Validateable {
+public class NewTeamPayload {
 
     public static class GsonDeserializer extends BaseGsonDeserializer<NewTeamPayload> {
 
-        private static final String JSON_PROPERTY_FIRST_PLAYER_ID = "firstPlayerId";
-        private static final String JSON_PROPERTY_SECOND_PLAYER_ID = "secondPlayerId";
+        public static final String JSON_PROPERTY_FIRST_PLAYER_ID = "firstPlayerId";
+        public static final String JSON_PROPERTY_SECOND_PLAYER_ID = "secondPlayerId";
 
         @Override
         public NewTeamPayload deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -52,10 +51,6 @@ public class NewTeamPayload implements Validateable {
 
     public UserId getSecondPlayerId() {
         return secondPlayerId;
-    }
-
-    public boolean isValid() {
-        return (firstPlayerId != null && secondPlayerId != null);
     }
 
 }

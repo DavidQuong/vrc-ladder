@@ -47,6 +47,10 @@ public abstract class DatabaseManager<T> {
         T obj = session.get(STORED_CLASS_TYPE, id);
         session.close();
 
+        if (obj == null) {
+            throw new EntityNotFoundException();
+        }
+
         return obj;
     }
 
