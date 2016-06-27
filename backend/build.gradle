@@ -7,7 +7,7 @@ apply plugin: 'war'
 
 sourceCompatibility = 1.8
 
-mainClassName="ca.sfu.cmpt373.alpha.vrcrest.RestDriver"
+mainClassName="ca.sfu.cmpt373.alpha.vrcrest.RestApplication"
 
 run {
     standardInput = System.in

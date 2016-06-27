@@ -62,4 +62,9 @@ public class RestApplication implements SparkApplication {
         restApi.shutDown();
     }
 
+    public static void main(String[] args) {
+        RestApplication restApplication = new RestApplication();
+        restApplication.init();
+    }
+
 }
