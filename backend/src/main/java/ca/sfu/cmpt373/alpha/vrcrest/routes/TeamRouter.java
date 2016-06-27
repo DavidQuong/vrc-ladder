@@ -52,15 +52,13 @@ public class TeamRouter extends RestRouter {
 
     @Override
     public void attachRoutes() {
-        Spark.get(ROUTE_TEAMS, (request, response) -> handleGetAllTeams(request, response));
-        Spark.post(ROUTE_TEAMS, (request, response) -> handleCreateTeam(request, response));
-        Spark.get(ROUTE_TEAM_ID, (request, response) -> handleGetTeamById(request, response));
-        Spark.delete(ROUTE_TEAM_ID, (request, response) -> handleDeleteTeamById(request, response));
-        Spark.get(ROUTE_TEAM_ID_ATTENDANCE, (request, response) -> handleGetTeamAttendance(request, response));
-        Spark.put(ROUTE_TEAM_ID_ATTENDANCE_PLAYTIME, (request, response) -> handleUpdatePlayTime(request, response));
-        Spark.put(ROUTE_TEAM_ID_ATTENDANCE_STATUS, (request, response) -> handleUpdateAttendanceStatus(request,
-            response));
-
+        Spark.get(ROUTE_TEAMS, this::handleGetAllTeams);
+        Spark.post(ROUTE_TEAMS, this::handleCreateTeam);
+        Spark.get(ROUTE_TEAM_ID, this::handleGetTeamById);
+        Spark.delete(ROUTE_TEAM_ID, this::handleDeleteTeamById);
+        Spark.get(ROUTE_TEAM_ID_ATTENDANCE, this::handleGetTeamAttendance);
+        Spark.put(ROUTE_TEAM_ID_ATTENDANCE_PLAYTIME, this::handleUpdatePlayTime);
+        Spark.put(ROUTE_TEAM_ID_ATTENDANCE_STATUS, this::handleUpdateAttendanceStatus);
     }
 
     @Override

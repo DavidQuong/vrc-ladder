@@ -5,7 +5,6 @@ import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.CourtManager;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
-import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.TeamNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchScheduler;
 import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
@@ -28,6 +27,7 @@ import spark.Request;
 import spark.Response;
 import spark.Spark;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;

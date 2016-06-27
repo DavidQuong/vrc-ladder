@@ -46,11 +46,11 @@ public class UserRouter extends RestRouter {
 
     @Override
     public void attachRoutes() {
-        Spark.get(ROUTE_USERS, (request, response) -> handleGetUsers(request, response));
-        Spark.post(ROUTE_USERS, (request, response) -> handleCreateUser(request, response));
-        Spark.get(ROUTE_USER_ID, (request, response) -> handleGetUserById(request, response));
-        Spark.put(ROUTE_USER_ID, (request, response) -> handleUpdateUserById(request, response));
-        Spark.delete(ROUTE_USER_ID, (request, response) -> handleDeleteUserById(request, response));
+        Spark.get(ROUTE_USERS, this::handleGetUsers);
+        Spark.post(ROUTE_USERS, this::handleCreateUser);
+        Spark.get(ROUTE_USER_ID, this::handleGetUserById);
+        Spark.put(ROUTE_USER_ID, this::handleUpdateUserById);
+        Spark.delete(ROUTE_USER_ID, this::handleDeleteUserById);
     }
 
     @Override

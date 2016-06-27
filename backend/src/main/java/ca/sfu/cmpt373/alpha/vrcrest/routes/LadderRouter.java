@@ -38,7 +38,6 @@ public class LadderRouter extends RestRouter{
     private String handleUpdateLadder(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
         try {
-            //TODO: make sure MatchGroups are sorted
             List<Team> teams = teamManager.getAll();
             List<MatchGroup> matchGroups = matchGroupManager.getAll();
 
