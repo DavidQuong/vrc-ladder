@@ -1,11 +1,10 @@
 package ca.sfu.cmpt373.alpha.vrcladder.persistence;
 
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.exception.ConstraintViolationException;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 /**
