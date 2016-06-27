@@ -46,7 +46,7 @@ public class MatchGroup implements Comparable<MatchGroup> {
 
     @OneToMany(fetch = FetchType.EAGER)
     @OrderColumn
-	private List<Team> teams;
+    private List<Team> teams;
 
     @OneToOne (cascade = CascadeType.ALL)
     private ScoreCard scoreCard;
@@ -188,47 +188,47 @@ public class MatchGroup implements Comparable<MatchGroup> {
         return id.hashCode();
     }
 
-	void addTeam(Team newTeam) {
-		if(this.teams.size() < MAX_NUM_TEAMS) {
+    void addTeam(Team newTeam) {
+        if(this.teams.size() < MAX_NUM_TEAMS) {
             if (teams.contains(newTeam)) {
                 throw new IllegalStateException(ERROR_TEAM_ALREADY_EXISTS);
             }
-			this.teams.add(newTeam);
+            this.teams.add(newTeam);
             Collections.sort(teams, getTeamLadderPositionComparator());
-		} else {
-			throw new IllegalStateException(ERROR_TOO_MANY_TEAMS);
-		}
-	}
+        } else {
+            throw new IllegalStateException(ERROR_TOO_MANY_TEAMS);
+        }
+    }
 
-	void removeTeam(Team leavingTeam) {
-		if(this.teams.size() > MIN_NUM_TEAMS) {
+    void removeTeam(Team leavingTeam) {
+        if(this.teams.size() > MIN_NUM_TEAMS) {
             if (!teams.contains(leavingTeam)) {
                 throw new IllegalStateException(ERROR_NO_TEAM_EXISTS);
             }
-			this.teams.remove(leavingTeam);
-		} else {
-			throw new IllegalStateException(ERROR_NOT_ENOUGH_TEAMS);
-		}
-	}
+            this.teams.remove(leavingTeam);
+        } else {
+            throw new IllegalStateException(ERROR_NOT_ENOUGH_TEAMS);
+        }
+    }
 
-	void tradeTeams(Team teamToRemove, MatchGroup otherMatchGroup, Team teamToAdd) {
-		if(this.teams.contains(teamToRemove) && otherMatchGroup.teams.contains(teamToAdd)) {
+    void tradeTeams(Team teamToRemove, MatchGroup otherMatchGroup, Team teamToAdd) {
+        if(this.teams.contains(teamToRemove) && otherMatchGroup.teams.contains(teamToAdd)) {
             //A new list is created to ensure that this.teams ALWAYS contains a valid number of teams
-			ArrayList<Team> thisMatchGroupTeams = new ArrayList<>(this.teams);
-			ArrayList<Team> otherMatchGroupTeams = new ArrayList<>(otherMatchGroup.teams);
-			thisMatchGroupTeams.remove(teamToRemove);
-			otherMatchGroupTeams.remove(teamToAdd);
-			thisMatchGroupTeams.add(teamToAdd);
-			otherMatchGroupTeams.add(teamToRemove);
-			this.teams = thisMatchGroupTeams;
-			otherMatchGroup.teams = otherMatchGroupTeams;
+            ArrayList<Team> thisMatchGroupTeams = new ArrayList<>(this.teams);
+            ArrayList<Team> otherMatchGroupTeams = new ArrayList<>(otherMatchGroup.teams);
+            thisMatchGroupTeams.remove(teamToRemove);
+            otherMatchGroupTeams.remove(teamToAdd);
+            thisMatchGroupTeams.add(teamToAdd);
+            otherMatchGroupTeams.add(teamToRemove);
+            this.teams = thisMatchGroupTeams;
+            otherMatchGroup.teams = otherMatchGroupTeams;
 
             Collections.sort(this.teams, getTeamLadderPositionComparator());
             Collections.sort(otherMatchGroup.teams, getTeamLadderPositionComparator());
-		} else {
-			throw new TeamNotFoundException();
-		}
-	}
+        } else {
+            throw new TeamNotFoundException();
+        }
+    }
 
     private Comparator<Team> getTeamLadderPositionComparator() {
         return (team1, team2) -> team1.getLadderPosition().compareTo(team2.getLadderPosition());

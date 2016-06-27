@@ -19,6 +19,9 @@ import java.util.List;
 public class LadderRouter extends RestRouter{
 
     private static final String ROUTE_LADDER = "/ladder";
+
+    public static final String ROUTE_LADDER_REGENERATE = ROUTE_LADDER + "/regenerate";
+
     private static final String ERROR_SCORECARDS_NOT_FILLED = "Not all MatchGroups have reported their scores yet";
 
     private TeamManager teamManager;
@@ -31,7 +34,7 @@ public class LadderRouter extends RestRouter{
 
     @Override
     public void attachRoutes() {
-        Spark.put(ROUTE_LADDER, this::handleUpdateLadder);
+        Spark.put(ROUTE_LADDER_REGENERATE, this::handleUpdateLadder);
         //TODO: add manual team ladder position swapping
     }
 
