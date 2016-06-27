@@ -100,17 +100,9 @@ public class MatchGroup {
         return Collections.unmodifiableList(teams);
     }
 
-    private void setTeams(List<Team> teams) {
-        this.teams = teams;
-    }
-
     public ScoreCard getScoreCard() {
         return this.scoreCard;
     }
-
-	private boolean isValidIndex(int index) {
-		return 0 <= index && index < this.teams.size();
-	}
 
     /**
      * @return the @{@link PlayTime} that the majority of the group teams want to play at.

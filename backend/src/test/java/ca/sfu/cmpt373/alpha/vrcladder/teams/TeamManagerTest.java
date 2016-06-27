@@ -18,6 +18,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
@@ -267,6 +269,42 @@ public class TeamManagerTest extends BaseTest {
         // Should throw an ExistingTeamException.
         // Note the reverse order of arguments from testCreateDuplicateTeam.
         teamManager.create(existingTeam.getSecondPlayer(), existingTeam.getFirstPlayer());
+    }
+
+    @Test
+    public void testUpdateLadderPositions() {
+        List<Team> teams = new ArrayList<>();
+        int additionalTeamCount = 1;
+        for (int i = 0; i < additionalTeamCount; i++) {
+            teams.add(MockTeamGenerator.generateTeam());
+        }
+
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+        saveTeams(teams, session);
+        transaction.commit();
+
+        //add the teamFixture in so we are testing with all teams
+        teams.add(0, teamFixture);
+
+        //for this test we want to set the rankings in reverse order
+        Collections.reverse(teams);
+
+        teamManager.updateLadderPositions(teams);
+
+        List<Team> newRankedTeams = teamManager.getAll();
+
+        for (int i = 0; i < teams.size(); i++) {
+            Assert.assertEquals(teams.get(i), newRankedTeams.get(i));
+        }
+    }
+
+    private void saveTeams(List<Team> teams, Session session) {
+        for (Team team : teams) {
+            session.save(team.getFirstPlayer());
+            session.save(team.getSecondPlayer());
+            session.save(team);
+        }
     }
 
 }

@@ -61,6 +61,14 @@ public class ScoreCard {
         this.rankedTeams = rankedTeams;
     }
 
+    /**
+     * @return whether or not the ScoreCard has be "filled out'.
+     * i.e. Whether or not team rankings have been recorded
+     */
+    public boolean isFilledOut() {
+        return rankedTeams.size() == matchGroup.getTeams().size();
+    }
+
     private void checkTeamInMatchGroup(Team team) {
         boolean isTeamInGroup = false;
         for (Team groupTeam : matchGroup.getTeams()) {

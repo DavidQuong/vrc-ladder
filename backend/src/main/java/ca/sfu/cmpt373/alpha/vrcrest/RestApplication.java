@@ -11,6 +11,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserBuilder;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
+import ca.sfu.cmpt373.alpha.vrcrest.routes.LadderRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.MatchGroupRouter;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.PasswordManager;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.RestRouter;
@@ -57,7 +58,10 @@ public class RestApplication implements SparkApplication {
                 appManager.getMatchGroupManager(),
                 appManager.getTeamManager(),
                 appManager.getCourtManager());
-        List<RestRouter> routers = Arrays.asList(userRouter, teamRouter, matchGroupRouter);
+        LadderRouter ladderRouter = new LadderRouter(
+                appManager.getTeamManager(),
+                appManager.getMatchGroupManager());
+        List<RestRouter> routers = Arrays.asList(userRouter, teamRouter, matchGroupRouter, ladderRouter);
         restApi = new RestApi(appManager, routers);
     }
 

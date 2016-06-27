@@ -44,10 +44,10 @@ public class MatchGroupRouter extends RestRouter {
         this.courtManager = courtManager;
     }
 
-    private static final String PARAM_MATCHGROUP_1 = PARAM_ID + "matchGroup1";
-    private static final String PARAM_MATCHGROUP_2 = PARAM_ID + "matchGroup2";
-    private static final String PARAM_TEAM_1 = PARAM_ID + "team1";
-    private static final String PARAM_TEAM_2 = PARAM_ID + "team2";
+    private static final String PARAM_MATCHGROUP_1 = PARAM_ID + "matchGroupId1";
+    private static final String PARAM_MATCHGROUP_2 = PARAM_ID + "matchGroupId2";
+    private static final String PARAM_TEAM_1 = PARAM_ID + "teamId1";
+    private static final String PARAM_TEAM_2 = PARAM_ID + "teamId2";
 
     private static final String ROUTE_MATCHGROUP = "/matchGroup";
 
