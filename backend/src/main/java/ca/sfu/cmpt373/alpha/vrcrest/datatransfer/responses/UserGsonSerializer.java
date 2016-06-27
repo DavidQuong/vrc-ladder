@@ -1,7 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses;
 
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
-import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import com.google.gson.*;
 import com.sun.xml.internal.ws.encoding.soap.SerializationException;
 

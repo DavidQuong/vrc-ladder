@@ -1,17 +1,14 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
-import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
-import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.Log;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewUserPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.UserGsonSerializer;
 import com.google.gson.*;
 import org.eclipse.jetty.http.HttpStatus;
-import org.hibernate.exception.ConstraintViolationException;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
@@ -30,11 +27,7 @@ public class UserRouter extends RestRouter {
     private static final String ERROR_NONEXISTENT_USER = "This user does not exist.";
     private static final String ERROR_EXISTING_USER = "Cannot create user as a user with this ID already exists.";
     private static final String ERROR_GET_USERS_FAILURE = "Unable to pull all users";
-
-
-    private UserManager userManager;
-    private static ApplicationManager application = new ApplicationManager();
-
+    private final UserManager userManager;
 
     public UserRouter(UserManager userManager) {
         super();
