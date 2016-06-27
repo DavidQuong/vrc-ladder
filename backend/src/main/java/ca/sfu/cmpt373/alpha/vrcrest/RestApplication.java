@@ -37,7 +37,7 @@ public class RestApplication implements SparkApplication {
         ApplicationManager appManager = new ApplicationManager(sessionManager, passwordManager, userManager,
             teamManager, matchGroupManager);
 
-        UserRouter userRouter = new UserRouter(appManager.getUserManager());
+        UserRouter userRouter = new UserRouter(appManager.getPasswordManager(), appManager.getUserManager());
         TeamRouter teamRouter = new TeamRouter(appManager.getTeamManager());
         List<RestRouter> routers = Arrays.asList(userRouter, teamRouter);
         restApi = new RestApi(appManager, routers);

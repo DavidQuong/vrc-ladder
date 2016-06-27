@@ -3,6 +3,7 @@ package ca.sfu.cmpt373.alpha.vrcrest.routes;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.PasswordManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.Log;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewUserPayload;
@@ -24,7 +25,7 @@ import java.util.List;
 public class UserRouter extends RestRouter {
 
     public static final String ROUTE_USERS = "/users";
-    public static final String ROUTE_USER_ID = "/user/:id";
+    public static final String ROUTE_USER_ID = "/user/" + ROUTE_ID;
 
     public static final String JSON_PROPERTY_USERS = "users";
     public static final String JSON_PROPERTY_USER = "user";
@@ -32,12 +33,14 @@ public class UserRouter extends RestRouter {
     private static final String ERROR_PLAYER_ID_NOT_FOUND = "The provided player ID cannot be found.";
     private static final String ERROR_NONEXISTENT_USER = "This user does not exist.";
     private static final String ERROR_EXISTING_USER = "Cannot create user as a user with this ID already exists.";
-    private static final String ERROR_GET_USERS_FAILURE = "Unable to pull all users";
+    private static final String ERROR_GET_USERS_FAILURE = "Unable to get all users";
 
+    private PasswordManager passwordManager;
     private UserManager userManager;
 
-    public UserRouter(UserManager userManager) {
+    public UserRouter(PasswordManager passwordManager, UserManager userManager) {
         super();
+        this.passwordManager = passwordManager;
         this.userManager = userManager;
     }
 
@@ -61,31 +64,30 @@ public class UserRouter extends RestRouter {
 
 
     private String handleGetUsers(Request request, Response response) {
-        List<User> users = userManager.getAll();
         JsonObject responseBody = new JsonObject();
 
         try {
+            List<User> users = userManager.getAll();
             responseBody.add(JSON_PROPERTY_USERS, getGson().toJsonTree(users));
-            response.type(JSON_RESPONSE_TYPE);
             response.status(HttpStatus.OK_200);
-            return responseBody.toString();
         } catch (Exception e) {
             e.printStackTrace();
             responseBody.add(JSON_PROPERTY_USERS, getGson().toJsonTree(ERROR_GET_USERS_FAILURE));
             response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
-            return responseBody.toString();
         }
+
+        response.type(JSON_RESPONSE_TYPE);
+        return responseBody.toString();
     }
 
     private String handleCreateUser(Request request, Response response) {
-        User newUser;
         JsonObject responseBody = new JsonObject();
 
         try {
             NewUserPayload newUserPayload = getGson().fromJson(request.body(), NewUserPayload.class);
+            Password hashedPassword = passwordManager.hashPassword(newUserPayload.getPassword());
 
-            Password hashedPassword = null;
-            newUser = userManager.create(
+            User newUser = userManager.create(
                 newUserPayload.getUserId(),
                 newUserPayload.getUserRole(),
                 newUserPayload.getFirstName(),
@@ -119,6 +121,7 @@ public class UserRouter extends RestRouter {
 
     private String handleGetUserById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
+
         String requestedId = request.params(ROUTE_ID);
         UserId userId = new UserId(requestedId);
 
@@ -128,7 +131,6 @@ public class UserRouter extends RestRouter {
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(existingUser));
             response.status(HttpStatus.OK_200);
         } catch (JsonSyntaxException ex) {
-            Log.info("Unable to get user");
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
             response.status(HttpStatus.BAD_REQUEST_400);
         } catch (EntityNotFoundException ex) {
@@ -139,6 +141,7 @@ public class UserRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
+        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
@@ -172,14 +175,16 @@ public class UserRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
+        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
     private String handleDeleteUserById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        String requestedId = request.params(ROUTE_ID);
 
+        String requestedId = request.params(ROUTE_ID);
         UserId userId = new UserId(requestedId);
+
         try {
             User deletedUser = userManager.deleteById(userId);
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(deletedUser));
@@ -192,6 +197,7 @@ public class UserRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
+        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 

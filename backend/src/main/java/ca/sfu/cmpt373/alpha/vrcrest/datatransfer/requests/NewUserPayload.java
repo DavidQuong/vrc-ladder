@@ -29,7 +29,7 @@ public class NewUserPayload {
     public static class GsonDeserializer extends BaseGsonDeserializer<NewUserPayload> {
         @Override
         public NewUserPayload deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-                throws JsonParseException {
+            throws JsonParseException {
             JsonObject jsonObject = json.getAsJsonObject();
             checkForMissingProperties(jsonObject);
 
