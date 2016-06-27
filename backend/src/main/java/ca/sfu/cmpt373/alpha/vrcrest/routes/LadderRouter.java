@@ -5,6 +5,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -73,7 +74,8 @@ public class LadderRouter extends RestRouter{
     private void resetPlayerSettings(List<Team> teams) {
         matchGroupManager.deleteAll();
         for (Team team : teams) {
-            teamManager.updateAttendance(team.getId(), PlayTime.NONE);
+            teamManager.updateAttendancePlaytime(team.getId(), PlayTime.NONE);
+            teamManager.updateAttendanceStatus(team.getId(), AttendanceStatus.PRESENT);
         }
     }
 }
