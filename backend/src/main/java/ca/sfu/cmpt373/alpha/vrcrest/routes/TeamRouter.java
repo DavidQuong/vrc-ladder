@@ -86,12 +86,11 @@ public class TeamRouter extends RestRouter {
     }
 
     private String handleCreateTeam(Request request, Response response) {
-        Team newTeam;
         JsonObject responseBody = new JsonObject();
 
         try {
             NewTeamPayload newTeamPayload = getGson().fromJson(request.body(), NewTeamPayload.class);
-            newTeam = teamManager.create(newTeamPayload.getFirstPlayerId(), newTeamPayload.getSecondPlayerId());
+            Team newTeam = teamManager.create(newTeamPayload.getFirstPlayerId(), newTeamPayload.getSecondPlayerId());
 
             JsonElement jsonTeam = getGson().toJsonTree(newTeam);
             responseBody.add(JSON_PROPERTY_TEAM, jsonTeam);

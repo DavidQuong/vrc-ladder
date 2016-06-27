@@ -20,11 +20,9 @@ public class NewPlayTimePayload {
         @Override
         public NewPlayTimePayload deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
-            JsonObject jsonObject = (JsonObject) json;
+            JsonObject jsonObject = json.getAsJsonObject();
+            checkForMissingProperties(jsonObject);
 
-            if (!jsonObject.has(JSON_PROPERTY_PLAY_TIME)) {
-                throwMissingPropertyException(JSON_PROPERTY_PLAY_TIME);
-            }
             JsonElement jsonPlayTime = jsonObject.get(JSON_PROPERTY_PLAY_TIME);
             PlayTime playTime = EnumUtils.getEnum(PlayTime.class, jsonPlayTime.getAsString());
 
@@ -33,6 +31,13 @@ public class NewPlayTimePayload {
             }
 
             return new NewPlayTimePayload(playTime);
+        }
+
+        @Override
+        protected void checkForMissingProperties(JsonObject jsonObject) {
+            if (!jsonObject.has(JSON_PROPERTY_PLAY_TIME)) {
+                throwMissingPropertyException(JSON_PROPERTY_PLAY_TIME);
+            }
         }
 
     }
