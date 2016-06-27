@@ -200,7 +200,7 @@ public class TeamRouter extends RestRouter {
 
         try {
             NewPlayTimePayload playTimePayload = getGson().fromJson(request.body(), NewPlayTimePayload.class);
-            Team existingTeam = teamManager.updateAttendance(generatedId, playTimePayload.getPlayTime());
+            Team existingTeam = teamManager.updateAttendancePlaytime(generatedId, playTimePayload.getPlayTime());
             AttendanceCard attendanceCard = existingTeam.getAttendanceCard();
 
             responseBody.add(JSON_PROPERTY_ATTENDANCE, getGson().toJsonTree(attendanceCard));
