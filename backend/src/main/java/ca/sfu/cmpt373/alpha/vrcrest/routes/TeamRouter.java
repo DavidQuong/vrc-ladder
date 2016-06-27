@@ -58,8 +58,8 @@ public class TeamRouter extends RestRouter {
         Spark.delete(ROUTE_TEAM_ID, (request, response) -> handleDeleteTeamById(request, response));
         Spark.get(ROUTE_TEAM_ID_ATTENDANCE, (request, response) -> handleGetTeamAttendance(request, response));
         Spark.put(ROUTE_TEAM_ID_ATTENDANCE_PLAYTIME, (request, response) -> handleUpdatePlayTime(request, response));
-        Spark.put(ROUTE_TEAM_ID_ATTENDANCE_STATUS, (request, response) -> handleUpdateAttendanceStatus(request,
-            response));
+        Spark.put(ROUTE_TEAM_ID_ATTENDANCE_STATUS, (request, response) -> handleUpdateAttendanceStatus(request, response));
+
 
     }
 
