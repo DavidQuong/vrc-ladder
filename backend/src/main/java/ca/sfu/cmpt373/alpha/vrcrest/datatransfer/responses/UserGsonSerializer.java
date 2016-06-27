@@ -13,22 +13,17 @@ public class UserGsonSerializer implements JsonSerializer<User>{
 
     @Override
     public JsonElement serialize(User user, Type typeOfSrc, JsonSerializationContext context) {
-        try{
-            JsonObject jsonObject = new JsonObject();
+        JsonObject jsonUser = new JsonObject();
 
-            jsonObject.addProperty("userId", user.getUserId().getValue().toString());
-            jsonObject.addProperty("userRole", user.getUserRole().name());
-            jsonObject.addProperty("firstName", user.getFirstName());
-            jsonObject.addProperty("middleName", user.getMiddleName());
-            jsonObject.addProperty("lastName", user.getLastName());
-            jsonObject.addProperty("emailAddress", user.getEmailAddress().getValue());
-            jsonObject.addProperty("phoneNumber", user.getPhoneNumber().getValue());
+        jsonUser.addProperty("userId", user.getUserId().getValue().toString());
+        jsonUser.addProperty("userRole", user.getUserRole().name());
+        jsonUser.addProperty("firstName", user.getFirstName());
+        jsonUser.addProperty("middleName", user.getMiddleName());
+        jsonUser.addProperty("lastName", user.getLastName());
+        jsonUser.addProperty("emailAddress", user.getEmailAddress().getValue());
+        jsonUser.addProperty("phoneNumber", user.getPhoneNumber().getValue());
 
-            return jsonObject;
-        }catch (ClassCastException e){
-            e.printStackTrace();
-            throw new SerializationException("Unable to serialize object.");
-        }
+        return jsonUser;
     }
 
 
