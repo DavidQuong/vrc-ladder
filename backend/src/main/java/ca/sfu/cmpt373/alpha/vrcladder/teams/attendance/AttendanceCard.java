@@ -27,7 +27,10 @@ public class AttendanceCard {
     private PlayTime preferredPlayTime;
 
     //TODO: add this to the database
+    @Enumerated(EnumType.STRING)
+    @Column(name = PersistenceConstants.COLUMN_ATTENDANCE_STATUS, nullable = false)
     private AttendanceStatus attendanceStatus;
+
 
     public AttendanceCard() {
         this.id = new GeneratedId();

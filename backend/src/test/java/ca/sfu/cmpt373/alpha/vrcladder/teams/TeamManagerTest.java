@@ -6,6 +6,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MultiplePlayTimeException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
@@ -134,7 +135,7 @@ public class TeamManagerTest extends BaseTest {
         final PlayTime newPlayTime1 = PlayTime.TIME_SLOT_A;
         final PlayTime newPlayTime2 = PlayTime.TIME_SLOT_B;
         final PlayTime newPlayTime3 = PlayTime.NONE;
-        teamManager.updateAttendance(teamFixture.getId(), newPlayTime1);
+        teamManager.updateAttendancePlaytime(teamFixture.getId(), newPlayTime1);
 
         Session session = sessionManager.getSession();
         Team team = session.get(Team.class, teamFixture.getId());
@@ -143,15 +144,41 @@ public class TeamManagerTest extends BaseTest {
         Assert.assertEquals(newPlayTime1, attendanceCard.getPreferredPlayTime());
         session.clear();
 
-        teamManager.updateAttendance(teamFixture.getId(), newPlayTime2);
+        teamManager.updateAttendancePlaytime(teamFixture.getId(), newPlayTime2);
         session.refresh(attendanceCard);
         Assert.assertEquals(newPlayTime2, attendanceCard.getPreferredPlayTime());
         session.clear();
 
-        teamManager.updateAttendance(teamFixture.getId(), newPlayTime3);
+        teamManager.updateAttendancePlaytime(teamFixture.getId(), newPlayTime3);
         session.refresh(attendanceCard);
         Assert.assertEquals(newPlayTime3, attendanceCard.getPreferredPlayTime());
         session.close();
+    }
+    @Test
+    public void testUpdateAttendanceStatus(){
+        final AttendanceStatus newAttStatus1 = AttendanceStatus.PRESENT;
+        final AttendanceStatus newAttStatus2 = AttendanceStatus.LATE;
+        final AttendanceStatus newAttStatus3 = AttendanceStatus.NO_SHOW;
+        teamManager.updateAttendanceStatus(teamFixture.getId(), newAttStatus1);
+
+        Session session = sessionManager.getSession();
+        Team team = session.get(Team.class, teamFixture.getId());
+
+        AttendanceCard attendanceCard = session.get(AttendanceCard.class, team.getAttendanceCard().getId());
+        Assert.assertEquals(newAttStatus1, attendanceCard.getAttendanceStatus());
+        session.clear();
+
+        teamManager.updateAttendanceStatus(teamFixture.getId(), newAttStatus2);
+        session.refresh(attendanceCard);
+        Assert.assertEquals(newAttStatus2, attendanceCard.getAttendanceStatus());
+        session.clear();
+
+
+        teamManager.updateAttendanceStatus(teamFixture.getId(), newAttStatus3);
+        session.refresh(attendanceCard);
+        Assert.assertEquals(newAttStatus3, attendanceCard.getAttendanceStatus());
+        session.close();
+
     }
 
     @Test(expected = MultiplePlayTimeException.class)
@@ -170,15 +197,17 @@ public class TeamManagerTest extends BaseTest {
         transaction.commit();
         session.close();
 
-        teamManager.updateAttendance(teamFixture.getId(), PlayTime.TIME_SLOT_A);
-        teamManager.updateAttendance(newTeam.getId(), PlayTime.TIME_SLOT_B);
+        teamManager.updateAttendancePlaytime(teamFixture.getId(), PlayTime.TIME_SLOT_A);
+        teamManager.updateAttendancePlaytime(newTeam.getId(), PlayTime.TIME_SLOT_B);
     }
+
 
     @Test(expected = EntityNotFoundException.class)
     public void testUpdateNonExistentTeamAttendance() {
         final GeneratedId nonExistentTeamId = new GeneratedId();
-        teamManager.updateAttendance(nonExistentTeamId, PlayTime.TIME_SLOT_A);
+        teamManager.updateAttendancePlaytime(nonExistentTeamId, PlayTime.TIME_SLOT_A);
     }
+
 
     @Test
     public void testDeleteTeam() {
