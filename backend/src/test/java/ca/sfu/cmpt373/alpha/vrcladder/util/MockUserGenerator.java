@@ -37,7 +37,7 @@ public class MockUserGenerator {
         String lastName = LAST_NAME_BASE + userId;
         EmailAddress emailAddress = generateEmailAddress(userCountStr);
         PhoneNumber phoneNumber = generatePhoneNumber(userCountStr);
-        Password password = passwordManager.hashPassword(HASH_BASE + userId);
+        Password password = new Password(HASH_BASE + userId);
 
         User newUser = new UserBuilder()
             .setUserId(userId)
