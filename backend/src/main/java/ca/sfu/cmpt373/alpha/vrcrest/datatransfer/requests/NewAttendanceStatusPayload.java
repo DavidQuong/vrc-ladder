@@ -14,23 +14,23 @@ public class NewAttendanceStatusPayload {
 
     public static class GsonDeserializer extends BaseGsonDeserializer<NewAttendanceStatusPayload> {
 
-        public static final String JSON_PROPERTY_PLAY_TIME = "AttendanceStatus";
+        public static final String JSON_PROPERTY_ATTENDANCE_STATUS = "AttendanceStatus";
 
-        private static final String ERROR_INVALID_PLAY_TIME = "Invalid AttendanceStatus.";
+        private static final String ERROR_INVALID_ATTENDANCE_STATUS = "Invalid AttendanceStatus.";
 
         @Override
         public NewAttendanceStatusPayload deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
                 throws JsonParseException {
             JsonObject jsonObject = (JsonObject) json;
 
-            if (!jsonObject.has(JSON_PROPERTY_PLAY_TIME)) {
-                throwMissingPropertyException(JSON_PROPERTY_PLAY_TIME);
+            if (!jsonObject.has(JSON_PROPERTY_ATTENDANCE_STATUS)) {
+                throwMissingPropertyException(JSON_PROPERTY_ATTENDANCE_STATUS);
             }
-            JsonElement jsonAttendanceStatus = jsonObject.get(JSON_PROPERTY_PLAY_TIME);
+            JsonElement jsonAttendanceStatus = jsonObject.get(JSON_PROPERTY_ATTENDANCE_STATUS);
             AttendanceStatus AttendanceStatus = EnumUtils.getEnum(AttendanceStatus.class, jsonAttendanceStatus.getAsString());
 
             if (AttendanceStatus == null) {
-                throw new IllegalArgumentException(ERROR_INVALID_PLAY_TIME);
+                throw new IllegalArgumentException(ERROR_INVALID_ATTENDANCE_STATUS);
             }
 
             return new NewAttendanceStatusPayload(AttendanceStatus);

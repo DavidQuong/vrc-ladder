@@ -72,7 +72,7 @@ public class TeamRouter extends RestRouter {
             .registerTypeAdapter(AttendanceCard.class, new AttendanceCardGsonSerializer())
             .registerTypeAdapter(NewTeamPayload.class, new NewTeamPayload.GsonDeserializer())
             .registerTypeAdapter(NewPlayTimePayload.class, new NewPlayTimePayload.GsonDeserializer())
-                .registerTypeAdapter(NewAttendanceStatusPayload.class, new NewAttendanceStatusPayload.GsonDeserializer())
+            .registerTypeAdapter(NewAttendanceStatusPayload.class, new NewAttendanceStatusPayload.GsonDeserializer())
             .setPrettyPrinting()
             .create();
     }
