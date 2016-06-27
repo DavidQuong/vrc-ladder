@@ -7,6 +7,8 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 
 import java.util.ArrayList;
@@ -64,7 +66,7 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
 	public MatchGroup addTeamToMatchGroup(IdType matchGroupId, Team newTeam) {
 		MatchGroup matchGroup = getById(matchGroupId);
 		if (matchGroup == null) {
-			throw new RuntimeException(ERROR_NO_MATCH_GROUP);
+			throw new EntityNotFoundException(ERROR_NO_MATCH_GROUP);
 		}
 		matchGroup.addTeam(newTeam);
 
@@ -74,7 +76,7 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
 	public MatchGroup removeTeamFromMatchGroup(IdType matchGroupId, Team leavingTeam) {
 		MatchGroup matchGroup = getById(matchGroupId);
 		if (matchGroup == null) {
-			throw new RuntimeException(ERROR_NO_MATCH_GROUP);
+			throw new EntityNotFoundException(ERROR_NO_MATCH_GROUP);
 		}
 		matchGroup.removeTeam(leavingTeam);
 
@@ -84,11 +86,11 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
 	public List<MatchGroup> tradeTeamsInMatchGroups(IdType matchGroupId1, Team first, IdType matchGroupId2, Team second) {
 		MatchGroup matchGroup1 = getById(matchGroupId1);
 		if (matchGroup1 == null) {
-			throw new RuntimeException(ERROR_NO_MATCH_GROUP);
+			throw new EntityNotFoundException(ERROR_NO_MATCH_GROUP);
 		}
 		MatchGroup matchGroup2 = getById(matchGroupId2);
 		if (matchGroup2 == null) {
-			throw new RuntimeException(ERROR_NO_MATCH_GROUP);
+			throw new EntityNotFoundException(ERROR_NO_MATCH_GROUP);
 		}
 		matchGroup1.tradeTeams(first, matchGroup2, second);
 
@@ -107,6 +109,7 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
 
 		return results;
 	}
+
     @Override
     public List<MatchGroup> getAll() {
         //Criteria.DISTINCT_ROOT_ENTITY is needed so duplicates of results aren't returned

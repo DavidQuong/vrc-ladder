@@ -33,9 +33,12 @@ public class MatchGroup {
     public static final int MIN_NUM_TEAMS = 3;
     public static final int MAX_NUM_TEAMS = 4;
 
-    private static final String ERROR_NUM_TEAMS = "Teams list contains more or less than the min or max " +
-        "number of permissible teams";
+    private static final String ERROR_NUM_TEAMS = "Teams list contains an invalid number of teams";
     private static final String ERROR_DUPLICATE_TEAMS = "MatchGroup cannot contain duplicate teams";
+    private static final String ERROR_NO_TEAM_EXISTS = "The team does not exist in this MatchGroup";
+    private static final String ERROR_TEAM_ALREADY_EXISTS = "The team already exists in this MatchGroup";
+    private static final String ERROR_NOT_ENOUGH_TEAMS = "There are not enough teams in the MatchGroup to remove a team";
+    private static final String ERROR_TOO_MANY_TEAMS = "There are too many teams in the MatchGroup to add another Team";
 
     @EmbeddedId
     private GeneratedId id;
@@ -192,31 +195,37 @@ public class MatchGroup {
     }
 
 	void addTeam(Team newTeam) {
-		if(this.teams.size() == MIN_NUM_TEAMS) {
+		if(this.teams.size() < MAX_NUM_TEAMS) {
+            if (teams.contains(newTeam)) {
+                throw new IllegalStateException(ERROR_TEAM_ALREADY_EXISTS);
+            }
 			this.teams.add(newTeam);
 		} else {
-			throw new IllegalStateException(ERROR_NUM_TEAMS);
+			throw new IllegalStateException(ERROR_TOO_MANY_TEAMS);
 		}
 	}
 
 	void removeTeam(Team leavingTeam) {
-		if(this.teams.size() == MAX_NUM_TEAMS) {
+		if(this.teams.size() > MIN_NUM_TEAMS) {
+            if (!teams.contains(leavingTeam)) {
+                throw new IllegalStateException(ERROR_NO_TEAM_EXISTS);
+            }
 			this.teams.remove(leavingTeam);
 		} else {
-			throw new IllegalStateException(ERROR_NUM_TEAMS);
+			throw new IllegalStateException(ERROR_NOT_ENOUGH_TEAMS);
 		}
 	}
 
 	void tradeTeams(Team teamToRemove, MatchGroup otherMatchGroup, Team teamToAdd) { //Swap two teams between their respective MatchGroups
 		if(this.teams.contains(teamToRemove) && otherMatchGroup.teams.contains(teamToAdd)) {
-			ArrayList<Team> possessions = new ArrayList<>(this.teams); //A new list is created to ensure that this.teams ALWAYS contains a valid number of teams
-			ArrayList<Team> storeStock = new ArrayList<>(otherMatchGroup.teams);
-			possessions.remove(teamToRemove);
-			storeStock.remove(teamToAdd);
-			possessions.add(teamToAdd);
-			storeStock.add(teamToRemove);
-			this.teams = possessions;
-			otherMatchGroup.teams = storeStock;
+			ArrayList<Team> thisMatchGroupTeams = new ArrayList<>(this.teams); //A new list is created to ensure that this.teams ALWAYS contains a valid number of teams
+			ArrayList<Team> otherMatchGroupTeams = new ArrayList<>(otherMatchGroup.teams);
+			thisMatchGroupTeams.remove(teamToRemove);
+			otherMatchGroupTeams.remove(teamToAdd);
+			thisMatchGroupTeams.add(teamToAdd);
+			otherMatchGroupTeams.add(teamToRemove);
+			this.teams = thisMatchGroupTeams;
+			otherMatchGroup.teams = otherMatchGroupTeams;
 		} else {
 			throw new TeamNotFoundException();
 		}

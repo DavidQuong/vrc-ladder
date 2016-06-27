@@ -23,6 +23,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import org.eclipse.jetty.http.HttpStatus;
+import org.hibernate.exception.ConstraintViolationException;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
@@ -260,10 +261,50 @@ public class MatchGroupRouter extends RestRouter {
     }
 
     private String handleAddMatchGroupTeam(Request request, Response response) {
-        return null;
+        JsonObject responseBody = new JsonObject();
+        try {
+            String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_1);
+            String paramTeamId1 =  request.params(PARAM_TEAM_1);
+
+            Team teamToAdd = teamManager.getById(new GeneratedId(paramTeamId1));
+            matchGroupManager.addTeamToMatchGroup(new GeneratedId(paramMatchGroupId1), teamToAdd);
+        } catch (EntityNotFoundException e) {
+            response.status(HttpStatus.NOT_FOUND_404);
+            //TODO: change this error to specify that either the Team or the MatchGroup was not found instead of just the MatchGroup
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_MATCHGROUP_FOUND);
+        } catch (IllegalStateException e) {
+            //This occurs if a Team is added, and there's already the max # of players
+            response.status(HttpStatus.BAD_REQUEST_400);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
+        } catch (ConstraintViolationException e) {
+            //TODO: don't let these constraint violations happen!
+            response.status(HttpStatus.BAD_REQUEST_400);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
+        }
+        return responseBody.toString();
     }
 
     private String handleRemoveMatchGroupTeam(Request request, Response response) {
-        return null;
+        JsonObject responseBody = new JsonObject();
+        try {
+            String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_1);
+            String paramTeamId1 = request.params(PARAM_TEAM_1);
+
+            Team teamToRemove = teamManager.getById(new GeneratedId(paramTeamId1));
+            matchGroupManager.removeTeamFromMatchGroup(new GeneratedId(paramMatchGroupId1), teamToRemove);
+        } catch (EntityNotFoundException e) {
+            //TODO: change this error to specify that either the Team or the MatchGroup was not found
+            response.status(HttpStatus.NOT_FOUND_404);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
+        } catch (IllegalStateException e) {
+            //this occurs if a team is removed and there's already the minimum number of players
+            response.status(HttpStatus.BAD_REQUEST_400);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
+        } catch (ConstraintViolationException e) {
+            //TODO: don't let these constraint violations happen!
+            response.status(HttpStatus.BAD_REQUEST_400);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
+        }
+        return responseBody.toString();
     }
 }

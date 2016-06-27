@@ -2,7 +2,6 @@ package ca.sfu.cmpt373.alpha.vrcrest;
 
 import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.CourtManager;
-import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
@@ -118,16 +117,35 @@ public class RestApplication implements SparkApplication {
                 .setEmailAddress("Emaasdfgggail@test.com")
                 .setPhoneNumber("1111111111")
                 .buildUser());
+        User user7 = userManager.create(new UserBuilder()
+                .setUserId("7")
+                .setUserRole(UserRole.PLAYER)
+                .setFirstName("First")
+                .setMiddleName(StringUtils.EMPTY)
+                .setLastName("Last")
+                .setEmailAddress("Emaasdfgwfsdfhhhhggail@test.com")
+                .setPhoneNumber("1111111111")
+                .buildUser());
+        User user8 = userManager.create(new UserBuilder()
+                .setUserId("8")
+                .setUserRole(UserRole.PLAYER)
+                .setFirstName("First")
+                .setMiddleName(StringUtils.EMPTY)
+                .setLastName("Last")
+                .setEmailAddress("Emaasdfgcsdfgfgfdggail@test.com")
+                .setPhoneNumber("1111111111")
+                .buildUser());
         Team team1 = teamManager.create(user1, user2);
         Team team2 = teamManager.create(user3, user4);
         Team team3 = teamManager.create(user5, user6);
+        //this team is an extra one that's not in any MatchGroup
+        Team team4 = teamManager.create(user7, user8);
+
         teamManager.updateAttendancePlaytime(team1.getId(), PlayTime.TIME_SLOT_A);
         teamManager.updateAttendancePlaytime(team2.getId(), PlayTime.TIME_SLOT_A);
         teamManager.updateAttendancePlaytime(team3.getId(), PlayTime.TIME_SLOT_A);
-        List<MatchGroup> matchGroups = matchGroupManager.getAll();
-        MatchGroup matchGroup1 = matchGroupManager.create(Arrays.asList(team1, team2, team3));
-        matchGroups = matchGroupManager.getAll();
-        List<Team> teams = teamManager.getAll();
+        teamManager.updateAttendancePlaytime(team4.getId(), PlayTime.TIME_SLOT_A);
+        matchGroupManager.create(Arrays.asList(team1, team2, team3));
     }
 
     @Override
