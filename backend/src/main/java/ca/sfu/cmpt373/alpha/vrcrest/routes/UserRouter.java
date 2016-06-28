@@ -15,6 +15,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import org.eclipse.jetty.http.HttpStatus;
+import org.hibernate.exception.ConstraintViolationException;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
@@ -30,9 +31,9 @@ public class UserRouter extends RestRouter {
     public static final String JSON_PROPERTY_USERS = "users";
     public static final String JSON_PROPERTY_USER = "user";
 
-    private static final String ERROR_PLAYER_ID_NOT_FOUND = "The provided player ID cannot be found.";
+    private static final String ERROR_COULD_NOT_CREATE_USER = "The provided user could not be created.";
+    private static final String ERROR_COULD_NOT_UPDATE_USER = "The provided user could not be updated.";
     private static final String ERROR_NONEXISTENT_USER = "This user does not exist.";
-    private static final String ERROR_EXISTING_USER = "Cannot create user as a user with this ID already exists.";
     private static final String ERROR_GET_USERS_FAILURE = "Unable to get all users";
 
     private PasswordManager passwordManager;
@@ -108,9 +109,9 @@ public class UserRouter extends RestRouter {
         } catch (JsonParseException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
-        } catch (EntityNotFoundException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_PLAYER_ID_NOT_FOUND);
-            response.status(HttpStatus.NOT_FOUND_404);
+        } catch (ConstraintViolationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_CREATE_USER);
+            response.status(HttpStatus.CONFLICT_409);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.BAD_REQUEST_400);
@@ -170,9 +171,9 @@ public class UserRouter extends RestRouter {
         } catch (JsonParseException | IllegalArgumentException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
-        } catch (EntityNotFoundException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER);
-            response.status(HttpStatus.NOT_FOUND_404);
+        } catch (ConstraintViolationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_UPDATE_USER);
+            response.status(HttpStatus.CONFLICT_409);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.BAD_REQUEST_400);

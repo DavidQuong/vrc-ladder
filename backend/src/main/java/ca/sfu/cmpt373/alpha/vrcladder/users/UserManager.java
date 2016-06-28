@@ -9,6 +9,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.CriterionConstants;
+import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -90,6 +91,13 @@ public class UserManager extends DatabaseManager<User> {
             super.delete(user);
         }
 
+        return user;
+    }
+
+    @Override
+    public User deleteById(IdType id) {
+        User user = getById(id);
+        delete(user);
         return user;
     }
 
