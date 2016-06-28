@@ -10,17 +10,19 @@ import {LinkContainer} from 'react-router-bootstrap';
 
 const Layout = ({children}) => (
   <div>
-    <ButtonToolbar>
-      <LinkContainer to='/signup'>
-        <Button>Sign up</Button>
-      </LinkContainer>
-      <LinkContainer to='/ladder'>
-        <Button>Ladder</Button>
-      </LinkContainer>
-      <LinkContainer to='/create-team'>
-        <Button>Create team</Button>
-      </LinkContainer>
-    </ButtonToolbar>
+    <div>
+      <ButtonToolbar>
+        <LinkContainer to='/signup'>
+          <Button>Sign up</Button>
+        </LinkContainer>
+        <LinkContainer to='/ladder'>
+          <Button>Ladder</Button>
+        </LinkContainer>
+        <LinkContainer to='/create-team'>
+          <Button>Create team</Button>
+        </LinkContainer>
+      </ButtonToolbar>
+      </div>
     <div>
       {children}
     </div>
