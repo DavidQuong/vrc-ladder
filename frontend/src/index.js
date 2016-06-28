@@ -32,7 +32,7 @@ export default ({store}) : Element => (
     <IntlProvider messages={{}} defaultLocale='en-US'>
       <Router history={browserHistory}>
         <Route path='/' component={Layout}>
-          <IndexRoute component={() => <div>INDEX</div>}/>
+          <IndexRoute component={Ladder}/>
           <Route path='/signup' component={SignUp}/>
           <Route path='/ladder' component={Ladder}/>
           <Route path='/create-team' component={CreateTeam}/>
