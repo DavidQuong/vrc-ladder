@@ -62,16 +62,15 @@ public class UserManager extends DatabaseManager<User> {
 
     public User update(UserId userId, String firstName, String middleName, String lastName, EmailAddress emailAddress,
         PhoneNumber phoneNumber) {
-        Session session = sessionManager.getSession();
+        User user = getById(userId);
 
-        User user = session.get(User.class, userId);
         user.setFirstName(firstName);
         user.setMiddleName(middleName);
         user.setLastName(lastName);
         user.setEmailAddress(emailAddress);
         user.setPhoneNumber(phoneNumber);
 
-        return update(user, session);
+        return update(user);
     }
 
     @Override
