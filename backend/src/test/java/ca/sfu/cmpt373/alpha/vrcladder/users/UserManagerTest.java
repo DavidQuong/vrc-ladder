@@ -78,8 +78,8 @@ public class UserManagerTest extends BaseTest {
         final PhoneNumber newPhoneNumber = new PhoneNumber("(778) 111-2222");
         final EmailAddress newEmailAddress = new EmailAddress("billyj@vrc.ca");
 
-        userManager.update(userFixture.getUserId(), userFixture.getUserRole(), newFirstName, newMiddleName,
-            userFixture.getLastName(), newEmailAddress, newPhoneNumber);
+        userManager.update(userFixture.getUserId(), newFirstName, newMiddleName, userFixture.getLastName(),
+            newEmailAddress, newPhoneNumber);
 
         Session session = sessionManager.getSession();
         User user = session.get(User.class, userFixture.getUserId());
