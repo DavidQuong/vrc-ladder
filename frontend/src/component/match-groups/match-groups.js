@@ -3,7 +3,7 @@ import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import map from 'lodash/fp/map';
 import sortBy from 'lodash/fp/sortBy';
-import styles from './match-group.css';
+import styles from './match-groups.css';
 
 // import styles from './ladder.css';
 import Heading from '../heading/heading';
