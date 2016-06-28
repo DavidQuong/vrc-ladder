@@ -2,6 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests;
 
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonProperties;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -11,13 +12,7 @@ import java.lang.reflect.Type;
 
 public class UpdateUserPayload {
 
-    public static final String JSON_PROPERTY_FIRST_NAME = "firstName";
-    public static final String JSON_PROPERTY_MIDDLE_NAME = "middleName";
-    public static final String JSON_PROPERTY_LAST_NAME = "lastName";
-    public static final String JSON_PROPERTY_EMAIL_ADDRESS = "emailAddress";
-    public static final String JSON_PROPERTY_PHONE_NUMBER = "phoneNumber";
-
-    public static class GsonDeserialiezr extends BaseGsonDeserializer<UpdateUserPayload> {
+    public static class GsonDeserializer extends BaseGsonDeserializer<UpdateUserPayload> {
 
         @Override
         public UpdateUserPayload deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -25,14 +20,14 @@ public class UpdateUserPayload {
             JsonObject jsonObject = json.getAsJsonObject();
             checkForMissingProperties(jsonObject);
 
-            String firstName = jsonObject.get(JSON_PROPERTY_FIRST_NAME).getAsString();
-            String middleName = jsonObject.get(JSON_PROPERTY_MIDDLE_NAME).getAsString();
-            String lastName = jsonObject.get(JSON_PROPERTY_LAST_NAME).getAsString();
+            String firstName = jsonObject.get(JsonProperties.JSON_PROPERTY_FIRST_NAME).getAsString();
+            String middleName = jsonObject.get(JsonProperties.JSON_PROPERTY_MIDDLE_NAME).getAsString();
+            String lastName = jsonObject.get(JsonProperties.JSON_PROPERTY_LAST_NAME).getAsString();
 
-            JsonElement jsonEmailAddress = jsonObject.get(JSON_PROPERTY_EMAIL_ADDRESS);
+            JsonElement jsonEmailAddress = jsonObject.get(JsonProperties.JSON_PROPERTY_EMAIL_ADDRESS);
             EmailAddress emailAddress = new EmailAddress(jsonEmailAddress.getAsString());
 
-            JsonElement jsonPhoneNumber = jsonObject.get(JSON_PROPERTY_PHONE_NUMBER);
+            JsonElement jsonPhoneNumber = jsonObject.get(JsonProperties.JSON_PROPERTY_PHONE_NUMBER);
             PhoneNumber phoneNumber = new PhoneNumber(jsonPhoneNumber.getAsString());
 
             return new UpdateUserPayload(firstName, middleName, lastName, emailAddress, phoneNumber);
@@ -40,24 +35,24 @@ public class UpdateUserPayload {
 
         @Override
         protected void checkForMissingProperties(JsonObject jsonObject) {
-            if (!jsonObject.has(JSON_PROPERTY_FIRST_NAME)) {
-                throwMissingPropertyException(JSON_PROPERTY_FIRST_NAME);
+            if (!jsonObject.has(JsonProperties.JSON_PROPERTY_FIRST_NAME)) {
+                throwMissingPropertyException(JsonProperties.JSON_PROPERTY_FIRST_NAME);
             }
 
-            if (!jsonObject.has(JSON_PROPERTY_MIDDLE_NAME)) {
-                throwMissingPropertyException(JSON_PROPERTY_MIDDLE_NAME);
+            if (!jsonObject.has(JsonProperties.JSON_PROPERTY_MIDDLE_NAME)) {
+                throwMissingPropertyException(JsonProperties.JSON_PROPERTY_MIDDLE_NAME);
             }
 
-            if (!jsonObject.has(JSON_PROPERTY_LAST_NAME)) {
-                throwMissingPropertyException(JSON_PROPERTY_LAST_NAME);
+            if (!jsonObject.has(JsonProperties.JSON_PROPERTY_LAST_NAME)) {
+                throwMissingPropertyException(JsonProperties.JSON_PROPERTY_LAST_NAME);
             }
 
-            if (!jsonObject.has(JSON_PROPERTY_EMAIL_ADDRESS)) {
-                throwMissingPropertyException(JSON_PROPERTY_EMAIL_ADDRESS);
+            if (!jsonObject.has(JsonProperties.JSON_PROPERTY_EMAIL_ADDRESS)) {
+                throwMissingPropertyException(JsonProperties.JSON_PROPERTY_EMAIL_ADDRESS);
             }
 
-            if (!jsonObject.has(JSON_PROPERTY_PHONE_NUMBER)) {
-                throwMissingPropertyException(JSON_PROPERTY_PHONE_NUMBER);
+            if (!jsonObject.has(JsonProperties.JSON_PROPERTY_PHONE_NUMBER)) {
+                throwMissingPropertyException(JsonProperties.JSON_PROPERTY_PHONE_NUMBER);
             }
         }
     }

@@ -59,7 +59,7 @@ public class UserRouter extends RestRouter {
         GsonBuilder gson = new GsonBuilder()
             .registerTypeAdapter(User.class, new UserGsonSerializer())
             .registerTypeAdapter(NewUserPayload.class, new NewUserPayload.GsonDeserializer())
-            .registerTypeAdapter(UpdateUserPayload.class, new UpdateUserPayload.GsonDeserialiezr())
+            .registerTypeAdapter(UpdateUserPayload.class, new UpdateUserPayload.GsonDeserializer())
             .setPrettyPrinting();
         return gson.create();
     }
@@ -156,12 +156,12 @@ public class UserRouter extends RestRouter {
         try {
             UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
             User existingUser = userManager.update(
-                    userId,
-                    updateUserPayload.getFirstName(),
-                    updateUserPayload.getMiddleName(),
-                    updateUserPayload.getLastName(),
-                    updateUserPayload.getEmailAddress(),
-                    updateUserPayload.getPhoneNumber());
+                userId,
+                updateUserPayload.getFirstName(),
+                updateUserPayload.getMiddleName(),
+                updateUserPayload.getLastName(),
+                updateUserPayload.getEmailAddress(),
+                updateUserPayload.getPhoneNumber());
 
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(existingUser));
             response.status(HttpStatus.OK_200);
