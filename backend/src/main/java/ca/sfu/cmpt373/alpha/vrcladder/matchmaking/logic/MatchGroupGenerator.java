@@ -26,7 +26,7 @@ public class MatchGroupGenerator {
         List<Team> teamsToGroup = new ArrayList<>();
 
         int deductedTeams = 0;
-        int teamsTotal = teams.size();
+        int teamsTotal = attendingTeams.size();
         if(teamsTotal == 0) {
             throw new MatchMakingException(ERROR_MESSAGE);
         }
