@@ -105,12 +105,7 @@ public class TeamManager extends DatabaseManager<Team> {
     }
 
     public Team updateAttendancePlaytime(IdType teamId, PlayTime playTime) {
-        Session session = sessionManager.getSession();
-
-        Team team = session.get(Team.class, teamId);
-        if (team == null) {
-            throw new EntityNotFoundException();
-        }
+        Team team = getById(teamId);
 
         if (playTime.isPlayable()) {
             checkForActiveTeam(team);
@@ -118,26 +113,17 @@ public class TeamManager extends DatabaseManager<Team> {
 
         AttendanceCard attendanceCard = team.getAttendanceCard();
         attendanceCard.setPreferredPlayTime(playTime);
-
-        team = update(team, session);
-        session.close();
+        team = update(team);
 
         return team;
     }
 
     public Team updateAttendanceStatus(IdType teamId, AttendanceStatus status) {
-        Session session = sessionManager.getSession();
-        Team team = session.get(Team.class, teamId);
-
-        if (team == null) {
-            throw new EntityNotFoundException();
-        }
+        Team team = getById(teamId);
 
         AttendanceCard attendanceCard = team.getAttendanceCard();
         attendanceCard.setAttendanceStatus(status);
-
-        team = update(team, session);
-        session.close();
+        team = update(team);
 
         return team;
     }

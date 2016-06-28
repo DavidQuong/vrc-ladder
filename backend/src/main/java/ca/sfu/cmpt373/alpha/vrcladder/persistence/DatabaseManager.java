@@ -72,14 +72,6 @@ public abstract class DatabaseManager<T> {
         return obj;
     }
 
-    protected T update(T obj, Session session) {
-        Transaction transaction = session.beginTransaction();
-        session.update(obj);
-        transaction.commit();
-
-        return obj;
-    }
-
     public T delete(T obj) {
         Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
