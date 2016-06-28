@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MatchScheduler {
-    private static WaitlistManager<MatchGroup> waitListManager = new WaitlistManager<>();
+    public static final int DEFAULT_NUM_COURTS = 6;
+    private static final String ERROR_MESSAGE_COURTS_FULL = "There were not enough courts available to schedule all matches";
 
     /**
      * @throws MatchMakingException if Courts are full, and matches cannot be scheduled
@@ -52,15 +53,10 @@ public class MatchScheduler {
                     }
                 }
                 if (!isAnyPlayTimeScheduled) {
-                    waitListManager.addToWaitlist(matchGroup, preferredPlayTime);
+                    throw new MatchMakingException(ERROR_MESSAGE_COURTS_FULL);
                 }
             }
         }
         return courts;
     }
-
-    public WaitlistManager getWaitlist(){
-        return waitListManager;
-    }
-
 }

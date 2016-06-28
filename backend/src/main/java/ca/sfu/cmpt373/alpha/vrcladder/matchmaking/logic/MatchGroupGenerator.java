@@ -2,6 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MatchMakingException;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.WaitlistManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 
 import java.util.ArrayList;
@@ -11,31 +12,49 @@ import java.util.List;
  * A class for generating the groups of teams that will play matches against each other each week
  */
 public class MatchGroupGenerator {
-    private static final String ERROR_MESSAGE    = "There are not enough teams to sort into groups of 3 or 4";
-    private static final int MIN_REMAINING_TEAMS = 1;
-    private static final int MAX_REMAINING_TEAMS = 2;
+    private static final String ERROR_MESSAGE = "There are not enough attending teams to sort into groups of 3 or 4";
+    private static WaitlistManager<Team> waitListManager = new WaitlistManager<>();
 
     /**
      * preconditions: teams are assumed to be in sorted ranked order
      * Generates groups of three or four teams to play matches against one another
      * @throws MatchMakingException if teams cannot be sorted into groups
      */
-    public static List<MatchGroup> generateMatchGroupings(List<Team> teams, int maxTeams) {
+    public static List<MatchGroup> generateMatchGroupings(List<Team> teams, int numberOfGroups) {
         List<MatchGroup> results = new ArrayList<>();
         List<Team> attendingTeams = getAttendingTeams(teams);
         List<Team> teamsToGroup = new ArrayList<>();
 
-        int currentGroupSize = decideCurrentGroupSize(maxTeams);
-        int remainingTeams;
-        boolean addToWaitlist = false;
-        for(int counter = 0; counter < maxTeams; counter++) {
-            addToWaitlist = (counter >= attendingTeams.size());
-            teamsToGroup.add(attendingTeams.get(counter));
-            if(teamsToGroup.size() == currentGroupSize) {
-                results.add(new MatchGroup( teamsToGroup));
-                remainingTeams = attendingTeams.size() - (counter + 1);
-                currentGroupSize = decideCurrentGroupSize(remainingTeams);
-                teamsToGroup.clear();
+        int deductedTeams = 0;
+        int teamsTotal = teams.size();
+        if(teamsTotal == 0) {
+            throw new MatchMakingException(ERROR_MESSAGE);
+        }
+
+        for(int counter = 0; counter < numberOfGroups; counter++) {
+            int currentGroupSize;
+            int remainingGroups = (numberOfGroups - counter);
+            int remainingTeams = (teamsTotal - deductedTeams);
+
+            if((MatchGroup.MAX_NUM_TEAMS * remainingGroups) <= remainingTeams){
+                currentGroupSize = MatchGroup.MAX_NUM_TEAMS;
+            }else{
+                currentGroupSize = MatchGroup.MIN_NUM_TEAMS;
+            }
+
+            for(int subCounter = 0; subCounter < currentGroupSize; subCounter++){
+                int teamIndex = (subCounter + deductedTeams);
+                teamsToGroup.add(attendingTeams.get(teamIndex));
+            }
+
+            deductedTeams = deductedTeams + currentGroupSize;
+            results.add(new MatchGroup( teamsToGroup));
+            teamsToGroup.clear();
+        }
+
+        if(deductedTeams < teamsTotal){
+            for(int counter = deductedTeams; counter < teamsTotal; counter++){
+                waitListManager.addToWaitlist(attendingTeams.get(counter));
             }
         }
 
@@ -45,17 +64,8 @@ public class MatchGroupGenerator {
         return results;
     }
 
-    private static int decideCurrentGroupSize(int teamsSize){
-        int results = teamsSize % MatchGroup.MIN_NUM_TEAMS;
-        int futureRemainingTeams = teamsSize - MatchGroup.MIN_NUM_TEAMS;
-        if(results == 0){
-            return MatchGroup.MIN_NUM_TEAMS;
-        }else{
-            if(futureRemainingTeams > MIN_REMAINING_TEAMS || futureRemainingTeams > MAX_REMAINING_TEAMS){
-                return MatchGroup.MIN_NUM_TEAMS;
-            }
-        }
-        return MatchGroup.MAX_NUM_TEAMS;
+    public static List<Waitlist> getWaitList(){
+        return waitListManager.getWaitlist();
     }
 
     private static List<Team> getAttendingTeams (List<Team> teams) {
