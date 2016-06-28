@@ -15,7 +15,7 @@ public class Password {
         // Required by Hibernate.
     }
 
-    Password(String hash) {
+    public Password(String hash) {
         this.hash = hash;
     }
 
