@@ -108,4 +108,17 @@ public abstract class DatabaseManager<T> {
         return obj;
     }
 
+    //note this may be inefficient if there are many items,
+    //since each item has to be retrieved before deletion.
+    protected List<T> deleteAll() {
+        List<T> items = getAll();
+
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+        items.stream().forEach(session::delete);
+        transaction.commit();
+        session.close();
+        return items;
+    }
+
 }

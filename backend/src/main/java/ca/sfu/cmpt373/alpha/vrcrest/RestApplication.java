@@ -1,18 +1,17 @@
 package ca.sfu.cmpt373.alpha.vrcrest;
 
 import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.CourtManager;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
+import ca.sfu.cmpt373.alpha.vrcrest.routes.LadderRouter;
+import ca.sfu.cmpt373.alpha.vrcrest.routes.MatchGroupRouter;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.PasswordManager;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.RestRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.TeamRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.UserRouter;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.util.Factory;
 import spark.servlet.SparkApplication;
 
 import java.util.Arrays;
@@ -21,7 +20,9 @@ import java.util.List;
 
 /**
  * A class for deploying Spark on Servers/Servlet containers such as TomCat or GlassFish
- * This is used primarily for Amazon Web Services Deployment
+ * This is used primarily for Amazon Web Services Deployment.
+ * This class also contains all the initialization logic for the REST API. As such,
+ * it is called in RestDriver to initialize the API even when using Spark's embedded Jetty server
  */
 public class RestApplication implements SparkApplication {
 
@@ -34,12 +35,25 @@ public class RestApplication implements SparkApplication {
         UserManager userManager = new UserManager(sessionManager);
         TeamManager teamManager = new TeamManager(sessionManager);
         MatchGroupManager matchGroupManager = new MatchGroupManager(sessionManager);
-        ApplicationManager appManager = new ApplicationManager(sessionManager, passwordManager, userManager,
-            teamManager, matchGroupManager);
+        CourtManager courtManager = new CourtManager(sessionManager);
+        ApplicationManager appManager = new ApplicationManager(
+                sessionManager,
+                passwordManager,
+                userManager,
+                teamManager,
+                matchGroupManager,
+                courtManager);
 
         UserRouter userRouter = new UserRouter(appManager.getPasswordManager(), appManager.getUserManager());
         TeamRouter teamRouter = new TeamRouter(appManager.getTeamManager());
-        List<RestRouter> routers = Arrays.asList(userRouter, teamRouter);
+        MatchGroupRouter matchGroupRouter = new MatchGroupRouter(
+                appManager.getMatchGroupManager(),
+                appManager.getTeamManager(),
+                appManager.getCourtManager());
+        LadderRouter ladderRouter = new LadderRouter(
+                appManager.getTeamManager(),
+                appManager.getMatchGroupManager());
+        List<RestRouter> routers = Arrays.asList(userRouter, teamRouter, matchGroupRouter, ladderRouter);
         restApi = new RestApi(appManager, routers);
     }
 

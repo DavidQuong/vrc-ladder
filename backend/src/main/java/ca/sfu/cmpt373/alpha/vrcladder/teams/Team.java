@@ -69,6 +69,10 @@ public class Team {
         return ladderPosition;
     }
 
+    void setLadderPosition(LadderPosition ladderPosition) {
+        this.ladderPosition = ladderPosition;
+    }
+
     @Override
     public boolean equals(Object otherObj) {
         if (this == otherObj) {

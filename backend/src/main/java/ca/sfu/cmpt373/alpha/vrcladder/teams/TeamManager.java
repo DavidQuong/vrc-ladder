@@ -14,6 +14,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.util.CriterionConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -32,6 +33,7 @@ public class TeamManager extends DatabaseManager<Team> {
     private static final Class TEAM_CLASS_TYPE = Team.class;
     private static final Integer FIRST_POSITION = 1;
     private static final Order ASCENDING_POSITION_ORDER = Order.asc(CriterionConstants.TEAM_LADDER_POSITION_PROPERTY);
+    private static final String ERROR_NOT_ALL_TEAMS = "All teams must be present in order to update ladder positions";
 
     public TeamManager(SessionManager sessionManager) {
         super(TEAM_CLASS_TYPE, sessionManager);
@@ -209,6 +211,47 @@ public class TeamManager extends DatabaseManager<Team> {
             int nextPositionCount = lastPosition.getValue() + 1;
             return new LadderPosition(nextPositionCount);
         }
+    }
+
+    /**
+     * Erases every Team's ranking in the database, and replaces each team's ranking
+     * with their position in the list of teams
+     * @param teams A list that contains every team in the database in the ranked order to be applied
+     * @throws IllegalStateException if not every team in the database is passed in
+     */
+    public List<Team> updateLadderPositions(List<Team> teams) {
+        //TODO: add more verification that every team in the ladder is actually passed in
+        Session session = sessionManager.getSession();
+        Long numTeamsInLadder = (Long) session.createCriteria(Team.class)
+                .setProjection(Projections.rowCount())
+                .uniqueResult();
+        if (teams.size() != numTeamsInLadder) {
+            throw new IllegalStateException(ERROR_NOT_ALL_TEAMS);
+        }
+
+        //TODO: figure out a less-hacky way to do this!
+        //since ladderPositions have a unique constraint,
+        //we must overwrite all the values with dummy values before continuing
+        Transaction transaction = session.beginTransaction();
+        for (int i = 0; i < teams.size(); i++) {
+            long placeHolderLadderPosition = numTeamsInLadder + i + 1;
+            Team team = teams.get(i);
+            team.setLadderPosition(new LadderPosition((int) placeHolderLadderPosition));
+            session.update(team);
+        }
+        transaction.commit();
+
+        transaction = session.beginTransaction();
+        for (int i = 0; i < teams.size(); i++) {
+            int newTeamLadderPosition = i + 1;
+            Team team = teams.get(i);
+            team.setLadderPosition(new LadderPosition(newTeamLadderPosition));
+            session.update(team);
+        }
+        transaction.commit();
+
+        session.close();
+        return teams;
     }
 
 }
