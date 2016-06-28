@@ -1,24 +1,26 @@
 import {createElement, Element} from 'react';
 import {Provider} from 'react-redux';
 import {IntlProvider} from 'react-intl';
-import {Router, Route, IndexRoute, browserHistory, Link} from 'react-router';
+import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import CreateTeam from './component/create-team/create-team';
+import {Button, ButtonToolbar} from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
 
 const Layout = ({children}) => (
-  <div>
-    <div>
-      <Link to='/signup'>Sign Up</Link>
-    </div>
-    <div>
-      <Link to='/ladder'>Ladder</Link>
-    </div>
-    <div>
-      <Link to='/create-team'>Create team</Link>
-    </div>
+  <ButtonToolbar>
+    <LinkContainer to='/signup'>
+      <Button>Sign up</Button>
+    </LinkContainer>
+    <LinkContainer to='/ladder'>
+      <Button>Ladder</Button>
+    </LinkContainer>
+    <LinkContainer to='/create-team'>
+      <Button>Create team</Button>
+    </LinkContainer>
     {children}
-  </div>
+  </ButtonToolbar>
 );
 
 export default ({store}) : Element => (
