@@ -9,18 +9,22 @@ import {Button, ButtonToolbar} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 
 const Layout = ({children}) => (
-  <ButtonToolbar>
-    <LinkContainer to='/signup'>
-      <Button>Sign up</Button>
-    </LinkContainer>
-    <LinkContainer to='/ladder'>
-      <Button>Ladder</Button>
-    </LinkContainer>
-    <LinkContainer to='/create-team'>
-      <Button>Create team</Button>
-    </LinkContainer>
-    {children}
-  </ButtonToolbar>
+  <div>
+    <ButtonToolbar>
+      <LinkContainer to='/signup'>
+        <Button>Sign up</Button>
+      </LinkContainer>
+      <LinkContainer to='/ladder'>
+        <Button>Ladder</Button>
+      </LinkContainer>
+      <LinkContainer to='/create-team'>
+        <Button>Create team</Button>
+      </LinkContainer>
+    </ButtonToolbar>
+    <div>
+      {children}
+    </div>
+  </div>
 );
 
 export default ({store}) : Element => (
