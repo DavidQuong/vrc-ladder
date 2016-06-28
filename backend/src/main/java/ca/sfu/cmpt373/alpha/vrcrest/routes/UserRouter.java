@@ -31,8 +31,6 @@ public class UserRouter extends RestRouter {
     public static final String JSON_PROPERTY_USERS = "users";
     public static final String JSON_PROPERTY_USER = "user";
 
-    private static final String ERROR_COULD_NOT_CREATE_USER = "The provided user could not be created.";
-    private static final String ERROR_COULD_NOT_UPDATE_USER = "The provided user could not be updated.";
     private static final String ERROR_NONEXISTENT_USER = "This user does not exist.";
     private static final String ERROR_GET_USERS_FAILURE = "Unable to get all users";
 
@@ -110,7 +108,7 @@ public class UserRouter extends RestRouter {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
         } catch (ConstraintViolationException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_CREATE_USER);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.CONFLICT_409);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
@@ -175,7 +173,7 @@ public class UserRouter extends RestRouter {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
         } catch (ConstraintViolationException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_UPDATE_USER);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.CONFLICT_409);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
