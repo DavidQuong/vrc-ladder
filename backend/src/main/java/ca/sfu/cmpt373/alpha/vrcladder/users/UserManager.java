@@ -9,6 +9,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.CriterionConstants;
+import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -59,19 +60,17 @@ public class UserManager extends DatabaseManager<User> {
         return createdUser;
     }
 
-    public User update(UserId userId, UserRole userRole, String firstName, String middleName, String lastName,
-        EmailAddress emailAddress, PhoneNumber phoneNumber) {
-        Session session = sessionManager.getSession();
+    public User update(UserId userId, String firstName, String middleName, String lastName, EmailAddress emailAddress,
+        PhoneNumber phoneNumber) {
+        User user = getById(userId);
 
-        User user = session.get(User.class, userId);
-        user.setUserRole(userRole);
         user.setFirstName(firstName);
         user.setMiddleName(middleName);
         user.setLastName(lastName);
         user.setEmailAddress(emailAddress);
         user.setPhoneNumber(phoneNumber);
 
-        return update(user, session);
+        return update(user);
     }
 
     @Override
@@ -91,6 +90,13 @@ public class UserManager extends DatabaseManager<User> {
             super.delete(user);
         }
 
+        return user;
+    }
+
+    @Override
+    public User deleteById(IdType id) {
+        User user = getById(id);
+        delete(user);
         return user;
     }
 

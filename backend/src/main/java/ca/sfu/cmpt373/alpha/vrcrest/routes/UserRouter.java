@@ -5,16 +5,17 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.PasswordManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
-import ca.sfu.cmpt373.alpha.vrcladder.util.Log;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewUserPayload;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.UpdateUserPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.UserGsonSerializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import org.eclipse.jetty.http.HttpStatus;
+import org.hibernate.exception.ConstraintViolationException;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
@@ -30,9 +31,7 @@ public class UserRouter extends RestRouter {
     public static final String JSON_PROPERTY_USERS = "users";
     public static final String JSON_PROPERTY_USER = "user";
 
-    private static final String ERROR_PLAYER_ID_NOT_FOUND = "The provided player ID cannot be found.";
     private static final String ERROR_NONEXISTENT_USER = "This user does not exist.";
-    private static final String ERROR_EXISTING_USER = "Cannot create user as a user with this ID already exists.";
     private static final String ERROR_GET_USERS_FAILURE = "Unable to get all users";
 
     private PasswordManager passwordManager;
@@ -58,6 +57,7 @@ public class UserRouter extends RestRouter {
         GsonBuilder gson = new GsonBuilder()
             .registerTypeAdapter(User.class, new UserGsonSerializer())
             .registerTypeAdapter(NewUserPayload.class, new NewUserPayload.GsonDeserializer())
+            .registerTypeAdapter(UpdateUserPayload.class, new UpdateUserPayload.GsonDeserializer())
             .setPrettyPrinting();
         return gson.create();
     }
@@ -107,9 +107,9 @@ public class UserRouter extends RestRouter {
         } catch (JsonParseException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
-        } catch (EntityNotFoundException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_PLAYER_ID_NOT_FOUND);
-            response.status(HttpStatus.NOT_FOUND_404);
+        } catch (ConstraintViolationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
+            response.status(HttpStatus.CONFLICT_409);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.BAD_REQUEST_400);
@@ -148,16 +148,18 @@ public class UserRouter extends RestRouter {
     private String handleUpdateUserById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
+        String requestedId = request.params(PARAM_ID);
+        UserId userId = new UserId(requestedId);
+
         try {
-            NewUserPayload userPayload = getGson().fromJson(request.body(), NewUserPayload.class);
+            UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
             User existingUser = userManager.update(
-                    userPayload.getUserId(),
-                    userPayload.getUserRole(),
-                    userPayload.getFirstName(),
-                    userPayload.getMiddleName(),
-                    userPayload.getLastName(),
-                    userPayload.getEmailAddress(),
-                    userPayload.getPhoneNumber());
+                userId,
+                updateUserPayload.getFirstName(),
+                updateUserPayload.getMiddleName(),
+                updateUserPayload.getLastName(),
+                updateUserPayload.getEmailAddress(),
+                updateUserPayload.getPhoneNumber());
 
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(existingUser));
             response.status(HttpStatus.OK_200);
@@ -168,8 +170,11 @@ public class UserRouter extends RestRouter {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
         } catch (EntityNotFoundException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
+        } catch (ConstraintViolationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
+            response.status(HttpStatus.CONFLICT_409);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.BAD_REQUEST_400);
