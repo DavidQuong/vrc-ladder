@@ -20,21 +20,25 @@ public class LoginPayload {
             throws JsonParseException {
             JsonObject jsonObject = json.getAsJsonObject();
 
-            if (!jsonObject.has(JSON_PROPERTY_USER_ID)) {
-                throwMissingPropertyException(JSON_PROPERTY_USER_ID);
-            }
             JsonElement jsonUserId = jsonObject.get(JSON_PROPERTY_USER_ID);
             UserId userId = new UserId(jsonUserId.getAsString());
 
-            if (!jsonObject.has(JSON_PROPERTY_PASSWORD)) {
-                throwMissingPropertyException(JSON_PROPERTY_PASSWORD);
-            }
             JsonElement jsonPassword = jsonObject.get(JSON_PROPERTY_PASSWORD);
             String password = jsonPassword.getAsString();
 
             return new LoginPayload(userId, password);
         }
 
+        @Override
+        protected void checkForMissingProperties(JsonObject jsonObject) {
+            if (!jsonObject.has(JSON_PROPERTY_USER_ID)) {
+                throwMissingPropertyException(JSON_PROPERTY_USER_ID);
+            }
+
+            if (!jsonObject.has(JSON_PROPERTY_PASSWORD)) {
+                throwMissingPropertyException(JSON_PROPERTY_PASSWORD);
+            }
+        }
     }
 
     private UserId userId;
