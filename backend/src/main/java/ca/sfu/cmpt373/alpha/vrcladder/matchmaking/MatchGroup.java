@@ -5,21 +5,19 @@ import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
-import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,18 +29,22 @@ import java.util.Map;
  */
 @Entity
 @Table(name = PersistenceConstants.TABLE_MATCH_GROUP)
-public class MatchGroup {
+public class MatchGroup implements Comparable<MatchGroup> {
 
     public static final int MIN_NUM_TEAMS = 3;
     public static final int MAX_NUM_TEAMS = 4;
 
-    private static final String ERROR_MESSAGE_NUM_TEAMS = "Teams list contains more or less than the min or max " +
-        "number of permissible teams";
+    private static final String ERROR_NUM_TEAMS = "Teams list contains an invalid number of teams";
+    private static final String ERROR_DUPLICATE_TEAMS = "MatchGroup cannot contain duplicate teams";
+    private static final String ERROR_NO_TEAM_EXISTS = "The team does not exist in this MatchGroup";
+    private static final String ERROR_TEAM_ALREADY_EXISTS = "The team already exists in this MatchGroup";
+    private static final String ERROR_NOT_ENOUGH_TEAMS = "There are not enough teams in the MatchGroup to remove a team";
+    private static final String ERROR_TOO_MANY_TEAMS = "There are too many teams in the MatchGroup to add another Team";
 
     @EmbeddedId
     private GeneratedId id;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER)
     @OrderColumn
     private List<Team> teams;
 
@@ -55,12 +57,12 @@ public class MatchGroup {
     }
 
     public MatchGroup(Team team1, Team team2, Team team3) {
-        this.teams = Arrays.asList(team1, team2, team3);
+        this.teams = new ArrayList<>(Arrays.asList(team1, team2, team3));
         init();
     }
 
     public MatchGroup(Team team1, Team team2, Team team3, Team team4) {
-        this.teams = Arrays.asList(team1, team2, team3, team4);
+        this.teams = new ArrayList<>(Arrays.asList(team1, team2, team3, team4));
         init();
     }
 
@@ -69,15 +71,27 @@ public class MatchGroup {
      */
     public MatchGroup(List<Team> teams) {
         if (teams.size() < MIN_NUM_TEAMS || teams.size() > MAX_NUM_TEAMS) {
-            throw new IllegalStateException(ERROR_MESSAGE_NUM_TEAMS);
+            throw new IllegalStateException(ERROR_NUM_TEAMS);
         }
         this.teams = new ArrayList<>(teams);
         init();
     }
 
     private void init() {
+        checkDuplicateTeams();
         id = new GeneratedId();
         scoreCard = new ScoreCard(this);
+        Collections.sort(teams, getTeamLadderPositionComparator());
+    }
+
+    private void checkDuplicateTeams() {
+        for (int i = 0; i < teams.size(); i++) {
+            for (int j = i + 1; j < teams.size(); j++) {
+                if (teams.get(i).equals(teams.get(j))) {
+                    throw new IllegalStateException(ERROR_DUPLICATE_TEAMS);
+                }
+            }
+        }
     }
 
     public GeneratedId getId() {
@@ -86,10 +100,6 @@ public class MatchGroup {
 
     public List<Team> getTeams() {
         return Collections.unmodifiableList(teams);
-    }
-
-    private void setTeams(List<Team> teams) {
-        this.teams = teams;
     }
 
     public ScoreCard getScoreCard() {
@@ -178,4 +188,56 @@ public class MatchGroup {
         return id.hashCode();
     }
 
+    void addTeam(Team newTeam) {
+        if(this.teams.size() < MAX_NUM_TEAMS) {
+            if (teams.contains(newTeam)) {
+                throw new IllegalStateException(ERROR_TEAM_ALREADY_EXISTS);
+            }
+            this.teams.add(newTeam);
+            Collections.sort(teams, getTeamLadderPositionComparator());
+        } else {
+            throw new IllegalStateException(ERROR_TOO_MANY_TEAMS);
+        }
+    }
+
+    void removeTeam(Team leavingTeam) {
+        if(this.teams.size() > MIN_NUM_TEAMS) {
+            if (!teams.contains(leavingTeam)) {
+                throw new IllegalStateException(ERROR_NO_TEAM_EXISTS);
+            }
+            this.teams.remove(leavingTeam);
+        } else {
+            throw new IllegalStateException(ERROR_NOT_ENOUGH_TEAMS);
+        }
+    }
+
+    void tradeTeams(Team teamToRemove, MatchGroup otherMatchGroup, Team teamToAdd) {
+        if(this.teams.contains(teamToRemove) && otherMatchGroup.teams.contains(teamToAdd)) {
+            //A new list is created to ensure that this.teams ALWAYS contains a valid number of teams
+            ArrayList<Team> thisMatchGroupTeams = new ArrayList<>(this.teams);
+            ArrayList<Team> otherMatchGroupTeams = new ArrayList<>(otherMatchGroup.teams);
+            thisMatchGroupTeams.remove(teamToRemove);
+            otherMatchGroupTeams.remove(teamToAdd);
+            thisMatchGroupTeams.add(teamToAdd);
+            otherMatchGroupTeams.add(teamToRemove);
+            this.teams = thisMatchGroupTeams;
+            otherMatchGroup.teams = otherMatchGroupTeams;
+
+            Collections.sort(this.teams, getTeamLadderPositionComparator());
+            Collections.sort(otherMatchGroup.teams, getTeamLadderPositionComparator());
+        } else {
+            throw new TeamNotFoundException();
+        }
+    }
+
+    private Comparator<Team> getTeamLadderPositionComparator() {
+        return (team1, team2) -> team1.getLadderPosition().compareTo(team2.getLadderPosition());
+    }
+
+    @Override
+    public int compareTo(MatchGroup otherMatchGroup) {
+        Team thisLowestRankedTeam = teams.get(teams.size() - 1);
+        Team otherLowestRankedTeam = otherMatchGroup.teams.get(otherMatchGroup.teams.size() - 1);
+        return thisLowestRankedTeam.getLadderPosition().compareTo(otherLowestRankedTeam.getLadderPosition());
+    }
 }

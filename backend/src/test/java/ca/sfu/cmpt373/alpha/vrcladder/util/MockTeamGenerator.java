@@ -4,6 +4,9 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.LadderPosition;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MockTeamGenerator {
 
     private static final Integer START_POSITION = 1;
@@ -22,6 +25,14 @@ public class MockTeamGenerator {
         Team team = new Team(player1, player2, ladderPosition);
 
         return team;
+    }
+
+    public static List<Team> generateTeams(int numTeams) {
+        List<Team> teams = new ArrayList<>();
+        for (int i = 0; i < numTeams; i++) {
+            teams.add(generateTeam());
+        }
+        return teams;
     }
 
     public static LadderPosition generateLadderPosition() {

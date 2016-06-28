@@ -2,85 +2,64 @@ package ca.sfu.cmpt373.alpha.vrcladder.ladder;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 
 public class Ladder {
 
+    private static final String ERROR_MATCHGROUP_NO_TEAMS_PRESENT = "No teams were present in this MatchGroup";
+    private static final String ERROR_MATCHGROUP_TEAM_NOT_ATTENDING = "Teams that did not attend should not change rankings within their matchgroups";
+    private static final String ERROR_MATCHGROUPS_NOT_RANKED = "MatchGroups are not in ranked order";
+    private static final String ERROR_DUPLICATE_TEAM = "The Ladder already contains this team. The ladder may not hold duplicate elements";
 
-    List<Team> ladderList;
-    final private int LADDER_VOLUME = 200;
-    final private int ATTENDANCE_PENALTY =2;
-    private int teamCount;
+    private List<Team> ladder;
 
-    public enum SHIFT_DIRECTION {UP, DOWN}
-
-
-    public Ladder() {
-
-        ladderList = new ArrayList<>(LADDER_VOLUME);
-        teamCount = 0;
-    }
-
-    public Ladder(List<Team> newLadder) {
-
-        ladderList = newLadder;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder("");
-
-        for (int i = 0; i < ladderList.size(); i++) {
-            stringBuilder.append(i + " :");
-            stringBuilder.append(ladderList.get(i).toString() + "\n ");
+    public Ladder(List<Team> teams) {
+        ladder = new ArrayList<>();
+        for (Team team : teams) {
+            if (ladder.contains(team)) {
+                throw new IllegalStateException(ERROR_DUPLICATE_TEAM);
+            }
+            ladder.add(team);
         }
-
-        String s = stringBuilder.toString();
-        return s;
     }
 
+    public List<Team> getLadder() {
+        return Collections.unmodifiableList(ladder);
+    }
 
     public Team findTeamAtPosition(int teamPosition) {
-
-        return ladderList.get(teamPosition);
+        //search the actual ranking of the team, not the index
+        return ladder.get(teamPosition - 1);
     }
 
     public int findTeamPosition(Team team) throws NoSuchElementException {
-        for (Team t : ladderList) {
-            if (t != null && team.getId().equals(t.getId())) return ladderList.indexOf(team);
+        int teamPosition = ladder.indexOf(team);
+        if (teamPosition == -1) {
+            throw new NoSuchElementException();
         }
-        throw new NoSuchElementException("Team with id: " + team.getId() + " does not exist in the ladder.");
+        //return the actual ranking of the team, not the index
+        return teamPosition + 1;
     }
 
-
-
-    public void pushTeam(Team team) {
-        ladderList.add(team);
+    public void addTeam(Team team) {
+        if (ladder.contains(team)) {
+            throw new IllegalStateException(ERROR_DUPLICATE_TEAM);
+        }
+        ladder.add(team);
     }
 
-    public void insertTeamAtPosition(int position, Team team) {
-
-        ladderList.add(position, team);
-
+    public int getTeamCount() {
+        return ladder.size();
     }
 
-    public int getLadderVolume() {
-        return LADDER_VOLUME;
-    }
-
-    public int getLadderTeamCount() {
-        return ladderList.size();
-    }
-
-
-
-    public void swapTeams(Team team1, Team team2) {
+    private void swapTeams(Team team1, Team team2) {
         int team1Position;
         int team2Position;
         try {
@@ -95,121 +74,210 @@ public class Ladder {
         swapTeams(team1Position, team2Position);
     }
 
-    public void swapTeams(int team1Position, int team2Position) {
-        if (!verifyPositions(team1Position) || !verifyPositions(team2Position)) return;
-
-        Team tempTeam = ladderList.get(team1Position);
-        ladderList.remove(team1Position);
-        insertTeamAtPosition(team1Position, ladderList.get(team2Position - 1));
-        ladderList.remove(team2Position);
-        insertTeamAtPosition(team2Position, tempTeam);
+    private void swapTeams(int team1Position, int team2Position) {
+        int team1Index = team1Position - 1;
+        int team2Index = team2Position - 1;
+        Collections.swap(ladder, team1Index, team2Index);
     }
 
-    private boolean verifyPositions(int position) {
-        return (position < 0 || position >= ladderList.size());
+    /**
+     * @param matchGroups should be ranked in the same order as the ladder itself
+     * @throws IllegalStateException if @matchGroups are not in ranked order
+     */
+    public void updateLadder(List<MatchGroup> matchGroups){
+        //MatchGroups with no teams attending will cause problems when swapping teams between MatchGroups
+        removeNonAttendingMatchGroups(matchGroups);
+
+        for (MatchGroup matchGroup : matchGroups){
+            applyRankingsWithinMatchGroup(matchGroup);
+        }
+
+        swapTeamsBetweenMatchGroup(matchGroups);
+
+        applyPenalties();
     }
 
-
-    private void updateDatabase() {
-
-
-    }
-
-    private int findLowestNumber(int[] array) {
-        int lowest = array[0];
-        for (int i=0;i<array.length;i++) {
-            if (array[i] < lowest) {
-                lowest = array[i];
+    private void removeNonAttendingMatchGroups(List<MatchGroup> matchGroups) {
+        for (int i = 0; i < matchGroups.size(); i++) {
+            MatchGroup matchGroup = matchGroups.get(i);
+            int nonAttendingTeamCount = 0;
+            for (Team team : matchGroup.getTeams()) {
+                if (!team.getAttendanceCard().isPresent()) {
+                    nonAttendingTeamCount++;
+                }
+            }
+            if (nonAttendingTeamCount == matchGroup.getTeamCount()) {
+                matchGroups.remove(i);
+                i--;
             }
         }
-        return lowest;
-
     }
-    private int findHighestNumber(int[] array) {
-        int highest = 0;
-        for (int i=0;i<array.length;i++) {
-            if (array[i] > highest){
-                highest = array[i];
+
+
+    private void applyRankingsWithinMatchGroup(MatchGroup matchGroup){
+        //find the ladder indices for 1st, 2nd, 3rd, 4th... positions
+        //these need to be found before, because we will be overwriting teams below
+        List<Integer> rankedIndices = new ArrayList<>();
+        for (Team team : matchGroup.getTeams()) {
+            rankedIndices.add(findTeamPosition(team) - 1);
+        }
+
+        //overwrite the team in each position with the teams specified in the ScoreCard
+        List<Team> rankedTeams = matchGroup.getScoreCard().getRankedTeams();
+        for (int i = 0; i < matchGroup.getTeamCount(); i++) {
+            Team team = matchGroup.getTeams().get(i);
+            AttendanceCard attendanceCard = team.getAttendanceCard();
+            if (attendanceCard.isPresent()) {
+                ladder.set(rankedIndices.get(i), rankedTeams.get(i));
+            } else {
+                //if a team does not attend, its position within its group should remain the same
+                boolean hasTeamMovedWithinGroup = !team.equals(rankedTeams.get(i));
+                if (hasTeamMovedWithinGroup) {
+                    throw new IllegalStateException(ERROR_MATCHGROUP_TEAM_NOT_ATTENDING);
+                }
             }
         }
-        return highest;
     }
 
-    //swap teams in a match based on rank, then switch highest team of match with lowest team of previous match
-    //then, apply penalties
-    public void updateLadder(MatchGroup[] MatchGroup){
-        arrangeMatchResults(MatchGroup[0]);
-        for (int matchIndex =1; matchIndex<MatchGroup.length; matchIndex++){
-            arrangeMatchResults(MatchGroup[matchIndex]);
+    private void swapTeamsBetweenMatchGroup(List<MatchGroup> matchGroups) {
+        for (int i = 0; i < matchGroups.size() - 1; i++) {
+            List<Team> rankedMatchGroupTeams1 = matchGroups.get(i).getScoreCard().getRankedTeams();
+            List<Team> rankedMatchGroupTeams2 = matchGroups.get(i + 1).getScoreCard().getRankedTeams();
 
-            if(MatchGroup[matchIndex].getTeams().size()==3) {
-                swapBetweenMatchGroup(MatchGroup, matchIndex);
+            // we must only consider teams within MatchGroups that are present.
+            // Teams that are not attending should not be considered in any ranking changes within/between MatchGroups
+            // Instead, these teams are penalized separately after everything else is done
+            Team lastPlacePresentTeamInMatchGroup1 = getLastPresentTeam(rankedMatchGroupTeams1);
+            Team firstPlacePresentTeamInMatchGroup2 = getFirstPresentTeam(rankedMatchGroupTeams2);
+
+            if (findTeamPosition(lastPlacePresentTeamInMatchGroup1) > findTeamPosition(firstPlacePresentTeamInMatchGroup2)) {
+                throw new IllegalStateException(ERROR_MATCHGROUPS_NOT_RANKED);
             }
 
-        }
-        int ladderSize = this.getLadderTeamCount();
-        //prevent loop from going out of bounds
-        if (ladderSize>=getLadderVolume()){
-            ladderSize-=ATTENDANCE_PENALTY;
-        }
-
-        for (int k =0;k<ladderSize; k++){
-            if(!ladderList.get(k).getAttendanceCard().isAttending()){
-                Team tempTeam = ladderList.get(k);
-                ladderList.remove(k);
-                ladderList.add(k-ATTENDANCE_PENALTY, tempTeam);
-            }
-
+            swapTeams(lastPlacePresentTeamInMatchGroup1, firstPlacePresentTeamInMatchGroup2);
         }
     }
 
-    private void swapBetweenMatchGroup(MatchGroup[] MatchGroup, int index){
-        int[] teamPos = {findTeamPosition(MatchGroup[index].getTeam1()),
-                findTeamPosition(MatchGroup[index].getTeam2()),
-                findTeamPosition(MatchGroup[index].getTeam3())};
-
-        int lowTeam = findLowestNumber(teamPos);
-
-        teamPos[0] = findTeamPosition(MatchGroup[index-1].getTeam1());
-        teamPos[1] = findTeamPosition(MatchGroup[index-1].getTeam2());
-        teamPos[2] = findTeamPosition(MatchGroup[index-1].getTeam3());
-
-        int highTeam = findHighestNumber(teamPos);
-
-        swapTeams(highTeam,lowTeam);
-    }
-
-
-    private void arrangeMatchResults(MatchGroup match){
-        if (match.getTeams().size()==3){
-            arrange3Teams(match);
-        }
-        else if(match.getTeams().size()==4){
-            arrange4Teams(match);
-        }
-
-    }
-
-    private void arrange4Teams(MatchGroup match){
-
-
-    }
-    private void arrange3Teams(MatchGroup match){
-        //match.getScoreSheet().getscores();
-        /*if(match.team1Wins()==0){
-            if(match.team2Wins() ==2){
-                swapTeams(match.getTeam1(), match.getTeam2());
-            } else if(match.team3Wins() ==2){
-                swapTeams(match.getTeam1(), match.getTeam3());
+    private Team getLastPresentTeam(List<Team> teams) {
+        for (int i = teams.size() - 1; i >= 0; i--) {
+            AttendanceCard attendanceCard = teams.get(i).getAttendanceCard();
+            if (attendanceCard.isPresent()) {
+                return teams.get(i);
             }
         }
-        if (match.team2Wins ==0){
-            if (match.team3Wins()==2){
-                swapTeams(match.getTeam2(),match.getTeam3());
-            }
-
-        }*///KEEPING COMMENT FOR REVIEW
-
+        //this should never be called since we removed all MatchGroups that were completely not attending
+        throw new IllegalStateException(ERROR_MATCHGROUP_NO_TEAMS_PRESENT);
     }
 
+    private Team getFirstPresentTeam(List<Team> teams) {
+        for (Team team : teams) {
+            AttendanceCard attendanceCard = team.getAttendanceCard();
+            if (attendanceCard.isPresent()) {
+                return team;
+            }
+        }
+        //this should never be called since we removed all MatchGroups that were completely not attending
+        throw new IllegalStateException(ERROR_MATCHGROUP_NO_TEAMS_PRESENT);
+    }
+
+    private void applyPenalties() {
+        List<TeamIndexPenaltyTuple> teamsToApplyPenaltiesTo = getTeamsToApplyPenaltiesTo();
+        removePenalizedTeams(teamsToApplyPenaltiesTo);
+
+        //sort so that highest ranked teams are re-added first
+        //this way, we don't have to worry about the list indices shifting around
+        //which guarantees that a team has shifted down the correct amount
+        Collections.sort(teamsToApplyPenaltiesTo, TeamIndexPenaltyTuple.getNewIndexComparator());
+
+        //re-add penalized teams at their new indices
+        int prevNewIndex = 0;
+        int prevConflictOffset = 0;
+        for (int i = 0; i < teamsToApplyPenaltiesTo.size(); i++) {
+            TeamIndexPenaltyTuple team = teamsToApplyPenaltiesTo.get(i);
+            List<TeamIndexPenaltyTuple> teamsWithSameNewIndex = findTeamsWithSameNewIndex(teamsToApplyPenaltiesTo, team);
+            boolean isConflictCompensationNeeded = prevConflictOffset + prevNewIndex >= team.getNewIndex();
+            if (isConflictCompensationNeeded) {
+                insertTeamsAtSameNewIndex(teamsWithSameNewIndex, prevConflictOffset);
+            } else {
+                insertTeamsAtSameNewIndex(teamsWithSameNewIndex, 0);
+                prevConflictOffset = 0;
+            }
+            teamsWithSameNewIndex
+                    .stream()
+                    .forEach(teamsToApplyPenaltiesTo::remove);
+            //roll back an index since we just removed the team at the current index
+            i--;
+
+            //if there was more than one team at an index, then record the conflict's offset
+            //so that the next group of teams to be added can compensate appropriately
+            prevConflictOffset += teamsWithSameNewIndex.size() - 1;
+            prevNewIndex = team.getNewIndex();
+        }
+    }
+
+    private List<TeamIndexPenaltyTuple> getTeamsToApplyPenaltiesTo() {
+        List<TeamIndexPenaltyTuple> teamsToApplyPenaltiesTo = new ArrayList<>();
+
+        for (int i = 0; i < ladder.size(); i++) {
+            Team team = ladder.get(i);
+            AttendanceCard attendanceCard = team.getAttendanceCard();
+            if (!attendanceCard.isAttending()) {
+                teamsToApplyPenaltiesTo.add(new TeamIndexPenaltyTuple(team, i, AttendanceCard.NOT_ATTENDING_PENALTY));
+            } else if (attendanceCard.getAttendanceStatus() == AttendanceStatus.LATE) {
+                teamsToApplyPenaltiesTo.add(new TeamIndexPenaltyTuple(team, i, AttendanceStatus.LATE.getPenalty()));
+            } else if (attendanceCard.getAttendanceStatus() == AttendanceStatus.NO_SHOW) {
+                teamsToApplyPenaltiesTo.add(new TeamIndexPenaltyTuple(team, i, AttendanceStatus.NO_SHOW.getPenalty()));
+            }
+        }
+
+        return teamsToApplyPenaltiesTo;
+    }
+
+    private void removePenalizedTeams(List<TeamIndexPenaltyTuple> teamsToApplyPenalties) {
+        for (TeamIndexPenaltyTuple team : teamsToApplyPenalties) {
+            ladder.remove(team.getTeam());
+        }
+    }
+
+    private List<TeamIndexPenaltyTuple> findTeamsWithSameNewIndex(List<TeamIndexPenaltyTuple> teams, TeamIndexPenaltyTuple indexTeam) {
+        List<TeamIndexPenaltyTuple> teamsWithSameNewIndex = new ArrayList<>();
+        for (TeamIndexPenaltyTuple currTeam : teams) {
+            if (indexTeam.getNewIndex() == currTeam.getNewIndex()) {
+                teamsWithSameNewIndex.add(currTeam);
+            }
+        }
+        return teamsWithSameNewIndex;
+    }
+
+    private void insertTeamsAtSameNewIndex(List<TeamIndexPenaltyTuple> teamsWithSameNewIndex, int previousConflictOffset) {
+        //sort teams by penalty so that for conflicting teams, the teams with the lowest penalty get priority
+        Collections.sort(teamsWithSameNewIndex, TeamIndexPenaltyTuple.getPenaltyComparator());
+
+        for (int conflictOffset = 0; conflictOffset < teamsWithSameNewIndex.size(); conflictOffset++) {
+            TeamIndexPenaltyTuple currTeam = teamsWithSameNewIndex.get(conflictOffset);
+            // for each following team, the index must be offset by i to
+            // compensate for prior teams in the tuples list being added to the ladder
+            // additionally, previousConflictOffset is needed if a previous conflict occurred, and the
+            // current teams being re-added need to shift down to compensate for the previous conflict
+            int newOffsetIndex = currTeam.getNewIndex() + previousConflictOffset + conflictOffset;
+            if (newOffsetIndex < ladder.size()) {
+                ladder.add(newOffsetIndex, currTeam.getTeam());
+            } else {
+                //if the new index is beyond the ladder bounds, add the element to the end of the list
+                ladder.add(currTeam.getTeam());
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder("");
+
+        for (int i = 0; i < ladder.size(); i++) {
+            stringBuilder.append(i + " :");
+            stringBuilder.append(ladder.get(i).toString() + "\n ");
+        }
+
+        return stringBuilder.toString();
+    }
 }

@@ -8,29 +8,62 @@ This project is split up by the individual components, the frontend and the back
 ------------
 ### Frontend
 
+#### Instructions (For Ubuntu 14.04):
+1) Start a terminal session in the frontend directory (<project-dir>/frontend)
+
+
+2) Install Node:
+
+	Check Version:
+    	nodejs --version
+
+	If version is above 5.X.X go to step 3
+
+	Delete outdated nodejs version if older version exist:
+    	sudo apt-get remove --purge nodejs
+
+	Install Node:
+    	curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
+    	sudo apt-get install nodejs
+    	sudo ln -s /usr/bin/nodejs /usr/bin/node
+
+
+3) Install dependencies:
+
+    	sudo apt-get install npm
+    	sudo apt-get install libvips
+    	npm install
+
+4) Start local development server:
+
+    	npm run dev
+
+
+5) Run the production build
+
+    	npm run build
+
 #### Instructions (For OS X):
 1) Start a terminal session in the frontend directory (<project-dir>/frontend)
+
 2) Download dependencies:
 
-   brew install vips \
-   --with-webp \
-   --without-pango \
-   --without-python \
-   --without-pygobject3 \
-   --with-graphicsmagick
+    	brew install vips \
+    	--with-webp \
+    	--without-pango \
+    	--without-python \
+    	--without-pygobject3 \
+    	--with-graphicsmagick
 
-  npm install
+    	npm install
 
 3) Start local development server:
 
-  npm run dev
-  env PORT=8080 npm run dev
+    	npm run dev
 
 4) Run the production build
 
-	npm run build
-
-TODO - Add instructions for Linux (and possibly Windows)
+    	npm run build
 
 #### Citations:
 All webpack settings, and redux settings are from various guides online. Below is a list of online resources that were read or used.
@@ -59,8 +92,31 @@ All webpack settings, and redux settings are from various guides online. Below i
 
 #### Instructions:
 1) Start a terminal session in the backend directory (<project-dir>/backend)
+
 2) Run "gradle clean run", or "gradlew clean run" if gradle is not installed on your machine
+
+#### Amazon Web Services Deployment:
+1) Start a terminal session in the backend directory (<project-dir>/backend)
+
+2) Run "gradle war", or "gradlew war" if gradle is not installed on your machine
+
+3) Locate the generated WAR archive in the /build/libs directory
+
+4) Create/login to an Amazon Web Services Account
+
+5) Navigate to the AWS Elastic Beanstalk page, and click "Create New Application"
+
+6) Select a Web Server Environment
+
+7) Choose the TomCat Platform
+
+8) When prompted to upload software, upload the WAR archive generated from gradle
+
+9) The rest of the settings can be left at their defaults
 
 #### Citations:
 - src\main\java\ca\sfu\cmpt373\alpha\vrctextui\Menu.java: Idea based on design from Summer 2016 CMPT213 As0.
 - https://sparktutorials.github.io/2015/04/03/spark-lombok-jackson-reduce-boilerplate.html for dataToJSON method in RestDriver
+- src\test\java\ca\sfu\cmpt373\alpha\vrcladder\ladder\LadderTest.java:  Got way to get a sublist from http://beginnersbook.com/2013/12/how-to-get-sublist-of-an-arraylist-with-example/
+- src\test\java\ca\sfu\cmpt373\alpha\vrcladder\ladder\LadderTest.java:  Conversion from List to Array obtained from http://stackoverflow.com/questions/9572795/convert-list-to-array-in-java
+- src\test\java\ca\sfu\cmpt373\alpha\vrcladder\ladder\LadderMethodsTest.java: generatePermutations() implementation from: http://stackoverflow.com/questions/10305153/generating-all-possible-permutations-of-a-list-recursively

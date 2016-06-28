@@ -1,11 +1,10 @@
 package ca.sfu.cmpt373.alpha.vrcladder.persistence;
 
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.exception.ConstraintViolationException;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 /**
@@ -47,6 +46,10 @@ public abstract class DatabaseManager<T> {
         T obj = session.get(STORED_CLASS_TYPE, id);
         session.close();
 
+        if (obj == null) {
+            throw new EntityNotFoundException();
+        }
+
         return obj;
     }
 
@@ -65,14 +68,6 @@ public abstract class DatabaseManager<T> {
         session.update(obj);
         transaction.commit();
         session.close();
-
-        return obj;
-    }
-
-    protected T update(T obj, Session session) {
-        Transaction transaction = session.beginTransaction();
-        session.update(obj);
-        transaction.commit();
 
         return obj;
     }
@@ -103,6 +98,19 @@ public abstract class DatabaseManager<T> {
         session.close();
 
         return obj;
+    }
+
+    //note this may be inefficient if there are many items,
+    //since each item has to be retrieved before deletion.
+    protected List<T> deleteAll() {
+        List<T> items = getAll();
+
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+        items.stream().forEach(session::delete);
+        transaction.commit();
+        session.close();
+        return items;
     }
 
 }

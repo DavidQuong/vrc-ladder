@@ -1,25 +1,27 @@
 package ca.sfu.cmpt373.alpha.vrcladder.teams;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.DuplicateTeamMemberException;
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EntityNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MultiplePlayTimeException;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.DatabaseManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.CriterionConstants;
-import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 /**
@@ -30,6 +32,8 @@ public class TeamManager extends DatabaseManager<Team> {
 
     private static final Class TEAM_CLASS_TYPE = Team.class;
     private static final Integer FIRST_POSITION = 1;
+    private static final Order ASCENDING_POSITION_ORDER = Order.asc(CriterionConstants.TEAM_LADDER_POSITION_PROPERTY);
+    private static final String ERROR_NOT_ALL_TEAMS = "All teams must be present in order to update ladder positions";
 
     public TeamManager(SessionManager sessionManager) {
         super(TEAM_CLASS_TYPE, sessionManager);
@@ -70,6 +74,10 @@ public class TeamManager extends DatabaseManager<Team> {
             throw new ExistingTeamException();
         }
 
+        if (firstPlayer.getUserId().equals(secondPlayer.getUserId())) {
+            throw new DuplicateTeamMemberException();
+        }
+
         LadderPosition newLadderPosition = generateNewLadderPosition();
         Team newTeam = new Team(firstPlayer, secondPlayer, newLadderPosition);
 
@@ -82,13 +90,22 @@ public class TeamManager extends DatabaseManager<Team> {
         return newTeam;
     }
 
-    public Team updateAttendance(IdType teamId, PlayTime playTime) {
+    /**
+     * @return A List of Team's stored in the database in ascending LadderPosition order.
+     */
+    @Override
+    public List<Team> getAll() {
         Session session = sessionManager.getSession();
+        List<Team> teams = session.createCriteria(Team.class)
+                .addOrder(ASCENDING_POSITION_ORDER)
+                .list();
+        session.close();
 
-        Team team = session.get(Team.class, teamId);
-        if (team == null) {
-            throw new EntityNotFoundException();
-        }
+        return teams;
+    }
+
+    public Team updateAttendancePlaytime(IdType teamId, PlayTime playTime) {
+        Team team = getById(teamId);
 
         if (playTime.isPlayable()) {
             checkForActiveTeam(team);
@@ -96,13 +113,20 @@ public class TeamManager extends DatabaseManager<Team> {
 
         AttendanceCard attendanceCard = team.getAttendanceCard();
         attendanceCard.setPreferredPlayTime(playTime);
-
-        team = update(team, session);
-        session.close();
+        team = update(team);
 
         return team;
     }
 
+    public Team updateAttendanceStatus(IdType teamId, AttendanceStatus status) {
+        Team team = getById(teamId);
+
+        AttendanceCard attendanceCard = team.getAttendanceCard();
+        attendanceCard.setAttendanceStatus(status);
+        team = update(team);
+
+        return team;
+    }
     private boolean isExistingTeam(User firstPlayer, User secondPlayer) {
         Session session = sessionManager.getSession();
 
@@ -173,6 +197,47 @@ public class TeamManager extends DatabaseManager<Team> {
             int nextPositionCount = lastPosition.getValue() + 1;
             return new LadderPosition(nextPositionCount);
         }
+    }
+
+    /**
+     * Erases every Team's ranking in the database, and replaces each team's ranking
+     * with their position in the list of teams
+     * @param teams A list that contains every team in the database in the ranked order to be applied
+     * @throws IllegalStateException if not every team in the database is passed in
+     */
+    public List<Team> updateLadderPositions(List<Team> teams) {
+        //TODO: add more verification that every team in the ladder is actually passed in
+        Session session = sessionManager.getSession();
+        Long numTeamsInLadder = (Long) session.createCriteria(Team.class)
+                .setProjection(Projections.rowCount())
+                .uniqueResult();
+        if (teams.size() != numTeamsInLadder) {
+            throw new IllegalStateException(ERROR_NOT_ALL_TEAMS);
+        }
+
+        //TODO: figure out a less-hacky way to do this!
+        //since ladderPositions have a unique constraint,
+        //we must overwrite all the values with dummy values before continuing
+        Transaction transaction = session.beginTransaction();
+        for (int i = 0; i < teams.size(); i++) {
+            long placeHolderLadderPosition = numTeamsInLadder + i + 1;
+            Team team = teams.get(i);
+            team.setLadderPosition(new LadderPosition((int) placeHolderLadderPosition));
+            session.update(team);
+        }
+        transaction.commit();
+
+        transaction = session.beginTransaction();
+        for (int i = 0; i < teams.size(); i++) {
+            int newTeamLadderPosition = i + 1;
+            Team team = teams.get(i);
+            team.setLadderPosition(new LadderPosition(newTeamLadderPosition));
+            session.update(team);
+        }
+        transaction.commit();
+
+        session.close();
+        return teams;
     }
 
 }

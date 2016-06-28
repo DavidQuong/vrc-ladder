@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users;
 
+import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
@@ -13,7 +14,8 @@ public class UserBuilder {
     private static final String ERROR_MSG_NULL_MIDDLE_NAME = "Middle name cannot be null.";
     private static final String ERROR_MSG_NULL_LAST_NAME = "Last name cannot be null.";
     private static final String ERROR_MSG_NULL_EMAIL_ADDRESS = "Email address cannot be null.";
-    private static final String ERROR_MSG_NULL_USER_PHONE_NUMBER = "Phone number cannot be null.";
+    private static final String ERROR_MSG_NULL_PHONE_NUMBER = "Phone number cannot be null.";
+    private static final String ERROR_MSG_NULL_PASSWORD = "Password cannot be null.";
 
     private UserId userId;
     private UserRole userRole;
@@ -22,6 +24,7 @@ public class UserBuilder {
     private String lastName;
     private EmailAddress emailAddress;
     private PhoneNumber phoneNumber;
+    private Password password;
 
     public UserBuilder() {
         userId = null;
@@ -31,6 +34,7 @@ public class UserBuilder {
         lastName = null;
         emailAddress = null;
         phoneNumber = null;
+        password = null;
     }
 
     public UserBuilder setUserId(UserId userId) {
@@ -93,6 +97,12 @@ public class UserBuilder {
         return this;
     }
 
+    public UserBuilder setPassword(Password password) {
+        this.password = password;
+
+        return this;
+    }
+
     public User buildUser() {
         if (userId == null) {
             throw new IllegalStateException(ERROR_MSG_NULL_USER_ID);
@@ -119,10 +129,14 @@ public class UserBuilder {
         }
 
         if (phoneNumber == null) {
-            throw new IllegalStateException(ERROR_MSG_NULL_USER_PHONE_NUMBER);
+            throw new IllegalStateException(ERROR_MSG_NULL_PHONE_NUMBER);
         }
 
-        return new User(userId, userRole, firstName, middleName, lastName, emailAddress, phoneNumber);
+        if (password == null) {
+            throw new IllegalStateException(ERROR_MSG_NULL_PASSWORD);
+        }
+
+        return new User(userId, userRole, firstName, middleName, lastName, emailAddress, phoneNumber, password);
     }
 
 }
