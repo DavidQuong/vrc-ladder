@@ -7,6 +7,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MatchGroupGeneratorTest {
@@ -16,7 +17,8 @@ public class MatchGroupGeneratorTest {
 
     @Test
     public void testGroupSizes() {
-        List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(MAX_TEST_TEAM_COUNT), (MAX_TEST_TEAM_COUNT - 1) / MatchGroup.MAX_NUM_TEAMS);
+        List<Team> waitList = new ArrayList<>();
+        List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(MAX_TEST_TEAM_COUNT), waitList, (MAX_TEST_TEAM_COUNT - 1) / MatchGroup.MAX_NUM_TEAMS);
         for (MatchGroup matchGroup : matchGroups) {
             List<Team> teams = matchGroup.getTeams();
             Assert.assertTrue(teams.size() == MatchGroup.MAX_NUM_TEAMS || teams.size() == MatchGroup.MIN_NUM_TEAMS);
@@ -31,10 +33,11 @@ public class MatchGroupGeneratorTest {
     public void testIdealGroupSize() {
         //there should only be groups of MatchGroup.MIN_NUM_TEAMS for teamCounts that are evenly divisible by MatchGroup.MIN_NUM_TEAMS
         int idealGroupSize = MatchGroup.MIN_NUM_TEAMS;
+        List<Team> waitList = new ArrayList<>();
         //arbitrary number of test runs, could be any multiple of MIN_NUM_TEAMS
         for (int teamCount = idealGroupSize; teamCount < MAX_TEST_TEAM_COUNT; teamCount += idealGroupSize) {
             Assert.assertTrue(teamCount % MatchGroup.MIN_NUM_TEAMS == 0);
-            List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount), (teamCount / idealGroupSize));
+            List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount), waitList, (teamCount / idealGroupSize));
             for (MatchGroup matchGroup : matchGroups) {
                 Assert.assertTrue(matchGroup.getTeams().size() == idealGroupSize);
             }
@@ -47,9 +50,10 @@ public class MatchGroupGeneratorTest {
         //start after corner cases
         for (int teamCount = IMPOSSIBLE_TEAM_COUNT + 1; teamCount < MAX_TEST_TEAM_COUNT; teamCount++) {
             boolean isUndesiredGroupSize = teamCount % MatchGroup.MIN_NUM_TEAMS != 0;
+            List<Team> waitList = new ArrayList<>();
             if (isUndesiredGroupSize) {
                 int undesiredGroupCount = 0;
-                List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount), MAX_TEST_TEAM_COUNT);
+                List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount), waitList, MAX_TEST_TEAM_COUNT);
                 for (MatchGroup matchGroup : matchGroups) {
                     int matchGroupSize = matchGroup.getTeams().size();
                     boolean isNotIdealSize = matchGroupSize != MatchGroup.MIN_NUM_TEAMS;
@@ -69,9 +73,10 @@ public class MatchGroupGeneratorTest {
     public void testIllegalTeamCounts() {
         int failureCount = 0;
         int teamCount;
+        List<Team> waitList = new ArrayList<>();
         for (teamCount = 0; teamCount < MatchGroup.MIN_NUM_TEAMS; teamCount++) {
             try {
-                MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount), (MAX_TEST_TEAM_COUNT - 1) / MatchGroup.MAX_NUM_TEAMS);
+                MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount), waitList, (MAX_TEST_TEAM_COUNT - 1) / MatchGroup.MAX_NUM_TEAMS);
             } catch (MatchMakingException e) {
                 failureCount++;
             }
@@ -81,6 +86,6 @@ public class MatchGroupGeneratorTest {
         Assert.assertTrue(teamCount == failureCount);
 
         //it's impossible to sort 5 teams into groups of 3 or 4
-        MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(IMPOSSIBLE_TEAM_COUNT), IMPOSSIBLE_TEAM_COUNT);
+        MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(IMPOSSIBLE_TEAM_COUNT), waitList, IMPOSSIBLE_TEAM_COUNT);
     }
 }

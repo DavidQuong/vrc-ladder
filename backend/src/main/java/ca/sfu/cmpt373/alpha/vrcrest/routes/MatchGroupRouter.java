@@ -144,9 +144,10 @@ public class MatchGroupRouter extends RestRouter {
             courtManager.deleteAll();
             matchGroupManager.deleteAll();
             List<Team> teams = teamManager.getAll();
+            List<Team> waitList = new ArrayList<>();
             List<Court> courts = MatchScheduler.scheduleMatches(
                     MatchScheduler.DEFAULT_NUM_COURTS,
-                    MatchGroupGenerator.generateMatchGroupings(teams, (MatchScheduler.DEFAULT_NUM_COURTS * MatchScheduler.DEFAULT_NUM_PLAYTIME)));
+                    MatchGroupGenerator.generateMatchGroupings(teams, waitList,  (MatchScheduler.DEFAULT_NUM_COURTS * MatchScheduler.DEFAULT_NUM_PLAYTIME)));
             for (Court court : courts) {
                 for (MatchGroup matchGroup : court.getScheduledMatches().values()) {
                     matchGroupManager.create(matchGroup);

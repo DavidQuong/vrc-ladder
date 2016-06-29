@@ -11,14 +11,13 @@ import java.util.List;
  */
 public class MatchGroupGenerator {
     private static final String ERROR_MESSAGE = "There are not enough attending teams to sort into groups of 3 or 4";
-    private static List<Team> waitlist = new ArrayList<>();
 
     /**
      * preconditions: teams are assumed to be in sorted ranked order
      * Generates groups of three or four teams to play matches against one another
      * @throws MatchMakingException if teams cannot be sorted into groups
      */
-    public static List<MatchGroup> generateMatchGroupings(List<Team> teams, int numberOfGroups) {
+    public static List<MatchGroup> generateMatchGroupings(List<Team> teams, List<Team> waitList, int numberOfGroups) {
         List<MatchGroup> results = new ArrayList<>();
         List<Team> attendingTeams = getAttendingTeams(teams);
         List<Team> teamsToGroup = new ArrayList<>();
@@ -30,29 +29,12 @@ public class MatchGroupGenerator {
             int currentGroupSize;
             int remainingGroups = (numberOfGroups - counter);
             int remainingTeams = (teamsTotal - deductedTeams);
-
             if(remainingTeams < MatchGroup.MIN_NUM_TEAMS){
                 break;
             }
 
-            if((MatchGroup.MAX_NUM_TEAMS * remainingGroups) <= remainingTeams){
-                currentGroupSize = MatchGroup.MAX_NUM_TEAMS;
-            }else{
-                if(remainingTeams % MatchGroup.MAX_NUM_TEAMS == 0 && ((remainingTeams - MatchGroup.MAX_NUM_TEAMS) == 0 || (remainingTeams - MatchGroup.MAX_NUM_TEAMS) == 4)){
-                    currentGroupSize = MatchGroup.MAX_NUM_TEAMS;
-                }else{
-                    currentGroupSize = MatchGroup.MIN_NUM_TEAMS;
-                }
-            }
-
-            for(int subCounter = 0; subCounter < currentGroupSize; subCounter++){
-                int teamIndex = (subCounter + deductedTeams);
-                if(teamIndex < attendingTeams.size()){
-                    Team currentTeam = attendingTeams.get(teamIndex);
-                    teamsToGroup.add(currentTeam);
-                }
-            }
-
+            currentGroupSize = decideCurrentTeam(remainingGroups, remainingTeams);
+            createGroup(currentGroupSize, deductedTeams, teams, teamsToGroup);
             deductedTeams = deductedTeams + currentGroupSize;
             results.add(new MatchGroup( teamsToGroup));
             teamsToGroup.clear();
@@ -62,16 +44,8 @@ public class MatchGroupGenerator {
             throw new MatchMakingException(ERROR_MESSAGE);
         }
 
-        if(deductedTeams < teamsTotal){
-            for(int counter = deductedTeams; counter < teamsTotal; counter++){
-                waitlist.add(attendingTeams.get(counter));
-            }
-        }
+        addToWaitList(deductedTeams, teams, waitList);
         return results;
-    }
-
-    public static List<Team> getWaitList(){
-        return waitlist;
     }
 
     private static List<Team> getAttendingTeams (List<Team> teams) {
@@ -82,5 +56,40 @@ public class MatchGroupGenerator {
             }
         }
         return attendingTeams;
+    }
+
+    private static int decideCurrentTeam(int remainingGroups, int remainingTeams){
+        int results;
+        if((MatchGroup.MAX_NUM_TEAMS * remainingGroups) <= remainingTeams){
+            results = MatchGroup.MAX_NUM_TEAMS;
+        }else{
+            if(remainingTeams % MatchGroup.MAX_NUM_TEAMS == 0 && ((remainingTeams - MatchGroup.MAX_NUM_TEAMS) == 0 || (remainingTeams - MatchGroup.MAX_NUM_TEAMS) == 4)){
+                results = MatchGroup.MAX_NUM_TEAMS;
+            }else{
+                results = MatchGroup.MIN_NUM_TEAMS;
+            }
+        }
+        return results;
+    }
+
+    private static void createGroup(int currentGroupSize, int deductedTeams, List<Team> teams, List<Team> teamsToGroup){
+        List<Team> attendingTeams = getAttendingTeams(teams);
+        for(int subCounter = 0; subCounter < currentGroupSize; subCounter++){
+            int teamIndex = (subCounter + deductedTeams);
+            if(teamIndex < attendingTeams.size()){
+                Team currentTeam = attendingTeams.get(teamIndex);
+                teamsToGroup.add(currentTeam);
+            }
+        }
+    }
+
+    private static void addToWaitList(int deductedTeams, List<Team> teams, List<Team> waitList){
+        List<Team> attendingTeams = getAttendingTeams(teams);
+        int teamsTotal = attendingTeams.size();
+        if(deductedTeams < teamsTotal){
+            for(int counter = deductedTeams; counter < teamsTotal; counter++){
+                waitList.add(attendingTeams.get(counter));
+            }
+        }
     }
 }
