@@ -31,7 +31,7 @@ public class MatchGroupGenerator {
             int remainingGroups = (numberOfGroups - counter);
             int remainingTeams = (teamsTotal - deductedTeams);
 
-            if(remainingTeams <= MatchGroup.MIN_NUM_TEAMS){
+            if(remainingTeams < MatchGroup.MIN_NUM_TEAMS){
                 break;
             }
 
@@ -56,6 +56,10 @@ public class MatchGroupGenerator {
             deductedTeams = deductedTeams + currentGroupSize;
             results.add(new MatchGroup( teamsToGroup));
             teamsToGroup.clear();
+        }
+
+        if(results.size() == 0){
+            throw new MatchMakingException(ERROR_MESSAGE);
         }
 
         if(deductedTeams < teamsTotal){

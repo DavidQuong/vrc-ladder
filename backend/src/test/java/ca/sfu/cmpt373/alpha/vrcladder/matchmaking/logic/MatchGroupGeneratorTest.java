@@ -49,7 +49,7 @@ public class MatchGroupGeneratorTest {
             boolean isUndesiredGroupSize = teamCount % MatchGroup.MIN_NUM_TEAMS != 0;
             if (isUndesiredGroupSize) {
                 int undesiredGroupCount = 0;
-                List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount), (MAX_TEST_TEAM_COUNT - 1) / MatchGroup.MAX_NUM_TEAMS);
+                List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount), MAX_TEST_TEAM_COUNT);
                 for (MatchGroup matchGroup : matchGroups) {
                     int matchGroupSize = matchGroup.getTeams().size();
                     boolean isNotIdealSize = matchGroupSize != MatchGroup.MIN_NUM_TEAMS;
@@ -65,20 +65,20 @@ public class MatchGroupGeneratorTest {
         }
     }
 
-    @Test(expected = MatchMakingException.class)
+    @Test
     public void testIllegalTeamCounts() {
         int failureCount = 0;
         int teamCount;
         for (teamCount = 0; teamCount < MatchGroup.MIN_NUM_TEAMS; teamCount++) {
             try {
-                MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount), teamCount);
-            } catch (IllegalStateException e) {
+                MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(teamCount), (MAX_TEST_TEAM_COUNT - 1) / MatchGroup.MAX_NUM_TEAMS);
+            } catch (MatchMakingException e) {
                 failureCount++;
             }
         }
 
         //an exception should be thrown for every team count that's unable to be sorted into a group
-        Assert.assertTrue(teamCount - 1 == failureCount);
+        Assert.assertTrue(teamCount == failureCount);
 
         //it's impossible to sort 5 teams into groups of 3 or 4
         MatchGroupGenerator.generateMatchGroupings(MockDatabase.getRankedLadderTeams(IMPOSSIBLE_TEAM_COUNT), IMPOSSIBLE_TEAM_COUNT);
