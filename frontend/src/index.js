@@ -9,18 +9,24 @@ import {Button, ButtonToolbar} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 
 const Layout = ({children}) => (
-  <ButtonToolbar>
-    <LinkContainer to='/signup'>
-      <Button>Sign up</Button>
-    </LinkContainer>
-    <LinkContainer to='/ladder'>
-      <Button>Ladder</Button>
-    </LinkContainer>
-    <LinkContainer to='/create-team'>
-      <Button>Create team</Button>
-    </LinkContainer>
-    {children}
-  </ButtonToolbar>
+  <div>
+    <div>
+      <ButtonToolbar>
+        <LinkContainer to='/signup'>
+          <Button>Sign up</Button>
+        </LinkContainer>
+        <LinkContainer to='/ladder'>
+          <Button>Ladder</Button>
+        </LinkContainer>
+        <LinkContainer to='/create-team'>
+          <Button>Create team</Button>
+        </LinkContainer>
+      </ButtonToolbar>
+      </div>
+    <div>
+      {children}
+    </div>
+  </div>
 );
 
 export default ({store}) : Element => (
@@ -28,7 +34,7 @@ export default ({store}) : Element => (
     <IntlProvider messages={{}} defaultLocale='en-US'>
       <Router history={browserHistory}>
         <Route path='/' component={Layout}>
-          <IndexRoute component={() => <div>INDEX</div>}/>
+          <IndexRoute component={Ladder}/>
           <Route path='/signup' component={SignUp}/>
           <Route path='/ladder' component={Ladder}/>
           <Route path='/create-team' component={CreateTeam}/>
