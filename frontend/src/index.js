@@ -8,8 +8,18 @@ import CreateTeam from './component/create-team/create-team';
 import {Button, ButtonToolbar} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 
+const divStyle = {
+  height: '100%',
+  color: 'white',
+  backgroundColor: '#dbb079',
+  backgroundImage: 'url(' + require('file!./../src/public/wood-tile.png') + ')',
+  backgroundRepeat: 'repeat',
+  WebkitTransition: 'all',
+  msTransition: 'all',
+};
+
 const Layout = ({children}) => (
-  <div>
+  <div style={divStyle}>
     <div>
       <ButtonToolbar>
         <LinkContainer to='/signup'>

@@ -32,6 +32,7 @@
   "devDependencies": {
     "babel-core": "^6.9.1",
     "babel-preset-metalab": "^0.2.1",
+    "css-loader": "^0.23.1",
     "enzyme": "^2.3.0",
     "eslint": "^2.10.2",
     "eslint-config-metalab": "^4.0.1",
@@ -39,6 +40,9 @@
     "eslint-plugin-import": "^1.8.0",
     "eslint-plugin-lodash-fp": "^1.2.0",
     "eslint-plugin-react": "^5.1.1",
+    "file-loader": "^0.9.0",
+    "resolve-url-loader": "^1.4.4",
+    "url-loader": "^0.5.7",
     "webpack": "^1.13.0",
     "webpack-assets": "^0.2.0",
     "webpack-config-babel": "^0.2.0",
