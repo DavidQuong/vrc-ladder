@@ -62,52 +62,52 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
         return deleteById(matchGroupId);
     }
 
-	public MatchGroup addTeamToMatchGroup(IdType matchGroupId, Team newTeam) {
-		MatchGroup matchGroup = getById(matchGroupId);
-		if (matchGroup == null) {
-			throw new EntityNotFoundException(ERROR_NO_MATCH_GROUP);
-		}
-		matchGroup.addTeam(newTeam);
+    public MatchGroup addTeamToMatchGroup(IdType matchGroupId, Team newTeam) {
+        MatchGroup matchGroup = getById(matchGroupId);
+        if (matchGroup == null) {
+            throw new EntityNotFoundException(ERROR_NO_MATCH_GROUP);
+        }
+        matchGroup.addTeam(newTeam);
 
-		return update(matchGroup);
-	}
+        return update(matchGroup);
+    }
 
-	public MatchGroup removeTeamFromMatchGroup(IdType matchGroupId, Team leavingTeam) {
-		MatchGroup matchGroup = getById(matchGroupId);
-		if (matchGroup == null) {
-			throw new EntityNotFoundException(ERROR_NO_MATCH_GROUP);
-		}
-		matchGroup.removeTeam(leavingTeam);
+    public MatchGroup removeTeamFromMatchGroup(IdType matchGroupId, Team leavingTeam) {
+        MatchGroup matchGroup = getById(matchGroupId);
+        if (matchGroup == null) {
+            throw new EntityNotFoundException(ERROR_NO_MATCH_GROUP);
+        }
+        matchGroup.removeTeam(leavingTeam);
 
-		return update(matchGroup);
-	}
+        return update(matchGroup);
+    }
 
-	public List<MatchGroup> tradeTeamsInMatchGroups(IdType matchGroupId1, Team first, IdType matchGroupId2, Team second) {
-		MatchGroup matchGroup1 = getById(matchGroupId1);
-		if (matchGroup1 == null) {
-			throw new EntityNotFoundException(ERROR_NO_MATCH_GROUP);
-		}
-		MatchGroup matchGroup2 = getById(matchGroupId2);
-		if (matchGroup2 == null) {
-			throw new EntityNotFoundException(ERROR_NO_MATCH_GROUP);
-		}
-		matchGroup1.tradeTeams(first, matchGroup2, second);
+    public List<MatchGroup> tradeTeamsInMatchGroups(IdType matchGroupId1, Team first, IdType matchGroupId2, Team second) {
+        MatchGroup matchGroup1 = getById(matchGroupId1);
+        if (matchGroup1 == null) {
+            throw new EntityNotFoundException(ERROR_NO_MATCH_GROUP);
+        }
+        MatchGroup matchGroup2 = getById(matchGroupId2);
+        if (matchGroup2 == null) {
+            throw new EntityNotFoundException(ERROR_NO_MATCH_GROUP);
+        }
+        matchGroup1.tradeTeams(first, matchGroup2, second);
 
-		Session session = sessionManager.getSession();
-		Transaction transaction = session.beginTransaction();
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
 
-		session.update(matchGroup1);
-		session.update(matchGroup2);
+        session.update(matchGroup1);
+        session.update(matchGroup2);
 
-		transaction.commit();
-		session.close();
+        transaction.commit();
+        session.close();
 
-		List<MatchGroup> results = new ArrayList<>();
-		results.add(matchGroup1);
-		results.add(matchGroup2);
+        List<MatchGroup> results = new ArrayList<>();
+        results.add(matchGroup1);
+        results.add(matchGroup2);
 
-		return results;
-	}
+        return results;
+    }
 
     @Override
     public List<MatchGroup> getAll() {

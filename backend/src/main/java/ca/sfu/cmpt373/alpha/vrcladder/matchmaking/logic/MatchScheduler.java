@@ -10,13 +10,14 @@ import java.util.List;
 
 public class MatchScheduler {
     public static final int DEFAULT_NUM_COURTS = 6;
+    public static final int DEFAULT_NUM_PLAYTIME = 2;
     private static final String ERROR_MESSAGE_COURTS_FULL = "There were not enough courts available to schedule all matches";
 
     /**
      * @throws MatchMakingException if Courts are full, and matches cannot be scheduled
      */
     public static List<Court> scheduleMatches(int numCourts, List<MatchGroup> matchGroups) {
-        //generate courts to schedule matches in
+        // Schedule matches into the courts.
         List<Court> courts = new ArrayList<>();
         for (int i = 0; i < numCourts; i++) {
             courts.add(new Court());
