@@ -1,18 +1,27 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.authentication;
 
+import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcladder.util.MockUserGenerator;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.crypto.MacProvider;
+import org.apache.shiro.authc.AuthenticationException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.security.Key;
+
 public class SecurityManagerTest {
 
     private static final String TEST_PASSWORD = "vrcpass1234";
+    private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
+    private static final Key SIGNATURE_KEY = MacProvider.generateKey();
 
     private SecurityManager securityManager;
 
     @Before
     public void setUp() {
-        securityManager = new SecurityManager();
+        securityManager = new SecurityManager(SIGNATURE_ALGORITHM, SIGNATURE_KEY);
     }
 
     @Test
@@ -33,11 +42,20 @@ public class SecurityManagerTest {
     }
 
     @Test
-    public void testMatchPassword() {
-        Password password = securityManager.hashPassword(TEST_PASSWORD);
+    public void testLoginSuccessful() {
+        User mockUser = MockUserGenerator.generatePlayer();
+        Password mockPassword = securityManager.hashPassword(TEST_PASSWORD);
+        mockUser.setPassword(mockPassword);
 
-        boolean doesPasswordMatch = securityManager.doesPasswordMatch(TEST_PASSWORD, password);
-        Assert.assertTrue(doesPasswordMatch);
+        String authorizationToken = securityManager.login(mockUser, TEST_PASSWORD);
+        Assert.assertNotNull(authorizationToken);
+    }
+
+    @Test(expected = AuthenticationException.class)
+    public void testLoginFailed() {
+        User mockUser = MockUserGenerator.generatePlayer();
+
+        securityManager.login(mockUser, TEST_PASSWORD);
     }
 
 }

@@ -21,6 +21,8 @@ public class LoginRouter extends RestRouter {
 
     public static final String ROUTE_LOGIN = "/login";
 
+    private static final String JSON_PROPERTY_AUTHORIZATION_TOKEN = "authorizationToken";
+
     private static final String ERROR_INVALID_CREDENTIALS = "Invalid credentials (user ID or password).";
 
     private SecurityManager securityManager;
@@ -53,8 +55,8 @@ public class LoginRouter extends RestRouter {
             User user = userManager.getById(loginPayload.getUserId());
             String plaintextPassword = loginPayload.getPassword();
 
-            securityManager.login(user, plaintextPassword);
-
+            String authorizationToken = securityManager.login(user, plaintextPassword);
+            responseBody.addProperty(JSON_PROPERTY_AUTHORIZATION_TOKEN, authorizationToken);
             response.status(HttpStatus.OK_200);
         } catch (JsonSyntaxException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);

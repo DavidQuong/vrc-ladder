@@ -13,9 +13,13 @@ import ca.sfu.cmpt373.alpha.vrcrest.routes.MatchGroupRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.RestRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.TeamRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.UserRouter;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.crypto.MacProvider;
 import spark.servlet.SparkApplication;
 
+import java.security.Key;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -32,7 +36,12 @@ public class RestApplication implements SparkApplication {
     @Override
     public void init() {
         SessionManager sessionManager = new SessionManager();
-        SecurityManager securityManager = new SecurityManager();
+
+        // TODO - Receive these from configuration file instead.
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+        Key signatureKey = MacProvider.generateKey();
+
+        SecurityManager securityManager = new SecurityManager(signatureAlgorithm, signatureKey);
         UserManager userManager = new UserManager(sessionManager);
         TeamManager teamManager = new TeamManager(sessionManager);
         MatchGroupManager matchGroupManager = new MatchGroupManager(sessionManager);
