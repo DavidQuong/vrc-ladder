@@ -1,67 +1,85 @@
 import {createElement, Element} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
-import map from 'lodash/fp/map';
+// import map from 'lodash/fp/map';
 import sortBy from 'lodash/fp/sortBy';
 import styles from './match-groups.css';
 
-// import styles from './ladder.css';
-import Heading from '../heading/heading';
-
-const orderPlayers = map((player) => (
-  <div key={player.email}>
-    {player.firstName} {player.lastName}
-  </div>
-));
-
-const orderTeams = map((team) => (
-  <div className={styles.table}>
-    <div className={styles.entry}>
-      <FormattedMessage
-        id='rank'
-        defaultMessage='Rank: '
-      />
-      {team.rank}
-    </div>
-    <div className={styles.entry}>
-      <FormattedMessage
-        id='player1'
-        defaultMessage='First Player: '
-      />
-      {team.firstPlayer}
-    </div>
-    <div className={styles.entry}>
-      <FormattedMessage
-        id='player2'
-        defaultMessage='Second Player: '
-      />
-      {team.secondPlayer}
-    </div>
-  </div>
-));
-
 const MatchGroup = ({
-  players,
-  teams,
 }) : Element => (
-  <div className={styles.ladder}>
-    <div>
-      <Heading kind='huge'>
-        <FormattedMessage
-          id='playerList'
-          defaultMessage='Players'
-        />
-      </Heading>
-    {orderPlayers(players)}
+  <div className={styles.matchGroupPage}>
+    <div className={styles.matchGroupTitle}>
+      <FormattedMessage
+        id='Matchgroups_title'
+        defaultMessage='This weeks&quot; match group'
+      />
     </div>
     <div>
-      <Heading kind='huge'>
+      <br/>
+      <div className={styles.matchGroup}>
+        <div>
+          <FormattedMessage
+            id='court #1'
+            defaultMessage='Court #1'
+          />
+        </div>
+          <FormattedMessage
+            id='match1'
+            defaultMessage='Team 1 vs Team 2 @8:30pm --> Winner Results: 1'
+          /><br/>
+          <FormattedMessage
+            id='match2'
+            defaultMessage='Team 1 vs Team 3 @8:30pm --> Winner Results: 1'
+          /><br/>
+          <FormattedMessage
+            id='match3'
+            defaultMessage='Team 2 vs Team 3 @8:30pm --> Winner Results: 3'
+          /><br/>
+      </div>
+      <div className={styles.matchGroup}>
+        <div>
+        </div>
         <FormattedMessage
-          id='teamList'
-          defaultMessage='Teams'
-        />
-      </Heading>
-      {orderTeams(teams)}
+          id='matchGroup2'
+          defaultMessage='MatchGroup 2'
+        /><br/>
+          <FormattedMessage
+            id='match1'
+            defaultMessage='Team 4 vs Team 5 @8:30pm -->    Winner Results:   4'
+          /><br/>
+          <FormattedMessage
+            id='match2'
+            defaultMessage='Team 4 vs Team 6 @8:30pm -->    Winner Results:   6'
+          /><br/>
+          <FormattedMessage
+            id='match3'
+            defaultMessage='Team 5 vs Team 6 @8:30pm -->    Winner Results:   4'
+          /><br/>
+      </div>
+      <div className={styles.matchGroup}>
+        <div>
+        </div>
+        <FormattedMessage
+          id='matchGroup3'
+          defaultMessage='MatchGroup 3'
+        /><br/>
+          <FormattedMessage
+            id='match1'
+            defaultMessage='Team 7 vs Team 8 @8:30pm -->    Winner Results:   7'
+          /><br/>
+          <FormattedMessage
+            id='match2'
+            defaultMessage='Team 7 vs Team 9 @8:30pm -->    Winner Results:   7'
+          /><br/>
+          <FormattedMessage
+            id='match3'
+            defaultMessage='Team 9 vs Team W @8:30pm -->    Winner Results:   9'
+          /><br/>
+          <FormattedMessage
+            id='match3'
+            defaultMessage='Team 10 vs Team D @8:30pm -->    Winner Results:  ~'
+          /><br/>
+      </div>
     </div>
   </div>
 );
