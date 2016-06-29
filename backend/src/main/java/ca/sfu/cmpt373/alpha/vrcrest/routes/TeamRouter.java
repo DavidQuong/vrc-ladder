@@ -7,6 +7,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewAttendanceStatusPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewPlayTimePayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewTeamPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.AttendanceCardGsonSerializer;
@@ -68,6 +69,7 @@ public class TeamRouter extends RestRouter {
             .registerTypeAdapter(AttendanceCard.class, new AttendanceCardGsonSerializer())
             .registerTypeAdapter(NewTeamPayload.class, new NewTeamPayload.GsonDeserializer())
             .registerTypeAdapter(NewPlayTimePayload.class, new NewPlayTimePayload.GsonDeserializer())
+            .registerTypeAdapter(NewAttendanceStatusPayload.class, new NewAttendanceStatusPayload.GsonDeserializer())
             .setPrettyPrinting()
             .create();
     }
@@ -221,9 +223,36 @@ public class TeamRouter extends RestRouter {
         return responseBody.toString();
     }
 
-    // TODO - Enable updating a Team's AttendanceStatus.
+
     private String handleUpdateAttendanceStatus(Request request, Response response) {
-      return null;
+        JsonObject responseBody = new JsonObject();
+
+        String paramId = request.params(PARAM_ID);
+        GeneratedId generatedId = new GeneratedId(paramId);
+
+        try {
+            NewAttendanceStatusPayload AttendanceStatusPayload = getGson().fromJson(request.body(), NewAttendanceStatusPayload.class);
+            Team existingTeam = teamManager.updateAttendanceStatus(generatedId, AttendanceStatusPayload.getAttendanceStatus());
+            AttendanceCard attendanceCard = existingTeam.getAttendanceCard();
+
+            responseBody.add(JSON_PROPERTY_ATTENDANCE, getGson().toJsonTree(attendanceCard));
+            response.status(HttpStatus.OK_200);
+        } catch (JsonSyntaxException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (JsonParseException | IllegalArgumentException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (EntityNotFoundException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_TEAM);
+            response.status(HttpStatus.NOT_FOUND_404);
+        } catch (RuntimeException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        }
+
+        response.type(JSON_RESPONSE_TYPE);
+        return responseBody.toString();
     }
 
 }
