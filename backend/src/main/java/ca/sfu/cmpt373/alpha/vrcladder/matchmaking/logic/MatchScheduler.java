@@ -11,6 +11,7 @@ import java.util.List;
 
 public class MatchScheduler {
     public static final int DEFAULT_NUM_COURTS = 6;
+    public static final int DEFAULT_NUM_PAYTIME = 2;
     private static final String ERROR_MESSAGE_COURTS_FULL = "There were not enough courts available to schedule all matches";
 
     /**
