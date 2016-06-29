@@ -3,7 +3,6 @@ package ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MatchMakingException;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
-import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.WaitlistManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 
 import java.util.ArrayList;
