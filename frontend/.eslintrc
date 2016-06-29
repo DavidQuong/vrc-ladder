@@ -1,4 +1,24 @@
-extends:
-  - metalab
-  - metalab/react
-  - metalab/rules/lodash-fp
+{
+	"extends": [
+    	"metalab",
+    	"metalab/react",
+    	"metalab/rules/lodash-fp"
+	],
+
+    "env": {
+        "browser": true,
+        "node": true
+    },
+
+    "globals": {
+        "React": true
+    },
+
+    "ecmaFeatures": {
+        "jsx": true
+    },
+
+    "plugins": [
+        "react"
+    ]
+}

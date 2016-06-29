@@ -1,6 +1,7 @@
 ~colors: "./config/colors.config";
 
 @import url(https://fonts.googleapis.com/css?family=Roboto);
+@import url(https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css);
 
 :global {
   html, body {
