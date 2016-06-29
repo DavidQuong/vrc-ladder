@@ -23,9 +23,7 @@ public class NewAttendanceStatusPayload {
                 throws JsonParseException {
             JsonObject jsonObject = json.getAsJsonObject();
 
-            if (!jsonObject.has(JSON_PROPERTY_ATTENDANCE_STATUS)) {
-                throwMissingPropertyException(JSON_PROPERTY_ATTENDANCE_STATUS);
-            }
+            checkForMissingProperties(jsonObject);
             JsonElement jsonAttendanceStatus = jsonObject.get(JSON_PROPERTY_ATTENDANCE_STATUS);
             AttendanceStatus AttendanceStatus = EnumUtils.getEnum(AttendanceStatus.class, jsonAttendanceStatus.getAsString());
 
@@ -36,6 +34,12 @@ public class NewAttendanceStatusPayload {
             return new NewAttendanceStatusPayload(AttendanceStatus);
         }
 
+        @Override
+        protected void checkForMissingProperties(JsonObject jsonObject) {
+            if (!jsonObject.has(JSON_PROPERTY_ATTENDANCE_STATUS)) {
+                throwMissingPropertyException(JSON_PROPERTY_ATTENDANCE_STATUS);
+            }
+        }
     }
 
     private AttendanceStatus AttendanceStatus;

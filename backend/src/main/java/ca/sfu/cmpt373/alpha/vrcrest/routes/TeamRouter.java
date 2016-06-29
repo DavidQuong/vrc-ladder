@@ -227,7 +227,7 @@ public class TeamRouter extends RestRouter {
     private String handleUpdateAttendanceStatus(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
-        String paramId = request.params(ROUTE_ID);
+        String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
 
         try {
