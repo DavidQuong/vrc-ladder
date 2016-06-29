@@ -7,7 +7,7 @@ apply plugin: 'war'
 
 sourceCompatibility = 1.8
 
-mainClassName="ca.sfu.cmpt373.alpha.vrcrest.RestDriver"
+mainClassName="ca.sfu.cmpt373.alpha.vrcrest.RestApplication"
 
 run {
     standardInput = System.in
@@ -23,6 +23,7 @@ dependencies {
     compile group: 'com.h2database', name: 'h2', version: '1.4.192'
     compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
     compile group: 'org.apache.shiro', name: 'shiro-core', version: '1.2.5'
+    compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.6.0'
 
     // For Spark REST
     compile group: 'com.sparkjava',  name: 'spark-core', version: '2.5'
