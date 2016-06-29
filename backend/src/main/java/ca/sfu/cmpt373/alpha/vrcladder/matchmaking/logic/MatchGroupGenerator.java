@@ -3,61 +3,49 @@ package ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MatchMakingException;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * A class for generating the groups of teams that will play matches against each other each week
  */
 public class MatchGroupGenerator {
-    private static final String ERROR_MESSAGE = "There are not enough teams to sort into groups of 3 or 4";
+    private static final String ERROR_MESSAGE = "There are not enough attending teams to sort into groups of 3 or 4";
 
     /**
      * preconditions: teams are assumed to be in sorted ranked order
      * Generates groups of three or four teams to play matches against one another
      * @throws MatchMakingException if teams cannot be sorted into groups
      */
-    public static List<MatchGroup> generateMatchGroupings(List<Team> teams) {
-        List<MatchGroup> matchGroupings = new ArrayList<>();
-
+    public static List<MatchGroup> generateMatchGroupings(List<Team> teams, List<Team> waitList, int numberOfGroups) {
+        List<MatchGroup> results = new ArrayList<>();
         List<Team> attendingTeams = getAttendingTeams(teams);
         List<Team> teamsToGroup = new ArrayList<>();
 
-        //figure out how many teams won't fit into groups of three
-        int groupCount = MatchGroup.MIN_NUM_TEAMS;
-        int extraTeams = attendingTeams.size() % groupCount;
+        int deductedTeams = 0;
+        int teamsTotal = attendingTeams.size();
 
-        //while there are teams that won't fit into groups of three, make groups of four instead
-        if (extraTeams > 0) {
-            groupCount = MatchGroup.MAX_NUM_TEAMS;
-        }
-
-        //make groups starting from the bottom of the list so that groups of four are created from the lowest ranked players
-        for (int i = attendingTeams.size() - 1; i >= 0; i--) {
-            teamsToGroup.add(attendingTeams.get(i));
-            if (teamsToGroup.size() == groupCount) {
-                //reverse teamsToGroup before adding them to a group, so that they are in ranked order
-                Collections.reverse(teamsToGroup);
-                matchGroupings.add(new MatchGroup(teamsToGroup));
-                teamsToGroup.clear();
-                extraTeams--;
-                if (extraTeams == 0) {
-                    //switch back to groups of three
-                    groupCount = MatchGroup.MIN_NUM_TEAMS;
-                }
+        for(int counter = 0; counter < numberOfGroups; counter++) {
+            int currentGroupSize;
+            int remainingGroups = (numberOfGroups - counter);
+            int remainingTeams = (teamsTotal - deductedTeams);
+            if(remainingTeams < MatchGroup.MIN_NUM_TEAMS){
+                break;
             }
+
+            currentGroupSize = decideCurrentTeam(remainingGroups, remainingTeams);
+            createGroup(currentGroupSize, deductedTeams, teams, teamsToGroup);
+            deductedTeams = deductedTeams + currentGroupSize;
+            results.add(new MatchGroup( teamsToGroup));
+            teamsToGroup.clear();
         }
 
-        //put match groupings in sorted order, since they were generated backwards
-        Collections.reverse(matchGroupings);
-
-        //this only happens if there are less than three teams, or five teams
-        if (extraTeams > 0) {
+        if(results.size() == 0){
             throw new MatchMakingException(ERROR_MESSAGE);
         }
-        return matchGroupings;
+
+        addToWaitList(deductedTeams, teams, waitList);
+        return results;
     }
 
     private static List<Team> getAttendingTeams (List<Team> teams) {
@@ -68,5 +56,40 @@ public class MatchGroupGenerator {
             }
         }
         return attendingTeams;
+    }
+
+    private static int decideCurrentTeam(int remainingGroups, int remainingTeams){
+        int results;
+        if((MatchGroup.MAX_NUM_TEAMS * remainingGroups) <= remainingTeams){
+            results = MatchGroup.MAX_NUM_TEAMS;
+        }else{
+            if(remainingTeams % MatchGroup.MAX_NUM_TEAMS == 0 && ((remainingTeams - MatchGroup.MAX_NUM_TEAMS) == 0 || (remainingTeams - MatchGroup.MAX_NUM_TEAMS) == 4)){
+                results = MatchGroup.MAX_NUM_TEAMS;
+            }else{
+                results = MatchGroup.MIN_NUM_TEAMS;
+            }
+        }
+        return results;
+    }
+
+    private static void createGroup(int currentGroupSize, int deductedTeams, List<Team> teams, List<Team> teamsToGroup){
+        List<Team> attendingTeams = getAttendingTeams(teams);
+        for(int subCounter = 0; subCounter < currentGroupSize; subCounter++){
+            int teamIndex = (subCounter + deductedTeams);
+            if(teamIndex < attendingTeams.size()){
+                Team currentTeam = attendingTeams.get(teamIndex);
+                teamsToGroup.add(currentTeam);
+            }
+        }
+    }
+
+    private static void addToWaitList(int deductedTeams, List<Team> teams, List<Team> waitList){
+        List<Team> attendingTeams = getAttendingTeams(teams);
+        int teamsTotal = attendingTeams.size();
+        if(deductedTeams < teamsTotal){
+            for(int counter = deductedTeams; counter < teamsTotal; counter++){
+                waitList.add(attendingTeams.get(counter));
+            }
+        }
     }
 }

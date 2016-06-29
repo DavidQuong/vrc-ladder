@@ -1,9 +1,14 @@
 package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
+import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class MatchGroupTest {
 
@@ -93,5 +98,23 @@ public class MatchGroupTest {
 		MatchGroup testGroup1 = new MatchGroup(firstTeam, secondTeam, thirdTeam);
 		MatchGroup testGroup2 = new MatchGroup(fourthTeam, fifthTeam, sixthTeam);
 		testGroup1.tradeTeams(secondTeam, testGroup2, seventhTeam);
+	}
+
+	@Test
+	public void testComparableAscendingOrder() {
+		int matchGroupCount = 10;
+		List<MatchGroup> testMatchGroups = new ArrayList<>();
+		for (int i = 0; i < matchGroupCount; i++) {
+			testMatchGroups.add(MockMatchGroupGenerator.generateFourTeamMatchGroup());
+		}
+
+		List<MatchGroup> expectedResults = new ArrayList<>(testMatchGroups);
+		Collections.reverse(testMatchGroups);
+
+		Collections.sort(testMatchGroups);
+
+		for (int i = 0; i < expectedResults.size(); i++) {
+			Assert.assertEquals(expectedResults.get(i), testMatchGroups.get(i));
+		}
 	}
 }

@@ -40,7 +40,7 @@ public class UserManagerTest extends BaseTest {
         User newUser = MockUserGenerator.generatePlayer();
 
         userManager.create(newUser.getUserId(), newUser.getUserRole(), newUser.getFirstName(), newUser.getMiddleName(),
-            newUser.getLastName(), newUser.getEmailAddress(), newUser.getPhoneNumber());
+            newUser.getLastName(), newUser.getEmailAddress(), newUser.getPhoneNumber(), newUser.getPassword());
 
         Session session = sessionManager.getSession();
         User user = session.get(User.class, newUser.getUserId());
@@ -54,6 +54,7 @@ public class UserManagerTest extends BaseTest {
         Assert.assertEquals(newUser.getLastName(), user.getLastName());
         Assert.assertEquals(newUser.getEmailAddress(), user.getEmailAddress());
         Assert.assertEquals(newUser.getPhoneNumber(), user.getPhoneNumber());
+        Assert.assertEquals(newUser.getPassword(), user.getPassword());
     }
 
     @Test
@@ -77,8 +78,8 @@ public class UserManagerTest extends BaseTest {
         final PhoneNumber newPhoneNumber = new PhoneNumber("(778) 111-2222");
         final EmailAddress newEmailAddress = new EmailAddress("billyj@vrc.ca");
 
-        userManager.update(userFixture.getUserId(), userFixture.getUserRole(), newFirstName, newMiddleName,
-            userFixture.getLastName(), newEmailAddress, newPhoneNumber);
+        userManager.update(userFixture.getUserId(), newFirstName, newMiddleName, userFixture.getLastName(),
+            newEmailAddress, newPhoneNumber);
 
         Session session = sessionManager.getSession();
         User user = session.get(User.class, userFixture.getUserId());

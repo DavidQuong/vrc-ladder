@@ -3,7 +3,9 @@
 ## CMPT 373 - Team Alpha
 ------------------------
 
-This project is split up by the individual components, the frontend and the backend. The frontend is written in JavaScript and the backend is written in Java. This project is under the Berkeley Software Distribution (BSD) license and was developed for the Vancouver Racquet Club (VRC).
+This project was developed for the non-profit society, the Vancouver Racquets Club (VRC), as a part of CMPT373: Software Development Methods, and it is provided under the terms of the Berkeley Software Distribution (BSD) license.
+
+The goal of the system is to modernize the weekly doubles ladder system of VRC through an easy-to-use, platform-independent user interface. It is split up into the frontend (written in JavaScript) and the backend (written in Java).
 
 ------------
 ### Frontend
@@ -93,12 +95,12 @@ All webpack settings, and redux settings are from various guides online. Below i
 #### Instructions:
 1) Start a terminal session in the backend directory (<project-dir>/backend)
 
-2) Run "gradle clean run", or "gradlew clean run" if gradle is not installed on your machine
+2) Run `gradle clean run`, or `gradlew clean run` if gradle is not installed on your machine
 
 #### Amazon Web Services Deployment:
 1) Start a terminal session in the backend directory (<project-dir>/backend)
 
-2) Run "gradle war", or "gradlew war" if gradle is not installed on your machine
+2) Run `gradle war`, or `gradlew war` if gradle is not installed on your machine
 
 3) Locate the generated WAR archive in the /build/libs directory
 

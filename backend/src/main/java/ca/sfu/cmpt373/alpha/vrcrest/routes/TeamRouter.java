@@ -30,8 +30,8 @@ import java.util.List;
 public class TeamRouter extends RestRouter {
 
     public static final String ROUTE_TEAMS = "/teams";
-    public static final String ROUTE_TEAM_ID = "/team/" + ROUTE_ID;
-    public static final String ROUTE_TEAM_ID_ATTENDANCE = "/team/" + ROUTE_ID + "/attendance";
+    public static final String ROUTE_TEAM_ID = "/team/" + PARAM_ID;
+    public static final String ROUTE_TEAM_ID_ATTENDANCE = "/team/" + PARAM_ID + "/attendance";
     public static final String ROUTE_TEAM_ID_ATTENDANCE_PLAYTIME = ROUTE_TEAM_ID_ATTENDANCE + "/playtime";
     public static final String ROUTE_TEAM_ID_ATTENDANCE_STATUS = ROUTE_TEAM_ID_ATTENDANCE + "/status";
 
@@ -53,16 +53,13 @@ public class TeamRouter extends RestRouter {
 
     @Override
     public void attachRoutes() {
-        Spark.get(ROUTE_TEAMS, (request, response) -> handleGetAllTeams(request, response));
-        Spark.post(ROUTE_TEAMS, (request, response) -> handleCreateTeam(request, response));
-        Spark.get(ROUTE_TEAM_ID, (request, response) -> handleGetTeamById(request, response));
-        Spark.delete(ROUTE_TEAM_ID, (request, response) -> handleDeleteTeamById(request, response));
-        Spark.get(ROUTE_TEAM_ID_ATTENDANCE, (request, response) -> handleGetTeamAttendance(request, response));
-        
-        Spark.put(ROUTE_TEAM_ID_ATTENDANCE_PLAYTIME, (request, response) -> handleUpdatePlayTime(request, response));
-        Spark.put(ROUTE_TEAM_ID_ATTENDANCE_STATUS, (request, response) -> handleUpdateAttendanceStatus(request, response));
-
-
+        Spark.get(ROUTE_TEAMS, this::handleGetAllTeams);
+        Spark.post(ROUTE_TEAMS, this::handleCreateTeam);
+        Spark.get(ROUTE_TEAM_ID, this::handleGetTeamById);
+        Spark.delete(ROUTE_TEAM_ID, this::handleDeleteTeamById);
+        Spark.get(ROUTE_TEAM_ID_ATTENDANCE, this::handleGetTeamAttendance);
+        Spark.put(ROUTE_TEAM_ID_ATTENDANCE_PLAYTIME, this::handleUpdatePlayTime);
+        Spark.put(ROUTE_TEAM_ID_ATTENDANCE_STATUS, this::handleUpdateAttendanceStatus);
     }
 
     @Override
@@ -89,12 +86,11 @@ public class TeamRouter extends RestRouter {
     }
 
     private String handleCreateTeam(Request request, Response response) {
-        Team newTeam;
         JsonObject responseBody = new JsonObject();
 
         try {
             NewTeamPayload newTeamPayload = getGson().fromJson(request.body(), NewTeamPayload.class);
-            newTeam = teamManager.create(newTeamPayload.getFirstPlayerId(), newTeamPayload.getSecondPlayerId());
+            Team newTeam = teamManager.create(newTeamPayload.getFirstPlayerId(), newTeamPayload.getSecondPlayerId());
 
             JsonElement jsonTeam = getGson().toJsonTree(newTeam);
             responseBody.add(JSON_PROPERTY_TEAM, jsonTeam);
@@ -126,7 +122,7 @@ public class TeamRouter extends RestRouter {
     private String handleGetTeamById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
-        String paramId = request.params(ROUTE_ID);
+        String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
 
         try {
@@ -152,7 +148,7 @@ public class TeamRouter extends RestRouter {
     private String handleDeleteTeamById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
-        String paramId = request.params(ROUTE_ID);
+        String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
 
         try {
@@ -175,7 +171,7 @@ public class TeamRouter extends RestRouter {
     private String handleGetTeamAttendance(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
-        String paramId = request.params(ROUTE_ID);
+        String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
 
         try {
@@ -199,7 +195,7 @@ public class TeamRouter extends RestRouter {
     private String handleUpdatePlayTime(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
-        String paramId = request.params(ROUTE_ID);
+        String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
 
         try {

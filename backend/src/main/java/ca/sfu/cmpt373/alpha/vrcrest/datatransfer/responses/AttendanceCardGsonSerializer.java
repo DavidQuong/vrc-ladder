@@ -3,6 +3,7 @@ package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonProperties;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -12,7 +13,6 @@ import java.lang.reflect.Type;
 
 public class AttendanceCardGsonSerializer implements JsonSerializer<AttendanceCard> {
 
-    public static final String JSON_PROPERTY_PLAY_TIME = "playTime";
     public static final String JSON_PROPERTY_ATTENDANCE_STATUS = "attendanceStatus";
 
     @Override
@@ -20,7 +20,7 @@ public class AttendanceCardGsonSerializer implements JsonSerializer<AttendanceCa
         JsonObject jsonAttendanceCard = new JsonObject();
 
         PlayTime preferredPlayTime = attendanceCard.getPreferredPlayTime();
-        jsonAttendanceCard.addProperty(JSON_PROPERTY_PLAY_TIME, preferredPlayTime.toString());
+        jsonAttendanceCard.addProperty(JsonProperties.JSON_PROPERTY_PLAY_TIME, preferredPlayTime.toString());
         AttendanceStatus attendanceStatus = attendanceCard.getAttendanceStatus();
         jsonAttendanceCard.addProperty(JSON_PROPERTY_ATTENDANCE_STATUS, attendanceStatus.toString());
 
