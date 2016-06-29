@@ -146,7 +146,7 @@ public class MatchGroupRouter extends RestRouter {
             List<Team> teams = teamManager.getAll();
             List<Court> courts = MatchScheduler.scheduleMatches(
                     MatchScheduler.DEFAULT_NUM_COURTS,
-                    MatchGroupGenerator.generateMatchGroupings(teams, (MatchScheduler.DEFAULT_NUM_COURTS * MatchScheduler.DEFAULT_NUM_PAYTIME)));
+                    MatchGroupGenerator.generateMatchGroupings(teams, (MatchScheduler.DEFAULT_NUM_COURTS * MatchScheduler.DEFAULT_NUM_PLAYTIME)));
             for (Court court : courts) {
                 for (MatchGroup matchGroup : court.getScheduledMatches().values()) {
                     matchGroupManager.create(matchGroup);

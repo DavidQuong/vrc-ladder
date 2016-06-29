@@ -41,7 +41,7 @@ public class MatchGroupGeneratorTest {
         }
     }
 
-    @Test(expected = MatchMakingException.class)
+    @Test
     public void testUndesiredGroupSize() {
         //this could be any number, but we've got to stop testing somewhere!
         //start after corner cases

@@ -25,19 +25,24 @@ public class MatchGroupGenerator {
 
         int deductedTeams = 0;
         int teamsTotal = attendingTeams.size();
-        if(teamsTotal == 0) {
-            throw new MatchMakingException(ERROR_MESSAGE);
-        }
 
         for(int counter = 0; counter < numberOfGroups; counter++) {
             int currentGroupSize;
             int remainingGroups = (numberOfGroups - counter);
             int remainingTeams = (teamsTotal - deductedTeams);
 
+            if(remainingTeams <= MatchGroup.MIN_NUM_TEAMS){
+                break;
+            }
+
             if((MatchGroup.MAX_NUM_TEAMS * remainingGroups) <= remainingTeams){
                 currentGroupSize = MatchGroup.MAX_NUM_TEAMS;
             }else{
-                currentGroupSize = MatchGroup.MIN_NUM_TEAMS;
+                if(remainingTeams % MatchGroup.MAX_NUM_TEAMS == 0 && ((remainingTeams - MatchGroup.MAX_NUM_TEAMS) == 0 || (remainingTeams - MatchGroup.MAX_NUM_TEAMS) == 4)){
+                    currentGroupSize = MatchGroup.MAX_NUM_TEAMS;
+                }else{
+                    currentGroupSize = MatchGroup.MIN_NUM_TEAMS;
+                }
             }
 
             for(int subCounter = 0; subCounter < currentGroupSize; subCounter++){
@@ -45,18 +50,12 @@ public class MatchGroupGenerator {
                 if(teamIndex < attendingTeams.size()){
                     Team currentTeam = attendingTeams.get(teamIndex);
                     teamsToGroup.add(currentTeam);
-                }else{
-                    throw new MatchMakingException(ERROR_MESSAGE);
                 }
             }
 
             deductedTeams = deductedTeams + currentGroupSize;
             results.add(new MatchGroup( teamsToGroup));
             teamsToGroup.clear();
-        }
-
-        if(!teamsToGroup.isEmpty()){
-            throw new MatchMakingException(ERROR_MESSAGE);
         }
 
         if(deductedTeams < teamsTotal){
