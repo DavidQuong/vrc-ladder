@@ -5,13 +5,13 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.apache.shiro.authc.credential.PasswordService;
 
-public class PasswordManager {
+public class SecurityManager {
 
     public static final int HASH_WIDTH = 92;
 
     private PasswordService passwordService;
 
-    public PasswordManager() {
+    public SecurityManager() {
         passwordService = new DefaultPasswordService();
     }
 

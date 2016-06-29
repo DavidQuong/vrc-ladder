@@ -2,7 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
-import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.PasswordManager;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.LoginPayload;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,11 +23,11 @@ public class LoginRouter extends RestRouter {
 
     private static final String ERROR_INVALID_CREDENTIALS = "Invalid credentials (user ID or password).";
 
-    private PasswordManager passwordManager;
+    private SecurityManager securityManager;
     private UserManager userManager;
 
-    public LoginRouter(PasswordManager passwordManager, UserManager userManager) {
-        this.passwordManager = passwordManager;
+    public LoginRouter(SecurityManager securityManager, UserManager userManager) {
+        this.securityManager = securityManager;
         this.userManager = userManager;
     }
 
@@ -53,7 +53,7 @@ public class LoginRouter extends RestRouter {
             User user = userManager.getById(loginPayload.getUserId());
             String plaintextPassword = loginPayload.getPassword();
 
-            passwordManager.login(user, plaintextPassword);
+            securityManager.login(user, plaintextPassword);
 
             response.status(HttpStatus.OK_200);
         } catch (JsonSyntaxException ex) {

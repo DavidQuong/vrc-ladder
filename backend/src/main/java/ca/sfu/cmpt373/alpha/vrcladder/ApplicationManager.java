@@ -5,22 +5,21 @@ import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
-import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
-import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.PasswordManager;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
 
 public class ApplicationManager {
 
     private SessionManager sessionManager;
-    private PasswordManager passwordManager;
+    private SecurityManager securityManager;
     private UserManager userManager;
     private TeamManager teamManager;
     private MatchGroupManager matchGroupManager;
     private CourtManager courtManager;
 
-    public ApplicationManager(SessionManager sessionManager, PasswordManager passwordManager, UserManager userManager,
+    public ApplicationManager(SessionManager sessionManager, SecurityManager securityManager, UserManager userManager,
         TeamManager teamManager, MatchGroupManager matchGroupManager, CourtManager courtManager) {
         this.sessionManager = sessionManager;
-        this.passwordManager = passwordManager;
+        this.securityManager = securityManager;
         this.userManager = userManager;
         this.teamManager = teamManager;
         this.matchGroupManager = matchGroupManager;
@@ -31,8 +30,8 @@ public class ApplicationManager {
         sessionManager.shutDown();
     }
 
-    public PasswordManager getPasswordManager() {
-        return passwordManager;
+    public SecurityManager getSecurityManager() {
+        return securityManager;
     }
 
     public UserManager getUserManager() {

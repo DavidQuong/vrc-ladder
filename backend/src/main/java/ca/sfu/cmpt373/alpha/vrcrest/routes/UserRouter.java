@@ -3,9 +3,8 @@ package ca.sfu.cmpt373.alpha.vrcrest.routes;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
-import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.PasswordManager;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
-import ca.sfu.cmpt373.alpha.vrcladder.util.Log;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewUserPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.UserGsonSerializer;
 import com.google.gson.Gson;
@@ -35,12 +34,12 @@ public class UserRouter extends RestRouter {
     private static final String ERROR_EXISTING_USER = "Cannot create user as a user with this ID already exists.";
     private static final String ERROR_GET_USERS_FAILURE = "Unable to get all users";
 
-    private PasswordManager passwordManager;
+    private SecurityManager securityManager;
     private UserManager userManager;
 
-    public UserRouter(PasswordManager passwordManager, UserManager userManager) {
+    public UserRouter(SecurityManager securityManager, UserManager userManager) {
         super();
-        this.passwordManager = passwordManager;
+        this.securityManager = securityManager;
         this.userManager = userManager;
     }
 
@@ -85,7 +84,7 @@ public class UserRouter extends RestRouter {
 
         try {
             NewUserPayload newUserPayload = getGson().fromJson(request.body(), NewUserPayload.class);
-            Password hashedPassword = passwordManager.hashPassword(newUserPayload.getPassword());
+            Password hashedPassword = securityManager.hashPassword(newUserPayload.getPassword());
 
             User newUser = userManager.create(
                 newUserPayload.getUserId(),

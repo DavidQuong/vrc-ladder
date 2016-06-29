@@ -6,7 +6,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
-import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.PasswordManager;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.LadderRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.LoginRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.MatchGroupRouter;
@@ -32,21 +32,21 @@ public class RestApplication implements SparkApplication {
     @Override
     public void init() {
         SessionManager sessionManager = new SessionManager();
-        PasswordManager passwordManager = new PasswordManager();
+        SecurityManager securityManager = new SecurityManager();
         UserManager userManager = new UserManager(sessionManager);
         TeamManager teamManager = new TeamManager(sessionManager);
         MatchGroupManager matchGroupManager = new MatchGroupManager(sessionManager);
         CourtManager courtManager = new CourtManager(sessionManager);
         ApplicationManager appManager = new ApplicationManager(
                 sessionManager,
-                passwordManager,
+                securityManager,
                 userManager,
                 teamManager,
                 matchGroupManager,
                 courtManager);
 
-        LoginRouter loginRouter = new LoginRouter(appManager.getPasswordManager(), appManager.getUserManager());
-        UserRouter userRouter = new UserRouter(appManager.getPasswordManager(), appManager.getUserManager());
+        LoginRouter loginRouter = new LoginRouter(appManager.getSecurityManager(), appManager.getUserManager());
+        UserRouter userRouter = new UserRouter(appManager.getSecurityManager(), appManager.getUserManager());
         TeamRouter teamRouter = new TeamRouter(appManager.getTeamManager());
         MatchGroupRouter matchGroupRouter = new MatchGroupRouter(
                 appManager.getMatchGroupManager(),
