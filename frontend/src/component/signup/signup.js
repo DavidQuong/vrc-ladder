@@ -10,6 +10,8 @@ import findIndex from 'lodash/fp/findIndex';
 import isEmpty from 'lodash/fp/isEmpty';
 import classNames from 'classnames';
 
+import {addUser} from '../../action/users';
+
 const validate = (values, {players} ) => {
   const errors = {};
   if (!values.firstName) {
@@ -30,7 +32,15 @@ const validate = (values, {players} ) => {
   } else if (values.password !== values.confirmPassword) {
     errors.password = 'Password does not match';
   }
+  console.log("Errors:");
+  console.log(errors);
   return errors;
+};
+
+const parseUser = (props) => {
+  console.log("Props:");
+  console.log(props);
+  return props;
 };
 
 const formEnhancer = reduxForm({
@@ -38,6 +48,37 @@ const formEnhancer = reduxForm({
   fields: ['firstName', 'lastName', 'email', 'password', 'confirmPassword'],
   validate,
 });
+
+const FormError = ({touched, error}) => {
+  if (touched && error) {
+    return (
+      <div className={classNames(styles.errorMsg)}>
+        <Heading kind='error'>
+          {error}
+        </Heading>
+      </div>
+    );
+  }
+  return null;
+};
+
+const Input = (props) => {
+  return (
+    <input
+      {...props}
+      className={classNames(
+        styles.goodForm, {
+          [styles.errorForm]: props.error && props.touched,
+        },
+        props.className
+      )}
+    />
+  );
+};
+
+// const Foo = (props) => <div>{props.message}</div>;
+// const Foo = ({message}) => <div>{message}</div>;
+// <Foo message='...'/>
 
 const BaseSignUpForm = ({
   fields: {firstName, lastName, email, password, confirmPassword},
@@ -56,19 +97,12 @@ const BaseSignUpForm = ({
           defaultMessage='First Name'
         />
       </label>
-      <input
-        className={classNames(styles.goodForm, {
-          [styles.errorForm]: firstName.error && firstName.touched})}
+      <Input
         type='text'
         placeholder='First Name'
         {...firstName}
       />
-      {firstName.touched && firstName.error &&
-        <div className={classNames(styles.errorMsg)}>
-          <Heading kind='error'>
-            {firstName.error}
-          </Heading>
-        </div>}
+      <FormError {...firstName}/>
     </div>
     <div className={classNames(styles.formGroup)}>
       <label
@@ -79,19 +113,12 @@ const BaseSignUpForm = ({
           defaultMessage='Last name'
         />
       </label>
-      <input
-        className={classNames(styles.goodForm, {
-          [styles.errorForm]: lastName.error && lastName.touched})}
+      <Input
         type='text'
         placeholder='Last Name'
         {...lastName}
       />
-      {lastName.touched && lastName.error &&
-        <div className={classNames(styles.errorMsg)}>
-          <Heading kind='error'>
-            {lastName.error}
-          </Heading>
-        </div>}
+      <FormError {...lastName}/>
     </div>
     <div className={classNames(styles.formGroup)}>
       <label
@@ -102,19 +129,12 @@ const BaseSignUpForm = ({
           defaultMessage='Email'
         />
       </label>
-      <input
-        className={classNames(styles.goodForm, {
-          [styles.errorForm]: email.error && email.touched})}
+      <Input
         type='text'
         placeholder='Email'
         {...email}
       />
-      {email.touched && email.error &&
-        <div className={classNames(styles.errorMsg)}>
-          <Heading kind='error'>
-            {email.error}
-          </Heading>
-        </div>}
+      <FormError {...email}/>
     </div>
     <div className={classNames(styles.formGroup)}>
       <label
@@ -171,7 +191,7 @@ const SignUpForm = formEnhancer(BaseSignUpForm);
 const addPlayer = createAction('PLAYER_ADD');
 
 const SignUp = ({
-  addPlayer,
+  addUser,
   players,
 }) : Element => (
   <div className={styles.signup}>
@@ -184,13 +204,13 @@ const SignUp = ({
     <SignUpForm
       onSubmit={(props) => {
         const errors = validate(props, {players});
+        const userInfo = parseUser(props);
         if (!isEmpty(errors)) {
           return Promise.reject(errors);
         }
-        addPlayer({
-          ...props,
+        return addUser({
+          ...userInfo,
         });
-        return Promise.resolve();
       }}
     />
   </div>
@@ -200,5 +220,5 @@ export default connect(
   (state) => ({
     players: state.app.players,
   }),
-  {addPlayer}
+  {addUser}
 )(SignUp);
