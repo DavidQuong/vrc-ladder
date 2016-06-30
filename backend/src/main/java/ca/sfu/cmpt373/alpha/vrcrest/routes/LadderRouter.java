@@ -69,13 +69,12 @@ public class LadderRouter extends RestRouter{
 
             List<Team> teams = new ArrayList<>();
             List<GeneratedId> teamIds = newTeamPayload.getTeamIds();
-            List<MatchGroup> matchGroups = matchGroupManager.getAll();
 
             for(GeneratedId teamId : teamIds) {
                 teams.add(teamManager.getById(teamId));
             }
 
-            updateLadder(teams, matchGroups);
+            teamManager.updateLadderPositions(teams);
             response.status(HttpStatus.OK_200);
         } catch (IllegalStateException e) {
             response.status(HttpStatus.BAD_REQUEST_400);
@@ -98,7 +97,7 @@ public class LadderRouter extends RestRouter{
             List<MatchGroup> matchGroups = matchGroupManager.getAll();
 
             checkAllScoresReported(matchGroups);
-            updateLadder(teams, matchGroups);
+            regenerateLadder(teams, matchGroups);
             resetPlayerSettings(teams);
             response.status(HttpStatus.OK_200);
         } catch (IllegalStateException e) {
@@ -116,7 +115,7 @@ public class LadderRouter extends RestRouter{
         }
     }
 
-    private void updateLadder(List<Team> teams, List<MatchGroup> matchGroups) {
+    private void regenerateLadder(List<Team> teams, List<MatchGroup> matchGroups) {
         Ladder ladder = new Ladder(teams);
         ladder.updateLadder(matchGroups);
         teamManager.updateLadderPositions(ladder.getLadder());
