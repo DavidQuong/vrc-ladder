@@ -9,7 +9,9 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewTeamIdListPayload;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewTeamPayload;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import org.eclipse.jetty.http.HttpStatus;
 import spark.Request;
@@ -48,6 +50,14 @@ public class LadderRouter extends RestRouter{
         this.matchGroupManager = matchGroupManager;
     }
 
+	@Override
+	protected Gson buildGson() {
+		return new GsonBuilder()
+				.registerTypeAdapter(NewTeamIdListPayload.class, new NewTeamIdListPayload.GsonDeserializer())
+				.setPrettyPrinting()
+				.create();
+	}
+
     @Override
     public void attachRoutes() {
         Spark.put(ROUTE_LADDER_REGENERATE, this::handleRegenerateLadder);
@@ -58,6 +68,7 @@ public class LadderRouter extends RestRouter{
 		JsonObject responseBody = new JsonObject();
 		try {
 			NewTeamIdListPayload newTeamPayload = getGson().fromJson(request.body(), NewTeamIdListPayload.class);
+
 			List<Team> teams = new ArrayList<>();
 			List<GeneratedId> teamIds = newTeamPayload.getTeamIds();
 			List<MatchGroup> matchGroups = matchGroupManager.getAll();
@@ -90,11 +101,6 @@ public class LadderRouter extends RestRouter{
             responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
         }
         return responseBody.toString();
-    }
-
-    @Override
-    protected Gson buildGson() {
-        return null;
     }
 
     private void checkAllScoresReported(List<MatchGroup> matchGroups) {
