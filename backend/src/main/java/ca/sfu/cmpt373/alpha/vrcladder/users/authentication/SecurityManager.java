@@ -31,6 +31,7 @@ public class SecurityManager {
 
     private static final String TOKEN_TYPE = "JWT";
     private static final int TTL_IN_SECONDS = 3600;
+    private static final int MILLISECONDS_TO_SECONDS_MULTIPLIER = 1000;
 
     private PasswordService passwordService;
     private SignatureAlgorithm signatureAlgorithm;
@@ -107,7 +108,7 @@ public class SecurityManager {
         claims.setSubject(userId.getValue());
 
         Date expirationDate = new Date();
-        expirationDate.setTime(expirationDate.getTime() + TTL_IN_SECONDS);
+        expirationDate.setTime(expirationDate.getTime() + (TTL_IN_SECONDS * MILLISECONDS_TO_SECONDS_MULTIPLIER));
         claims.setExpiration(expirationDate);
 
         return claims;
