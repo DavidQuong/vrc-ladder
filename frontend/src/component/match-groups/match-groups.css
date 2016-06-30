@@ -10,7 +10,6 @@
 }
 
 .matchGroupPage {
-  background-image: url('untitled.png');
   font-family: 'Oxygen', sans-serif;
   color: #FFFFFF;
   background-color: #005692;
@@ -18,14 +17,13 @@
 }
 
 .matchGroupTop{
-  background-image: image('Untitled.png');
 }
 
 .matchGroupTitle {
   font-family: 'Oxygen', sans-serif;
   font-weight: normal;
   font-size: 30px;
-  padding-left: 25;
+  padding-left: 25px;
   color: #FFFFFF;
   background-color: #005692;
 }
