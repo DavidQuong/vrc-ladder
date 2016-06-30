@@ -29,7 +29,6 @@ import spark.Spark;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 public class MatchGroupRouter extends RestRouter {
