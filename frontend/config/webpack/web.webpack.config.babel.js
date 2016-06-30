@@ -33,7 +33,7 @@ const formats = compose(
   postcss() // .css
 );
 
-export default compose(
+const config = compose(
   // env('production', optimize()),
   sourceMaps(),
   formats,
@@ -52,3 +52,11 @@ export default compose(
   }))
   // plugin(new S3Plugin('s3://izaakschroeder-test/'))
 )({target: 'web'});
+
+/*  config.module.loaders.push({
+  test: /\.(gif|jpe?g|png|svg|tiff)(\?.*)?$/,
+  loader: 'sharp-loader',
+  query: {},
+}); */
+
+export default config;
