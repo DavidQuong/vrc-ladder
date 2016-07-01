@@ -17,6 +17,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import org.apache.shiro.authz.AuthorizationException;
+import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.hibernate.exception.ConstraintViolationException;
 import spark.Request;
@@ -50,8 +51,11 @@ public class UserRouter extends RestRouter {
 
     @Override
     public void attachRoutes() {
+        Spark.before(ROUTE_USERS, this::beforeUsers);
         Spark.get(ROUTE_USERS, this::handleGetUsers);
         Spark.post(ROUTE_USERS, this::handleCreateUser);
+
+        Spark.before(ROUTE_USER_ID, this::beforeUserById);
         Spark.get(ROUTE_USER_ID, this::handleGetUserById);
         Spark.put(ROUTE_USER_ID, this::handleUpdateUserById);
         Spark.delete(ROUTE_USER_ID, this::handleDeleteUserById);
@@ -67,21 +71,54 @@ public class UserRouter extends RestRouter {
             .create();
     }
 
+    private void beforeUsers(Request request, Response response) {
+        try {
+            if (request.requestMethod().equals(HttpMethod.GET.name())) {
+                String authorizationToken = extractAuthorizationToken(request);
+                UserId subjectId = securityManager.parseToken(authorizationToken);
+                User subject = userManager.getById(subjectId);
+                subject.checkPermission(UserAction.GET_USER_INFORMATION);
+            }
+        } catch (AuthorizationException ex) {
+            JsonObject responseBody = new JsonObject();
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
+            Spark.halt(HttpStatus.UNAUTHORIZED_401, responseBody.toString());
+        }
+    }
+
+    private void beforeUserById(Request request, Response response) {
+        try {
+            String requestedId = request.params(PARAM_ID);
+            UserId userId = new UserId(requestedId);
+
+            String authorizationToken = extractAuthorizationToken(request);
+            UserId subjectId = securityManager.parseToken(authorizationToken);
+            User subject = userManager.getById(subjectId);
+
+            String httpMethod = request.requestMethod();
+            if (httpMethod.equals(HttpMethod.GET.name()) && !userId.equals(subjectId)) {
+                subject.checkPermission(UserAction.GET_USER_INFORMATION);
+            } else if (httpMethod.equals(HttpMethod.PUT.name()) && !userId.equals(subjectId)) {
+                subject.checkPermission(UserAction.UPDATE_USER_INFORMATION);
+            } else if (httpMethod.equals(HttpMethod.DELETE.name())) {
+                subject.checkPermission(UserAction.DELETE_USER);
+            } else {
+                assert false;
+            }
+        } catch (AuthorizationException | EntityNotFoundException ex) {
+            JsonObject responseBody = new JsonObject();
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_UNAUTHORIZED_OTHER_USERS);
+            Spark.halt(HttpStatus.UNAUTHORIZED_401, responseBody.toString());
+        }
+    }
+
     private String handleGetUsers(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
         try {
-            String authorizationToken = extractAuthorizationToken(request);
-            UserId subjectId = securityManager.parseToken(authorizationToken);
-            User subject = userManager.getById(subjectId);
-            subject.checkPermission(UserAction.GET_USER_INFORMATION);
-
             List<User> users = userManager.getAll();
             responseBody.add(JSON_PROPERTY_USERS, getGson().toJsonTree(users));
             response.status(HttpStatus.OK_200);
-        } catch (AuthorizationException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
-            response.status(HttpStatus.UNAUTHORIZED_401);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.BAD_REQUEST_400);
@@ -137,13 +174,6 @@ public class UserRouter extends RestRouter {
             String requestedId = request.params(PARAM_ID);
             UserId userId = new UserId(requestedId);
 
-            String authorizationToken = extractAuthorizationToken(request);
-            UserId subjectId = securityManager.parseToken(authorizationToken);
-            if (!userId.equals(subjectId)) {
-                User subject = userManager.getById(subjectId);
-                subject.checkPermission(UserAction.GET_USER_INFORMATION);
-            }
-
             User existingUser = userManager.getById(userId);
 
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(existingUser));
@@ -151,9 +181,6 @@ public class UserRouter extends RestRouter {
         } catch (ValidationException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_INVALID_RESOURCE_ID);
             response.status(HttpStatus.BAD_REQUEST_400);
-        } catch (AuthorizationException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_UNAUTHORIZED_OTHER_USERS);
-            response.status(HttpStatus.UNAUTHORIZED_401);
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
@@ -173,13 +200,6 @@ public class UserRouter extends RestRouter {
             String requestedId = request.params(PARAM_ID);
             UserId userId = new UserId(requestedId);
 
-            String authorizationToken = extractAuthorizationToken(request);
-            UserId subjectId = securityManager.parseToken(authorizationToken);
-            if (!userId.equals(subjectId)) {
-                User subject = userManager.getById(subjectId);
-                subject.checkPermission(UserAction.UPDATE_USER_INFORMATION);
-            }
-
             UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
             User existingUser = userManager.update(
                 userId,
@@ -194,9 +214,6 @@ public class UserRouter extends RestRouter {
         } catch (ValidationException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
-        } catch (AuthorizationException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_UNAUTHORIZED_OTHER_USERS);
-            response.status(HttpStatus.UNAUTHORIZED_401);
         } catch (JsonSyntaxException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
             response.status(HttpStatus.BAD_REQUEST_400);
@@ -226,20 +243,12 @@ public class UserRouter extends RestRouter {
             String requestedId = request.params(PARAM_ID);
             UserId userId = new UserId(requestedId);
 
-            String authorizationToken = extractAuthorizationToken(request);
-            UserId subjectId = securityManager.parseToken(authorizationToken);
-            User subject = userManager.getById(subjectId);
-            subject.checkPermission(UserAction.DELETE_USER);
-
             User deletedUser = userManager.deleteById(userId);
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(deletedUser));
             response.status(HttpStatus.OK_200);
         } catch (ValidationException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
             response.status(HttpStatus.BAD_REQUEST_400);
-        } catch (AuthorizationException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_UNAUTHORIZED_OTHER_USERS);
-            response.status(HttpStatus.UNAUTHORIZED_401);
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
