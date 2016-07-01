@@ -16,6 +16,7 @@ public abstract class RestRouter {
 
     protected static final String ERROR_COULD_NOT_COMPLETE_REQUEST = "Request could not be completed.";
     protected static final String ERROR_MALFORMED_JSON = "The provided JSON in the request body is malformed.";
+    protected static final String ERROR_INVALID_RESOURCE_ID = "The provided resource identifier is invalid.";
 
     private static final String ERROR_MISSING_AUTHORIZATION_TOKEN = "The request is missing the Authorization header.";
     private static final String ERROR_INVALID_AUTHORIZATION_FORMAT = "The Authorization header should be in the " +
