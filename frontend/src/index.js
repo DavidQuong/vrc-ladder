@@ -7,11 +7,12 @@ import Ladder from './component/ladder/ladder';
 import CreateTeam from './component/create-team/create-team';
 import {Nav, NavItem, Navbar} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
+import styles from './index.css';
 
 const Layout = ({children}) => (
   <div>
     <div>
-      <Navbar inverse>
+      <Navbar inverse fixedTop className={styles.navbarInverse}>
         <Navbar.Header>
           <Navbar.Brand>
             <LinkContainer to='/'>
@@ -21,18 +22,18 @@ const Layout = ({children}) => (
           <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
-          <Navbar.Brand>
-            VRC RACQUETS CLUB
-          </Navbar.Brand>
+          <Nav pullLeft>
+            <p className={styles.navbarLogo}>Vancouver Racquets Club</p>
+          </Nav>
           <Nav pullRight>
             <LinkContainer to='/ladder'>
-              <NavItem>Ladder</NavItem>
+              <NavItem bsStyle='link'>Ladder</NavItem>
             </LinkContainer>
             <LinkContainer to='/create-team'>
-              <NavItem>Create team</NavItem>
+              <NavItem bsStyle='link'>Create team</NavItem>
             </LinkContainer>
             <LinkContainer to='/signup'>
-              <NavItem>Sign up</NavItem>
+              <NavItem bsStyle='link'>Sign up</NavItem>
             </LinkContainer>
           </Nav>
         </Navbar.Collapse>

@@ -6,9 +6,9 @@
 :global {
   html, body {
     height: 100%;
+    background: url(~url?limit=10000!./../src/public/wood-tile.png) repeat !important;
     /* background-color specified as fallback if background-image fails */
     background-color: ~colors.woodBrown;
-    background: url(~url?limit=10000!./../src/public/wood-tile.png) repeat;
   }
 
   html {
@@ -59,6 +59,7 @@
   }
 
   body {
+    padding-top: 40px;
     line-height: 1.5;
     color: ~colors.greyDark;
     font-family: Lato;
