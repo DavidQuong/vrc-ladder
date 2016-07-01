@@ -5,6 +5,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserAction;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.Log;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewUserPayload;
@@ -16,6 +17,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+import org.apache.shiro.authz.AuthorizationException;
 import org.eclipse.jetty.http.HttpStatus;
 import org.hibernate.exception.ConstraintViolationException;
 import spark.Request;
@@ -69,9 +71,17 @@ public class UserRouter extends RestRouter {
         JsonObject responseBody = new JsonObject();
 
         try {
+            String authorizationToken = extractAuthorizationToken(request);
+            UserId subjectId = securityManager.parseToken(authorizationToken);
+            User subject = userManager.getById(subjectId);
+            subject.checkPermission(UserAction.GET_ALL_USERS);
+
             List<User> users = userManager.getAll();
             responseBody.add(JSON_PROPERTY_USERS, getGson().toJsonTree(users));
             response.status(HttpStatus.OK_200);
+        } catch (AuthorizationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
+            response.status(HttpStatus.UNAUTHORIZED_401);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.BAD_REQUEST_400);
