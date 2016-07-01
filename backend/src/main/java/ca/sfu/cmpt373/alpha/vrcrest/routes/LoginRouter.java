@@ -62,8 +62,11 @@ public class LoginRouter extends RestRouter {
         } catch (JsonParseException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
-        } catch (AuthenticationException | EntityNotFoundException ex) {
+        } catch (AuthenticationException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
+            response.status(HttpStatus.UNAUTHORIZED_401);
+        } catch (EntityNotFoundException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, SecurityManager.ERROR_INVALID_CREDENTIALS);
             response.status(HttpStatus.UNAUTHORIZED_401);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
