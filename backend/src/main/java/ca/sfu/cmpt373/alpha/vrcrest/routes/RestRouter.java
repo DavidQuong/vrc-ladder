@@ -25,6 +25,7 @@ public abstract class RestRouter {
 
     private static final int EXPECTED_AUTHORIZATION_HEADER_WORD_COUNT = 2;
     private static final int AUTHORIZATION_BEARER_INDEX = 0;
+    private static final int AUTHORIZATION_TOKEN_INDEX = 1;
 
     private Gson gson;
 
@@ -36,20 +37,12 @@ public abstract class RestRouter {
         return gson;
     }
 
-    protected void checkForAuthorizationToken(Request request, Response response) {
+    protected String extractAuthorizationToken(Request request, Response response) {
         String authorizationHeader = request.headers(HEADER_AUTHORIZATION);
         if (authorizationHeader == null) {
             haltUnauthorizedRequest(response);
         }
 
-        try {
-            checkAuthorizationHeaderFormat(authorizationHeader);
-        } catch (AuthorizationException ex) {
-            haltUnauthorizedRequest(response);
-        }
-    }
-
-    private void checkAuthorizationHeaderFormat(String authorizationHeader) {
         String[] authorizationHeaderWords = authorizationHeader.split(" ");
         if (authorizationHeaderWords.length != EXPECTED_AUTHORIZATION_HEADER_WORD_COUNT) {
             throw new AuthorizationException();
@@ -58,6 +51,8 @@ public abstract class RestRouter {
         if (!authorizationHeaderWords[AUTHORIZATION_BEARER_INDEX].equals(HEADER_AUTHORIZATION_VALUE_BEARER)) {
             throw new AuthorizationException();
         }
+
+        return authorizationHeaderWords[AUTHORIZATION_TOKEN_INDEX];
     }
 
     private void haltUnauthorizedRequest(Response response) {
