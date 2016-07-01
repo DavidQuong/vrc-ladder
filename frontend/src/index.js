@@ -7,6 +7,7 @@ import Ladder from './component/ladder/ladder';
 import CreateTeam from './component/create-team/create-team';
 import {Button, ButtonToolbar} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
+import {getUser} from './action/users';
 
 const Layout = ({children}) => (
   <div>
@@ -36,7 +37,13 @@ export default ({store}) : Element => (
         <Route path='/' component={Layout}>
           <IndexRoute component={Ladder}/>
           <Route path='/signup' component={SignUp}/>
-          <Route path='/ladder' component={Ladder}/>
+          <Route
+            path='/ladder'
+            component={Ladder}
+            onEnter={(nextState, replace, callback) => {
+              store.dispatch(getUser()).then(callback);
+            }}
+          />
           <Route path='/create-team' component={CreateTeam}/>
         </Route>
       </Router>

@@ -1,7 +1,6 @@
 import {createElement, Element} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
-import {createAction} from 'redux-actions';
 import {reduxForm} from 'redux-form';
 import {SubmitBtn} from '../button';
 import styles from './signup.css';
@@ -9,43 +8,60 @@ import Heading from '../heading/heading';
 import findIndex from 'lodash/fp/findIndex';
 import isEmpty from 'lodash/fp/isEmpty';
 import classNames from 'classnames';
+import {withRouter} from 'react-router';
 
 import {addUser} from '../../action/users';
 
 const validate = (values, {players} ) => {
   const errors = {};
+  if (!values.userId) {
+    errors.userId = 'Required';
+  }
   if (!values.firstName) {
     errors.firstName = 'Required';
   }
   if (!values.lastName) {
     errors.lastName = 'Required';
   }
-  if (!values.email) {
-    errors.email = 'Required';
-  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-    errors.email = 'Invalid email address';
-  } else if (findIndex(['email', values.email], players) !== -1) {
-    errors.email = 'Email already exist';
+  if (!values.emailAddress) {
+    errors.emailAddress = 'Required';
+  } else if
+  (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.emailAddress)) {
+    errors.emailAddress = 'Invalid email address';
+  } else if (findIndex(['email', values.emailAddress], players) !== -1) {
+    errors.emailAddress = 'Email already exist';
+  }
+  if (!values.phoneNumber) {
+    errors.phoneNumber = 'Required';
   }
   if (!values.password) {
     errors.password = 'Password Required';
   } else if (values.password !== values.confirmPassword) {
     errors.password = 'Password does not match';
   }
-  console.log("Errors:");
-  console.log(errors);
   return errors;
 };
 
 const parseUser = (props) => {
-  console.log("Props:");
-  console.log(props);
-  return props;
+  const user = props;
+  delete user.confirmPassword;
+  return ({
+    ...user,
+    userRole: 'PLAYER',
+    middleName: ' ',
+  });
 };
 
 const formEnhancer = reduxForm({
   form: 'signUp',
-  fields: ['firstName', 'lastName', 'email', 'password', 'confirmPassword'],
+  fields: [
+    'userId',
+    'firstName',
+    'lastName',
+    'emailAddress',
+    'phoneNumber',
+    'password',
+    'confirmPassword'],
   validate,
 });
 
@@ -81,13 +97,36 @@ const Input = (props) => {
 // <Foo message='...'/>
 
 const BaseSignUpForm = ({
-  fields: {firstName, lastName, email, password, confirmPassword},
+  fields: {
+    userId,
+    firstName,
+    lastName,
+    emailAddress,
+    phoneNumber,
+    password,
+    confirmPassword},
   handleSubmit,
 }) => (
   <form
     className={styles.formHorizontal}
     onSubmit={handleSubmit}
   >
+    <div className={classNames(styles.formGroup)}>
+      <label
+        className={classNames(styles.colXsTitle)}
+      >
+        <FormattedMessage
+          id='userID'
+          defaultMessage='Your ID #'
+        />
+      </label>
+      <Input
+        type='text'
+        placeholder='Id #'
+        {...userId}
+      />
+      <FormError {...userId}/>
+    </div>
     <div className={classNames(styles.formGroup)}>
       <label
         className={classNames(styles.colXsTitle)}
@@ -125,16 +164,32 @@ const BaseSignUpForm = ({
         className={classNames(styles.colXsTitle)}
       >
         <FormattedMessage
-          id='email'
+          id='emailAddress'
           defaultMessage='Email'
         />
       </label>
       <Input
         type='text'
         placeholder='Email'
-        {...email}
+        {...emailAddress}
       />
-      <FormError {...email}/>
+      <FormError {...emailAddress}/>
+    </div>
+    <div className={classNames(styles.formGroup)}>
+      <label
+        className={classNames(styles.colXsTitle)}
+      >
+        <FormattedMessage
+          id='phoneNumber'
+          defaultMessage='Your Phone Number'
+        />
+      </label>
+      <Input
+        type='text'
+        placeholder='6041234567'
+        {...phoneNumber}
+      />
+      <FormError {...phoneNumber}/>
     </div>
     <div className={classNames(styles.formGroup)}>
       <label
@@ -188,11 +243,10 @@ const BaseSignUpForm = ({
 
 const SignUpForm = formEnhancer(BaseSignUpForm);
 
-const addPlayer = createAction('PLAYER_ADD');
-
-const SignUp = ({
+const SignUp = withRouter(({
   addUser,
   players,
+  router,
 }) : Element => (
   <div className={styles.signup}>
     <Heading kind='huge'>
@@ -208,13 +262,16 @@ const SignUp = ({
         if (!isEmpty(errors)) {
           return Promise.reject(errors);
         }
-        return addUser({
-          ...userInfo,
+        return addUser(userInfo).then(() => {
+          router.push('/');
+        }).catch((errors) => {
+          // TODO: Error object to expected.
+          return Promise.reject(errors);
         });
       }}
     />
   </div>
-);
+));
 
 export default connect(
   (state) => ({

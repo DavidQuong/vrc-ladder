@@ -27,6 +27,9 @@ import java.util.List;
 
 public class UserRouter extends RestRouter {
 
+    public static final String HEADER_ACCESS = "Access-Control-Allow-Origin";
+    public static final String HEADER_ACCESS_VALUE = "*";
+
     public static final String ROUTE_USERS = "/users";
     public static final String ROUTE_USER_ID = "/user/" + PARAM_ID;
 
@@ -68,7 +71,7 @@ public class UserRouter extends RestRouter {
 
     private String handleGetUsers(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-
+        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
         try {
             List<User> users = userManager.getAll();
             responseBody.add(JSON_PROPERTY_USERS, getGson().toJsonTree(users));
@@ -85,7 +88,7 @@ public class UserRouter extends RestRouter {
 
     private String handleCreateUser(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-
+        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
         try {
             NewUserPayload newUserPayload = getGson().fromJson(request.body(), NewUserPayload.class);
             Password hashedPassword = securityManager.hashPassword(newUserPayload.getPassword());
@@ -101,7 +104,6 @@ public class UserRouter extends RestRouter {
                 hashedPassword);
 
             JsonElement jsonUser = getGson().toJsonTree(newUser);
-
             responseBody.add(JSON_PROPERTY_USER, jsonUser);
             response.status(HttpStatus.CREATED_201);
         } catch (JsonSyntaxException ex) {
@@ -124,13 +126,13 @@ public class UserRouter extends RestRouter {
 
     private String handleGetUserById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
+        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         try {
             String requestedId = request.params(PARAM_ID);
             UserId userId = new UserId(requestedId);
 
             User existingUser = userManager.getById(userId);
-
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(existingUser));
             response.status(HttpStatus.OK_200);
         } catch (ValidationException ex) {
@@ -153,6 +155,7 @@ public class UserRouter extends RestRouter {
 
     private String handleUpdateUserById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
+        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         try {
             String requestedId = request.params(PARAM_ID);
@@ -198,6 +201,7 @@ public class UserRouter extends RestRouter {
 
     private String handleDeleteUserById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
+        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         try {
             String requestedId = request.params(PARAM_ID);

@@ -11,7 +11,7 @@ import styles from './app.css';
 
 const restoreState = createAction('STATE_RESTORE');
 const saveState = createAction('STATE_SAVE');
-const syncPlayers = createAction('PLAYER_SYNC');
+export const syncPlayers = createAction('PLAYER_SYNC');
 const root = 'http://localhost:6789/';
 
 const restoreFromBrowser = () => (dispatch) => {
