@@ -12,7 +12,7 @@ import styles from './index.css';
 const Layout = ({children}) => (
   <div>
     <div>
-      <Navbar inverse fixedTop className={styles.navbarInverse}>
+      <Navbar fixedTop className={styles.upperNavbar}>
         <Navbar.Header>
           <Navbar.Brand>
             <LinkContainer to='/'>
@@ -27,16 +27,24 @@ const Layout = ({children}) => (
           </Nav>
           <Nav pullRight>
             <LinkContainer to='/ladder'>
-              <NavItem bsStyle='link'>Ladder</NavItem>
+              <NavItem bsStyle='link' className={styles.navItem}>Ladder</NavItem>
             </LinkContainer>
             <LinkContainer to='/create-team'>
-              <NavItem bsStyle='link'>Create team</NavItem>
+              <NavItem bsStyle='link' className={styles.navItem}>Create team</NavItem>
             </LinkContainer>
             <LinkContainer to='/signup'>
-              <NavItem bsStyle='link'>Sign up</NavItem>
+              <NavItem bsStyle='link' className={styles.navItem}>Sign up</NavItem>
             </LinkContainer>
           </Nav>
         </Navbar.Collapse>
+      </Navbar>
+
+      <Navbar fixedTop className={styles.lowerNavbar}>
+        <Nav className={styles.lowerNavContainer}>
+          <Navbar.Text className={styles.lowerNavbarHeading}>
+          Weekly Doubles Leaderboard
+          </Navbar.Text>
+        </Nav>
       </Navbar>
     </div>
     <div>
