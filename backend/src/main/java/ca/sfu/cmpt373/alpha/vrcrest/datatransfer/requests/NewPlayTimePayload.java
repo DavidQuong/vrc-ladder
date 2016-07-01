@@ -1,6 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests;
 
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonProperties;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -13,19 +14,15 @@ public class NewPlayTimePayload {
 
     public static class GsonDeserializer extends BaseGsonDeserializer<NewPlayTimePayload> {
 
-        public static final String JSON_PROPERTY_PLAY_TIME = "playTime";
-
         private static final String ERROR_INVALID_PLAY_TIME = "Invalid playTime.";
 
         @Override
         public NewPlayTimePayload deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
-            JsonObject jsonObject = (JsonObject) json;
+            JsonObject jsonObject = json.getAsJsonObject();
+            checkForMissingProperties(jsonObject);
 
-            if (!jsonObject.has(JSON_PROPERTY_PLAY_TIME)) {
-                throwMissingPropertyException(JSON_PROPERTY_PLAY_TIME);
-            }
-            JsonElement jsonPlayTime = jsonObject.get(JSON_PROPERTY_PLAY_TIME);
+            JsonElement jsonPlayTime = jsonObject.get(JsonProperties.JSON_PROPERTY_PLAY_TIME);
             PlayTime playTime = EnumUtils.getEnum(PlayTime.class, jsonPlayTime.getAsString());
 
             if (playTime == null) {
@@ -33,6 +30,13 @@ public class NewPlayTimePayload {
             }
 
             return new NewPlayTimePayload(playTime);
+        }
+
+        @Override
+        protected void checkForMissingProperties(JsonObject jsonObject) {
+            if (!jsonObject.has(JsonProperties.JSON_PROPERTY_PLAY_TIME)) {
+                throwMissingPropertyException(JsonProperties.JSON_PROPERTY_PLAY_TIME);
+            }
         }
 
     }

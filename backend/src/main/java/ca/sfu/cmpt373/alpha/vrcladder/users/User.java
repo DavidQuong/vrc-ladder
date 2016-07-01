@@ -1,6 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users;
 
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserAction;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
@@ -38,18 +39,20 @@ public class User {
     private String lastName;
 
     @Embedded
-    @Column(name = PersistenceConstants.COLUMN_EMAIL_ADDRESS, nullable = false)
     private EmailAddress emailAddress;
 
-    @Column(name = PersistenceConstants.COLUMN_PHONE_NUMBER, nullable = false)
+    @Embedded
     private PhoneNumber phoneNumber;
+
+    @Embedded
+    private Password password;
 
     private User() {
         // Required by Hibernate.
     }
 
     public User(UserId userId, UserRole userRole, String firstName, String middleName, String lastName,
-        EmailAddress emailAddress, PhoneNumber phoneNumber) {
+        EmailAddress emailAddress, PhoneNumber phoneNumber, Password password) {
         this.userId = userId;
         this.userRole = userRole;
         this.firstName = firstName;
@@ -57,6 +60,7 @@ public class User {
         this.lastName = lastName;
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
+        this.password = password;
     }
 
     public UserId getUserId() {
@@ -124,6 +128,14 @@ public class User {
 
     public void setPhoneNumber(PhoneNumber phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public Password getPassword() {
+        return password;
+    }
+
+    public void setPassword(Password password) {
+        this.password = password;
     }
 
     public boolean isPermittedToPerform(UserAction action) {

@@ -72,14 +72,6 @@ public abstract class DatabaseManager<T> {
         return obj;
     }
 
-    protected T update(T obj, Session session) {
-        Transaction transaction = session.beginTransaction();
-        session.update(obj);
-        transaction.commit();
-
-        return obj;
-    }
-
     public T delete(T obj) {
         Session session = sessionManager.getSession();
         Transaction transaction = session.beginTransaction();
@@ -106,6 +98,19 @@ public abstract class DatabaseManager<T> {
         session.close();
 
         return obj;
+    }
+
+    //note this may be inefficient if there are many items,
+    //since each item has to be retrieved before deletion.
+    protected List<T> deleteAll() {
+        List<T> items = getAll();
+
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+        items.stream().forEach(session::delete);
+        transaction.commit();
+        session.close();
+        return items;
     }
 
 }

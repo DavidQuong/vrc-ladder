@@ -5,8 +5,8 @@ import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
-import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewAttendanceStatusPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewPlayTimePayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewTeamPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.AttendanceCardGsonSerializer;
@@ -29,8 +29,8 @@ import java.util.List;
 public class TeamRouter extends RestRouter {
 
     public static final String ROUTE_TEAMS = "/teams";
-    public static final String ROUTE_TEAM_ID = "/team/" + ROUTE_ID;
-    public static final String ROUTE_TEAM_ID_ATTENDANCE = "/team/" + ROUTE_ID + "/attendance";
+    public static final String ROUTE_TEAM_ID = "/team/" + PARAM_ID;
+    public static final String ROUTE_TEAM_ID_ATTENDANCE = "/team/" + PARAM_ID + "/attendance";
     public static final String ROUTE_TEAM_ID_ATTENDANCE_PLAYTIME = ROUTE_TEAM_ID_ATTENDANCE + "/playtime";
     public static final String ROUTE_TEAM_ID_ATTENDANCE_STATUS = ROUTE_TEAM_ID_ATTENDANCE + "/status";
 
@@ -52,15 +52,13 @@ public class TeamRouter extends RestRouter {
 
     @Override
     public void attachRoutes() {
-        Spark.get(ROUTE_TEAMS, (request, response) -> handleGetAllTeams(request, response));
-        Spark.post(ROUTE_TEAMS, (request, response) -> handleCreateTeam(request, response));
-        Spark.get(ROUTE_TEAM_ID, (request, response) -> handleGetTeamById(request, response));
-        Spark.delete(ROUTE_TEAM_ID, (request, response) -> handleDeleteTeamById(request, response));
-        Spark.get(ROUTE_TEAM_ID_ATTENDANCE, (request, response) -> handleGetTeamAttendance(request, response));
-        Spark.put(ROUTE_TEAM_ID_ATTENDANCE_PLAYTIME, (request, response) -> handleUpdatePlayTime(request, response));
-        Spark.put(ROUTE_TEAM_ID_ATTENDANCE_STATUS, (request, response) -> handleUpdateAttendanceStatus(request,
-            response));
-
+        Spark.get(ROUTE_TEAMS, this::handleGetAllTeams);
+        Spark.post(ROUTE_TEAMS, this::handleCreateTeam);
+        Spark.get(ROUTE_TEAM_ID, this::handleGetTeamById);
+        Spark.delete(ROUTE_TEAM_ID, this::handleDeleteTeamById);
+        Spark.get(ROUTE_TEAM_ID_ATTENDANCE, this::handleGetTeamAttendance);
+        Spark.put(ROUTE_TEAM_ID_ATTENDANCE_PLAYTIME, this::handleUpdatePlayTime);
+        Spark.put(ROUTE_TEAM_ID_ATTENDANCE_STATUS, this::handleUpdateAttendanceStatus);
     }
 
     @Override
@@ -70,6 +68,7 @@ public class TeamRouter extends RestRouter {
             .registerTypeAdapter(AttendanceCard.class, new AttendanceCardGsonSerializer())
             .registerTypeAdapter(NewTeamPayload.class, new NewTeamPayload.GsonDeserializer())
             .registerTypeAdapter(NewPlayTimePayload.class, new NewPlayTimePayload.GsonDeserializer())
+            .registerTypeAdapter(NewAttendanceStatusPayload.class, new NewAttendanceStatusPayload.GsonDeserializer())
             .setPrettyPrinting()
             .create();
     }
@@ -86,12 +85,11 @@ public class TeamRouter extends RestRouter {
     }
 
     private String handleCreateTeam(Request request, Response response) {
-        Team newTeam;
         JsonObject responseBody = new JsonObject();
 
         try {
             NewTeamPayload newTeamPayload = getGson().fromJson(request.body(), NewTeamPayload.class);
-            newTeam = teamManager.create(newTeamPayload.getFirstPlayerId(), newTeamPayload.getSecondPlayerId());
+            Team newTeam = teamManager.create(newTeamPayload.getFirstPlayerId(), newTeamPayload.getSecondPlayerId());
 
             JsonElement jsonTeam = getGson().toJsonTree(newTeam);
             responseBody.add(JSON_PROPERTY_TEAM, jsonTeam);
@@ -123,7 +121,7 @@ public class TeamRouter extends RestRouter {
     private String handleGetTeamById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
-        String paramId = request.params(ROUTE_ID);
+        String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
 
         try {
@@ -149,7 +147,7 @@ public class TeamRouter extends RestRouter {
     private String handleDeleteTeamById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
-        String paramId = request.params(ROUTE_ID);
+        String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
 
         try {
@@ -172,7 +170,7 @@ public class TeamRouter extends RestRouter {
     private String handleGetTeamAttendance(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
-        String paramId = request.params(ROUTE_ID);
+        String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
 
         try {
@@ -196,7 +194,7 @@ public class TeamRouter extends RestRouter {
     private String handleUpdatePlayTime(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
-        String paramId = request.params(ROUTE_ID);
+        String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
 
         try {
@@ -224,9 +222,36 @@ public class TeamRouter extends RestRouter {
         return responseBody.toString();
     }
 
-    // TODO - Enable updating a Team's AttendanceStatus.
+
     private String handleUpdateAttendanceStatus(Request request, Response response) {
-      return null;
+        JsonObject responseBody = new JsonObject();
+
+        String paramId = request.params(PARAM_ID);
+        GeneratedId generatedId = new GeneratedId(paramId);
+
+        try {
+            NewAttendanceStatusPayload AttendanceStatusPayload = getGson().fromJson(request.body(), NewAttendanceStatusPayload.class);
+            Team existingTeam = teamManager.updateAttendanceStatus(generatedId, AttendanceStatusPayload.getAttendanceStatus());
+            AttendanceCard attendanceCard = existingTeam.getAttendanceCard();
+
+            responseBody.add(JSON_PROPERTY_ATTENDANCE, getGson().toJsonTree(attendanceCard));
+            response.status(HttpStatus.OK_200);
+        } catch (JsonSyntaxException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (JsonParseException | IllegalArgumentException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (EntityNotFoundException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_TEAM);
+            response.status(HttpStatus.NOT_FOUND_404);
+        } catch (RuntimeException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        }
+
+        response.type(JSON_RESPONSE_TYPE);
+        return responseBody.toString();
     }
 
 }

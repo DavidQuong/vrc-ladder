@@ -2,6 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.scores;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
 import org.junit.Assert;
@@ -22,6 +23,14 @@ public class ScoreCardTest {
     public void setUp() {
         threeTeamMockMatchGroup = MockMatchGroupGenerator.generateThreeTeamMatchGroup();
         fourTeamMockMatchGroup = MockMatchGroupGenerator.generateFourTeamMatchGroup();
+        setAttending(threeTeamMockMatchGroup.getTeams());
+        setAttending(fourTeamMockMatchGroup.getTeams());
+    }
+
+    private void setAttending(List<Team> teams) {
+        for (Team team : teams) {
+            team.getAttendanceCard().setPreferredPlayTime(PlayTime.TIME_SLOT_A);
+        }
     }
 
     @Test

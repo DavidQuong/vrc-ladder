@@ -85,7 +85,7 @@ public class Ladder {
      * @throws IllegalStateException if @matchGroups are not in ranked order
      */
     public void updateLadder(List<MatchGroup> matchGroups){
-        //MatchGroups with no teams attending will cause problems
+        //MatchGroups with no teams attending will cause problems when swapping teams between MatchGroups
         removeNonAttendingMatchGroups(matchGroups);
 
         for (MatchGroup matchGroup : matchGroups){
