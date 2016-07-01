@@ -1,10 +1,12 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
+import ca.sfu.cmpt373.alpha.vrcladder.util.Log;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewUserPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.UpdateUserPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.UserGsonSerializer;
@@ -32,7 +34,8 @@ public class UserRouter extends RestRouter {
     public static final String JSON_PROPERTY_USER = "user";
 
     private static final String ERROR_NONEXISTENT_USER = "This user does not exist.";
-    private static final String ERROR_GET_USERS_FAILURE = "Unable to get all users";
+    private static final String ERROR_GET_USERS_FAILURE = "Unable to get all users.";
+    private static final String ERROR_EXISTNG_CONSTRAINT = "Email or user already exists.";
 
     private SecurityManager securityManager;
     private UserManager userManager;
@@ -108,10 +111,10 @@ public class UserRouter extends RestRouter {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
         } catch (ConstraintViolationException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTNG_CONSTRAINT);
             response.status(HttpStatus.CONFLICT_409);
         } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST + ": " + ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
