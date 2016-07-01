@@ -1,12 +1,14 @@
 ~colors: "./config/colors.config";
 
-@import url(https://fonts.googleapis.com/css?family=Roboto);
+@import url(https://fonts.googleapis.com/css?family=Roboto|Lato);
 @import url(https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css);
 
 :global {
   html, body {
     height: 100%;
-    background: url(~url?limit=10000!./../src/public/wood-tile.png) repeat ~colors.woodBrown;
+    /* background-color specified as fallback if background-image fails */
+    background-color: ~colors.woodBrown;
+    background: url(~url?limit=10000!./../src/public/wood-tile.png) repeat;
   }
 
   html {
