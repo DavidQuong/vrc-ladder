@@ -23,8 +23,6 @@ public class LoginRouter extends RestRouter {
 
     private static final String JSON_PROPERTY_AUTHORIZATION_TOKEN = "authorizationToken";
 
-    private static final String ERROR_INVALID_CREDENTIALS = "Invalid credentials (user ID or password).";
-
     private SecurityManager securityManager;
     private UserManager userManager;
 
@@ -65,7 +63,7 @@ public class LoginRouter extends RestRouter {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
         } catch (AuthenticationException | EntityNotFoundException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_INVALID_CREDENTIALS);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.UNAUTHORIZED_401);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
