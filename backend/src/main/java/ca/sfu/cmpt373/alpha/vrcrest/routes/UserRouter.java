@@ -140,7 +140,6 @@ public class UserRouter extends RestRouter {
         try {
             String authorizationToken = extractAuthorizationToken(request);
             UserId subjectId = securityManager.parseToken(authorizationToken);
-
             if (!userId.equals(subjectId)) {
                 User subject = userManager.getById(subjectId);
                 subject.checkPermission(UserAction.GET_USER_INFORMATION);
@@ -150,7 +149,6 @@ public class UserRouter extends RestRouter {
 
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(existingUser));
             response.status(HttpStatus.OK_200);
-
         } catch (AuthorizationException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_UNAUTHORIZED_OTHER_USERS);
             response.status(HttpStatus.UNAUTHORIZED_401);
@@ -173,6 +171,13 @@ public class UserRouter extends RestRouter {
             String requestedId = request.params(PARAM_ID);
             UserId userId = new UserId(requestedId);
 
+            String authorizationToken = extractAuthorizationToken(request);
+            UserId subjectId = securityManager.parseToken(authorizationToken);
+            if (!userId.equals(subjectId)) {
+                User subject = userManager.getById(subjectId);
+                subject.checkPermission(UserAction.UPDATE_USER_INFORMATION);
+            }
+
             UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
             User existingUser = userManager.update(
                 userId,
@@ -187,6 +192,9 @@ public class UserRouter extends RestRouter {
         } catch (ValidationException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON  + ": " + ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (AuthorizationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_UNAUTHORIZED_OTHER_USERS);
+            response.status(HttpStatus.UNAUTHORIZED_401);
         } catch (JsonSyntaxException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON + ": " + ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);

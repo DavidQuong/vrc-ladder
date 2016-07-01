@@ -13,19 +13,17 @@ public enum UserRole {
         MODIFY_TEAM_PARTICIPATION,
         CREATE_TEAM,
         DELETE_TEAM,
-        UPDATE_PLAYER,
         REPORT_GAME_SCORES
     );
 
     private static EnumSet<UserAction> MODERATOR_ACTIONS = EnumSet.of(
         GET_USER_INFORMATION,
+        UPDATE_USER_INFORMATION,
+        DELETE_USER,
 
         MODIFY_TEAM_PARTICIPATION,
         CREATE_TEAM,
         DELETE_TEAM,
-        CREATE_PLAYER,
-        UPDATE_PLAYER,
-        DELETE_PLAYER,
         REPORT_GAME_SCORES,
         MODIFY_GAME_SCORES,
         MODIFY_RANKINGS,
@@ -35,13 +33,12 @@ public enum UserRole {
 
     private static EnumSet<UserAction> ADMINISTRATOR_ACTIONS = EnumSet.of(
         GET_USER_INFORMATION,
+        UPDATE_USER_INFORMATION,
+        DELETE_USER,
 
         MODIFY_TEAM_PARTICIPATION,
         CREATE_TEAM,
         DELETE_TEAM,
-        CREATE_PLAYER,
-        UPDATE_PLAYER,
-        DELETE_PLAYER,
         REPORT_GAME_SCORES,
         MODIFY_GAME_SCORES,
         MODIFY_RANKINGS,
