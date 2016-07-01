@@ -15,7 +15,7 @@ const app = handleActions({
   PLAYER_SYNC: (state, {payload}) => {
     return {
       ...state,
-      players: payload.players,
+      players: payload,
     };
   },
 

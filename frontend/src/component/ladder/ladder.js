@@ -1,4 +1,5 @@
 import {createElement, Element} from 'react';
+import {createAction} from 'redux-actions';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import map from 'lodash/fp/map';
@@ -8,8 +9,11 @@ import styles from './ladder.css';
 // import styles from './ladder.css';
 import Heading from '../heading/heading';
 
+import {getUser} from '../../action/users';
+export const syncPlayers = createAction('PLAYER_SYNC');
+
 const orderPlayers = map((player) => (
-  <div key={player.email}>
+  <div key={player.userId}>
     {player.firstName} {player.lastName}
   </div>
 ));
@@ -43,8 +47,10 @@ const orderTeams = map((team) => (
 const Ladder = ({
   players,
   teams,
+  getUser,
 }) : Element => (
   <div className={styles.ladder}>
+  <button onClick={getUser}>FETCH</button>
     <div>
       <Heading kind='huge'>
         <FormattedMessage
@@ -71,5 +77,5 @@ export default connect(
     players: sortBy('firstName', state.app.players),
     teams: sortBy('rank', state.app.teams),
   }),
-  {}
+  {getUser}
 )(Ladder);
