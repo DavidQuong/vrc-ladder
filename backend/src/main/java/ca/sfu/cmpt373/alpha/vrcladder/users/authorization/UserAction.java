@@ -1,7 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.authorization;
 
 public enum UserAction {
-    GET_ALL_USERS,
+    GET_USER_INFORMATION,
 
     MODIFY_TEAM_PARTICIPATION,
     CREATE_TEAM,

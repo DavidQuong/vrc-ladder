@@ -36,8 +36,9 @@ public class UserRouter extends RestRouter {
     public static final String JSON_PROPERTY_USER = "user";
 
     private static final String ERROR_NONEXISTENT_USER = "This user does not exist.";
-    private static final String ERROR_GET_USERS_FAILURE = "Unable to get all users.";
-    private static final String ERROR_EXISTNG_CONSTRAINT = "Email or user already exists.";
+    private static final String ERROR_EXISTING_USER_DETAILS = "A user with this ID or email address already exists.";
+    private static final String ERROR_UNAUTHORIZED_OTHER_USERS = "This user is not authorized to access other user " +
+        "data.";
 
     private SecurityManager securityManager;
     private UserManager userManager;
@@ -74,7 +75,7 @@ public class UserRouter extends RestRouter {
             String authorizationToken = extractAuthorizationToken(request);
             UserId subjectId = securityManager.parseToken(authorizationToken);
             User subject = userManager.getById(subjectId);
-            subject.checkPermission(UserAction.GET_ALL_USERS);
+            subject.checkPermission(UserAction.GET_USER_INFORMATION);
 
             List<User> users = userManager.getAll();
             responseBody.add(JSON_PROPERTY_USERS, getGson().toJsonTree(users));
@@ -119,7 +120,7 @@ public class UserRouter extends RestRouter {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
         } catch (ConstraintViolationException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTNG_CONSTRAINT);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER_DETAILS);
             response.status(HttpStatus.CONFLICT_409);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST + ": " + ex.getMessage());
@@ -137,10 +138,22 @@ public class UserRouter extends RestRouter {
         UserId userId = new UserId(requestedId);
 
         try {
+            String authorizationToken = extractAuthorizationToken(request);
+            UserId subjectId = securityManager.parseToken(authorizationToken);
+
+            if (!userId.equals(subjectId)) {
+                User subject = userManager.getById(subjectId);
+                subject.checkPermission(UserAction.GET_USER_INFORMATION);
+            }
+
             User existingUser = userManager.getById(userId);
 
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(existingUser));
             response.status(HttpStatus.OK_200);
+
+        } catch (AuthorizationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_UNAUTHORIZED_OTHER_USERS);
+            response.status(HttpStatus.UNAUTHORIZED_401);
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);

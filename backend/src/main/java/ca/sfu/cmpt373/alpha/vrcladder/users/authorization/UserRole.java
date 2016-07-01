@@ -18,7 +18,7 @@ public enum UserRole {
     );
 
     private static EnumSet<UserAction> MODERATOR_ACTIONS = EnumSet.of(
-        GET_ALL_USERS,
+        GET_USER_INFORMATION,
 
         MODIFY_TEAM_PARTICIPATION,
         CREATE_TEAM,
@@ -34,7 +34,7 @@ public enum UserRole {
     );
 
     private static EnumSet<UserAction> ADMINISTRATOR_ACTIONS = EnumSet.of(
-        GET_ALL_USERS,
+        GET_USER_INFORMATION,
 
         MODIFY_TEAM_PARTICIPATION,
         CREATE_TEAM,
