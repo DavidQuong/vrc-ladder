@@ -37,8 +37,8 @@ public class UserRouter extends RestRouter {
 
     private static final String ERROR_NONEXISTENT_USER = "This user does not exist.";
     private static final String ERROR_EXISTING_USER_DETAILS = "A user with this ID or email address already exists.";
-    private static final String ERROR_UNAUTHORIZED_OTHER_USERS = "This user is not authorized to access other user " +
-        "data.";
+    private static final String ERROR_UNAUTHORIZED_OTHER_USERS = "This user is not authorized to access or modify " +
+        "other user's data.";
 
     private SecurityManager securityManager;
     private UserManager userManager;
@@ -226,13 +226,21 @@ public class UserRouter extends RestRouter {
             String requestedId = request.params(PARAM_ID);
             UserId userId = new UserId(requestedId);
 
+            String authorizationToken = extractAuthorizationToken(request);
+            UserId subjectId = securityManager.parseToken(authorizationToken);
+            User subject = userManager.getById(subjectId);
+            subject.checkPermission(UserAction.DELETE_USER);
+
             User deletedUser = userManager.deleteById(userId);
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(deletedUser));
             response.status(HttpStatus.OK_200);
         } catch (ValidationException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON  + ": " + ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
-        }  catch (EntityNotFoundException ex) {
+        } catch (AuthorizationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_UNAUTHORIZED_OTHER_USERS);
+            response.status(HttpStatus.UNAUTHORIZED_401);
+        } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
         } catch (RuntimeException ex) {
