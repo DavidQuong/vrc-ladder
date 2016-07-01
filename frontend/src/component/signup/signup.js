@@ -5,14 +5,13 @@ import {reduxForm} from 'redux-form';
 import {SubmitBtn} from '../button';
 import styles from './signup.css';
 import Heading from '../heading/heading';
-import findIndex from 'lodash/fp/findIndex';
 import isEmpty from 'lodash/fp/isEmpty';
 import classNames from 'classnames';
 import {withRouter} from 'react-router';
 
 import {addUser} from '../../action/users';
 
-const validate = (values, {players} ) => {
+const validate = (values) => {
   const errors = {};
   if (!values.userId) {
     errors.userId = 'Required';
@@ -28,8 +27,6 @@ const validate = (values, {players} ) => {
   } else if
   (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.emailAddress)) {
     errors.emailAddress = 'Invalid email address';
-  } else if (findIndex(['email', values.emailAddress], players) !== -1) {
-    errors.emailAddress = 'Email already exist';
   }
   if (!values.phoneNumber) {
     errors.phoneNumber = 'Required';
@@ -245,7 +242,6 @@ const SignUpForm = formEnhancer(BaseSignUpForm);
 
 const SignUp = withRouter(({
   addUser,
-  players,
   router,
 }) : Element => (
   <div className={styles.signup}>
@@ -257,7 +253,7 @@ const SignUp = withRouter(({
     </Heading>
     <SignUpForm
       onSubmit={(props) => {
-        const errors = validate(props, {players});
+        const errors = validate(props);
         const userInfo = parseUser(props);
         if (!isEmpty(errors)) {
           return Promise.reject(errors);
