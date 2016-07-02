@@ -131,30 +131,30 @@ All webpack settings, and redux settings are from various guides online. Below i
 - src\test\java\ca\sfu\cmpt373\alpha\vrcladder\ladder\LadderMethodsTest.java: generatePermutations() implementation from: http://stackoverflow.com/questions/10305153/generating-all-possible-permutations-of-a-list-recursively
 
 #### Directory Structure Explanation
--backend
-    -gradle/wrapper : Supports gradle integration into the application. Gradle is for the purposes of switching between debug and production, and for automatically obtaining files the project is dependent upon. It is effectively for our own use, not a part of the final product.
-    -src : Source code for the project
-        -main : Production code and supporting files
-            -resources : Database configuration information
-            -webapp/WEB-INF : Configure Rest API to run on AWS
-            -java/ca/sfu/cmpt373/alpha : Production code
-                -vrcladder : Business logic and database
-                    -exceptions : RuntimeExceptions that can occur in the program
-                    -ladder : Ladder and ladder sorting data structure
-                    -matchmaking : Grouping teams into MatchGroups and MatchGroup interface with database
-                        -logic : Sorting MatchGroups onto courts and determines times of play
-                    -persistence : Database
-                    -scores : Structure for MatchGroup's scores
-                    -teams : Team data structure and Team interface with database
-                        -attendance : Team attendance data structure
-                    -users : User data structure and User interface with database
-                        -authentication : Determines if they have permission to perform an action
-                        -authorization : Figures out who a User is
-                        -personal : Data structures for fields of Users
-                    -util : Utility support files
-                -vrcrest : Rest API
-                    -datatransfer :
-                        -requests : Turns incoming JSON bodies into internal data structures
-                        -responses : Turns internal data structures into outgoing JSON bodies
-                    -routes : Methods that are automatically called by Spark with HTTP Requests
-        -test : Debug code and supporting files
+- backend
+     -gradle/wrapper : Supports gradle integration into the application. Gradle is for the purposes of switching between debug and production, and for automatically obtaining files the project is dependent upon. It is effectively for our own use, not a part of the final product.
+    - src : Source code for the project
+        - main : Production code and supporting files
+            - resources : Database configuration information
+            - webapp/WEB-INF : Configure Rest API to run on AWS
+            - java/ca/sfu/cmpt373/alpha : Production code
+                - vrcladder : Business logic and database
+                    - exceptions : RuntimeExceptions that can occur in the program
+                    - ladder : Ladder and ladder sorting data structure
+                    - matchmaking : Grouping teams into MatchGroups and MatchGroup interface with database
+                        - logic : Sorting MatchGroups onto courts and determines times of play
+                    - persistence : Database
+                    - scores : Structure for MatchGroup's scores
+                    - teams : Team data structure and Team interface with database
+                        - attendance : Team attendance data structure
+                    - users : User data structure and User interface with database
+                        - authentication : Determines if they have permission to perform an action
+                        - authorization : Figures out who a User is
+                        - personal : Data structures for fields of Users
+                    - util : Utility support files
+                - vrcrest : Rest API
+                    - datatransfer :
+                        - requests : Turns incoming JSON bodies into internal data structures
+                        - responses : Turns internal data structures into outgoing JSON bodies
+                    - routes : Methods that are automatically called by Spark with HTTP Requests
+        - test : Debug code and supporting files
