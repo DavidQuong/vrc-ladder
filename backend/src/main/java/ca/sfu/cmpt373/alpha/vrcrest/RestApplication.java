@@ -19,7 +19,6 @@ import spark.servlet.SparkApplication;
 
 import java.security.Key;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 
@@ -55,7 +54,10 @@ public class RestApplication implements SparkApplication {
                 courtManager);
 
         LoginRouter loginRouter = new LoginRouter(appManager.getSecurityManager(), appManager.getUserManager());
-        UserRouter userRouter = new UserRouter(appManager.getSecurityManager(), appManager.getUserManager());
+        UserRouter userRouter = new UserRouter(
+                appManager.getSecurityManager(),
+                appManager.getUserManager(),
+                appManager.getTeamManager());
         TeamRouter teamRouter = new TeamRouter(appManager.getTeamManager());
         MatchGroupRouter matchGroupRouter = new MatchGroupRouter(
                 appManager.getMatchGroupManager(),

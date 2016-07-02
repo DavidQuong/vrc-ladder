@@ -127,6 +127,7 @@ public class TeamManager extends DatabaseManager<Team> {
 
         return team;
     }
+
     private boolean isExistingTeam(User firstPlayer, User secondPlayer) {
         Session session = sessionManager.getSession();
 
@@ -143,6 +144,17 @@ public class TeamManager extends DatabaseManager<Team> {
         session.close();
 
         return (!matchedTeams.isEmpty());
+    }
+
+    public List<Team> getTeamsForUser(User player) {
+        Session session = sessionManager.getSession();
+
+        Criterion userTeamCriterion = Restrictions.and(
+                Restrictions.eq(CriterionConstants.TEAM_FIRST_PLAYER_USER_ID_PROPERTY, player.getUserId()));
+
+        Criteria userTeamCriteria = session.createCriteria(Team.class)
+                .add(userTeamCriterion);
+        return userTeamCriteria.list();
     }
 
     private void checkForActiveTeam(Team team) {
