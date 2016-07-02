@@ -6,6 +6,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcladder.util.ConfigurationManager;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
@@ -20,8 +21,17 @@ import org.hibernate.cfg.Configuration;
 public class SessionManager {
 
     private SessionFactory sessionFactory;
+    private ConfigurationManager configurationManager;
 
-    public SessionManager() {
+    private static final String PROPERTY_CONNECTION_URL = "hibernate.connection.url";
+    private static final String PROPERTY_DRIVER = "hibernate.connection.driver_class";
+    private static final String PROPERTY_USERNAME = "hibernate.connection.username";
+    private static final String PROPERTY_PASSWORD = "hibernate.connection.password";
+    private static final String PROPERTY_DIALECT = "hibernate.dialect";
+    private static final String PROPERTY_CREATE_MODE = "hibernate.hbm2ddl.auto";
+
+    public SessionManager(ConfigurationManager configurationManager) {
+        this.configurationManager = configurationManager;
         sessionFactory = buildSessionFactory();
     }
 
@@ -43,18 +53,12 @@ public class SessionManager {
                 .addAnnotatedClass(Team.class)
                 .addAnnotatedClass(User.class)
                 .addAnnotatedClass(Court.class)
-//                .setProperty("hibernate.connection.url", )
+                .setProperty(PROPERTY_CONNECTION_URL, configurationManager.getDatabaseUrl())
+                .setProperty(PROPERTY_DRIVER, configurationManager.getDatabaseDriver())
+                .setProperty(PROPERTY_USERNAME, configurationManager.getDatabaseUsername())
+                .setProperty(PROPERTY_PASSWORD, configurationManager.getDatabasePassword())
+                .setProperty(PROPERTY_DIALECT, configurationManager.getDatabaseDialect())
+                .setProperty(PROPERTY_CREATE_MODE, configurationManager.getDatabaseCreateMode())
                 .buildSessionFactory();
     }
-
-//    public String getRemoteConnectionUrl() {
-//String dbName = System.getProperty("RDS_DB_NAME");
-//    String userName = System.getProperty("RDS_USERNAME");
-//    String password = System.getProperty("RDS_PASSWORD");
-//    String hostname = System.getProperty("RDS_HOSTNAME");
-//    String port = System.getProperty("RDS_PORT");
-    //    String jdbcUrl = "jdbc:postgresql://" + hostname + ":" + port + "/" + dbName + "?user=" + userName + "&password=" + password;
-
-//    }
-
 }

@@ -1,0 +1,12 @@
+new File("$buildDir/resources/main/configuration.properties").withWriter { w ->
+    Properties p = new Properties()
+    p[projectVersion] = project.version.toString()
+
+    p[databaseUrl] = "jdbc:h2:mem:vrctest;MVCC=TRUE"
+    p[databaseUsername] = "admin"
+    p[databasePassword] = ""
+    p[databaseDriver] = "org.h2.Driver"
+    p[databaseDialect] = "org.hibernate.dialect.H2Dialect"
+    p[databaseCreateMode] = "create-drop"
+    p.store w, null
+}

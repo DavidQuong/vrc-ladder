@@ -13,6 +13,17 @@ run {
     standardInput = System.in
 }
 
+//TODO: make debug config the default configuration (no command line params required to run debug)
+task initializeBuildConfigurationResource (dependsOn: processResources) << {
+    def configScript = file("build-configurations/$configuration-config.gradle")
+    if (!configScript.exists()) {
+        throw new GradleException("Unknown configuration: $configuration")
+    }
+    apply from: configScript
+}
+//ensures that this task is run when you execute gradle build/run
+classes.finalizedBy(initializeBuildConfigurationResource)
+
 repositories {
     mavenCentral()
 }
