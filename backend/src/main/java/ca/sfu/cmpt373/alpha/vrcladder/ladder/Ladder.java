@@ -19,7 +19,7 @@ public class Ladder {
     private static final String ERROR_DUPLICATE_TEAM = "The Ladder already contains this team. The ladder may not hold duplicate elements";
 
     private List<Team> ladder;
-
+    private List<Team> attendingLadder = new ArrayList<>();
     public Ladder(List<Team> teams) {
         ladder = new ArrayList<>();
         for (Team team : teams) {
