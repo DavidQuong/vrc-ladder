@@ -25,15 +25,15 @@ const Layout = ({children}) => (
           <Nav pullLeft>
             <p className={styles.navbarLogo}>Vancouver Racquets Club</p>
           </Nav>
-          <Nav pullRight>
+          <Nav pullRight className={styles.navItem}>
             <LinkContainer to='/ladder'>
-              <NavItem bsStyle='link' className={styles.navItem}>Ladder</NavItem>
+              <NavItem >Ladder</NavItem>
             </LinkContainer>
             <LinkContainer to='/create-team'>
-              <NavItem bsStyle='link' className={styles.navItem}>Create team</NavItem>
+              <NavItem >Create team</NavItem>
             </LinkContainer>
             <LinkContainer to='/signup'>
-              <NavItem bsStyle='link' className={styles.navItem}>Sign up</NavItem>
+              <NavItem >Sign up</NavItem>
             </LinkContainer>
           </Nav>
         </Navbar.Collapse>

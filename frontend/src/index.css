@@ -40,21 +40,29 @@
     line-height: 20px;
   }
 
-  .navItem {
-    color: ~colors.white;
-  }
-
-  .navItem:hover {
-    color: red;
-  }
-
-  .navItem:active {
-    color: ~colors.white;
-    background-color: ~colors.darkerGreen;
-  }
-
-  /*.navbar-inverse .navbar-nav > li > a:focus, .navbar-inverse .navbar-nav > li > a:hover {
-    color: #fff;
-    background-color: transparent;
+  /*.navbar-default .navbar-nav > .active > a,
+  .navbar-default .navbar-nav > .active > a:focus,
+  .navbar-default .navbar-nav > .active > a:hover {
+      color: #555;
+      background-color: #e7e7e7;
   }*/
+  /*.navItem .nav > .active > a,
+  .navItem .nav > .active > a:focus,
+  .navItem .nav > .active > a:hover {
+    background-color: red !important;
+  }*/
+
+  .navItem > li > a {
+    color: inherit !important;
+    background-color: transparent !important;
+  }
+
+  .navItem > li > a:hover {
+    color: ~colors.brightYellow !important;
+  }
+
+  .navItem > li > a:active, .navItem > li > a:focus {
+    color: inherit !important;
+    background-color: ~colors.darkerGreen !important;
+  }
 }
