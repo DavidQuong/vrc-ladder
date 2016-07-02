@@ -20,7 +20,7 @@ const app = handleActions({
   TEAM_SYNC: (state, {payload}) => {
     return {
       ...state,
-      teams: payload.teams,
+      teams: payload,
     };
   },
 

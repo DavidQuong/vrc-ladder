@@ -3,13 +3,13 @@ import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {SubmitBtn} from '../button';
+import {withRouter} from 'react-router';
+import {addUser} from '../../action/users';
+
 import styles from './signup.css';
 import Heading from '../heading/heading';
 import isEmpty from 'lodash/fp/isEmpty';
 import classNames from 'classnames';
-import {withRouter} from 'react-router';
-
-import {addUser} from '../../action/users';
 
 const validate = (values) => {
   const errors = {};
@@ -45,7 +45,7 @@ const parseUser = (props) => {
   return ({
     ...user,
     userRole: 'PLAYER',
-    middleName: ' ',
+    middleName: '',
   });
 };
 

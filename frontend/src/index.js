@@ -2,13 +2,14 @@ import {createElement, Element} from 'react';
 import {Provider} from 'react-redux';
 import {IntlProvider} from 'react-intl';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
+import {Button, ButtonToolbar} from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
+import {getUser} from './action/users';
+import {getTeams} from './action/teams';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import CreateTeam from './component/create-team/create-team';
 import LogIn from './component/login/login';
-import {Button, ButtonToolbar} from 'react-bootstrap';
-import {LinkContainer} from 'react-router-bootstrap';
-import {getUser} from './action/users';
 
 const Layout = ({children}) => (
   <div>
@@ -43,6 +44,7 @@ export default ({store}) : Element => (
             component={Ladder}
             onEnter={(nextState, replace, callback) => {
               store.dispatch(getUser()).then(callback);
+              store.dispatch(getTeams()).then(callback);
             }}
           />
           <Route path='/signup' component={SignUp}/>
