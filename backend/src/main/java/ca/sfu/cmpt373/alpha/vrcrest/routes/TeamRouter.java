@@ -34,6 +34,9 @@ public class TeamRouter extends RestRouter {
     public static final String ROUTE_TEAM_ID_ATTENDANCE_PLAYTIME = ROUTE_TEAM_ID_ATTENDANCE + "/playtime";
     public static final String ROUTE_TEAM_ID_ATTENDANCE_STATUS = ROUTE_TEAM_ID_ATTENDANCE + "/status";
 
+    public static final String HEADER_ACCESS = "Access-Control-Allow-Origin";
+    public static final String HEADER_ACCESS_VALUE = "*";
+
     public static final String JSON_PROPERTY_TEAMS = "teams";
     public static final String JSON_PROPERTY_TEAM = "team";
     public static final String JSON_PROPERTY_ATTENDANCE = "attendance";
@@ -79,6 +82,7 @@ public class TeamRouter extends RestRouter {
         List<Team> teams = teamManager.getAll();
         responseBody.add(JSON_PROPERTY_TEAMS, getGson().toJsonTree(teams));
 
+        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
         response.status(HttpStatus.OK_200);
         response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
@@ -90,8 +94,8 @@ public class TeamRouter extends RestRouter {
         try {
             NewTeamPayload newTeamPayload = getGson().fromJson(request.body(), NewTeamPayload.class);
             Team newTeam = teamManager.create(newTeamPayload.getFirstPlayerId(), newTeamPayload.getSecondPlayerId());
-
             JsonElement jsonTeam = getGson().toJsonTree(newTeam);
+            response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
             responseBody.add(JSON_PROPERTY_TEAM, jsonTeam);
             response.status(HttpStatus.CREATED_201);
         } catch (JsonSyntaxException ex) {
@@ -120,6 +124,7 @@ public class TeamRouter extends RestRouter {
 
     private String handleGetTeamById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
+        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
@@ -146,6 +151,7 @@ public class TeamRouter extends RestRouter {
 
     private String handleDeleteTeamById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
+        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
@@ -169,6 +175,7 @@ public class TeamRouter extends RestRouter {
 
     private String handleGetTeamAttendance(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
+        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
@@ -193,6 +200,7 @@ public class TeamRouter extends RestRouter {
 
     private String handleUpdatePlayTime(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
+        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
@@ -225,6 +233,7 @@ public class TeamRouter extends RestRouter {
 
     private String handleUpdateAttendanceStatus(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
+        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);

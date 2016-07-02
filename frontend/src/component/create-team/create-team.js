@@ -1,50 +1,56 @@
 import {createElement, Element} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
-import {createAction} from 'redux-actions';
 import {reduxForm} from 'redux-form';
+import {addTeam} from '../../action/teams';
+import {SubmitBtn} from '../button';
+import {withRouter} from 'react-router';
+
 import map from 'lodash/fp/map';
 import styles from './create-team.css';
-import {SubmitBtn} from '../button';
 import Heading from '../heading/heading';
 import classNames from 'classnames';
-import findIndex from 'lodash/fp/findIndex';
+// import findIndex from 'lodash/fp/findIndex';
 import sortBy from 'lodash/fp/sortBy';
 
 const validate = (values, {teams}) => {
   const errors = {};
-  let i = 0;
-  if (!values.firstPlayer) {
-    errors.firstPlayer = 'Required';
+  let index = -1;
+  if (!values.firstPlayerId) {
+    errors.firstPlayerId = 'Required';
   }
-  if (!values.secondPlayer) {
-    errors.secondPlayer = 'Required';
+  if (!values.secondPlayerId) {
+    errors.secondPlayerId = 'Required';
   }
-  if (values.firstPlayer === values.secondPlayer) {
-    errors.secondPlayer = 'Cannot be same person';
+  if (values.firstPlayerId === values.secondPlayerId) {
+    errors.secondPlayerId = 'Cannot be same person';
   }
-  i = findIndex(['firstPlayer', values.firstPlayer], teams);
-  if (i !== -1) {
-    if (teams[i].secondPlayer === values.secondPlayer) {
-      errors.secondPlayer = 'Team Exists';
+  for (let i = 0; i < teams.length; i++) {
+    if (teams[i].firstPlayer.userId === values.firstPlayerId) {
+      index = i;
+      if (teams[index].secondPlayer.userId === values.secondPlayerId) {
+        errors.secondPlayerId = 'Team Exists';
+      }
     }
   }
-  i = findIndex(['firstPlayer', values.secondPlayer], teams);
-  if (i !== -1) {
-    if (teams[i].secondPlayer === values.firstPlayer) {
-      errors.secondPlayer = 'Team Exists';
+  index = -1;
+  for (let i = 0; i < teams.length; i++) {
+    if (teams[i].firstPlayer.userId === values.secondPlayerId) {
+      index = i;
+      if (teams[index].secondPlayer.userId === values.firstPlayerId) {
+        errors.secondPlayerId = 'Team Exists';
+      }
     }
   }
-
   return errors;
 };
 
 const CreateTeamForm = reduxForm({
   form: 'teamCreate',
-  fields: ['firstPlayer', 'secondPlayer', 'teamName'],
+  fields: ['firstPlayerId', 'secondPlayerId'],
   validate,
 })(({
-  fields: {firstPlayer, secondPlayer, teamName},
+  fields: {firstPlayerId, secondPlayerId},
   players,
   handleSubmit,
 }) => (
@@ -56,38 +62,22 @@ const CreateTeamForm = reduxForm({
     <label
       className={classNames(styles.colXsTitle)}
     >
-      <FormattedMessage
-        id='teamName'
-        defaultMessage='Team Name'
-      />
-    </label>
-    <input
-      className={classNames(styles.goodForm)}
-      type='text'
-      placeholder='Team Name'
-      {...teamName}
-    />
-  </div>
-  <div className={classNames(styles.formGroup)}>
-    <label
-      className={classNames(styles.colXsTitle)}
-    >
         <FormattedMessage
-          id='firstPlayer'
+          id='firstPlayerId'
           defaultMessage='Select Team Members Name'
         />
       </label>
       <select
         className={classNames(styles.goodForm, {
-          [styles.errorForm]: secondPlayer.error &&
-                              firstPlayer.touched &&
-                              secondPlayer.touched})}
-        {...firstPlayer}
+          [styles.errorForm]: secondPlayerId.error &&
+                              firstPlayerId.touched &&
+                              secondPlayerId.touched})}
+        {...firstPlayerId}
       >
         <option value=''>Select a player...</option>
         {map((player) => (
-          <option value={player.firstName}key={player.firstName}>
-            {player.firstName}
+          <option value={player.userId}key={player.userId}>
+            {player.firstName} {player.userId}
           </option>
         ), players)}
       </select>
@@ -97,28 +87,29 @@ const CreateTeamForm = reduxForm({
         className={classNames(styles.colXsTitle)}
       >
         <FormattedMessage
-          id='secondPlayer'
+          id='secondPlayerId'
           defaultMessage='Select Team Members Name'
         />
       </label>
       <select
         className={classNames(styles.goodForm, {
-          [styles.errorForm]: secondPlayer.error &&
-                              firstPlayer.touched &&
-                              secondPlayer.touched})}
-        {...secondPlayer}
+          [styles.errorForm]: secondPlayerId.error &&
+                              firstPlayerId.touched &&
+                              secondPlayerId.touched})}
+        {...secondPlayerId}
       >
         <option value=''>Select a player...</option>
         {map((player) => (
-          <option value={player.firstName}key={player.firstName}>
-            {player.firstName}
+          <option value={player.userId}key={player.userId}>
+            {player.firstName} {player.userId}
           </option>
         ), players)}
       </select>
-      {firstPlayer.touched && secondPlayer.touched && secondPlayer.error &&
+      {firstPlayerId.touched && secondPlayerId.touched
+        && secondPlayerId.error &&
         <div className={classNames(styles.errorMsg)}>
           <Heading kind='error'>
-            {secondPlayer.error}
+            {secondPlayerId.error}
           </Heading>
         </div>}
     </div>
@@ -128,12 +119,11 @@ const CreateTeamForm = reduxForm({
   </form>
 ));
 
-const addTeam = createAction('TEAM_ADD');
-
-const CreateTeam = ({
+const CreateTeam = withRouter(({
   addTeam,
   players,
   teams,
+  router,
 }) : Element => (
   <div className={styles.createTeam}>
     <Heading kind='huge'>
@@ -146,14 +136,18 @@ const CreateTeam = ({
       players={players}
       teams={teams}
       onSubmit={(props) => {
-        addTeam({
+        return addTeam({
           ...props,
-          rank: teams.length + 1,
+        }).then(() => {
+          router.push('/');
+        }).catch((errors) => {
+          // TODO: Error object handling
+          return Promise.reject(errors);
         });
       }}
     />
   </div>
-);
+));
 
 export default connect(
   (state) => ({
