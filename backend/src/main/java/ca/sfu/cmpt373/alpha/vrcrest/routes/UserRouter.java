@@ -5,26 +5,27 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
-import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserAction;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewUserPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.UpdateUserPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.UserGsonSerializer;
+import ca.sfu.cmpt373.alpha.vrcrest.security.RouteSignature;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
-import org.apache.shiro.authz.AuthorizationException;
-import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.hibernate.exception.ConstraintViolationException;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
+import spark.route.HttpMethod;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class UserRouter extends RestRouter {
@@ -40,6 +41,8 @@ public class UserRouter extends RestRouter {
     private static final String ERROR_UNAUTHORIZED_OTHER_USERS = "This user is not authorized to access or modify " +
         "other user's data.";
 
+    private static final List<RouteSignature> PUBLIC_ROUTE_SIGNATURES = createRouteSignature();
+
     private SecurityManager securityManager;
     private UserManager userManager;
 
@@ -51,14 +54,25 @@ public class UserRouter extends RestRouter {
 
     @Override
     public void attachRoutes() {
-        Spark.before(ROUTE_USERS, this::beforeUsers);
         Spark.get(ROUTE_USERS, this::handleGetUsers);
         Spark.post(ROUTE_USERS, this::handleCreateUser);
-
-        Spark.before(ROUTE_USER_ID, this::beforeUserById);
         Spark.get(ROUTE_USER_ID, this::handleGetUserById);
         Spark.put(ROUTE_USER_ID, this::handleUpdateUserById);
         Spark.delete(ROUTE_USER_ID, this::handleDeleteUserById);
+    }
+
+    @Override
+    public List<RouteSignature> getPublicRouteSignatures() {
+        return Collections.unmodifiableList(PUBLIC_ROUTE_SIGNATURES);
+    }
+
+    private static List<RouteSignature> createRouteSignature() {
+        List<RouteSignature> routeSignatures = new ArrayList<>();
+
+        RouteSignature createUserSignature = new RouteSignature(ROUTE_USERS, HttpMethod.get);
+        routeSignatures.add(createUserSignature);
+
+        return routeSignatures;
     }
 
     @Override
@@ -69,49 +83,6 @@ public class UserRouter extends RestRouter {
             .registerTypeAdapter(UpdateUserPayload.class, new UpdateUserPayload.GsonDeserializer())
             .setPrettyPrinting()
             .create();
-    }
-
-    private void beforeUsers(Request request, Response response) {
-        try {
-            if (request.requestMethod().equals(HttpMethod.GET.name())) {
-                String authorizationToken = extractAuthorizationToken(request);
-                UserId subjectId = securityManager.parseToken(authorizationToken);
-                User subject = userManager.getById(subjectId);
-                subject.checkPermission(UserAction.GET_USER_INFORMATION);
-            }
-        } catch (AuthorizationException ex) {
-            JsonObject responseBody = new JsonObject();
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
-            response.type(JSON_RESPONSE_TYPE);
-            Spark.halt(HttpStatus.UNAUTHORIZED_401, responseBody.toString());
-        }
-    }
-
-    private void beforeUserById(Request request, Response response) {
-        try {
-            String requestedId = request.params(PARAM_ID);
-            UserId userId = new UserId(requestedId);
-
-            String authorizationToken = extractAuthorizationToken(request);
-            UserId subjectId = securityManager.parseToken(authorizationToken);
-            User subject = userManager.getById(subjectId);
-
-            String httpMethod = request.requestMethod();
-            if (httpMethod.equals(HttpMethod.GET.name()) && !userId.equals(subjectId)) {
-                subject.checkPermission(UserAction.GET_USER_INFORMATION);
-            } else if (httpMethod.equals(HttpMethod.PUT.name()) && !userId.equals(subjectId)) {
-                subject.checkPermission(UserAction.UPDATE_USER_INFORMATION);
-            } else if (httpMethod.equals(HttpMethod.DELETE.name())) {
-                subject.checkPermission(UserAction.DELETE_USER);
-            } else {
-                assert false;
-            }
-        } catch (AuthorizationException | ValidationException | EntityNotFoundException ex) {
-            JsonObject responseBody = new JsonObject();
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_UNAUTHORIZED_OTHER_USERS);
-            response.type(JSON_RESPONSE_TYPE);
-            Spark.halt(HttpStatus.UNAUTHORIZED_401, responseBody.toString());
-        }
     }
 
     private String handleGetUsers(Request request, Response response) {

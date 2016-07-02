@@ -9,12 +9,14 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewTeamIdListPayload;
+import ca.sfu.cmpt373.alpha.vrcrest.security.RouteSignature;
 import com.google.gson.*;
 import org.eclipse.jetty.http.HttpStatus;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -59,6 +61,11 @@ public class LadderRouter extends RestRouter{
     public void attachRoutes() {
         Spark.put(ROUTE_LADDER_REGENERATE, this::handleRegenerateLadder);
         Spark.put(ROUTE_LADDER_REARRANGE, this::handleRearrangeLadder);
+    }
+
+    @Override
+    public List<RouteSignature> getPublicRouteSignatures() {
+        return Collections.emptyList();
     }
 
     private String handleRearrangeLadder(Request request, Response response) {

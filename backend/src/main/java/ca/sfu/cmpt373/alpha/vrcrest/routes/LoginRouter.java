@@ -4,6 +4,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.LoginPayload;
+import ca.sfu.cmpt373.alpha.vrcrest.security.RouteSignature;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -14,14 +15,20 @@ import org.eclipse.jetty.http.HttpStatus;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
+import spark.route.HttpMethod;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class LoginRouter extends RestRouter {
 
     public static final String ROUTE_LOGIN = "/login";
 
     private static final String JSON_PROPERTY_AUTHORIZATION_TOKEN = "authorizationToken";
+
+    private static final List<RouteSignature> PUBLIC_ROUTE_SIGNATURES = createRouteSignature();
 
     private SecurityManager securityManager;
     private UserManager userManager;
@@ -34,6 +41,20 @@ public class LoginRouter extends RestRouter {
     @Override
     public void attachRoutes() {
         Spark.post(ROUTE_LOGIN, ((request, response) -> handleLogin(request, response)));
+    }
+
+    @Override
+    public List<RouteSignature> getPublicRouteSignatures() {
+        return Collections.unmodifiableList(PUBLIC_ROUTE_SIGNATURES);
+    }
+
+    private static List<RouteSignature> createRouteSignature() {
+        List<RouteSignature> routeSignatures = new ArrayList<>();
+
+        RouteSignature createUserSignature = new RouteSignature(ROUTE_LOGIN, HttpMethod.post);
+        routeSignatures.add(createUserSignature);
+
+        return routeSignatures;
     }
 
     @Override
