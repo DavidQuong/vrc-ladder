@@ -82,6 +82,7 @@ public class UserRouter extends RestRouter {
         } catch (AuthorizationException ex) {
             JsonObject responseBody = new JsonObject();
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
+            response.type(JSON_RESPONSE_TYPE);
             Spark.halt(HttpStatus.UNAUTHORIZED_401, responseBody.toString());
         }
     }
@@ -105,9 +106,10 @@ public class UserRouter extends RestRouter {
             } else {
                 assert false;
             }
-        } catch (AuthorizationException | EntityNotFoundException ex) {
+        } catch (AuthorizationException | ValidationException | EntityNotFoundException ex) {
             JsonObject responseBody = new JsonObject();
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_UNAUTHORIZED_OTHER_USERS);
+            response.type(JSON_RESPONSE_TYPE);
             Spark.halt(HttpStatus.UNAUTHORIZED_401, responseBody.toString());
         }
     }
@@ -146,7 +148,6 @@ public class UserRouter extends RestRouter {
                 hashedPassword);
 
             JsonElement jsonUser = getGson().toJsonTree(newUser);
-
             responseBody.add(JSON_PROPERTY_USER, jsonUser);
             response.status(HttpStatus.CREATED_201);
         } catch (JsonSyntaxException ex) {
