@@ -4,12 +4,10 @@ import {reducer as form} from 'redux-form';
 
 const app = handleActions({
 
-  STATE_SAVE: (state) => {
-    return state;
-  },
-
-  STATE_RESTORE: (state, action) => {
-    return action.payload;
+  USER_LOGIN: (state, {payload}) => {
+    return {
+      loggedIn: payload,
+    };
   },
 
   PLAYER_SYNC: (state, {payload}) => {
@@ -47,6 +45,7 @@ const app = handleActions({
 }, {
   players: [],
   teams: [],
+  loggedIn: [],
 });
 
 export default combineReducers({
