@@ -204,3 +204,5 @@ backend<br />
 ------------------------responses : Turns internal data structures into outgoing JSON bodies<br />
 --------------------routes : Methods that are automatically called by Spark with HTTP Requests<br />
 --------test : Debug code and supporting files<br />
+------------java/ca/sfu/cmpt373/alpha/vrcladder : JUnit tests for vrcladder, folders here correspond to the folders of files being tested in backend/src/main/java/ca/sfu/cmpt373/alpha/vrcladder
+------------resources : Debug database configuration information<br />
