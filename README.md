@@ -132,29 +132,75 @@ All webpack settings, and redux settings are from various guides online. Below i
 
 #### Directory Structure Explanation
 - backend
-     -gradle/wrapper : Supports gradle integration into the application. Gradle is for the purposes of switching between debug and production, and for automatically obtaining files the project is dependent upon. It is effectively for our own use, not a part of the final product.
+     - gradle/wrapper : Supports gradle integration into the application. Gradle is for the purposes of switching between debug and production, and for automatically obtaining files the project is dependent upon. It is effectively for our own use, not a part of the final product.
     - src : Source code for the project
         - main : Production code and supporting files
             - resources : Database configuration information
             - webapp/WEB-INF : Configure Rest API to run on AWS
             - java/ca/sfu/cmpt373/alpha : Production code
                 - vrcladder : Business logic and database
-                    - exceptions : RuntimeExceptions that can occur in the program
-                    - ladder : Ladder and ladder sorting data structure
-                    - matchmaking : Grouping teams into MatchGroups and MatchGroup interface with database
-                        - logic : Sorting MatchGroups onto courts and determines times of play
-                    - persistence : Database
-                    - scores : Structure for MatchGroup's scores
-                    - teams : Team data structure and Team interface with database
-                        - attendance : Team attendance data structure
-                    - users : User data structure and User interface with database
-                        - authentication : Determines if they have permission to perform an action
-                        - authorization : Figures out who a User is
-                        - personal : Data structures for fields of Users
-                    - util : Utility support files
-                - vrcrest : Rest API
-                    - datatransfer :
-                        - requests : Turns incoming JSON bodies into internal data structures
-                        - responses : Turns internal data structures into outgoing JSON bodies
-                    - routes : Methods that are automatically called by Spark with HTTP Requests
+                    -exceptions : RuntimeExceptions that can occur in the program
+                    
+                    -ladder : Ladder and ladder sorting data structure
+                    
+                    -matchmaking : Grouping teams into MatchGroups and MatchGroup interface with database
+                    
+                        -logic : Sorting MatchGroups onto courts and determines times of play
+                        
+                    -persistence : Database
+                    
+                    -scores : Structure for MatchGroup's scores
+                    
+                    -teams : Team data structure and Team interface with database
+                        
+                        -attendance : Team attendance data structure
+                    
+                    -users : User data structure and User interface with database
+                        
+                        -authentication : Determines if they have permission to perform an action
+                        
+                        -authorization : Figures out who a User is
+                        
+                        -personal : Data structures for fields of Users
+                    
+                    -util : Utility support files
+                
+                -vrcrest : Rest API
+                    
+                    -datatransfer :
+                        
+                        -requests : Turns incoming JSON bodies into internal data structures
+                        
+                        -responses : Turns internal data structures into outgoing JSON bodies
+                    
+                    -routes : Methods that are automatically called by Spark with HTTP Requests
+                    
         - test : Debug code and supporting files
+
+backend<br />
+----gradle/wrapper : Supports gradle integration into the application. Gradle is for the purposes of switching between debug and production, and for automatically obtaining files the project is dependent upon. It is effectively for our own use, not a part of the final product.<br />
+----src : Source code for the project<br />
+--------main : Production code and supporting files<br />
+------------resources : Database configuration information<br />
+------------webapp/WEB-INF : Configure Rest API to run on AWS<br />
+------------java/ca/sfu/cmpt373/alpha : Production code<br />
+----------------vrcladder : Business logic and database<br />
+--------------------exceptions : RuntimeExceptions that can occur in the program<br />
+--------------------ladder : Ladder and ladder sorting data structure<br />
+--------------------matchmaking : Grouping teams into MatchGroups and MatchGroup interface with database<br />
+------------------------logic : Sorting MatchGroups onto courts and determines times of play<br />
+--------------------persistence : Database<br />
+--------------------scores : Structure for MatchGroup's scores<br />
+--------------------teams : Team data structure and Team interface with database<br />
+------------------------attendance : Team attendance data structure<br />
+--------------------users : User data structure and User interface with database<br />
+------------------------authentication : Determines if they have permission to perform an action<br />
+------------------------authorization : Figures out who a User is<br />
+------------------------personal : Data structures for fields of Users<br />
+--------------------util : Utility support files<br />
+----------------vrcrest : Rest API<br />
+--------------------datatransfer : Translates to and from JSON<br />
+------------------------requests : Turns incoming JSON bodies into internal data structures<br />
+------------------------responses : Turns internal data structures into outgoing JSON bodies<br />
+--------------------routes : Methods that are automatically called by Spark with HTTP Requests<br />
+--------test : Debug code and supporting files<br />
