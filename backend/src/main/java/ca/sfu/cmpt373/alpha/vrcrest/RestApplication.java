@@ -19,7 +19,6 @@ import spark.servlet.SparkApplication;
 
 import java.security.Key;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 
@@ -63,7 +62,8 @@ public class RestApplication implements SparkApplication {
                 appManager.getCourtManager());
         LadderRouter ladderRouter = new LadderRouter(
                 appManager.getTeamManager(),
-                appManager.getMatchGroupManager());
+                appManager.getMatchGroupManager(),
+                appManager.getCourtManager());
         List<RestRouter> routers = Arrays.asList(loginRouter, userRouter, teamRouter, matchGroupRouter, ladderRouter);
         restApi = new RestApi(appManager, routers);
     }

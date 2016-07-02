@@ -12,6 +12,7 @@ import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
 
 /**
  * Provides interface to create and manage Sessions (connections) to the database (data source).
@@ -21,8 +22,7 @@ public class SessionManager {
     private SessionFactory sessionFactory;
 
     public SessionManager() {
-        StandardServiceRegistry serviceRegistry = buildServiceRegistry();
-        sessionFactory = buildSessionFactory(serviceRegistry);
+        sessionFactory = buildSessionFactory();
     }
 
     public void shutDown() {
@@ -35,31 +35,26 @@ public class SessionManager {
         return sessionFactory.openSession();
     }
 
-    private StandardServiceRegistry buildServiceRegistry() {
-        StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder()
-            .configure()
-            .enableAutoClose();
-
-        return serviceRegistryBuilder.build();
+    private SessionFactory buildSessionFactory() {
+        return new Configuration().configure()
+                .addAnnotatedClass(AttendanceCard.class)
+                .addAnnotatedClass(MatchGroup.class)
+                .addAnnotatedClass(ScoreCard.class)
+                .addAnnotatedClass(Team.class)
+                .addAnnotatedClass(User.class)
+                .addAnnotatedClass(Court.class)
+//                .setProperty("hibernate.connection.url", )
+                .buildSessionFactory();
     }
 
-    private SessionFactory buildSessionFactory(StandardServiceRegistry serviceRegistry) {
-        MetadataSources metadataSources = addAnnotatedClasses(serviceRegistry);
-        Metadata metadata = metadataSources.buildMetadata();
+//    public String getRemoteConnectionUrl() {
+//String dbName = System.getProperty("RDS_DB_NAME");
+//    String userName = System.getProperty("RDS_USERNAME");
+//    String password = System.getProperty("RDS_PASSWORD");
+//    String hostname = System.getProperty("RDS_HOSTNAME");
+//    String port = System.getProperty("RDS_PORT");
+    //    String jdbcUrl = "jdbc:postgresql://" + hostname + ":" + port + "/" + dbName + "?user=" + userName + "&password=" + password;
 
-        return metadata.buildSessionFactory();
-    }
-
-    private MetadataSources addAnnotatedClasses(StandardServiceRegistry serviceRegistry) {
-        MetadataSources metadataSources = new MetadataSources(serviceRegistry)
-            .addAnnotatedClass(AttendanceCard.class)
-            .addAnnotatedClass(MatchGroup.class)
-            .addAnnotatedClass(ScoreCard.class)
-            .addAnnotatedClass(Team.class)
-            .addAnnotatedClass(User.class)
-            .addAnnotatedClass(Court.class);
-
-        return metadataSources;
-    }
+//    }
 
 }
