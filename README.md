@@ -40,12 +40,14 @@ These are the two folders in the root folder of the project
     	sudo apt-get install libvips
     	npm install
 
-4) Start local development server:
+4) Start local development server (If you want to use it locally):
 
     	npm run dev
 
 
-5) Run the production build
+OR
+
+5) Run the production build (If you want to host it online):
 
     	npm run build
 
@@ -63,11 +65,13 @@ These are the two folders in the root folder of the project
 
     	npm install
 
-3) Start local development server:
+3) Start local development server (If you want to use it locally):
 
     	npm run dev
 
-4) Run the production build
+OR
+
+4) Run the production build (If you want to host it online):
 
     	npm run build
 
