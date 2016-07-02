@@ -2,11 +2,14 @@ import {createElement, Element} from 'react';
 import {Provider} from 'react-redux';
 import {IntlProvider} from 'react-intl';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
+import {Button, ButtonToolbar} from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
+import {getUser} from './action/users';
+import {getTeams} from './action/teams';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import CreateTeam from './component/create-team/create-team';
-import {Button, ButtonToolbar} from 'react-bootstrap';
-import {LinkContainer} from 'react-router-bootstrap';
+import LogIn from './component/login/login';
 
 const Layout = ({children}) => (
   <div>
@@ -15,11 +18,14 @@ const Layout = ({children}) => (
         <LinkContainer to='/signup'>
           <Button>Sign up</Button>
         </LinkContainer>
-        <LinkContainer to='/ladder'>
+        <LinkContainer to='/'>
           <Button>Ladder</Button>
         </LinkContainer>
         <LinkContainer to='/create-team'>
           <Button>Create team</Button>
+        </LinkContainer>
+        <LinkContainer to='/login'>
+          <Button>Log In</Button>
         </LinkContainer>
       </ButtonToolbar>
       </div>
@@ -34,9 +40,15 @@ export default ({store}) : Element => (
     <IntlProvider messages={{}} defaultLocale='en-US'>
       <Router history={browserHistory}>
         <Route path='/' component={Layout}>
-          <IndexRoute component={Ladder}/>
+          <IndexRoute
+            component={Ladder}
+            onEnter={(nextState, replace, callback) => {
+              store.dispatch(getUser()).then(callback);
+              store.dispatch(getTeams()).then(callback);
+            }}
+          />
           <Route path='/signup' component={SignUp}/>
-          <Route path='/ladder' component={Ladder}/>
+          <Route path='/login' component={LogIn}/>
           <Route path='/create-team' component={CreateTeam}/>
         </Route>
       </Router>

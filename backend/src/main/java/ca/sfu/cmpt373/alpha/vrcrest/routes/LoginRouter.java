@@ -19,11 +19,11 @@ import javax.persistence.EntityNotFoundException;
 
 public class LoginRouter extends RestRouter {
 
+    public static final String HEADER_ACCESS = "Access-Control-Allow-Origin";
+    public static final String HEADER_ACCESS_VALUE = "*";
     public static final String ROUTE_LOGIN = "/login";
 
     private static final String JSON_PROPERTY_AUTHORIZATION_TOKEN = "authorizationToken";
-
-    private static final String ERROR_INVALID_CREDENTIALS = "Invalid credentials (user ID or password).";
 
     private SecurityManager securityManager;
     private UserManager userManager;
@@ -48,7 +48,7 @@ public class LoginRouter extends RestRouter {
 
     private String handleLogin(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-
+        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
         try {
             LoginPayload loginPayload = getGson().fromJson(request.body(), LoginPayload.class);
 
@@ -65,7 +65,7 @@ public class LoginRouter extends RestRouter {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
         } catch (AuthenticationException | EntityNotFoundException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_INVALID_CREDENTIALS);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.UNAUTHORIZED_401);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);

@@ -1,16 +1,20 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.authentication;
 
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
-import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.DefaultClaims;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.apache.shiro.authc.credential.PasswordService;
+import org.apache.shiro.authz.AuthorizationException;
 
 import java.security.Key;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,16 +22,16 @@ public class SecurityManager {
 
     public static final int HASH_WIDTH = 92;
 
+    private static final String ERROR_INVALID_CREDENTIALS = "Invalid credentials (user ID or password).";
+    private static final String ERROR_INVALID_TOKEN = "The provided authorization token is not valid";
+    private static final String ERROR_EXPIRED_TOKEN = "The provided authorization token has expired.";
+
     private static final String HEADER_PROPERTY_TYPE = "typ";
     private static final String HEADER_PROPERTY_ALGORITHM = "alg";
 
-    private static final String CLAIM_PROPERTY_SUBJECT = "sub";
-    private static final String CLAIM_PROPERTY_USER_ROLE = "role";
-    private static final String CLAIM_PROPERTY_EXPIRY_TIME = "exp";
-
     private static final String TOKEN_TYPE = "JWT";
-    private static final int SECONDS_CONVERSION_DIVIDER = 1000;
-    private static final int SESSION_LENGTH_IN_SECONDS = 3600;
+    private static final int TTL_IN_SECONDS = 3600;
+    private static final int MILLISECONDS_TO_SECONDS_MULTIPLIER = 1000;
 
     private PasswordService passwordService;
     private SignatureAlgorithm signatureAlgorithm;
@@ -43,10 +47,31 @@ public class SecurityManager {
         Password password = user.getPassword();
 
         if (!doesPasswordMatch(plaintextPassword, password)) {
-            throw new AuthenticationException();
+            throw new AuthenticationException(ERROR_INVALID_CREDENTIALS);
         }
 
         return createAuthorizationToken(user);
+    }
+
+    /**
+     * Validate the provided authorization token by first parsing it to a JSON web token format.
+     * The expiration time of the JSON web token is then validated (not expired), the subject
+     * (User ID) is then returned if still valid.
+     */
+    public UserId parseToken(String authorizationToken) {
+        Jwt jsonWebToken;
+        try {
+            jsonWebToken = parseAuthorizationToken(authorizationToken);
+        } catch (ExpiredJwtException ex) {
+            throw new AuthorizationException(ERROR_EXPIRED_TOKEN);
+        } catch (Exception ex) {
+            throw new AuthorizationException(ERROR_INVALID_TOKEN);
+        }
+
+        Claims containedClaims = (Claims) jsonWebToken.getBody();
+        String subject = containedClaims.getSubject();
+
+        return new UserId(subject);
     }
 
     public Password hashPassword(String plaintext) {
@@ -76,20 +101,23 @@ public class SecurityManager {
         return headers;
     }
 
-    private Map<String, Object> createClaims(User user) {
-        Map<String, Object> claims = new HashMap<>();
+    private Claims createClaims(User user) {
+        Claims claims = new DefaultClaims();
 
         UserId userId = user.getUserId();
-        claims.put(CLAIM_PROPERTY_SUBJECT, userId.getValue());
+        claims.setSubject(userId.getValue());
 
-        UserRole userRole = user.getUserRole();
-        claims.put(CLAIM_PROPERTY_USER_ROLE, userRole.name());
-
-        long expirationTime = (Calendar.getInstance().getTimeInMillis() / SECONDS_CONVERSION_DIVIDER) +
-            SESSION_LENGTH_IN_SECONDS;
-        claims.put(CLAIM_PROPERTY_EXPIRY_TIME, expirationTime);
+        Date expirationDate = new Date();
+        expirationDate.setTime(expirationDate.getTime() + (TTL_IN_SECONDS * MILLISECONDS_TO_SECONDS_MULTIPLIER));
+        claims.setExpiration(expirationDate);
 
         return claims;
+    }
+
+    private Jwt parseAuthorizationToken(String authorizationToken) {
+        return Jwts.parser()
+            .setSigningKey(signatureKey)
+            .parse(authorizationToken);
     }
 
 }

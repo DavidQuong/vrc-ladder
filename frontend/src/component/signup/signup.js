@@ -1,29 +1,35 @@
 import {createElement, Element} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
-import {createAction} from 'redux-actions';
 import {reduxForm} from 'redux-form';
 import {SubmitBtn} from '../button';
+import {withRouter} from 'react-router';
+import {addUser} from '../../action/users';
+
 import styles from './signup.css';
 import Heading from '../heading/heading';
-import findIndex from 'lodash/fp/findIndex';
 import isEmpty from 'lodash/fp/isEmpty';
 import classNames from 'classnames';
 
-const validate = (values, {players} ) => {
+const validate = (values) => {
   const errors = {};
+  if (!values.userId) {
+    errors.userId = 'Required';
+  }
   if (!values.firstName) {
     errors.firstName = 'Required';
   }
   if (!values.lastName) {
     errors.lastName = 'Required';
   }
-  if (!values.email) {
-    errors.email = 'Required';
-  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-    errors.email = 'Invalid email address';
-  } else if (findIndex(['email', values.email], players) !== -1) {
-    errors.email = 'Email already exist';
+  if (!values.emailAddress) {
+    errors.emailAddress = 'Required';
+  } else if
+  (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.emailAddress)) {
+    errors.emailAddress = 'Invalid email address';
+  }
+  if (!values.phoneNumber) {
+    errors.phoneNumber = 'Required';
   }
   if (!values.password) {
     errors.password = 'Password Required';
@@ -33,14 +39,69 @@ const validate = (values, {players} ) => {
   return errors;
 };
 
+const parseUser = (props) => {
+  const user = props;
+  delete user.confirmPassword;
+  return ({
+    ...user,
+    userRole: 'PLAYER',
+    middleName: '',
+  });
+};
+
 const formEnhancer = reduxForm({
   form: 'signUp',
-  fields: ['firstName', 'lastName', 'email', 'password', 'confirmPassword'],
+  fields: [
+    'userId',
+    'firstName',
+    'lastName',
+    'emailAddress',
+    'phoneNumber',
+    'password',
+    'confirmPassword'],
   validate,
 });
 
+const FormError = ({touched, error}) => {
+  if (touched && error) {
+    return (
+      <div className={classNames(styles.errorMsg)}>
+        <Heading kind='error'>
+          {error}
+        </Heading>
+      </div>
+    );
+  }
+  return null;
+};
+
+const Input = (props) => {
+  return (
+    <input
+      {...props}
+      className={classNames(
+        styles.goodForm, {
+          [styles.errorForm]: props.error && props.touched,
+        },
+        props.className
+      )}
+    />
+  );
+};
+
+// const Foo = (props) => <div>{props.message}</div>;
+// const Foo = ({message}) => <div>{message}</div>;
+// <Foo message='...'/>
+
 const BaseSignUpForm = ({
-  fields: {firstName, lastName, email, password, confirmPassword},
+  fields: {
+    userId,
+    firstName,
+    lastName,
+    emailAddress,
+    phoneNumber,
+    password,
+    confirmPassword},
   handleSubmit,
 }) => (
   <form
@@ -52,23 +113,32 @@ const BaseSignUpForm = ({
         className={classNames(styles.colXsTitle)}
       >
         <FormattedMessage
+          id='userID'
+          defaultMessage='Your ID #'
+        />
+      </label>
+      <Input
+        type='text'
+        placeholder='Id #'
+        {...userId}
+      />
+      <FormError {...userId}/>
+    </div>
+    <div className={classNames(styles.formGroup)}>
+      <label
+        className={classNames(styles.colXsTitle)}
+      >
+        <FormattedMessage
           id='firstName'
           defaultMessage='First Name'
         />
       </label>
-      <input
-        className={classNames(styles.goodForm, {
-          [styles.errorForm]: firstName.error && firstName.touched})}
+      <Input
         type='text'
         placeholder='First Name'
         {...firstName}
       />
-      {firstName.touched && firstName.error &&
-        <div className={classNames(styles.errorMsg)}>
-          <Heading kind='error'>
-            {firstName.error}
-          </Heading>
-        </div>}
+      <FormError {...firstName}/>
     </div>
     <div className={classNames(styles.formGroup)}>
       <label
@@ -79,42 +149,44 @@ const BaseSignUpForm = ({
           defaultMessage='Last name'
         />
       </label>
-      <input
-        className={classNames(styles.goodForm, {
-          [styles.errorForm]: lastName.error && lastName.touched})}
+      <Input
         type='text'
         placeholder='Last Name'
         {...lastName}
       />
-      {lastName.touched && lastName.error &&
-        <div className={classNames(styles.errorMsg)}>
-          <Heading kind='error'>
-            {lastName.error}
-          </Heading>
-        </div>}
+      <FormError {...lastName}/>
     </div>
     <div className={classNames(styles.formGroup)}>
       <label
         className={classNames(styles.colXsTitle)}
       >
         <FormattedMessage
-          id='email'
+          id='emailAddress'
           defaultMessage='Email'
         />
       </label>
-      <input
-        className={classNames(styles.goodForm, {
-          [styles.errorForm]: email.error && email.touched})}
+      <Input
         type='text'
         placeholder='Email'
-        {...email}
+        {...emailAddress}
       />
-      {email.touched && email.error &&
-        <div className={classNames(styles.errorMsg)}>
-          <Heading kind='error'>
-            {email.error}
-          </Heading>
-        </div>}
+      <FormError {...emailAddress}/>
+    </div>
+    <div className={classNames(styles.formGroup)}>
+      <label
+        className={classNames(styles.colXsTitle)}
+      >
+        <FormattedMessage
+          id='phoneNumber'
+          defaultMessage='Your Phone Number'
+        />
+      </label>
+      <Input
+        type='text'
+        placeholder='6041234567'
+        {...phoneNumber}
+      />
+      <FormError {...phoneNumber}/>
     </div>
     <div className={classNames(styles.formGroup)}>
       <label
@@ -168,11 +240,9 @@ const BaseSignUpForm = ({
 
 const SignUpForm = formEnhancer(BaseSignUpForm);
 
-const addPlayer = createAction('PLAYER_ADD');
-
-const SignUp = ({
-  addPlayer,
-  players,
+const SignUp = withRouter(({
+  addUser,
+  router,
 }) : Element => (
   <div className={styles.signup}>
     <Heading kind='huge'>
@@ -183,22 +253,25 @@ const SignUp = ({
     </Heading>
     <SignUpForm
       onSubmit={(props) => {
-        const errors = validate(props, {players});
+        const errors = validate(props);
+        const userInfo = parseUser(props);
         if (!isEmpty(errors)) {
           return Promise.reject(errors);
         }
-        addPlayer({
-          ...props,
+        return addUser(userInfo).then(() => {
+          router.push('/');
+        }).catch((errors) => {
+          // TODO: Error object to expected.
+          return Promise.reject(errors);
         });
-        return Promise.resolve();
       }}
     />
   </div>
-);
+));
 
 export default connect(
   (state) => ({
     players: state.app.players,
   }),
-  {addPlayer}
+  {addUser}
 )(SignUp);
