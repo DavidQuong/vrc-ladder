@@ -44,12 +44,13 @@ These are the two folders in the root folder of the project
 
     	npm run dev
 
-
 OR
 
 5) Run the production build (If you want to host it online):
 
     	npm run build
+    	
+6) Your default browser will open. Wait until the command line process finishes, then refresh the page in your default browser.
 
 #### Instructions (For OS X):
 1) Start a terminal session in the frontend directory (\<project-dir\>/frontend)
@@ -74,6 +75,8 @@ OR
 4) Run the production build (If you want to host it online):
 
     	npm run build
+    	
+5) Your default browser will open. Wait until the command line process finishes, then refresh the page in your default browser.
 
 #### Citations:
 All webpack settings, and redux settings are from various guides online. Below is a list of online resources that were read or used.
