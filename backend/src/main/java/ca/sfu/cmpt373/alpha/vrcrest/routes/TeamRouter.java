@@ -42,7 +42,7 @@ public class TeamRouter extends RestRouter {
     public static final String JSON_PROPERTY_TEAM = "team";
     public static final String JSON_PROPERTY_ATTENDANCE = "attendance";
 
-    private static final List<RouteSignature> PUBLIC_ROUTE_SIGNATURES = createRouteSignature();
+    private static final List<RouteSignature> PUBLIC_ROUTE_SIGNATURES = createPublicRouteSignatures();
 
     private static final String ERROR_PLAYER_ID_NOT_FOUND = "One of the provided player ID's cannot be found.";
     private static final String ERROR_EXISTING_TEAM = "The provided pair of player's already form a team.";
@@ -69,16 +69,16 @@ public class TeamRouter extends RestRouter {
 
     @Override
     public List<RouteSignature> getPublicRouteSignatures() {
-        return Collections.unmodifiableList(PUBLIC_ROUTE_SIGNATURES);
+        return PUBLIC_ROUTE_SIGNATURES;
     }
 
-    private static List<RouteSignature> createRouteSignature() {
+    private static List<RouteSignature> createPublicRouteSignatures() {
         List<RouteSignature> routeSignatures = new ArrayList<>();
 
         RouteSignature createUserSignature = new RouteSignature(ROUTE_TEAMS, HttpMethod.get);
         routeSignatures.add(createUserSignature);
 
-        return routeSignatures;
+        return Collections.unmodifiableList(routeSignatures);
     }
 
     @Override

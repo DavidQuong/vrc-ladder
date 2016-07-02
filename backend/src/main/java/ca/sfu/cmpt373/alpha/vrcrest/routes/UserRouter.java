@@ -41,7 +41,7 @@ public class UserRouter extends RestRouter {
     private static final String ERROR_UNAUTHORIZED_OTHER_USERS = "This user is not authorized to access or modify " +
         "other user's data.";
 
-    private static final List<RouteSignature> PUBLIC_ROUTE_SIGNATURES = createRouteSignature();
+    private static final List<RouteSignature> PUBLIC_ROUTE_SIGNATURES = createPublicRouteSignatures();
 
     private SecurityManager securityManager;
     private UserManager userManager;
@@ -63,16 +63,16 @@ public class UserRouter extends RestRouter {
 
     @Override
     public List<RouteSignature> getPublicRouteSignatures() {
-        return Collections.unmodifiableList(PUBLIC_ROUTE_SIGNATURES);
+        return PUBLIC_ROUTE_SIGNATURES;
     }
 
-    private static List<RouteSignature> createRouteSignature() {
+    private static List<RouteSignature> createPublicRouteSignatures() {
         List<RouteSignature> routeSignatures = new ArrayList<>();
 
         RouteSignature createUserSignature = new RouteSignature(ROUTE_USERS, HttpMethod.get);
         routeSignatures.add(createUserSignature);
 
-        return routeSignatures;
+        return Collections.unmodifiableList(routeSignatures);
     }
 
     @Override
