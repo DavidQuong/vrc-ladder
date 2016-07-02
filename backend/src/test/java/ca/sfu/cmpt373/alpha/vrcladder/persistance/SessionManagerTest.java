@@ -6,6 +6,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
+import ca.sfu.cmpt373.alpha.vrcladder.util.ConfigurationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockUserGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
@@ -24,7 +25,7 @@ public class SessionManagerTest {
 
     @Before
     public void setUp() {
-        sessionManager = new SessionManager();
+        sessionManager = new SessionManager(new ConfigurationManager());
 
         userFixture = MockUserGenerator.generatePlayer();
         saveOrUpdateUser(userFixture);
