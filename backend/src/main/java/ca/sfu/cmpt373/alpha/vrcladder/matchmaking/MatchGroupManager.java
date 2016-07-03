@@ -62,22 +62,12 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
         return deleteById(matchGroupId);
     }
 
-    public MatchGroup addTeamToMatchGroup(IdType matchGroupId, Team newTeam) {
+    public MatchGroup setTeamsInMatchGroup(IdType matchGroupId, List<Team> newTeams) {
         MatchGroup matchGroup = getById(matchGroupId);
         if (matchGroup == null) {
             throw new EntityNotFoundException(ERROR_NO_MATCH_GROUP);
         }
-        matchGroup.addTeam(newTeam);
-
-        return update(matchGroup);
-    }
-
-    public MatchGroup removeTeamFromMatchGroup(IdType matchGroupId, Team leavingTeam) {
-        MatchGroup matchGroup = getById(matchGroupId);
-        if (matchGroup == null) {
-            throw new EntityNotFoundException(ERROR_NO_MATCH_GROUP);
-        }
-        matchGroup.removeTeam(leavingTeam);
+        matchGroup.setTeams(newTeams);
 
         return update(matchGroup);
     }

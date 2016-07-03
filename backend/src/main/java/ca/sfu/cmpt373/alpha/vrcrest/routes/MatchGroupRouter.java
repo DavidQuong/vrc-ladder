@@ -58,9 +58,8 @@ public class MatchGroupRouter extends RestRouter {
     public static final String ROUTE_MATCHGROUP_ID = ROUTE_MATCHGROUP + "/" + PARAM_ID;
     public static final String ROUTE_MATCHGROUP_SCORES = ROUTE_MATCHGROUP + "/" + PARAM_ID + "/scores";
     public static final String ROUTE_MATCH_SCHEDULE = ROUTE_MATCHGROUPS + "/schedule";
-    public static final String ROUTE_MATCHGROUP_ADD_TEAM = ROUTE_MATCHGROUP + "/" + PARAM_MATCHGROUP_ID + "/add/" + PARAM_TEAM_ID;
+    public static final String ROUTE_MATCHGROUP_UPDATE_MATCHGROUP = ROUTE_MATCHGROUP + "/update";
     public static final String ROUTE_MATCHGROUPS_TRADE_TEAMS = ROUTE_MATCHGROUPS + "/trade/" + PARAM_MATCHGROUP_ID + "/" + PARAM_TEAM_ID + "/with/" + PARAM_MATCHGROUP_OTHER_ID + "/" + PARAM_TEAM_OTHER_ID;
-    public static final String ROUTE_MATCHGROUP_REMOVE_TEAM = ROUTE_MATCHGROUP + "/" + PARAM_MATCHGROUP_ID + "/remove/" + PARAM_TEAM_ID;
 
     private static final String JSON_PROPERTY_MATCHGROUPS = "matchGroups";
     private static final String JSON_PROPERTY_MATCHGROUP = "matchGroup";
@@ -79,10 +78,9 @@ public class MatchGroupRouter extends RestRouter {
         Spark.put(ROUTE_MATCHGROUP_SCORES, this::handleUpdateMatchGroupScores);
         Spark.delete(ROUTE_MATCHGROUP_ID, this::handleDeleteMatchGroup);
         Spark.post(ROUTE_MATCHGROUP_GENERATION, this::handleGenerateMatchGroups);
-        Spark.put(ROUTE_MATCHGROUP_ADD_TEAM, this::handleAddMatchGroupTeam);
+        Spark.put(ROUTE_MATCHGROUP_UPDATE_MATCHGROUP, this::handleUpdateMatchGroupTeams);
         Spark.get(ROUTE_MATCHGROUP_SCORES, this::handleGetMatchGroupScores);
         Spark.put(ROUTE_MATCHGROUPS_TRADE_TEAMS, this::handleSwapMatchGroupTeams);
-        Spark.put(ROUTE_MATCHGROUP_REMOVE_TEAM, this::handleRemoveMatchGroupTeam);
     }
 
     @Override
@@ -234,7 +232,7 @@ public class MatchGroupRouter extends RestRouter {
         return responseBody.toString();
     }
 
-    private String handleAddMatchGroupTeam(Request request, Response response) {
+    /*private String handleAddMatchGroupTeam(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
         response.type(JSON_RESPONSE_TYPE);
         try {
@@ -243,6 +241,26 @@ public class MatchGroupRouter extends RestRouter {
 
             Team teamToAdd = teamManager.getById(new GeneratedId(paramTeamId1));
             matchGroupManager.addTeamToMatchGroup(new GeneratedId(paramMatchGroupId1), teamToAdd);
+        } catch (EntityNotFoundException e) {
+            response.status(HttpStatus.NOT_FOUND_404);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_TEAM_MATCHGROUP_FOUND);
+        } catch (IllegalStateException e) {
+            //This occurs if a Team is added, and there's already the max # of players
+            response.status(HttpStatus.BAD_REQUEST_400);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
+        }
+        return responseBody.toString();
+    }*/
+
+    private String handleUpdateMatchGroupTeams(Request request, Response response) {
+        JsonObject responseBody = new JsonObject();
+        response.type(JSON_RESPONSE_TYPE);
+        try {
+            String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_ID);
+            String paramTeamId1 = request.params(PARAM_TEAM_ID);
+
+            Team teamToAdd = teamManager.getById(new GeneratedId(paramTeamId1));
+            matchGroupManager.setTeamsInMatchGroup(new GeneratedId(paramMatchGroupId1), teamToAdd);
         } catch (EntityNotFoundException e) {
             response.status(HttpStatus.NOT_FOUND_404);
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_TEAM_MATCHGROUP_FOUND);
@@ -276,7 +294,7 @@ public class MatchGroupRouter extends RestRouter {
         return responseBody.toString();
     }
 
-    private String handleRemoveMatchGroupTeam(Request request, Response response) {
+    /*private String handleRemoveMatchGroupTeam(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
         response.type(JSON_RESPONSE_TYPE);
         try {
@@ -294,5 +312,5 @@ public class MatchGroupRouter extends RestRouter {
             responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
         }
         return responseBody.toString();
-    }
+    }*/
 }

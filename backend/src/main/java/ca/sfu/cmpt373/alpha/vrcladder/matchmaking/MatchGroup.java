@@ -189,26 +189,13 @@ public class MatchGroup implements Comparable<MatchGroup> {
         return id.hashCode();
     }
 
-    void addTeam(Team newTeam) {
-        if(this.teams.size() < MAX_NUM_TEAMS) {
-            if (teams.contains(newTeam)) {
-                throw new IllegalStateException(ERROR_TEAM_ALREADY_EXISTS);
-            }
-            this.teams.add(newTeam);
-            Collections.sort(teams, getTeamLadderPositionComparator());
-        } else {
-            throw new IllegalStateException(ERROR_TOO_MANY_TEAMS);
-        }
-    }
-
-    void removeTeam(Team leavingTeam) {
-        if(this.teams.size() > MIN_NUM_TEAMS) {
-            if (!teams.contains(leavingTeam)) {
-                throw new IllegalStateException(ERROR_NO_TEAM_EXISTS);
-            }
-            this.teams.remove(leavingTeam);
-        } else {
+    void setTeams(List<Team> newTeams) {
+        if(newTeams.size() < MIN_NUM_TEAMS) {
             throw new IllegalStateException(ERROR_NOT_ENOUGH_TEAMS);
+        } else if(newTeams.size() > MAX_NUM_TEAMS) {
+            throw new IllegalStateException(ERROR_TOO_MANY_TEAMS);
+        } else {
+            this.teams = newTeams;
         }
     }
 
