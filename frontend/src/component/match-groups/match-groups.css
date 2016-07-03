@@ -11,12 +11,12 @@
 
 .matchGroupPage {
   font-family: 'Oxygen', sans-serif;
-  color: #FFFFFF;
-  background-color: #005692;
+  color: #9ca4ab;
   padding: 20px;
 }
 
 .matchGroupTop{
+
 }
 
 .matchGroupTitle {
@@ -24,17 +24,42 @@
   font-weight: normal;
   font-size: 30px;
   padding-left: 25px;
-  color: #FFFFFF;
-  background-color: #005692;
+  margin: 25px;
+  margin-left: 2.5%;
+  width: 80%;
+  color: #EEE;
+  background-color: #01BA08;
+}
+
+.matchGroupCourt{
+  font-family: 'Oxygen', sans-serif;
+  font-size: 22px;
+  font-weight: normal;
+  color: #EEE;
+  margin: 0px;
+  background-color: #01B808;
+  padding: 1%;
+}
+
+.matchGroupInfo{
+  margin-top: 2%;
+  margin-left: 1%;
+}
+
+.matchGroupResultsFORM{
+  margin-left: 5%;
+    display: inline-block;
 }
 
 .matchGroup{
   font-family: 'Oxygen', sans-serif;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: lighter;
-  color: #FFFFFF;
-  background-color: #222222;
-  margin: 25px;
-  padding : 50px;
+  color: #111;
+  background-color: #fdf9f3;
+  margin-bottom: 0.8%;
+  margin-left: 2.5%;
+  padding: 1%;
+  width: 80%;
   display: inline-block;
 }
