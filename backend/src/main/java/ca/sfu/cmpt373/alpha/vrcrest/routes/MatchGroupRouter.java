@@ -112,7 +112,6 @@ public class MatchGroupRouter extends RestRouter {
         JsonObject responseBody = new JsonObject();
         List<MatchGroup> matchGroups = matchGroupManager.getAll();
         responseBody.add(JSON_PROPERTY_MATCHGROUPS, getGson().toJsonTree(matchGroups));
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
@@ -120,13 +119,11 @@ public class MatchGroupRouter extends RestRouter {
         JsonObject responseBody = new JsonObject();
         List<Court> courts = courtManager.getAll();
         responseBody.add(JSON_PROPERTY_COURTS, getGson().toJsonTree(courts));
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
     private String handleGetMatchGroupById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.type(JSON_RESPONSE_TYPE);
         try {
             String matchGroupIdParam = request.params(PARAM_ID);
 
@@ -145,7 +142,6 @@ public class MatchGroupRouter extends RestRouter {
 
     private String handleGenerateMatchGroups(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.type(JSON_RESPONSE_TYPE);
         try {
             courtManager.deleteAll();
             matchGroupManager.deleteAll();
@@ -172,7 +168,6 @@ public class MatchGroupRouter extends RestRouter {
 
     private String handleUpdateMatchGroupScores(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.type(JSON_RESPONSE_TYPE);
         try {
             String matchGroupIdParam = request.params(PARAM_ID);
             MatchGroup matchGroup = matchGroupManager.getById(new GeneratedId(matchGroupIdParam));
@@ -211,7 +206,6 @@ public class MatchGroupRouter extends RestRouter {
 
     private String handleGetMatchGroupScores(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.type(JSON_RESPONSE_TYPE);
         try {
             String matchGroupIdParam = request.params(PARAM_ID);
             MatchGroup matchGroup = matchGroupManager.getById(new GeneratedId(matchGroupIdParam));
@@ -230,7 +224,6 @@ public class MatchGroupRouter extends RestRouter {
 
     private String handleDeleteMatchGroup(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.type(JSON_RESPONSE_TYPE);
         try {
             String matchGroupIdParam = request.params(PARAM_ID);
             matchGroupManager.deleteById(new GeneratedId(matchGroupIdParam));
@@ -244,7 +237,6 @@ public class MatchGroupRouter extends RestRouter {
 
     private String handleAddMatchGroupTeam(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.type(JSON_RESPONSE_TYPE);
         try {
             String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_ID);
             String paramTeamId1 =  request.params(PARAM_TEAM_ID);

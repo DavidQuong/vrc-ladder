@@ -9,7 +9,6 @@ public abstract class RestRouter {
 
     public static final String PARAM_ID = ":id";
 
-    public static final String JSON_RESPONSE_TYPE = "application/json";
     public static final String JSON_PROPERTY_ERROR = "error";
 
     protected static final String ERROR_COULD_NOT_COMPLETE_REQUEST = "Request could not be completed.";
