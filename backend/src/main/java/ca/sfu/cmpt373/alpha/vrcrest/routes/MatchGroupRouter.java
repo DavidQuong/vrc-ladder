@@ -16,6 +16,7 @@ import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.ScoreCardPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.CourtSerializer;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.MatchGroupSerializer;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.ScoreCardSerializer;
+import ca.sfu.cmpt373.alpha.vrcrest.security.RouteSignature;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -29,6 +30,7 @@ import spark.Spark;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MatchGroupRouter extends RestRouter {
@@ -88,6 +90,11 @@ public class MatchGroupRouter extends RestRouter {
         Spark.get(ROUTE_MATCHGROUP_SCORES, this::handleGetMatchGroupScores);
         Spark.put(ROUTE_MATCHGROUPS_TRADE_TEAMS, this::handleSwapMatchGroupTeams);
         Spark.put(ROUTE_MATCHGROUP_REMOVE_TEAM, this::handleRemoveMatchGroupTeam);
+    }
+
+    @Override
+    public List<RouteSignature> getPublicRouteSignatures() {
+        return Collections.emptyList();
     }
 
     @Override

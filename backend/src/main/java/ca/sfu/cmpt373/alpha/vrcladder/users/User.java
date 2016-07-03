@@ -8,6 +8,8 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.AuthorizationException;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -22,6 +24,7 @@ import javax.persistence.Table;
 public class User {
 
     private static final String DISPLAY_NAME_INITIAL_DOT = ". ";
+    private static final String ERROR_FORMAT_INVALID_AUTHORIZATION = "This user is not authorized to %s.";
 
     @EmbeddedId
     private UserId userId;
@@ -154,8 +157,11 @@ public class User {
         this.password = password;
     }
 
-    public boolean isPermittedToPerform(UserAction action) {
-        return userRole.hasAuthorizationToPerform(action);
+    public void checkPermission(UserAction action) {
+        if (!userRole.hasAuthorizationToPerform(action)) {
+            String errorMsg = String.format(ERROR_FORMAT_INVALID_AUTHORIZATION, action.name());
+            throw new AuthorizationException(errorMsg);
+        }
     }
 
     @Override

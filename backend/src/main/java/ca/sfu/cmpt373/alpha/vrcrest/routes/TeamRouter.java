@@ -11,6 +11,7 @@ import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewPlayTimePayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewTeamPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.AttendanceCardGsonSerializer;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.TeamGsonSerializer;
+import ca.sfu.cmpt373.alpha.vrcrest.security.RouteSignature;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -22,8 +23,11 @@ import org.hibernate.exception.ConstraintViolationException;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
+import spark.route.HttpMethod;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TeamRouter extends RestRouter {
@@ -40,6 +44,8 @@ public class TeamRouter extends RestRouter {
     public static final String JSON_PROPERTY_TEAMS = "teams";
     public static final String JSON_PROPERTY_TEAM = "team";
     public static final String JSON_PROPERTY_ATTENDANCE = "attendance";
+
+    private static final List<RouteSignature> PUBLIC_ROUTE_SIGNATURES = createPublicRouteSignatures();
 
     private static final String ERROR_PLAYER_ID_NOT_FOUND = "One of the provided player ID's cannot be found.";
     private static final String ERROR_EXISTING_TEAM = "The provided pair of player's already form a team.";
@@ -62,6 +68,20 @@ public class TeamRouter extends RestRouter {
         Spark.get(ROUTE_TEAM_ID_ATTENDANCE, this::handleGetTeamAttendance);
         Spark.put(ROUTE_TEAM_ID_ATTENDANCE_PLAYTIME, this::handleUpdatePlayTime);
         Spark.put(ROUTE_TEAM_ID_ATTENDANCE_STATUS, this::handleUpdateAttendanceStatus);
+    }
+
+    @Override
+    public List<RouteSignature> getPublicRouteSignatures() {
+        return PUBLIC_ROUTE_SIGNATURES;
+    }
+
+    private static List<RouteSignature> createPublicRouteSignatures() {
+        List<RouteSignature> routeSignatures = new ArrayList<>();
+
+        RouteSignature createUserSignature = new RouteSignature(ROUTE_TEAMS, HttpMethod.get);
+        routeSignatures.add(createUserSignature);
+
+        return Collections.unmodifiableList(routeSignatures);
     }
 
     @Override
