@@ -1,6 +1,8 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
@@ -8,6 +10,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewUserPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.UpdateUserPayload;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.TeamGsonSerializer;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.UserGsonSerializer;
 import ca.sfu.cmpt373.alpha.vrcrest.security.RouteSignature;
 import com.google.gson.Gson;
@@ -28,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static ca.sfu.cmpt373.alpha.vrcrest.routes.TeamRouter.JSON_PROPERTY_TEAMS;
+
 public class UserRouter extends RestRouter {
 
     public static final String HEADER_ACCESS = "Access-Control-Allow-Origin";
@@ -35,6 +40,7 @@ public class UserRouter extends RestRouter {
 
     public static final String ROUTE_USERS = "/users";
     public static final String ROUTE_USER_ID = "/user/" + PARAM_ID;
+    private static final String ROUTE_USER_ID_TEAMS = ROUTE_USER_ID + "/teams";
 
     public static final String JSON_PROPERTY_USERS = "users";
     public static final String JSON_PROPERTY_USER = "user";
@@ -48,11 +54,14 @@ public class UserRouter extends RestRouter {
 
     private SecurityManager securityManager;
     private UserManager userManager;
+    private TeamManager teamManager;
 
-    public UserRouter(SecurityManager securityManager, UserManager userManager) {
+    public UserRouter(SecurityManager securityManager, UserManager userManager, TeamManager teamManager) {
         super();
         this.securityManager = securityManager;
         this.userManager = userManager;
+        this.teamManager = teamManager;
+        this.teamManager = teamManager;
     }
 
     @Override
@@ -62,6 +71,7 @@ public class UserRouter extends RestRouter {
         Spark.get(ROUTE_USER_ID, this::handleGetUserById);
         Spark.put(ROUTE_USER_ID, this::handleUpdateUserById);
         Spark.delete(ROUTE_USER_ID, this::handleDeleteUserById);
+        Spark.get(ROUTE_USER_ID_TEAMS, this::handleGetAllTeamsForUser);
     }
 
     @Override
@@ -72,7 +82,7 @@ public class UserRouter extends RestRouter {
     private static List<RouteSignature> createPublicRouteSignatures() {
         List<RouteSignature> routeSignatures = new ArrayList<>();
 
-        RouteSignature createUserSignature = new RouteSignature(ROUTE_USERS, HttpMethod.get);
+        RouteSignature createUserSignature = new RouteSignature(ROUTE_USERS, HttpMethod.post);
         routeSignatures.add(createUserSignature);
 
         return Collections.unmodifiableList(routeSignatures);
@@ -81,6 +91,7 @@ public class UserRouter extends RestRouter {
     @Override
     protected Gson buildGson() {
         return new GsonBuilder()
+            .registerTypeAdapter(Team.class, new TeamGsonSerializer())
             .registerTypeAdapter(User.class, new UserGsonSerializer())
             .registerTypeAdapter(NewUserPayload.class, new NewUserPayload.GsonDeserializer())
             .registerTypeAdapter(UpdateUserPayload.class, new UpdateUserPayload.GsonDeserializer())
@@ -234,6 +245,18 @@ public class UserRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
+        response.type(JSON_RESPONSE_TYPE);
+        return responseBody.toString();
+    }
+
+    private String handleGetAllTeamsForUser(Request request, Response response) {
+        JsonObject responseBody = new JsonObject();
+
+        String userIdParam = request.params(PARAM_ID);
+        User user = userManager.getById(new UserId(userIdParam));
+
+        List<Team> teamsForUser = teamManager.getTeamsForUser(user);
+        responseBody.add(JSON_PROPERTY_TEAMS, getGson().toJsonTree(teamsForUser));
         response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }

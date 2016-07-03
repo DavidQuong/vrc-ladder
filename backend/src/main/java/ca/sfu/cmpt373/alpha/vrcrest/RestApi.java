@@ -11,6 +11,8 @@ import spark.Spark;
 
 import java.util.List;
 
+import static spark.route.HttpMethod.before;
+
 public class RestApi {
 
     public static final String ROUTE_WILDCARD = "/*";
