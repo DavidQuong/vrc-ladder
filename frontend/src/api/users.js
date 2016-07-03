@@ -1,7 +1,6 @@
-const root = 'http://localhost:4567/';
+const root = 'http://vrcladder.p76biyyfpm.us-west-2.elasticbeanstalk.com/';
 
 export const addUser = (user) => {
-//  console.log('Users :', user);
   return fetch(`${root}users`, {
     method: 'POST',
     body: JSON.stringify(user),
@@ -10,13 +9,17 @@ export const addUser = (user) => {
     if (response.ok) {
       return Promise.resolve(body);
     }
-//    console.log('response: ', response);
     return Promise.reject(body);
   });
 };
 
-export const getUser = () => {
-  return fetch(`${root}users`).then((response) => {
+export const getUser = (state) => {
+  return fetch(`${root}users`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: state.app.loggedIn.authorizationToken,
+    },
+  }).then((response) => {
     return response.json();
   });
 };

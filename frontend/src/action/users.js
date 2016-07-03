@@ -5,8 +5,9 @@ export const addUser = (user) => () => {
   return addUserAPI(user);
 };
 
-export const getUser =  () => (dispatch) => {
-  return getUserAPI().then((response) => {
+export const getUser =  () => (dispatch, getState) => {
+  const state = getState();
+  return getUserAPI(state).then((response) => {
     if (response.error) {
       return Promise.reject();
     }
