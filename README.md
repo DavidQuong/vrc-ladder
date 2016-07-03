@@ -127,12 +127,16 @@ frontend<br />
 #### Instructions:
 1) Start a terminal session in the backend directory (\<project-dir\>/backend)
 
-2) Run `gradle clean run`, or `gradlew clean run` if gradle is not installed on your machine
+2) Run `gradle clean run -Pconfiguration=debug`, or replace `gradle` with `gradlew` if gradle is not installed on your machine
+
+3) To run the application using the production database build, you'll have to use `gradle clean run -Pconfiguration=production`
+
+4) Note: if you're running the production build from your local machine, you must contact the team to add your IP Address to the list of authorized database IPs
 
 #### Amazon Web Services Deployment:
 1) Start a terminal session in the backend directory (\<project-dir\>/backend)
 
-2) Run `gradle war`, or `gradlew war` if gradle is not installed on your machine
+2) Run `gradle war -Pconfiguration=debug`, or replace `gradle` with `gradlew` if gradle is not installed on your machine
 
 3) Locate the generated WAR archive in the /build/libs directory
 
@@ -148,12 +152,15 @@ frontend<br />
 
 9) The rest of the settings can be left at their defaults
 
+Note that these instructions only apply for uploading the debug build to AWS. Running the production build requires setting up a database, then configuring the application to communicate with said database
+
 #### Citations:
 - src\main\java\ca\sfu\cmpt373\alpha\vrctextui\Menu.java: Idea based on design from Summer 2016 CMPT213 As0.
 - https://sparktutorials.github.io/2015/04/03/spark-lombok-jackson-reduce-boilerplate.html for dataToJSON method in RestDriver
 - src\test\java\ca\sfu\cmpt373\alpha\vrcladder\ladder\LadderTest.java:  Got way to get a sublist from http://beginnersbook.com/2013/12/how-to-get-sublist-of-an-arraylist-with-example/
 - src\test\java\ca\sfu\cmpt373\alpha\vrcladder\ladder\LadderTest.java:  Conversion from List to Array obtained from http://stackoverflow.com/questions/9572795/convert-list-to-array-in-java
 - src\test\java\ca\sfu\cmpt373\alpha\vrcladder\ladder\LadderMethodsTest.java: generatePermutations() implementation from: http://stackoverflow.com/questions/10305153/generating-all-possible-permutations-of-a-list-recursively
+- build-configurations\debug-config.gradle and production-config.gradle: generating resource properties file from Craig Trader: http://stackoverflow.com/questions/33020069/how-to-get-version-attribute-from-a-gradle-build-to-be-included-in-runtime-swing  
 
 #### Directory Structure Explanation
 backend<br />
