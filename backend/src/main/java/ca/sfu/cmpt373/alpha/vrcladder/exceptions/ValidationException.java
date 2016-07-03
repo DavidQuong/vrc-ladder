@@ -7,6 +7,10 @@ package ca.sfu.cmpt373.alpha.vrcladder.exceptions;
  */
 public class ValidationException extends BaseException {
 
+    public ValidationException() {
+        super();
+    }
+
     public ValidationException(String message) {
         super(message);
     }
