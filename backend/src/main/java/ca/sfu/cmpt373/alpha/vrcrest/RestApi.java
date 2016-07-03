@@ -70,6 +70,7 @@ public class RestApi {
             } catch (AuthorizationException ex) {
                 JsonObject responseBody = new JsonObject();
                 responseBody.addProperty(RestRouter.JSON_PROPERTY_ERROR, ex.getMessage());
+                response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
                 response.type(JSON_RESPONSE_TYPE);
                 Spark.halt(HttpStatus.UNAUTHORIZED_401, responseBody.toString());
             }
