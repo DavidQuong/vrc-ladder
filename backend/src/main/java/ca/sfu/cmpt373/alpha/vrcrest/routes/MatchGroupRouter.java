@@ -13,6 +13,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewTeamIdListPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.ScoreCardPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.CourtSerializer;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.MatchGroupSerializer;
@@ -58,7 +59,7 @@ public class MatchGroupRouter extends RestRouter {
     public static final String ROUTE_MATCHGROUP_ID = ROUTE_MATCHGROUP + "/" + PARAM_ID;
     public static final String ROUTE_MATCHGROUP_SCORES = ROUTE_MATCHGROUP + "/" + PARAM_ID + "/scores";
     public static final String ROUTE_MATCH_SCHEDULE = ROUTE_MATCHGROUPS + "/schedule";
-    public static final String ROUTE_MATCHGROUP_UPDATE_MATCHGROUP = ROUTE_MATCHGROUP + "/update";
+    public static final String ROUTE_MATCHGROUP_UPDATE_MATCHGROUP = ROUTE_MATCHGROUP + "/update/" + PARAM_MATCHGROUP_ID;
     public static final String ROUTE_MATCHGROUPS_TRADE_TEAMS = ROUTE_MATCHGROUPS + "/trade/" + PARAM_MATCHGROUP_ID + "/" + PARAM_TEAM_ID + "/with/" + PARAM_MATCHGROUP_OTHER_ID + "/" + PARAM_TEAM_OTHER_ID;
 
     private static final String JSON_PROPERTY_MATCHGROUPS = "matchGroups";
@@ -95,6 +96,7 @@ public class MatchGroupRouter extends RestRouter {
                 .registerTypeAdapter(Court.class, new CourtSerializer())
                 .registerTypeAdapter(ScoreCard.class, new ScoreCardSerializer())
                 .registerTypeAdapter(ScoreCardPayload.class, new ScoreCardPayload.GsonDeserializer())
+                .registerTypeAdapter(NewTeamIdListPayload.class, new NewTeamIdListPayload.GsonDeserializer())
                 .setPrettyPrinting()
                 .create();
     }
@@ -232,40 +234,25 @@ public class MatchGroupRouter extends RestRouter {
         return responseBody.toString();
     }
 
-    /*private String handleAddMatchGroupTeam(Request request, Response response) {
-        JsonObject responseBody = new JsonObject();
-        response.type(JSON_RESPONSE_TYPE);
-        try {
-            String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_ID);
-            String paramTeamId1 = request.params(PARAM_TEAM_ID);
-
-            Team teamToAdd = teamManager.getById(new GeneratedId(paramTeamId1));
-            matchGroupManager.addTeamToMatchGroup(new GeneratedId(paramMatchGroupId1), teamToAdd);
-        } catch (EntityNotFoundException e) {
-            response.status(HttpStatus.NOT_FOUND_404);
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_TEAM_MATCHGROUP_FOUND);
-        } catch (IllegalStateException e) {
-            //This occurs if a Team is added, and there's already the max # of players
-            response.status(HttpStatus.BAD_REQUEST_400);
-            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
-        }
-        return responseBody.toString();
-    }*/
-
     private String handleUpdateMatchGroupTeams(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
         response.type(JSON_RESPONSE_TYPE);
         try {
             String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_ID);
-            String paramTeamId1 = request.params(PARAM_TEAM_ID);
 
-            Team teamToAdd = teamManager.getById(new GeneratedId(paramTeamId1));
-            matchGroupManager.setTeamsInMatchGroup(new GeneratedId(paramMatchGroupId1), teamToAdd);
+            NewTeamIdListPayload newTeamPayload = getGson().fromJson(request.body(), NewTeamIdListPayload.class);
+
+            List<Team> newTeams = new ArrayList<>();
+            for(GeneratedId teamId : newTeamPayload.getTeamIds()) {
+                newTeams.add(teamManager.getById(teamId));
+            }
+
+            matchGroupManager.setTeamsInMatchGroup(new GeneratedId(paramMatchGroupId1), newTeams);
         } catch (EntityNotFoundException e) {
             response.status(HttpStatus.NOT_FOUND_404);
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_TEAM_MATCHGROUP_FOUND);
         } catch (IllegalStateException e) {
-            //This occurs if a Team is added, and there's already the max # of players
+            //This occurs if the list of teams passed in is less than 3 or more than 4 in size
             response.status(HttpStatus.BAD_REQUEST_400);
             responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
         }
@@ -293,24 +280,4 @@ public class MatchGroupRouter extends RestRouter {
         }
         return responseBody.toString();
     }
-
-    /*private String handleRemoveMatchGroupTeam(Request request, Response response) {
-        JsonObject responseBody = new JsonObject();
-        response.type(JSON_RESPONSE_TYPE);
-        try {
-            String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_ID);
-            String paramTeamId1 = request.params(PARAM_TEAM_ID);
-
-            Team teamToRemove = teamManager.getById(new GeneratedId(paramTeamId1));
-            matchGroupManager.removeTeamFromMatchGroup(new GeneratedId(paramMatchGroupId1), teamToRemove);
-        } catch (EntityNotFoundException e) {
-            response.status(HttpStatus.NOT_FOUND_404);
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_TEAM_MATCHGROUP_FOUND);
-        } catch (IllegalStateException e) {
-            //This occurs if a Team is removed, and there's already the min # of players OR if the team doesn't exist in the given MatchGroup
-            response.status(HttpStatus.BAD_REQUEST_400);
-            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
-        }
-        return responseBody.toString();
-    }*/
 }
