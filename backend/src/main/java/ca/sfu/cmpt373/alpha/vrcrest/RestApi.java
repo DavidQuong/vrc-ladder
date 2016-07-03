@@ -11,12 +11,15 @@ import spark.Spark;
 
 import java.util.List;
 
-import static spark.route.HttpMethod.before;
-
 public class RestApi {
 
     public static final String ROUTE_WILDCARD = "/*";
+
     public static final String HEADER_AUTHORIZATION = "Authorization";
+    public static final String HEADER_ACCESS = "Access-Control-Allow-Origin";
+    public static final String HEADER_ACCESS_VALUE = "*";
+
+    public static final String JSON_RESPONSE_TYPE = "application/json";
 
     private static final String ERROR_MISSING_AUTHORIZATION_TOKEN = "The request is missing the Authorization header.";
 
@@ -38,6 +41,7 @@ public class RestApi {
         configure();
         attachRouters();
         attachAuthorization();
+        attachResponseFilters();
     }
 
     private void configure() {
@@ -66,7 +70,8 @@ public class RestApi {
             } catch (AuthorizationException ex) {
                 JsonObject responseBody = new JsonObject();
                 responseBody.addProperty(RestRouter.JSON_PROPERTY_ERROR, ex.getMessage());
-                response.type(RestRouter.JSON_RESPONSE_TYPE);
+                response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
+                response.type(JSON_RESPONSE_TYPE);
                 Spark.halt(HttpStatus.UNAUTHORIZED_401, responseBody.toString());
             }
 
@@ -80,6 +85,13 @@ public class RestApi {
         }
 
         return authorizationHeader;
+    }
+
+    private void attachResponseFilters() {
+        Spark.after(ROUTE_WILDCARD, (request, response) -> {
+            response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
+            response.type(JSON_RESPONSE_TYPE);
+        });
     }
 
 }

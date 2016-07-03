@@ -96,7 +96,6 @@ public class LoginRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 

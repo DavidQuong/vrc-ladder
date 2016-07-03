@@ -104,7 +104,6 @@ public class TeamRouter extends RestRouter {
 
         response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
         response.status(HttpStatus.OK_200);
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
@@ -138,7 +137,6 @@ public class TeamRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
@@ -165,7 +163,6 @@ public class TeamRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
@@ -189,7 +186,6 @@ public class TeamRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
@@ -214,7 +210,6 @@ public class TeamRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
@@ -246,7 +241,6 @@ public class TeamRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
@@ -279,7 +273,6 @@ public class TeamRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 

@@ -35,9 +35,6 @@ import static ca.sfu.cmpt373.alpha.vrcrest.routes.TeamRouter.JSON_PROPERTY_TEAMS
 
 public class UserRouter extends RestRouter {
 
-    public static final String HEADER_ACCESS = "Access-Control-Allow-Origin";
-    public static final String HEADER_ACCESS_VALUE = "*";
-
     public static final String ROUTE_USERS = "/users";
     public static final String ROUTE_USER_ID = "/user/" + PARAM_ID;
     private static final String ROUTE_USER_ID_TEAMS = ROUTE_USER_ID + "/teams";
@@ -101,7 +98,6 @@ public class UserRouter extends RestRouter {
 
     private String handleGetUsers(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
         try {
             List<User> users = userManager.getAll();
             responseBody.add(JSON_PROPERTY_USERS, getGson().toJsonTree(users));
@@ -111,13 +107,11 @@ public class UserRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
     private String handleCreateUser(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
         try {
             NewUserPayload newUserPayload = getGson().fromJson(request.body(), NewUserPayload.class);
             Password hashedPassword = securityManager.hashPassword(newUserPayload.getPassword());
@@ -149,13 +143,11 @@ public class UserRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
     private String handleGetUserById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         try {
             String requestedId = request.params(PARAM_ID);
@@ -175,13 +167,11 @@ public class UserRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
     private String handleUpdateUserById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         try {
             String requestedId = request.params(PARAM_ID);
@@ -219,13 +209,11 @@ public class UserRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
     private String handleDeleteUserById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         try {
             String requestedId = request.params(PARAM_ID);
@@ -245,7 +233,6 @@ public class UserRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
@@ -257,7 +244,6 @@ public class UserRouter extends RestRouter {
 
         List<Team> teamsForUser = teamManager.getTeamsForUser(user);
         responseBody.add(JSON_PROPERTY_TEAMS, getGson().toJsonTree(teamsForUser));
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
