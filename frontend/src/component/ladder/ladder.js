@@ -6,67 +6,38 @@ import map from 'lodash/fp/map';
 import sortBy from 'lodash/fp/sortBy';
 import styles from './ladder.css';
 
-// import styles from './ladder.css';
-import Heading from '../heading/heading';
-
 export const syncPlayers = createAction('PLAYER_SYNC');
 
-const orderPlayers = map((player) => (
-  <div key={player.userId}>
-    {player.firstName} {player.lastName}
-  </div>
-));
-
 const orderTeams = map((team) => (
-  <div
-    className={styles.table}
-    key={team.teamId}
-  >
-    <div className={styles.entry}>
-      <FormattedMessage
-        id='rank'
-        defaultMessage='Rank: '
-      />
-      {team.ladderPosition}
+  <div className='panel panel-default'>
+    <div className={'panel-heading ' + styles.panelHeading}>
+    Rank {team.ladderPosition}
+      <span className='pull-right'>Playing at 8&#58;00PM</span>
     </div>
-    <div className={styles.entry}>
-      <FormattedMessage
-        id='player1'
-        defaultMessage='First Player: '
-      />
-      {team.firstPlayer.name}
-    </div>
-    <div className={styles.entry}>
-      <FormattedMessage
-        id='player2'
-        defaultMessage='Second Player: '
-      />
-      {team.secondPlayer.name}
+    <div className={'panel-body ' + styles.panelBody}>
+      <div className={styles.entry}>
+        <FormattedMessage
+          id='player1'
+          defaultMessage='First Player: '
+        />
+        {team.firstPlayer.name}
+      </div>
+      <div className={styles.entry}>
+        <FormattedMessage
+          id='player2'
+          defaultMessage='Second Player: '
+        />
+        {team.secondPlayer.name}
+      </div>
     </div>
   </div>
 ));
 
 const Ladder = ({
-  players,
   teams,
 }) : Element => (
-  <div className={styles.ladder}>
+  <div>
     <div>
-      <Heading kind='huge'>
-        <FormattedMessage
-          id='playerList'
-          defaultMessage='Players'
-        />
-      </Heading>
-    {orderPlayers(players)}
-    </div>
-    <div>
-      <Heading kind='huge'>
-        <FormattedMessage
-          id='teamList'
-          defaultMessage='Teams'
-        />
-      </Heading>
       {orderTeams(teams)}
     </div>
   </div>
