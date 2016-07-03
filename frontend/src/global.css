@@ -1,12 +1,14 @@
 ~colors: "./config/colors.config";
 
-@import url(https://fonts.googleapis.com/css?family=Roboto);
+@import url(https://fonts.googleapis.com/css?family=Roboto|Lato);
 @import url(https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css);
 
 :global {
   html, body {
     height: 100%;
-    /*background: url(~url?limit=10000!./images/test.jpeg);*/
+    background: url(~url?limit=10000!./../src/public/wood-tile.png) repeat !important;
+    /* background-color specified as fallback if background-image fails */
+    /*background-color: ~colors.woodBrown;*/
   }
 
   html {
@@ -57,6 +59,7 @@
   }
 
   body {
+    padding-top: 70px;
     line-height: 1.5;
     color: ~colors.greyDark;
     font-family: Lato;

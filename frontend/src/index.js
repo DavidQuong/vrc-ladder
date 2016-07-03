@@ -2,33 +2,57 @@ import {createElement, Element} from 'react';
 import {Provider} from 'react-redux';
 import {IntlProvider} from 'react-intl';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
-import {Button, ButtonToolbar} from 'react-bootstrap';
-import {LinkContainer} from 'react-router-bootstrap';
 import {getUser} from './action/users';
 import {getTeams} from './action/teams';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import CreateTeam from './component/create-team/create-team';
+import {Nav, NavItem, Navbar} from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
+import styles from './index.css';
 import LogIn from './component/login/login';
 
 const Layout = ({children}) => (
   <div>
     <div>
-      <ButtonToolbar>
-        <LinkContainer to='/signup'>
-          <Button>Sign up</Button>
-        </LinkContainer>
-        <LinkContainer to='/'>
-          <Button>Ladder</Button>
-        </LinkContainer>
-        <LinkContainer to='/create-team'>
-          <Button>Create team</Button>
-        </LinkContainer>
-        <LinkContainer to='/login'>
-          <Button>Log In</Button>
-        </LinkContainer>
-      </ButtonToolbar>
-      </div>
+      <Navbar fixedTop className={styles.upperNavbar}>
+        <Navbar.Header>
+          <Navbar.Brand>
+            <LinkContainer to='/'>
+              <img src={require('url?limit=10000!./../src/public/logo.png')} />
+            </LinkContainer>
+          </Navbar.Brand>
+          <Navbar.Toggle />
+        </Navbar.Header>
+        <Navbar.Collapse>
+          <Nav pullLeft>
+            <p className={styles.navbarLogo}>Vancouver Racquets Club</p>
+          </Nav>
+          <Nav pullRight className={styles.navItem}>
+            <LinkContainer to='/'>
+              <NavItem >Ladder</NavItem>
+            </LinkContainer>
+            <LinkContainer to='/create-team'>
+              <NavItem >Create team</NavItem>
+            </LinkContainer>
+            <LinkContainer to='/signup'>
+              <NavItem >Sign up</NavItem>
+            </LinkContainer>
+            <LinkContainer to='/login'>
+              <NavItem >Log in</NavItem>
+            </LinkContainer>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+
+      <Navbar fixedTop className={styles.lowerNavbar}>
+        <Nav className={styles.lowerNavContainer}>
+          <Navbar.Text className={styles.lowerNavbarHeading}>
+          Weekly Doubles Leaderboard
+          </Navbar.Text>
+        </Nav>
+      </Navbar>
+    </div>
     <div>
       {children}
     </div>
