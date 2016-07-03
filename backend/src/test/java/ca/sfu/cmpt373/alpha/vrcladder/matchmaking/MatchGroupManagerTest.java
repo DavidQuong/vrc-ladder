@@ -166,8 +166,6 @@ public class MatchGroupManagerTest extends BaseTest {
         }
 	}
 
-
-
 	@Test
 	public void testTradeTeamsInMatchGroups() {
         //note that teams appear in ranked order within MatchGroups,

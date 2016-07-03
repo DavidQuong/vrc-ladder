@@ -67,7 +67,6 @@ public class MatchGroupRouter extends RestRouter {
     private static final String JSON_PROPERTY_COURTS = "courts";
     private static final String JSON_PROPERTY_SCORES = "scores";
 
-    private static final String ERROR_TEAM_NOT_FOUND = "The provided Team does not belong to the provided MatchGroup";
     private static final String ERROR_NO_MATCHGROUP_FOUND = "There was no MatchGroup found for the given Id";
     private static final String ERROR_NO_TEAM_MATCHGROUP_FOUND = "The Team or the MatchGroup couldn't be found";
 

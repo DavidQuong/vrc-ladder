@@ -58,10 +58,6 @@ public class MatchGroupManager extends DatabaseManager<MatchGroup> {
         return matchGroup;
     }
 
-    public MatchGroup deleteMatchGroup(IdType matchGroupId) {
-        return deleteById(matchGroupId);
-    }
-
     public MatchGroup setTeamsInMatchGroup(IdType matchGroupId, List<Team> newTeams) {
         MatchGroup matchGroup = getById(matchGroupId);
         if (matchGroup == null) {

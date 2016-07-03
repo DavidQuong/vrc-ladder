@@ -196,6 +196,7 @@ public class MatchGroup implements Comparable<MatchGroup> {
             throw new IllegalStateException(ERROR_TOO_MANY_TEAMS);
         } else {
             this.teams = newTeams;
+            Collections.sort(this.teams, getTeamLadderPositionComparator());
         }
     }
 
