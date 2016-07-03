@@ -132,10 +132,6 @@ public class MatchGroupRouter extends RestRouter {
 
             MatchGroup matchGroup = matchGroupManager.getById(new GeneratedId(matchGroupIdParam));
             responseBody.add(JSON_PROPERTY_MATCHGROUP, getGson().toJsonTree(matchGroup));
-
-        } catch (JsonSyntaxException e) {
-            response.status(HttpStatus.BAD_REQUEST_400);
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
         } catch (EntityNotFoundException e) {
             response.status(HttpStatus.NOT_FOUND_404);
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_MATCHGROUP_FOUND);
@@ -196,6 +192,9 @@ public class MatchGroupRouter extends RestRouter {
             //and make sure there are no duplicate teams
             matchGroup.getScoreCard().setRankedTeams(rankedTeams);
             matchGroupManager.updateScoreCard(matchGroup);
+        } catch (JsonSyntaxException e) {
+            response.status(HttpStatus.BAD_REQUEST_400);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
         } catch (JsonParseException | IllegalStateException e) {
             response.status(HttpStatus.BAD_REQUEST_400);
             responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());

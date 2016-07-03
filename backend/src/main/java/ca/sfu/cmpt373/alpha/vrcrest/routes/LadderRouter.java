@@ -1,6 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
 import ca.sfu.cmpt373.alpha.vrcladder.ladder.Ladder;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.CourtManager;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
@@ -43,10 +44,12 @@ public class LadderRouter extends RestRouter{
 
     private TeamManager teamManager;
     private MatchGroupManager matchGroupManager;
+    private CourtManager courtManager;
 
-    public LadderRouter(TeamManager teamManager, MatchGroupManager matchGroupManager) {
+    public LadderRouter(TeamManager teamManager, MatchGroupManager matchGroupManager, CourtManager courtManager) {
         this.teamManager = teamManager;
         this.matchGroupManager = matchGroupManager;
+        this.courtManager = courtManager;
     }
 
     @Override
@@ -129,6 +132,7 @@ public class LadderRouter extends RestRouter{
     }
 
     private void resetPlayerSettings(List<Team> teams) {
+        courtManager.deleteAll();
         matchGroupManager.deleteAll();
         for (Team team : teams) {
             teamManager.updateAttendancePlaytime(team.getId(), PlayTime.NONE);
