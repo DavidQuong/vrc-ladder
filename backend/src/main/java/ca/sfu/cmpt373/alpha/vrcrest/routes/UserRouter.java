@@ -82,7 +82,7 @@ public class UserRouter extends RestRouter {
     private static List<RouteSignature> createPublicRouteSignatures() {
         List<RouteSignature> routeSignatures = new ArrayList<>();
 
-        RouteSignature createUserSignature = new RouteSignature(ROUTE_USERS, HttpMethod.get);
+        RouteSignature createUserSignature = new RouteSignature(ROUTE_USERS, HttpMethod.post);
         routeSignatures.add(createUserSignature);
 
         return Collections.unmodifiableList(routeSignatures);
