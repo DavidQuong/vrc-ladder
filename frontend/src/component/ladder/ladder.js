@@ -1,4 +1,5 @@
 import {createElement, Element} from 'react';
+import {createAction} from 'redux-actions';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import map from 'lodash/fp/map';
@@ -8,34 +9,39 @@ import styles from './ladder.css';
 // import styles from './ladder.css';
 import Heading from '../heading/heading';
 
+export const syncPlayers = createAction('PLAYER_SYNC');
+
 const orderPlayers = map((player) => (
-  <div key={player.email}>
+  <div key={player.userId}>
     {player.firstName} {player.lastName}
   </div>
 ));
 
 const orderTeams = map((team) => (
-  <div className={styles.table}>
+  <div
+    className={styles.table}
+    key={team.teamId}
+  >
     <div className={styles.entry}>
       <FormattedMessage
         id='rank'
         defaultMessage='Rank: '
       />
-      {team.rank}
+      {team.ladderPosition}
     </div>
     <div className={styles.entry}>
       <FormattedMessage
         id='player1'
         defaultMessage='First Player: '
       />
-      {team.firstPlayer}
+      {team.firstPlayer.name}
     </div>
     <div className={styles.entry}>
       <FormattedMessage
         id='player2'
         defaultMessage='Second Player: '
       />
-      {team.secondPlayer}
+      {team.secondPlayer.name}
     </div>
   </div>
 ));
@@ -69,7 +75,7 @@ const Ladder = ({
 export default connect(
   (state) => ({
     players: sortBy('firstName', state.app.players),
-    teams: sortBy('rank', state.app.teams),
+    teams: sortBy('ladderPosition', state.app.teams),
   }),
   {}
 )(Ladder);

@@ -2,12 +2,15 @@ import {createElement, Element} from 'react';
 import {Provider} from 'react-redux';
 import {IntlProvider} from 'react-intl';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
+import {getUser} from './action/users';
+import {getTeams} from './action/teams';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import CreateTeam from './component/create-team/create-team';
 import {Nav, NavItem, Navbar} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import styles from './index.css';
+import LogIn from './component/login/login';
 
 const Layout = ({children}) => (
   <div>
@@ -26,7 +29,7 @@ const Layout = ({children}) => (
             <p className={styles.navbarLogo}>Vancouver Racquets Club</p>
           </Nav>
           <Nav pullRight className={styles.navItem}>
-            <LinkContainer to='/ladder'>
+            <LinkContainer to='/'>
               <NavItem >Ladder</NavItem>
             </LinkContainer>
             <LinkContainer to='/create-team'>
@@ -34,6 +37,9 @@ const Layout = ({children}) => (
             </LinkContainer>
             <LinkContainer to='/signup'>
               <NavItem >Sign up</NavItem>
+            </LinkContainer>
+            <LinkContainer to='/login'>
+              <NavItem >Log in</NavItem>
             </LinkContainer>
           </Nav>
         </Navbar.Collapse>
@@ -58,9 +64,15 @@ export default ({store}) : Element => (
     <IntlProvider messages={{}} defaultLocale='en-US'>
       <Router history={browserHistory}>
         <Route path='/' component={Layout}>
-          <IndexRoute component={Ladder}/>
+          <IndexRoute
+            component={Ladder}
+            onEnter={(nextState, replace, callback) => {
+              store.dispatch(getUser()).then(callback);
+              store.dispatch(getTeams()).then(callback);
+            }}
+          />
           <Route path='/signup' component={SignUp}/>
-          <Route path='/ladder' component={Ladder}/>
+          <Route path='/login' component={LogIn}/>
           <Route path='/create-team' component={CreateTeam}/>
         </Route>
       </Router>

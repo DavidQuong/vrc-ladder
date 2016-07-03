@@ -1,7 +1,8 @@
 /* eslint-env browser */
 import {createElement} from 'react';
 import {render} from 'react-dom';
-
+import {getTeams} from '../src/action/teams';
+import {getUser} from '../src/action/users';
 // Main parts of the app.
 import Root from '../src';
 import createStore from '../src/store';
@@ -10,8 +11,15 @@ import createStore from '../src/store';
 // styling `html` or `body` tags.
 import '../src/global.css';
 
+const TIMER = 5000;
+
 // Create the initial state of the application.
 const store = createStore();
+
+setInterval(() => {
+  store.dispatch(getUser());
+  store.dispatch(getTeams());
+}, TIMER);
 
 // Create the application.
 const app = <Root store={store}/>;
