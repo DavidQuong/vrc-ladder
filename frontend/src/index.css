@@ -5,10 +5,10 @@
     background-color: ~colors.darkGreen;
     color: ~colors.white;
     border: ~colors.charcoalGrey;
+    font-size: 21px;
   }
 
   .navbarLogo {
-    color: inherit;
     position: relative;
     padding: 15px;
     line-height: 20px;
@@ -21,7 +21,8 @@
     background-color: ~colors.brightYellow;
     color: ~colors.white;
     border: ~colors.charcoalGrey;
-    min-height: 28px;
+    min-height: 35px;
+    font-size: 21px;
     text-align:center;
   }
 
@@ -34,9 +35,8 @@
   .lowerNavbarHeading {
     float:none;
     margin: 0px;
-    color: inherit;
     position: relative;
-    padding: 4px;
+    padding: 5px;
     line-height: 20px;
   }
 
