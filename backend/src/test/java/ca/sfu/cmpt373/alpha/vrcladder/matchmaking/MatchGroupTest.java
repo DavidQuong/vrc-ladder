@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.TeamNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;

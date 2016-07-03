@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.TeamNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
