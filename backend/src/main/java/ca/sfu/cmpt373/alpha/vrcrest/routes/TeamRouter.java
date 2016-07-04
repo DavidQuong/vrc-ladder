@@ -11,6 +11,7 @@ import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewPlayTimePayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewTeamPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.AttendanceCardGsonSerializer;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.TeamGsonSerializer;
+import ca.sfu.cmpt373.alpha.vrcrest.security.RouteSignature;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -22,8 +23,11 @@ import org.hibernate.exception.ConstraintViolationException;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
+import spark.route.HttpMethod;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TeamRouter extends RestRouter {
@@ -34,12 +38,11 @@ public class TeamRouter extends RestRouter {
     public static final String ROUTE_TEAM_ID_ATTENDANCE_PLAYTIME = ROUTE_TEAM_ID_ATTENDANCE + "/playtime";
     public static final String ROUTE_TEAM_ID_ATTENDANCE_STATUS = ROUTE_TEAM_ID_ATTENDANCE + "/status";
 
-    public static final String HEADER_ACCESS = "Access-Control-Allow-Origin";
-    public static final String HEADER_ACCESS_VALUE = "*";
-
     public static final String JSON_PROPERTY_TEAMS = "teams";
     public static final String JSON_PROPERTY_TEAM = "team";
     public static final String JSON_PROPERTY_ATTENDANCE = "attendance";
+
+    private static final List<RouteSignature> PUBLIC_ROUTE_SIGNATURES = createPublicRouteSignatures();
 
     private static final String ERROR_PLAYER_ID_NOT_FOUND = "One of the provided player ID's cannot be found.";
     private static final String ERROR_EXISTING_TEAM = "The provided pair of player's already form a team.";
@@ -65,6 +68,20 @@ public class TeamRouter extends RestRouter {
     }
 
     @Override
+    public List<RouteSignature> getPublicRouteSignatures() {
+        return PUBLIC_ROUTE_SIGNATURES;
+    }
+
+    private static List<RouteSignature> createPublicRouteSignatures() {
+        List<RouteSignature> routeSignatures = new ArrayList<>();
+
+        RouteSignature createUserSignature = new RouteSignature(ROUTE_TEAMS, HttpMethod.get);
+        routeSignatures.add(createUserSignature);
+
+        return Collections.unmodifiableList(routeSignatures);
+    }
+
+    @Override
     protected Gson buildGson() {
         return new GsonBuilder()
             .registerTypeAdapter(Team.class, new TeamGsonSerializer())
@@ -82,9 +99,7 @@ public class TeamRouter extends RestRouter {
         List<Team> teams = teamManager.getAll();
         responseBody.add(JSON_PROPERTY_TEAMS, getGson().toJsonTree(teams));
 
-        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
         response.status(HttpStatus.OK_200);
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
@@ -95,7 +110,6 @@ public class TeamRouter extends RestRouter {
             NewTeamPayload newTeamPayload = getGson().fromJson(request.body(), NewTeamPayload.class);
             Team newTeam = teamManager.create(newTeamPayload.getFirstPlayerId(), newTeamPayload.getSecondPlayerId());
             JsonElement jsonTeam = getGson().toJsonTree(newTeam);
-            response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
             responseBody.add(JSON_PROPERTY_TEAM, jsonTeam);
             response.status(HttpStatus.CREATED_201);
         } catch (JsonSyntaxException ex) {
@@ -118,13 +132,11 @@ public class TeamRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
     private String handleGetTeamById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
@@ -145,13 +157,11 @@ public class TeamRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
     private String handleDeleteTeamById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
@@ -169,13 +179,11 @@ public class TeamRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
     private String handleGetTeamAttendance(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
@@ -194,13 +202,11 @@ public class TeamRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
     private String handleUpdatePlayTime(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
@@ -226,14 +232,12 @@ public class TeamRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 
 
     private String handleUpdateAttendanceStatus(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
 
         String paramId = request.params(PARAM_ID);
         GeneratedId generatedId = new GeneratedId(paramId);
@@ -259,7 +263,6 @@ public class TeamRouter extends RestRouter {
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
-        response.type(JSON_RESPONSE_TYPE);
         return responseBody.toString();
     }
 

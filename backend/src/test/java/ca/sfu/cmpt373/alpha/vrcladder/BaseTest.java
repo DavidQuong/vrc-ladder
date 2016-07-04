@@ -1,6 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcladder;
 
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
+import ca.sfu.cmpt373.alpha.vrcladder.util.ConfigurationManager;
 import org.junit.After;
 import org.junit.Before;
 
@@ -10,7 +11,7 @@ public class BaseTest {
 
     @Before
     public void setUpBase() {
-        sessionManager = new SessionManager();
+        sessionManager = new SessionManager(new ConfigurationManager());
     }
 
     @After

@@ -20,7 +20,7 @@ public class PersistenceConstants {
     public static final String COLUMN_LADDER_POSITION = "LADDER_POSITION";
     public static final String COLUMN_ATTENDANCE_STATUS = "ATTENDANCE_STATUS";
 
-
+    public static final int MAX_NAME_LENGTH = 40;
     public static final String TABLE_ATTENDANCE_CARD = "ATTENDANCE_CARD";
     public static final String COLUMN_PLAY_TIME = "PLAY_TIME";
 

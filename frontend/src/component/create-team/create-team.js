@@ -13,9 +13,8 @@ import classNames from 'classnames';
 // import findIndex from 'lodash/fp/findIndex';
 import sortBy from 'lodash/fp/sortBy';
 
-const validate = (values, {teams}) => {
+const validate = (values) => {
   const errors = {};
-  let index = -1;
   if (!values.firstPlayerId) {
     errors.firstPlayerId = 'Required';
   }
@@ -24,23 +23,6 @@ const validate = (values, {teams}) => {
   }
   if (values.firstPlayerId === values.secondPlayerId) {
     errors.secondPlayerId = 'Cannot be same person';
-  }
-  for (let i = 0; i < teams.length; i++) {
-    if (teams[i].firstPlayer.userId === values.firstPlayerId) {
-      index = i;
-      if (teams[index].secondPlayer.userId === values.secondPlayerId) {
-        errors.secondPlayerId = 'Team Exists';
-      }
-    }
-  }
-  index = -1;
-  for (let i = 0; i < teams.length; i++) {
-    if (teams[i].firstPlayer.userId === values.secondPlayerId) {
-      index = i;
-      if (teams[index].secondPlayer.userId === values.firstPlayerId) {
-        errors.secondPlayerId = 'Team Exists';
-      }
-    }
   }
   return errors;
 };
@@ -124,6 +106,7 @@ const CreateTeam = withRouter(({
   players,
   teams,
   router,
+  login,
 }) : Element => (
   <div className={styles.createTeam}>
     <Heading kind='huge'>
@@ -138,8 +121,8 @@ const CreateTeam = withRouter(({
       onSubmit={(props) => {
         return addTeam({
           ...props,
-        }).then(() => {
-          router.push('/');
+        }, login).then(() => {
+          router.push('/ladder');
         }).catch((errors) => {
           // TODO: Error object handling
           return Promise.reject(errors);
@@ -153,6 +136,7 @@ export default connect(
   (state) => ({
     players: sortBy('firstName', state.app.players),
     teams: state.app.teams,
+    login: state.app.loggedIn,
   }),
   {addTeam}
 )(CreateTeam);

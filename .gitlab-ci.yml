@@ -24,4 +24,4 @@ backend:
   stage: test
   script:
     - cd backend
-    - ./gradlew build
+    - ./gradlew build -Pconfiguration=debug

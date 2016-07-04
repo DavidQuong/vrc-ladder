@@ -1,6 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
 import ca.sfu.cmpt373.alpha.vrcladder.ladder.Ladder;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.CourtManager;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
@@ -9,12 +10,14 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewTeamIdListPayload;
+import ca.sfu.cmpt373.alpha.vrcrest.security.RouteSignature;
 import com.google.gson.*;
 import org.eclipse.jetty.http.HttpStatus;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -41,10 +44,12 @@ public class LadderRouter extends RestRouter{
 
     private TeamManager teamManager;
     private MatchGroupManager matchGroupManager;
+    private CourtManager courtManager;
 
-    public LadderRouter(TeamManager teamManager, MatchGroupManager matchGroupManager) {
+    public LadderRouter(TeamManager teamManager, MatchGroupManager matchGroupManager, CourtManager courtManager) {
         this.teamManager = teamManager;
         this.matchGroupManager = matchGroupManager;
+        this.courtManager = courtManager;
     }
 
     @Override
@@ -61,9 +66,13 @@ public class LadderRouter extends RestRouter{
         Spark.put(ROUTE_LADDER_REARRANGE, this::handleRearrangeLadder);
     }
 
+    @Override
+    public List<RouteSignature> getPublicRouteSignatures() {
+        return Collections.emptyList();
+    }
+
     private String handleRearrangeLadder(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.type(JSON_RESPONSE_TYPE);
         try {
             NewTeamIdListPayload newTeamPayload = getGson().fromJson(request.body(), NewTeamIdListPayload.class);
 
@@ -91,7 +100,6 @@ public class LadderRouter extends RestRouter{
 
     private String handleRegenerateLadder(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.type(JSON_RESPONSE_TYPE);
         try {
             List<Team> teams = teamManager.getAll();
             List<MatchGroup> matchGroups = matchGroupManager.getAll();
@@ -122,6 +130,7 @@ public class LadderRouter extends RestRouter{
     }
 
     private void resetPlayerSettings(List<Team> teams) {
+        courtManager.deleteAll();
         matchGroupManager.deleteAll();
         for (Team team : teams) {
             teamManager.updateAttendancePlaytime(team.getId(), PlayTime.NONE);

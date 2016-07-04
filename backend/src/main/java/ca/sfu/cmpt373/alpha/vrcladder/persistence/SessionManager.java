@@ -6,12 +6,14 @@ import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
+import ca.sfu.cmpt373.alpha.vrcladder.util.ConfigurationManager;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
 
 /**
  * Provides interface to create and manage Sessions (connections) to the database (data source).
@@ -19,10 +21,18 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 public class SessionManager {
 
     private SessionFactory sessionFactory;
+    private ConfigurationManager configurationManager;
 
-    public SessionManager() {
-        StandardServiceRegistry serviceRegistry = buildServiceRegistry();
-        sessionFactory = buildSessionFactory(serviceRegistry);
+    private static final String PROPERTY_CONNECTION_URL = "hibernate.connection.url";
+    private static final String PROPERTY_DRIVER = "hibernate.connection.driver_class";
+    private static final String PROPERTY_USERNAME = "hibernate.connection.username";
+    private static final String PROPERTY_PASSWORD = "hibernate.connection.password";
+    private static final String PROPERTY_DIALECT = "hibernate.dialect";
+    private static final String PROPERTY_CREATE_MODE = "hibernate.hbm2ddl.auto";
+
+    public SessionManager(ConfigurationManager configurationManager) {
+        this.configurationManager = configurationManager;
+        sessionFactory = buildSessionFactory();
     }
 
     public void shutDown() {
@@ -35,31 +45,20 @@ public class SessionManager {
         return sessionFactory.openSession();
     }
 
-    private StandardServiceRegistry buildServiceRegistry() {
-        StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder()
-            .configure()
-            .enableAutoClose();
-
-        return serviceRegistryBuilder.build();
+    private SessionFactory buildSessionFactory() {
+        return new Configuration().configure()
+                .addAnnotatedClass(AttendanceCard.class)
+                .addAnnotatedClass(MatchGroup.class)
+                .addAnnotatedClass(ScoreCard.class)
+                .addAnnotatedClass(Team.class)
+                .addAnnotatedClass(User.class)
+                .addAnnotatedClass(Court.class)
+                .setProperty(PROPERTY_CONNECTION_URL, configurationManager.getDatabaseUrl())
+                .setProperty(PROPERTY_DRIVER, configurationManager.getDatabaseDriver())
+                .setProperty(PROPERTY_USERNAME, configurationManager.getDatabaseUsername())
+                .setProperty(PROPERTY_PASSWORD, configurationManager.getDatabasePassword())
+                .setProperty(PROPERTY_DIALECT, configurationManager.getDatabaseDialect())
+                .setProperty(PROPERTY_CREATE_MODE, configurationManager.getDatabaseCreateMode())
+                .buildSessionFactory();
     }
-
-    private SessionFactory buildSessionFactory(StandardServiceRegistry serviceRegistry) {
-        MetadataSources metadataSources = addAnnotatedClasses(serviceRegistry);
-        Metadata metadata = metadataSources.buildMetadata();
-
-        return metadata.buildSessionFactory();
-    }
-
-    private MetadataSources addAnnotatedClasses(StandardServiceRegistry serviceRegistry) {
-        MetadataSources metadataSources = new MetadataSources(serviceRegistry)
-            .addAnnotatedClass(AttendanceCard.class)
-            .addAnnotatedClass(MatchGroup.class)
-            .addAnnotatedClass(ScoreCard.class)
-            .addAnnotatedClass(Team.class)
-            .addAnnotatedClass(User.class)
-            .addAnnotatedClass(Court.class);
-
-        return metadataSources;
-    }
-
 }

@@ -21,8 +21,8 @@ import java.util.Map;
 public class SecurityManager {
 
     public static final int HASH_WIDTH = 92;
+    public static final String ERROR_INVALID_CREDENTIALS = "Invalid credentials (user ID or password).";
 
-    private static final String ERROR_INVALID_CREDENTIALS = "Invalid credentials (user ID or password).";
     private static final String ERROR_INVALID_TOKEN = "The provided authorization token is not valid";
     private static final String ERROR_EXPIRED_TOKEN = "The provided authorization token has expired.";
 

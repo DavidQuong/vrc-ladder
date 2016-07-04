@@ -127,6 +127,7 @@ public class TeamManager extends DatabaseManager<Team> {
 
         return team;
     }
+
     private boolean isExistingTeam(User firstPlayer, User secondPlayer) {
         Session session = sessionManager.getSession();
 
@@ -164,6 +165,18 @@ public class TeamManager extends DatabaseManager<Team> {
     }
 
     private Team findActiveTeam(User player) {
+        List<Team> matchedTeams = getTeamsForUser(player);
+
+        for (Team team : matchedTeams) {
+            if (team.getAttendanceCard().getPreferredPlayTime().isPlayable()) {
+                return team;
+            }
+        }
+
+        return null;
+    }
+
+    public List<Team> getTeamsForUser(User player) {
         Session session = sessionManager.getSession();
 
         Criterion firstPlayerCriterion = Restrictions.eq(CriterionConstants.TEAM_FIRST_PLAYER_USER_ID_PROPERTY,
@@ -175,14 +188,7 @@ public class TeamManager extends DatabaseManager<Team> {
 
         List<Team> matchedTeams = playingCriteria.list();
         session.close();
-
-        for (Team team : matchedTeams) {
-            if (team.getAttendanceCard().getPreferredPlayTime().isPlayable()) {
-                return team;
-            }
-        }
-
-        return null;
+        return matchedTeams;
     }
 
     private LadderPosition generateNewLadderPosition() {

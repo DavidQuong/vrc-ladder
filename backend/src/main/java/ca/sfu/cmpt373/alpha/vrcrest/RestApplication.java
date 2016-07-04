@@ -7,6 +7,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
+import ca.sfu.cmpt373.alpha.vrcladder.util.ConfigurationManager;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.LadderRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.LoginRouter;
 import ca.sfu.cmpt373.alpha.vrcrest.routes.MatchGroupRouter;
@@ -19,9 +20,7 @@ import spark.servlet.SparkApplication;
 
 import java.security.Key;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
-
 
 /**
  * A class for deploying Spark on Servers/Servlet containers such as TomCat or GlassFish
@@ -35,7 +34,9 @@ public class RestApplication implements SparkApplication {
 
     @Override
     public void init() {
-        SessionManager sessionManager = new SessionManager();
+        ConfigurationManager configurationManager = new ConfigurationManager();
+        System.out.println(configurationManager.getDatabaseUrl());
+        SessionManager sessionManager = new SessionManager(configurationManager);
 
         // TODO - Receive these from configuration file instead.
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -55,7 +56,10 @@ public class RestApplication implements SparkApplication {
                 courtManager);
 
         LoginRouter loginRouter = new LoginRouter(appManager.getSecurityManager(), appManager.getUserManager());
-        UserRouter userRouter = new UserRouter(appManager.getSecurityManager(), appManager.getUserManager());
+        UserRouter userRouter = new UserRouter(
+                appManager.getSecurityManager(),
+                appManager.getUserManager(),
+                appManager.getTeamManager());
         TeamRouter teamRouter = new TeamRouter(appManager.getTeamManager());
         MatchGroupRouter matchGroupRouter = new MatchGroupRouter(
                 appManager.getMatchGroupManager(),
@@ -63,7 +67,8 @@ public class RestApplication implements SparkApplication {
                 appManager.getCourtManager());
         LadderRouter ladderRouter = new LadderRouter(
                 appManager.getTeamManager(),
-                appManager.getMatchGroupManager());
+                appManager.getMatchGroupManager(),
+                appManager.getCourtManager());
         List<RestRouter> routers = Arrays.asList(loginRouter, userRouter, teamRouter, matchGroupRouter, ladderRouter);
         restApi = new RestApi(appManager, routers);
     }

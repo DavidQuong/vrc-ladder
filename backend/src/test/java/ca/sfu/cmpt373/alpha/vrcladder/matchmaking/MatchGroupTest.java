@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.matchmaking;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.TeamNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockMatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
@@ -20,7 +21,12 @@ public class MatchGroupTest {
 		Team fourthTeam = MockTeamGenerator.generateTeam();
 
 		MatchGroup testGroup = new MatchGroup(firstTeam, secondTeam, thirdTeam);
-		testGroup.addTeam(fourthTeam);
+        List<Team> newTeams = new ArrayList<>();
+        newTeams.add(firstTeam);
+        newTeams.add(secondTeam);
+        newTeams.add(thirdTeam);
+        newTeams.add(fourthTeam);
+		testGroup.setTeams(newTeams);
 
 		MatchGroup expectedResults = new MatchGroup(firstTeam, secondTeam, thirdTeam, fourthTeam);
 
@@ -35,7 +41,11 @@ public class MatchGroupTest {
 		Team fourthTeam = MockTeamGenerator.generateTeam();
 
 		MatchGroup testGroup = new MatchGroup(firstTeam, secondTeam, thirdTeam, fourthTeam);
-		testGroup.removeTeam(thirdTeam);
+        List<Team> newTeams = new ArrayList<>();
+        newTeams.add(firstTeam);
+        newTeams.add(secondTeam);
+        newTeams.add(fourthTeam);
+        testGroup.setTeams(newTeams);
 
 		MatchGroup expectedResults = new MatchGroup(firstTeam, secondTeam, fourthTeam);
 
@@ -51,7 +61,13 @@ public class MatchGroupTest {
 		Team fifthTeam = MockTeamGenerator.generateTeam();
 
 		MatchGroup testGroup = new MatchGroup(firstTeam, secondTeam, thirdTeam, fourthTeam);
-		testGroup.addTeam(fifthTeam);
+        List<Team> newTeams = new ArrayList<>();
+        newTeams.add(firstTeam);
+        newTeams.add(secondTeam);
+        newTeams.add(thirdTeam);
+        newTeams.add(fourthTeam);
+        newTeams.add(fifthTeam);
+        testGroup.setTeams(newTeams);
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -61,7 +77,10 @@ public class MatchGroupTest {
 		Team thirdTeam = MockTeamGenerator.generateTeam();
 
 		MatchGroup testGroup = new MatchGroup(firstTeam, secondTeam, thirdTeam);
-		testGroup.removeTeam(thirdTeam);
+        List<Team> newTeams = new ArrayList<>();
+        newTeams.add(firstTeam);
+        newTeams.add(secondTeam);
+        testGroup.setTeams(newTeams);
 	}
 
 	@Test

@@ -1,12 +1,16 @@
 import {createElement, Element} from 'react';
-import {createAction} from 'redux-actions';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import map from 'lodash/fp/map';
 import sortBy from 'lodash/fp/sortBy';
 import styles from './ladder.css';
 
-export const syncPlayers = createAction('PLAYER_SYNC');
+// import Heading from '../heading/heading';
+// const orderPlayers = map((player) => (
+//   <div key={player.userId}>
+//     {player.firstName} {player.lastName}
+//   </div>
+// ));
 
 const orderTeams = map((team) => (
   <div className={`panel panel-default ${styles.panel}`}>

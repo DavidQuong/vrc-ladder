@@ -1,8 +1,8 @@
 import {addTeam as addTeamAPI, getTeams as getTeamsAPI} from '../api/teams';
 import {syncTeams} from './types';
 
-export const addTeam = (user) => () => {
-  return addTeamAPI(user);
+export const addTeam = (user, login) => () => {
+  return addTeamAPI(user, login);
 };
 
 export const getTeams =  () => (dispatch) => {
