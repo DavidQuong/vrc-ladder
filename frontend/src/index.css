@@ -26,11 +26,11 @@
     line-height: 20px;
     padding: 7px;
     line-height: 20px;
-    text-align:center;
+    text-align: center;
   }
 
   .lowerNavContainer {
-    text-align:center;
+    text-align: center;
     float: none;
     display: inline-block;
   }
@@ -48,6 +48,7 @@
       color: #555;
       background-color: #e7e7e7;
   }*/
+
   /*.navItem .nav > .active > a,
   .navItem .nav > .active > a:focus,
   .navItem .nav > .active > a:hover {
