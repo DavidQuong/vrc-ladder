@@ -13,8 +13,30 @@ export const addUser = (user) => {
   });
 };
 
+export const getUserInfo = (state) => {
+  return fetch(`${root}user/${state.app.loggedIn.userId}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: state.app.loggedIn.authorizationToken,
+    },
+  }).then((response) => {
+    return response.json();
+  });
+};
+
 export const getUser = (state) => {
   return fetch(`${root}users`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: state.app.loggedIn.authorizationToken,
+    },
+  }).then((response) => {
+    return response.json();
+  });
+};
+
+export const getTeamInfo = (state) => {
+  return fetch(`${root}user/${state.app.loggedIn.userId}/teams`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: state.app.loggedIn.authorizationToken,

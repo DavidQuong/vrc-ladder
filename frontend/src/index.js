@@ -67,7 +67,10 @@ export default ({store}) : Element => (
           <IndexRoute component={LogIn}/>
           <Route path='/signup' component={SignUp}/>
           <Route path='/login' component={LogIn}/>
-          <Route path='/create-team' component={CreateTeam}/>
+          <Route
+            path='/create-team'
+            component={CreateTeam}
+          />
           <Route
             path='/ladder'
             component={Ladder}
