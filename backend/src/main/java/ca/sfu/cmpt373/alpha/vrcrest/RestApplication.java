@@ -24,9 +24,9 @@ import java.util.List;
 
 /**
  * A class for deploying Spark on Servers/Servlet containers such as TomCat or GlassFish
- * This is used primarily for Amazon Web Services Deployment.
- * This class also contains all the initialization logic for the REST API. As such,
- * it is called in RestDriver to initialize the API even when using Spark's embedded Jetty server
+ * This is used for Amazon Web Services Deployment using TomCat, as well as local deployment for dev/testing.
+ * It contains all the initialization logic for the REST API.
+ * There is also a main() method, which when called starts Spark's embedded Jetty server locally for dev/testing
  */
 public class RestApplication implements SparkApplication {
 
@@ -35,7 +35,6 @@ public class RestApplication implements SparkApplication {
     @Override
     public void init() {
         ConfigurationManager configurationManager = new ConfigurationManager();
-        System.out.println(configurationManager.getDatabaseUrl());
         SessionManager sessionManager = new SessionManager(configurationManager);
 
         // TODO - Receive these from configuration file instead.
