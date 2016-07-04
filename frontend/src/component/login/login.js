@@ -2,7 +2,7 @@ import {createElement, Element} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
-import {SubmitBtn} from '../button';
+// import {SubmitBtn} from '../button';
 import {withRouter} from 'react-router';
 import {logInUser} from '../../action/login';
 import {createAction} from 'redux-actions';
@@ -10,6 +10,9 @@ import {createAction} from 'redux-actions';
 import styles from './login.css';
 import Heading from '../heading/heading';
 import isEmpty from 'lodash/fp/isEmpty';
+import {
+  Well, Col, ControlLabel, Button, FormControl, FormGroup, Form,
+} from 'react-bootstrap';
 
 const validate = (values) => {
   const errors = {};
@@ -41,41 +44,29 @@ const BaseLogInForm = ({
     password},
   handleSubmit,
 }) => (
-  <form
-    onSubmit={handleSubmit}
-  >
+  <Form horizontal onSubmit={handleSubmit}>
     <div>
-      <label>
-        <FormattedMessage
-          id='userID'
-          defaultMessage='Your ID #'
-        />
-      </label>
-      <input
-        type='text'
-        placeholder='Id #'
-        {...userId}
-      />
-      <FormError {...userId}/>
+      <FormGroup>
+        <Col componentClass={ControlLabel} sm={3}>User ID</Col>
+        <Col sm={6}>
+          <FormControl type='userID' placeholder='Your ID #' {...userId} />
+        </Col>
+        <Col sm={3}><FormError {...userId}/></Col>
+      </FormGroup>
+
+      <FormGroup>
+        <Col componentClass={ControlLabel} sm={3}>Password</Col>
+        <Col sm={6}>
+          <FormControl type='password' placeholder='Password' {...password} />
+        </Col>
+        <Col sm={3}><FormError {...password}/></Col>
+      </FormGroup>
+
+      <div className={styles.center}>
+        <Button bsStyle='primary' bsSize='large' type='submit'>Log In</Button>
+      </div>
     </div>
-    <div>
-      <label>
-        <FormattedMessage
-          id='password'
-          defaultMessage='Password'
-        />
-      </label>
-      <input
-        type='password'
-        placeholder='Password'
-        {...password}
-      />
-      <FormError {...password}/>
-    </div>
-    <div>
-      <SubmitBtn type='submit'>Log In</SubmitBtn>
-    </div>
-  </form>
+  </Form>
 );
 
 const formEnhancer = reduxForm({
@@ -104,31 +95,33 @@ const LogIn = withRouter(({
   logInUser,
   router,
 }) : Element => (
-  <div className={styles.signup}>
-    <Heading kind='huge'>
-      <FormattedMessage
-        id='login'
-        defaultMessage='Log In'
-      />
-    </Heading>
-    <LogInForm
-      onSubmit={(props) => {
-        const errors = validate(props);
-        if (!isEmpty(errors)) {
-          return Promise.reject(errors);
-        }
-        return logInUser(props).then((response) => {
-          const userInfo = logInBuilder(props, response);
-          userLogIn({
-            ...userInfo,
+  <div className={styles.center}>
+    <Well>
+      <Heading>
+        <FormattedMessage
+          id='login'
+          defaultMessage='Login'
+        />
+      </Heading>
+      <LogInForm
+        onSubmit={(props) => {
+          const errors = validate(props);
+          if (!isEmpty(errors)) {
+            return Promise.reject(errors);
+          }
+          return logInUser(props).then((response) => {
+            const userInfo = logInBuilder(props, response);
+            userLogIn({
+              ...userInfo,
+            });
+            router.push('/ladder');
+          }).catch((errors) => {
+            // TODO: Error object to expected.
+            return Promise.reject(errors);
           });
-          router.push('/ladder');
-        }).catch((errors) => {
-          // TODO: Error object to expected.
-          return Promise.reject(errors);
-        });
-      }}
-    />
+        }}
+      />
+    </Well>
   </div>
 ));
 

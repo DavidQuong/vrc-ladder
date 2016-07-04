@@ -15,8 +15,9 @@ import styles from './ladder.css';
 const orderTeams = map((team) => (
   <div className={`panel panel-default ${styles.panel}`}>
     <div className={`panel-heading ${styles.panelHeading}`}>
-    Rank {team.ladderPosition}
+      <span className='pull-left'>Rank {team.ladderPosition}</span>
       <span className='pull-right'>Playing at 8&#58;00PM</span>
+      <br />
     </div>
     <div className={`panel-body ${styles.panelBody}`}>
       <div className={styles.entry}>
@@ -40,10 +41,8 @@ const orderTeams = map((team) => (
 const Ladder = ({
   teams,
 }) : Element => (
-  <div>
-    <div>
-      {orderTeams(teams)}
-    </div>
+  <div className={styles.center}>
+    {orderTeams(teams)}
   </div>
 );
 

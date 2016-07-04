@@ -109,7 +109,7 @@ const BaseSignUpForm = ({
         <Col sm={4}>
           <FormControl
             type='firstName'
-            placeholder='First Name'
+            placeholder='eg. Jane'
             {...firstName}
           />
         </Col>
@@ -119,7 +119,7 @@ const BaseSignUpForm = ({
       <FormGroup>
         <Col componentClass={ControlLabel} sm={4}>Last Name</Col>
         <Col sm={4}>
-          <FormControl type='lastName' placeholder='Last Name' {...lastName} />
+          <FormControl type='lastName' placeholder='eg. Doe' {...lastName} />
         </Col>
         <Col sm={3}><FormError {...lastName}/></Col>
       </FormGroup>
@@ -129,7 +129,7 @@ const BaseSignUpForm = ({
         <Col sm={5}>
           <FormControl
             type='emailAddress'
-            placeholder='Email'
+            placeholder='eg. jane.doe@example.com'
             {...emailAddress}
           />
         </Col>
@@ -141,7 +141,7 @@ const BaseSignUpForm = ({
         <Col sm={4}>
           <FormControl
             type='phoneNumber'
-            placeholder='6041234567'
+            placeholder='eg. 6041234567'
             {...phoneNumber}
           />
         </Col>
@@ -161,7 +161,7 @@ const BaseSignUpForm = ({
         <Col sm={5}>
           <FormControl
             type='password'
-            placeholder='Password'
+            placeholder='Password confirmation'
             {...confirmPassword}
           />
         </Col>
@@ -181,29 +181,31 @@ const SignUp = withRouter(({
   addUser,
   router,
 }) : Element => (
-  <Well>
-      <Heading>
-        <FormattedMessage
-          id='signup'
-          defaultMessage='Create Your Account:'
-        />
-      </Heading>
-    <SignUpForm
-      onSubmit={(props) => {
-        const errors = validate(props);
-        const userInfo = parseUser(props);
-        if (!isEmpty(errors)) {
-          return Promise.reject(errors);
-        }
-        return addUser(userInfo).then(() => {
-          router.push('/ladder');
-        }).catch((errors) => {
-          // TODO: Error object to expected.
-          return Promise.reject(errors);
-        });
-      }}
-    />
-  </Well>
+  <div className={styles.center}>
+    <Well>
+        <Heading>
+          <FormattedMessage
+            id='signup'
+            defaultMessage='Create Your Account:'
+          />
+        </Heading>
+      <SignUpForm
+        onSubmit={(props) => {
+          const errors = validate(props);
+          const userInfo = parseUser(props);
+          if (!isEmpty(errors)) {
+            return Promise.reject(errors);
+          }
+          return addUser(userInfo).then(() => {
+            router.push('/ladder');
+          }).catch((errors) => {
+            // TODO: Error object to expected.
+            return Promise.reject(errors);
+          });
+        }}
+      />
+    </Well>
+  </div>
 ));
 
 export default connect(
