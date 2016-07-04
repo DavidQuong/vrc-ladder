@@ -22,7 +22,8 @@
     background-color: ~colors.brightYellow;
     border: ~colors.charcoalGrey;
     min-height: 34px;
-    font-size: 21px;
+    font-size: 18px;
+    line-height: 20px;
     padding: 7px;
     line-height: 20px;
     text-align:center;
