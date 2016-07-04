@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import sortBy from 'lodash/fp/sortBy';
 import styles from './match-groups.css';
 
-const MatchGroup = ({
+const MatchGroups = ({
 }) : Element => (
   <div className={styles.matchGroupPage}>
     <div className={styles.matchGroupTitle}>
@@ -250,4 +250,4 @@ export default connect(
     teams: sortBy('rank', state.app.teams),
   }),
   {}
-)(MatchGroup);
+)(MatchGroups);

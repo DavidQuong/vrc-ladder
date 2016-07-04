@@ -6,9 +6,9 @@ import {getUser} from './action/users';
 import {getTeams} from './action/teams';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
-import MatchGroup from './component/match-groups/match-groups';
+import MatchGroups from './component/match-groups/match-groups';
 import CreateTeam from './component/create-team/create-team';
-import {Nav, NavItem, Navbar} from 'react-bootstrap';
+import {Nav, NavItem, Navbar, Grid} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import styles from './index.css';
 import LogIn from './component/login/login';
@@ -45,9 +45,6 @@ const Layout = ({children}) => (
             <LinkContainer to='/signup'>
               <NavItem >Sign up</NavItem>
             </LinkContainer>
-            <LinkContainer to='/login'>
-              <NavItem >Log in</NavItem>
-            </LinkContainer>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -75,7 +72,7 @@ export default ({store}) : Element => (
           <Route path='/signup' component={SignUp}/>
           <Route path='/login' component={LogIn}/>
           <Route path='/create-team' component={CreateTeam}/>
-          <Route path='/match-groups' component={MatchGroup}/>
+          <Route path='/match-groups' component={MatchGroups}/>
           <Route
             path='/ladder'
             component={Ladder}
@@ -84,10 +81,6 @@ export default ({store}) : Element => (
               store.dispatch(getTeams()).then(callback);
             }}
           />
-          <Route path='/signup' component={SignUp}/>
-          <Route path='/login' component={LogIn}/>
-          <Route path='/create-team' component={CreateTeam}/>
-          <Route path='/match-groups' component={MatchGroup}/>
         </Route>
       </Router>
     </IntlProvider>
