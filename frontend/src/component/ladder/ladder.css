@@ -1,3 +1,4 @@
+~colors: "../../config/colors.config";
 
 .ladder {
   font-family: 'Roboto', sans-serif;
@@ -5,11 +6,30 @@
   margin-bottom: 50px;
   font-size: 16px;
   display: block;
+  text-align: center;
+}
+
+.panelHeading {
+  font-size: 18px;
+  font-weight: 600;
+  color: ~colors.white !important;
+  background-color: ~colors.darkGreen !important;
+}
+
+.panelBody {
+  font-size: 18px;
+  font-weight: 600;
+  background-color: ~colors.paleGreen;
+  color: ~colors.charcoalGrey;
+}
+
+.panel {
+  border-color: ~colors.charcoalGrey;
 }
 
 .table {
-  display: block;
-  width: 100%;
+  display: inline-block;
+  width: auto;
   padding-top: 6px;
   padding-right: 12px;
   padding-bottom: 6px;
@@ -19,10 +39,8 @@
 }
 
 .entry {
-  width: 25%;
+  text-align: center;
+  width: auto;
   position: relative;
-  margin-right: 15px;
-  margin-left: 15px;
-  margin-bottom: 15px;
   height: 34px;
 }

@@ -7,7 +7,7 @@ import {getTeams} from './action/teams';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import CreateTeam from './component/create-team/create-team';
-import {Nav, NavItem, Navbar} from 'react-bootstrap';
+import {Nav, NavItem, Navbar, Grid} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import styles from './index.css';
 import LogIn from './component/login/login';
@@ -53,9 +53,9 @@ const Layout = ({children}) => (
         </Nav>
       </Navbar>
     </div>
-    <div>
+    <Grid>
       {children}
-    </div>
+    </Grid>
   </div>
 );
 
