@@ -10,11 +10,11 @@
 
   .navbarLogo {
     position: relative;
-    padding: 15px;
+    padding: 15px 0px;
     line-height: 20px;
+    font-size: 15px;
     text-transform: uppercase;
     font-weight: bolder;
-    letter-spacing: 1px;
   }
 
   .lowerNavbar {
@@ -36,7 +36,7 @@
 
   .lowerNavbarHeading {
     color: ~colors.charcoalGrey !important;
-    float:none;
+    float: none;
     margin: 0px;
     position: relative;
   }
