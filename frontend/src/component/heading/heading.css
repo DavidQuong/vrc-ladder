@@ -1,6 +1,8 @@
 .heading {
   font-family: 'Roboto', sans-serif;
-  font-size: 50px;
+  text-align: center;
+  font-size: 40px;
+  padding-bottom: 15px;
 }
 
 .huge {
@@ -9,5 +11,7 @@
 
 .error {
   color: #a94442;
+  padding-top: 6px;
+  padding-bottom: 6px;
   font-size: 12px;
 }
