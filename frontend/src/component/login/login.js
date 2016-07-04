@@ -122,7 +122,7 @@ const LogIn = withRouter(({
           userLogIn({
             ...userInfo,
           });
-          router.push('/');
+          router.push('/ladder');
         }).catch((errors) => {
           // TODO: Error object to expected.
           return Promise.reject(errors);

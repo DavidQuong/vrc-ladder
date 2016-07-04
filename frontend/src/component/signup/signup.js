@@ -259,7 +259,7 @@ const SignUp = withRouter(({
           return Promise.reject(errors);
         }
         return addUser(userInfo).then(() => {
-          router.push('/');
+          router.push('/ladder');
         }).catch((errors) => {
           // TODO: Error object to expected.
           return Promise.reject(errors);
