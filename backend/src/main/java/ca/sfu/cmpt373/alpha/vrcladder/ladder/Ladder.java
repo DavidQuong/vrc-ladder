@@ -86,11 +86,6 @@ public class Ladder {
             applyRankingsWithinMatchGroup(matchGroup);
         }
 
-        System.out.println("Teams After sorthing within MatchGroup: ");
-        for (Team team : ladder) {
-            System.out.println(team.getLadderPosition().getValue());
-        }
-
         swapTeamsBetweenMatchGroup(matchGroups);
 
         applyPenalties();
@@ -129,25 +124,8 @@ public class Ladder {
     }
 
     private void applyPenalties() {
-        System.out.println("ladder before penalties: ");
-        for (Team team : ladder) {
-            System.out.println(team.getLadderPosition().getValue());
-        }
         List<TeamIndexPenaltyTuple> teamsToApplyPenaltiesTo = getTeamsToApplyPenaltiesTo();
         removePenalizedTeams(teamsToApplyPenaltiesTo);
-
-        System.out.println("Ladder Teams");
-        for (Team team : ladder) {
-            System.out.println(team.getLadderPosition().getValue());
-        }
-        System.out.println("teams to apply penalties to");
-        for (TeamIndexPenaltyTuple tuple : teamsToApplyPenaltiesTo) {
-            System.out.println(
-                    "Team: "  + tuple.getTeam().getLadderPosition().getValue() + " " +
-                    "Original Index: " + tuple.getOriginalIndex() + " " +
-                    "Penalty: " + tuple.getPenalty() + " " +
-                    "New Index: " + tuple.getNewIndex());
-        }
 
         //sort so that highest ranked teams are re-added first
         //this way, we don't have to worry about the list indices shifting around

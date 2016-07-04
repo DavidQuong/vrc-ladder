@@ -272,7 +272,12 @@ public class LadderMethodsTest {
             teams.get(noShowTeamIndex).getAttendanceCard().setAttendanceStatus(AttendanceStatus.NO_SHOW);
         }
 
-        int[] expectedTeamIndices = new int[] {1, 3, 5, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15, 16, 17, 4, 18};
+        //Note that our algorithm applies Penalties differently than in the VRC example, so the expected results have
+        //been changed to reflect this. In our penalties algorithm, teams actually end up moving down the correct number
+        //of spots (from their original position) that their penalties enforce. In the vrc's example, teams
+        //don't always get moved down the correct number of spots from their original position (ex: in the vrc's example,
+        //team 3 only moved one spot down from its original position).
+        int[] expectedTeamIndices = new int[] {1, 3, 5, 6, 2, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 16, 17, 4, 18};
         List<Team> expectedTeams = new ArrayList<>();
         for (int expectedTeamIndex : expectedTeamIndices) {
             expectedTeams.add(teams.get(expectedTeamIndex));
@@ -297,9 +302,6 @@ public class LadderMethodsTest {
 
         Ladder ladder = new Ladder(teams);
         ladder.updateLadder(matchGroups);
-        for (Team team : ladder.getLadder()) {
-            System.out.println(team.getLadderPosition().getValue());
-        }
         for (int i = 0; i < ladder.getLadder().size(); i++) {
             Assert.assertEquals(ladder.getLadder().get(i), expectedTeams.get(i));
         }
