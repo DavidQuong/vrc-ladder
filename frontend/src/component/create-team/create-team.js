@@ -122,7 +122,7 @@ const CreateTeam = withRouter(({
         return addTeam({
           ...props,
         }, login).then(() => {
-          router.push('/');
+          router.push('/ladder');
         }).catch((errors) => {
           // TODO: Error object handling
           return Promise.reject(errors);

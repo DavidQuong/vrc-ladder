@@ -30,16 +30,16 @@ const Layout = ({children}) => (
           </Nav>
           <Nav pullRight className={styles.navItem}>
             <LinkContainer to='/'>
-              <NavItem >Ladder</NavItem>
+              <NavItem >Log in</NavItem>
             </LinkContainer>
             <LinkContainer to='/create-team'>
               <NavItem >Create team</NavItem>
             </LinkContainer>
+            <LinkContainer to='/ladder'>
+              <NavItem >Ladder</NavItem>
+            </LinkContainer>
             <LinkContainer to='/signup'>
               <NavItem >Sign up</NavItem>
-            </LinkContainer>
-            <LinkContainer to='/login'>
-              <NavItem >Log in</NavItem>
             </LinkContainer>
           </Nav>
         </Navbar.Collapse>
@@ -64,16 +64,18 @@ export default ({store}) : Element => (
     <IntlProvider messages={{}} defaultLocale='en-US'>
       <Router history={browserHistory}>
         <Route path='/' component={Layout}>
-          <IndexRoute
+          <IndexRoute component={LogIn}/>
+          <Route path='/signup' component={SignUp}/>
+          <Route path='/login' component={LogIn}/>
+          <Route path='/create-team' component={CreateTeam}/>
+          <Route
+            path='/ladder'
             component={Ladder}
             onEnter={(nextState, replace, callback) => {
               store.dispatch(getUser()).then(callback);
               store.dispatch(getTeams()).then(callback);
             }}
           />
-          <Route path='/signup' component={SignUp}/>
-          <Route path='/login' component={LogIn}/>
-          <Route path='/create-team' component={CreateTeam}/>
         </Route>
       </Router>
     </IntlProvider>
