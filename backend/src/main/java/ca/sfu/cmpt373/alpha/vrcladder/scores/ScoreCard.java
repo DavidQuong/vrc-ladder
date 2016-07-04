@@ -4,23 +4,20 @@ import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
-import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 
-import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
 public class ScoreCard {
 
-    private static final String ERROR_TEAM_NOT_ATTENDING = "Teams that did not attend should not change rankings within their matchgroups";
     private static final String ERROR_TEAM_NOT_IN_GROUP = "Team is not in match group";
     private static final String ERROR_ILLEGAL_SIZE = "Ranked teams list must be the same size as MatchGroup teams";
     private static final String ERROR_NO_RESULTS_SET = "There are no results recorded on this score card";
@@ -56,9 +53,29 @@ public class ScoreCard {
             throw new IllegalStateException(ERROR_ILLEGAL_SIZE);
         }
 
-        checkNonAttendingTeamsStayedTheSame(rankedTeams);
+        //create a new list so we can move list positions (guarantee that it's a modifiable list)
+        //also, it's a good idea to store a different list than the copy that's passed in in case the
+        //one passed in is modified externally.
+        List<Team> newRankedTeams = new ArrayList<>(rankedTeams);
+        moveNonPresentTeamsToBottom(newRankedTeams);
 
-        this.rankedTeams = rankedTeams;
+        this.rankedTeams = newRankedTeams;
+    }
+
+
+    private void moveNonPresentTeamsToBottom(List<Team> rankedTeams) {
+        List<Team> nonPresentTeams = new ArrayList<>();
+        for (int i = 0; i < rankedTeams.size(); i++) {
+            AttendanceCard attendanceCard = rankedTeams.get(i).getAttendanceCard();
+            boolean isTeamPresent = attendanceCard.isPresent();
+            if (!isTeamPresent) {
+                Team team = rankedTeams.remove(i);
+                nonPresentTeams.add(team);
+                //roll back one after removing a team so no teams are skipped
+                i--;
+            }
+        }
+        rankedTeams.addAll(nonPresentTeams);
     }
 
     /**
@@ -81,19 +98,6 @@ public class ScoreCard {
         }
     }
 
-    private void checkNonAttendingTeamsStayedTheSame(List<Team> rankedTeams) {
-        for (int i = 0; i < rankedTeams.size(); i++) {
-            AttendanceCard attendanceCard = rankedTeams.get(i).getAttendanceCard();
-            boolean isTeamPresent = attendanceCard.isPresent();
-            if (!isTeamPresent) {
-                boolean isTeamPositionDifferent = !rankedTeams.get(i).equals(matchGroup.getTeams().get(i));
-                if (isTeamPositionDifferent) {
-                    throw new IllegalStateException(ERROR_TEAM_NOT_ATTENDING);
-                }
-            }
-        }
-    }
-
     private void checkTeamsUnique(List<Team> teams) {
         for (int i = 0; i < teams.size(); i++) {
             Team currTeam = teams.get(i);
@@ -113,7 +117,7 @@ public class ScoreCard {
         if (rankedTeams.size() != matchGroup.getTeamCount()) {
             throw new IllegalStateException(ERROR_NO_RESULTS_SET);
         }
-        return rankedTeams;
+        return Collections.unmodifiableList(rankedTeams);
     }
 
     public MatchGroup getMatchGroup() {

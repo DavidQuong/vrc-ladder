@@ -1,6 +1,9 @@
 package ca.sfu.cmpt373.alpha.vrcladder.ladder;
 
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchGroupGenerator;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchScheduler;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
@@ -14,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LadderMethodsTest {
@@ -241,5 +245,63 @@ public class LadderMethodsTest {
         int positionFirstTeamOfNextMatchGroup = ladder.findTeamPosition(nextMatchGroupRankedTeams.get(0));
 
         return new ImmutablePair<>(positionLastTeamOfFirstMatchGroup, positionFirstTeamOfNextMatchGroup);
+    }
+
+    /**
+     * A Testcase example provided by the vrc
+     */
+    @Test
+    public void testUpdateLadder() {
+        int numTeams = 19;
+        MockTeamGenerator.resetTeamCount();
+        List<Team> teams = new ArrayList<>();
+        for (int i = 0; i < numTeams; i++) {
+            teams.add(MockTeamGenerator.generateTeam());
+        }
+
+        int lastAttendingTeamIndex = 19;
+        for (int i = 0; i < lastAttendingTeamIndex; i++) {
+            teams.get(i).getAttendanceCard().setPreferredPlayTime(PlayTime.TIME_SLOT_A);
+        }
+
+        int thirdTeamIndex = 2;
+        teams.get(thirdTeamIndex).getAttendanceCard().setPreferredPlayTime(PlayTime.NONE);
+
+        int[] noShowTeamIndices = new int[] {0, 4};
+        for (int noShowTeamIndex : noShowTeamIndices) {
+            teams.get(noShowTeamIndex).getAttendanceCard().setAttendanceStatus(AttendanceStatus.NO_SHOW);
+        }
+
+        int[] expectedTeamIndices = new int[] {1, 3, 5, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15, 16, 17, 4, 18};
+        List<Team> expectedTeams = new ArrayList<>();
+        for (int expectedTeamIndex : expectedTeamIndices) {
+            expectedTeams.add(teams.get(expectedTeamIndex));
+        }
+
+        //This situation would never occur in real scenarios since the MatchGroupGenerator would generate
+        //MatchGroups for all attending teams. Even if it was generating MatchGroups for just the first 9 teams,
+        // (with 1 team away), it would generate 2 MatchGroups of 4 Teams each
+        List<MatchGroup> matchGroups = new ArrayList<>();
+        matchGroups.add(new MatchGroup(
+                teams.get(0),
+                teams.get(1),
+                teams.get(3)));
+        matchGroups.add(new MatchGroup(
+                teams.get(4),
+                teams.get(5),
+                teams.get(6),
+                teams.get(7)));
+        for (MatchGroup matchGroup : matchGroups) {
+            matchGroup.getScoreCard().setRankedTeams(matchGroup.getTeams());
+        }
+
+        Ladder ladder = new Ladder(teams);
+        ladder.updateLadder(matchGroups);
+        for (Team team : ladder.getLadder()) {
+            System.out.println(team.getLadderPosition().getValue());
+        }
+        for (int i = 0; i < ladder.getLadder().size(); i++) {
+            Assert.assertEquals(ladder.getLadder().get(i), expectedTeams.get(i));
+        }
     }
 }
