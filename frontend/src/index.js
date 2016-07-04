@@ -39,6 +39,9 @@ const Layout = ({children}) => (
             <LinkContainer to='/ladder'>
               <NavItem >Ladder</NavItem>
             </LinkContainer>
+            <LinkContainer to='/match-groups'>
+              <NavItem >Match Groups</NavItem>
+            </LinkContainer>
             <LinkContainer to='/signup'>
               <NavItem >Sign up</NavItem>
             </LinkContainer>
@@ -71,10 +74,8 @@ export default ({store}) : Element => (
           <IndexRoute component={LogIn}/>
           <Route path='/signup' component={SignUp}/>
           <Route path='/login' component={LogIn}/>
-          <Route
-            path='/create-team'
-            component={CreateTeam}
-          />
+          <Route path='/create-team' component={CreateTeam}/>
+          <Route path='/match-groups' component={MatchGroup}/>
           <Route
             path='/ladder'
             component={Ladder}

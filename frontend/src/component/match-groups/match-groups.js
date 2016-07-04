@@ -10,13 +10,13 @@ const MatchGroup = ({
   <div className={styles.matchGroupPage}>
     <div className={styles.matchGroupTitle}>
       <FormattedMessage
-        id='Matchgroups_title'
-        defaultMessage='This weeks&quot; match group'
+        id='title'
+        defaultMessage='This weeks match groups'
       />
     </div>
     <div>
       <br/>
-      <div className={styles.matchGroup}>
+      <div className={styles.matchGroups}>
         <div className={styles.matchGroupCourt}>
           <FormattedMessage
             id='court #1'
@@ -26,7 +26,7 @@ const MatchGroup = ({
           <div className={styles.matchGroupInfo}>
             <FormattedMessage
               id='match1'
-              defaultMessage='Team 1 vs Team 2 @8:30pm'
+              defaultMessage='Team 1 vs Team 2 @ 8:30pm'
             />
             <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
@@ -35,11 +35,10 @@ const MatchGroup = ({
               />
               </div>
             </div>
-            <br/>
           <div className={styles.matchGroupInfo}>
             <FormattedMessage
               id='match2'
-              defaultMessage='Team 1 vs Team 3 @8:30pm'
+              defaultMessage='Team 1 vs Team 3 @ 8:45pm'
             />
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
@@ -48,11 +47,10 @@ const MatchGroup = ({
               />
               </div>
             </div>
-          <br/>
             <div className={styles.matchGroupInfo}>
             <FormattedMessage
               id='matchResults3'
-              defaultMessage='Team 2 vs Team 3 @8:30pm'
+              defaultMessage='Team 2 vs Team 3 @9:00pm'
             />
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
@@ -61,9 +59,8 @@ const MatchGroup = ({
               />
               </div>
             </div>
-          <br/>
       </div>
-      <div className={styles.matchGroup}>
+      <div className={styles.matchGroups}>
         <div className={styles.matchGroupCourt}>
           <FormattedMessage
             id='matchGroup2'
@@ -83,7 +80,6 @@ const MatchGroup = ({
               />
               </div>
             </div>
-            <br/>
             <div className={styles.matchGroupInfo}>
             <FormattedMessage
               id='match2'
@@ -96,7 +92,6 @@ const MatchGroup = ({
               />
               </div>
             </div>
-            <br/>
             <div className={styles.matchGroupInfo}>
               <FormattedMessage
                 id='match3'
@@ -110,9 +105,8 @@ const MatchGroup = ({
               </div>
             </div>
           </div>
-          <br/>
       </div>
-      <div className={styles.matchGroup}>
+      <div className={styles.matchGroups}>
         <div className={styles.matchGroupCourt}>
           <FormattedMessage
             id='matchGroup2'
@@ -132,7 +126,6 @@ const MatchGroup = ({
               />
               </div>
             </div>
-            <br/>
             <div className={styles.matchGroupInfo}>
             <FormattedMessage
               id='match2'
@@ -145,7 +138,6 @@ const MatchGroup = ({
               />
               </div>
             </div>
-            <br/>
             <div className={styles.matchGroupInfo}>
               <FormattedMessage
                 id='match3'
@@ -158,7 +150,6 @@ const MatchGroup = ({
               />
               </div>
             </div>
-            <br/>
             <div className={styles.matchGroupInfo}>
               <FormattedMessage
                 id='match4'
@@ -171,7 +162,6 @@ const MatchGroup = ({
               />
               </div>
             </div>
-            <br/>
           </div>
           <br/>
       </div>
