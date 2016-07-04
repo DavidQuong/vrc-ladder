@@ -2,9 +2,9 @@ import {createElement, Element} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
-// import {SubmitBtn} from '../button';
 import {withRouter} from 'react-router';
 import {logInUser} from '../../action/login';
+import {getUserInfo, getTeamInfo} from '../../action/users';
 import {createAction} from 'redux-actions';
 
 import styles from './login.css';
@@ -93,6 +93,8 @@ const userLogIn = createAction('USER_LOGIN');
 const LogIn = withRouter(({
   userLogIn,
   logInUser,
+  getUserInfo,
+  getTeamInfo,
   router,
 }) : Element => (
   <div className={styles.center}>
@@ -114,7 +116,11 @@ const LogIn = withRouter(({
             userLogIn({
               ...userInfo,
             });
-            router.push('/ladder');
+            getUserInfo().then(() => {
+              getTeamInfo().then(() => {
+                router.push('/ladder');
+              });
+            });
           }).catch((errors) => {
             // TODO: Error object to expected.
             return Promise.reject(errors);
@@ -128,7 +134,9 @@ const LogIn = withRouter(({
 export default connect(
   (state) => ({
     loggedIn: state.app.loggedIn,
-  }),
-  {logInUser,
-  userLogIn}
+  }), {
+    logInUser,
+    userLogIn,
+    getUserInfo,
+    getTeamInfo}
 )(LogIn);
