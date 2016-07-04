@@ -9,12 +9,12 @@ import styles from './ladder.css';
 export const syncPlayers = createAction('PLAYER_SYNC');
 
 const orderTeams = map((team) => (
-  <div className='panel panel-default'>
-    <div className={'panel-heading ' + styles.panelHeading}>
+  <div className={`panel panel-default ${styles.panel}`}>
+    <div className={`panel-heading ${styles.panelHeading}`}>
     Rank {team.ladderPosition}
       <span className='pull-right'>Playing at 8&#58;00PM</span>
     </div>
-    <div className={'panel-body ' + styles.panelBody}>
+    <div className={`panel-body ${styles.panelBody}`}>
       <div className={styles.entry}>
         <FormattedMessage
           id='player1'
