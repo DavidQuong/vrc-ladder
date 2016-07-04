@@ -16,6 +16,12 @@
   background-color: ~colors.darkGreen !important;
 }
 
+.center {
+  margin: auto;
+  width: 60%;
+  text-align: center;
+}
+
 .panelBody {
   font-size: 18px;
   font-weight: 600;
@@ -25,6 +31,7 @@
 
 .panel {
   border-color: ~colors.charcoalGrey;
+  min-width: 300px;
 }
 
 .table {

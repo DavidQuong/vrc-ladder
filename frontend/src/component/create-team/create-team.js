@@ -12,7 +12,6 @@ import Heading from '../heading/heading';
 import classNames from 'classnames';
 import isEmpty from 'lodash/fp/isEmpty';
 import sortBy from 'lodash/fp/sortBy';
-
 const validate = (values, userInfo) => {
   const errors = {};
   if (!values.secondPlayerId) {
@@ -23,7 +22,6 @@ const validate = (values, userInfo) => {
   }
   return errors;
 };
-
 const validateUpdateStatus = (values) => {
   const errors = {};
   if (!values.playTime) {
@@ -34,7 +32,6 @@ const validateUpdateStatus = (values) => {
   }
   return errors;
 };
-
 const playTimes = [{
   time: '8:00 pm',
   value: 'TIME_SLOT_A',
@@ -45,7 +42,6 @@ const playTimes = [{
   time: 'Not Playing',
   value: 'NONE',
 }];
-
 const UpdateAttendanceForm = reduxForm({
   form: 'updateTeam',
   fields: ['teamId', 'playTime'],
@@ -122,7 +118,6 @@ const UpdateAttendanceForm = reduxForm({
     </div>
   </form>
 ));
-
 const CreateTeamForm = reduxForm({
   form: 'teamCreate',
   fields: ['secondPlayerId'],
@@ -170,7 +165,6 @@ const CreateTeamForm = reduxForm({
     </div>
   </form>
 ));
-
 const displayMyInfo = (userInfo) => (
   <div>
     <div>
@@ -196,7 +190,6 @@ const displayMyInfo = (userInfo) => (
     </div>
   </div>
 );
-
 const getTime = (time) => {
   if (time === 'TIME_SLOT_A') {
     return '8:30';
@@ -205,7 +198,6 @@ const getTime = (time) => {
   }
   return 'NONE';
 };
-
 const displayTeamInfo = map((teamInfo) => (
   <div
     key={teamInfo.teamId}
@@ -234,7 +226,6 @@ const displayTeamInfo = map((teamInfo) => (
     {getTime(teamInfo.playTime)}
   </div>
 ));
-
 const CreateTeam = withRouter(({
   addTeam,
   players,
@@ -315,7 +306,6 @@ const CreateTeam = withRouter(({
     />
   </div>
 ));
-
 export default connect(
   (state) => ({
     players: sortBy('firstName', state.app.players),
