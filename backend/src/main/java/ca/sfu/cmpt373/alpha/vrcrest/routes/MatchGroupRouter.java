@@ -35,8 +35,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static ca.sfu.cmpt373.alpha.vrcrest.RestApi.JSON_RESPONSE_TYPE;
-
 public class MatchGroupRouter extends RestRouter {
 
     private MatchGroupManager matchGroupManager;
@@ -254,7 +252,6 @@ public class MatchGroupRouter extends RestRouter {
 
     private String handleSwapMatchGroupTeams(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.type(JSON_RESPONSE_TYPE);
         try {
             String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_ID);
             String paramMatchGroupId2 = request.params(PARAM_MATCHGROUP_OTHER_ID);
