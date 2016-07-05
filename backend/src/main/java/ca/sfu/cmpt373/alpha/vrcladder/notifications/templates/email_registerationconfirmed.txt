@@ -1,0 +1,9 @@
+Dear {user},
+
+This email is to confirm your registration in Vancouver Racquets Club. We welcome you to our club and wish you
+a pleasant time.
+
+If you didn't register, or receiving this email by mistake please contact us at support@vrc.com
+
+Sincerely Yours,
+VRC

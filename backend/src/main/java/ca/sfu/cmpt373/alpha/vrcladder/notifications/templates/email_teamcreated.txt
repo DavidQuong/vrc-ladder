@@ -1,0 +1,14 @@
+Dear {user},
+
+You have been added to a team in Vancouver Racquets Club. You can find details about the team below: -
+
+Team ID: {teamid}
+Preferred Time: {preferrdtime}
+Ladder Position: {ladderposition}
+First Team Member: {firstteammember}
+Second Team Member: {secondteammember}
+
+To opt out of this team please use your account to do so.
+
+Sincerely Yours,
+VRC

@@ -1,0 +1,11 @@
+Dear {user},
+
+You have been scheduled for a game for your team {team}, the information about the game is detailed below: -
+
+Date and Time: {time}
+
+Please make sure to attend on the scheduled game to avoid the penalty of not attending,
+or change the status to not attending to avoid any penalties.
+
+Sincerely Yours,
+VRC
