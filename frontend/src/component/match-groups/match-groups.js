@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 // import map from 'lodash/fp/map';
 import sortBy from 'lodash/fp/sortBy';
 import styles from './match-groups.css';
+import {SubmitBtn} from '../button';
 
 const MatchGroups = ({
 }) : Element => (
@@ -54,8 +55,13 @@ const MatchGroups = ({
             <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: <User enter results here (txt, drop?)>'
+                defaultMessage='Results: '
               />
+            <select>
+              <option value=''>Select a team...</option>
+                <option value='Team1'>Team1</option>
+                <option value='Team2'>Team2</option>
+            </select>
               </div>
             </div>
           <div className={styles.matchGroupInfo}>
@@ -66,8 +72,13 @@ const MatchGroups = ({
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: <User enter results here (txt, drop?)>'
+                defaultMessage='Results: '
               />
+              <select>
+                <option value=''>Select a team...</option>
+                  <option value='Team1'>Team1</option>
+                  <option value='Team3'>Team3</option>
+              </select>
               </div>
             </div>
             <div className={styles.matchGroupInfo}>
@@ -78,10 +89,16 @@ const MatchGroups = ({
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: <User enter results here (txt, drop?)>'
+                defaultMessage='Results: '
               />
+              <select>
+                <option value=''>Select a team...</option>
+                  <option value='Team2'>Team2</option>
+                  <option value='Team3'>Team3</option>
+              </select>
               </div>
             </div>
+            <SubmitBtn type='submit'>Report Match Results</SubmitBtn>
       </div>
       <div className={styles.matchGroups}>
         <div className={styles.matchGroupCourt}>
@@ -122,8 +139,13 @@ const MatchGroups = ({
             <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: <User enter results here (txt, drop?)>'
+                defaultMessage='Results: '
               />
+              <select>
+                <option value=''>Select a team...</option>
+                  <option value='Team4'>Team4</option>
+                  <option value='Team5'>Team5</option>
+              </select>
               </div>
             </div>
             <div className={styles.matchGroupInfo}>
@@ -134,8 +156,13 @@ const MatchGroups = ({
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: <User enter results here (txt, drop?)>'
+                defaultMessage='Results: '
               />
+              <select>
+                <option value=''>Select a team...</option>
+                  <option value='Team4'>Team4</option>
+                  <option value='Team6'>Team6</option>
+              </select>
               </div>
             </div>
             <div className={styles.matchGroupInfo}>
@@ -146,16 +173,22 @@ const MatchGroups = ({
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: <User enter results here (txt, drop?)>'
+                defaultMessage='Results: '
               />
+              <select>
+                <option value=''>Select a team...</option>
+                  <option value='Team4'>Team4</option>
+                  <option value='Team6'>Team6</option>
+              </select>
               </div>
             </div>
           </div>
+          <SubmitBtn type='submit'>Report Match Results</SubmitBtn>
       </div>
       <div className={styles.matchGroups}>
         <div className={styles.matchGroupCourt}>
           <FormattedMessage
-            id='matchGroup2'
+            id='matchGroup3'
             defaultMessage='Court #3'
           />
           <br/>
@@ -197,8 +230,13 @@ const MatchGroups = ({
             <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: <User enter results here (txt, drop?)>'
+                defaultMessage='Results: '
               />
+              <select>
+                <option value=''>Select a team...</option>
+                  <option value='Team7'>Team7</option>
+                  <option value='Team8'>Team8</option>
+              </select>
               </div>
             </div>
             <div className={styles.matchGroupInfo}>
@@ -209,8 +247,13 @@ const MatchGroups = ({
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: <User enter results here (txt, drop?)>'
+                defaultMessage='Results: '
               />
+              <select>
+                <option value=''>Select a team...</option>
+                  <option value='Team7'>Team7</option>
+                  <option value='Team9'>Team9</option>
+              </select>
               </div>
             </div>
             <div className={styles.matchGroupInfo}>
@@ -221,8 +264,13 @@ const MatchGroups = ({
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: <User enter results here (txt, drop?)>'
+                defaultMessage='Results: '
               />
+              <select>
+                <option value=''>Select a team...</option>
+                  <option value='Team9'>Team9</option>
+                  <option value='TeamW'>TeamW</option>
+              </select>
               </div>
             </div>
             <div className={styles.matchGroupInfo}>
@@ -233,10 +281,16 @@ const MatchGroups = ({
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults4'
-                defaultMessage='Results: <User enter results here (txt, drop?)>'
+                defaultMessage='Results: '
               />
+              <select>
+                <option value=''>Select a team...</option>
+                  <option value='Team10'>Team10</option>
+                  <option value='TeamD'>TeamD</option>
+              </select>
               </div>
             </div>
+            <SubmitBtn type='submit'>Report Match Results</SubmitBtn>
           </div>
           <br/>
       </div>
