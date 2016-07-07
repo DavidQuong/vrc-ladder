@@ -8,6 +8,7 @@ public class NotificationSettings {
     public static final String GAME_SCHEDULED_REMINDER    = "gamescheduledreminder";
     public static final String GAME_SCORES_ENTERED        = "gamescorereported";
     public static final String ACCOUNT_ACTIVATED          = "registrationconfirmed";
+    public static final String ACCOUNT_NEEDS_ACTIVATION   = "activationrequired";
     public static final String PASSWORD_UPDATED           = "passwordupdated";
     public static final String PASSWORD_RESET             = "passwordreset";
     public static final String FAILED_LOGIN               = "loginfailed";

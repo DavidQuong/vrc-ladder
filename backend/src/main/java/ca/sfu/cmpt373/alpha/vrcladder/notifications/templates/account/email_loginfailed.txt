@@ -1,0 +1,8 @@
+Dear #fullname,
+
+You have a failed attempt to login to your account at Vancouver Racquets Club!
+
+If the attempt was by you please ignore this message. If not, please inform us at support@vrc.com
+
+Sincerely Yours,
+VRC

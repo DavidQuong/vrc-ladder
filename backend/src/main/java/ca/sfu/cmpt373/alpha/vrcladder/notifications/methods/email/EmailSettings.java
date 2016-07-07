@@ -17,6 +17,7 @@ public class EmailSettings {
     static final String SUBJECT_GAME_SCHEDULED_REMINDER    = "REMINDER: You have a scheduled game";
     static final String SUBJECT_GAME_SCORES_ENTERED        = "A new score has been entered for your game";
     static final String SUBJECT_ACCOUNT_ACTIVATED          = "Welcome to VRC";
+    static final String SUBJECT_ACCOUNT_NEEDS_ACTIVATION   = "VRC Account Confirmation";
     static final String SUBJECT_PASSWORD_UPDATED           = "Your password has been updated successfully";
     static final String SUBJECT_PASSWORD_RESET             = "Password reset";
     static final String SUBJECT_FAILED_LOGIN               = "You have a failed login attempt";
