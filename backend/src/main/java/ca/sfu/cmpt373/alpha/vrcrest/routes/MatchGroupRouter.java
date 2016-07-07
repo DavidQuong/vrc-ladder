@@ -14,6 +14,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewTeamIdListPayload;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewTradingMatchGroupsPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.ScoreCardPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.CourtSerializer;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.MatchGroupSerializer;
@@ -48,9 +49,6 @@ public class MatchGroupRouter extends RestRouter {
     }
 
     private static final String PARAM_MATCHGROUP_ID = PARAM_ID + "matchGroupId";
-    private static final String PARAM_MATCHGROUP_OTHER_ID = PARAM_ID + "matchGroupOtherId";
-    private static final String PARAM_TEAM_ID = PARAM_ID + "teamId";
-    private static final String PARAM_TEAM_OTHER_ID = PARAM_ID + "teamOtherId";
 
     private static final String ROUTE_MATCHGROUP = "/matchgroup";
 
@@ -60,7 +58,7 @@ public class MatchGroupRouter extends RestRouter {
     public static final String ROUTE_MATCHGROUP_SCORES = ROUTE_MATCHGROUP + "/" + PARAM_ID + "/scores";
     public static final String ROUTE_MATCH_SCHEDULE = ROUTE_MATCHGROUPS + "/schedule";
     public static final String ROUTE_MATCHGROUP_UPDATE_MATCHGROUP = ROUTE_MATCHGROUP + "/update/" + PARAM_MATCHGROUP_ID;
-    public static final String ROUTE_MATCHGROUPS_TRADE_TEAMS = ROUTE_MATCHGROUPS + "/trade/" + PARAM_MATCHGROUP_ID + "/" + PARAM_TEAM_ID + "/with/" + PARAM_MATCHGROUP_OTHER_ID + "/" + PARAM_TEAM_OTHER_ID;
+    public static final String ROUTE_MATCHGROUPS_TRADE_TEAMS = ROUTE_MATCHGROUPS + "/trade";
 
     private static final String JSON_PROPERTY_MATCHGROUPS = "matchGroups";
     private static final String JSON_PROPERTY_MATCHGROUP = "matchGroup";
@@ -80,7 +78,7 @@ public class MatchGroupRouter extends RestRouter {
         Spark.post(ROUTE_MATCHGROUP_GENERATION, this::handleGenerateMatchGroups);
         Spark.put(ROUTE_MATCHGROUP_UPDATE_MATCHGROUP, this::handleUpdateMatchGroupTeams);
         Spark.get(ROUTE_MATCHGROUP_SCORES, this::handleGetMatchGroupScores);
-        Spark.put(ROUTE_MATCHGROUPS_TRADE_TEAMS, this::handleSwapMatchGroupTeams);
+        Spark.post(ROUTE_MATCHGROUPS_TRADE_TEAMS, this::handleSwapMatchGroupTeams);
     }
 
     @Override
@@ -96,6 +94,7 @@ public class MatchGroupRouter extends RestRouter {
                 .registerTypeAdapter(ScoreCard.class, new ScoreCardSerializer())
                 .registerTypeAdapter(ScoreCardPayload.class, new ScoreCardPayload.GsonDeserializer())
                 .registerTypeAdapter(NewTeamIdListPayload.class, new NewTeamIdListPayload.GsonDeserializer())
+                .registerTypeAdapter(NewTradingMatchGroupsPayload.class, new NewTradingMatchGroupsPayload.GsonDeserializer())
                 .setPrettyPrinting()
                 .create();
     }
@@ -253,20 +252,28 @@ public class MatchGroupRouter extends RestRouter {
     private String handleSwapMatchGroupTeams(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
         try {
-            String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_ID);
-            String paramMatchGroupId2 = request.params(PARAM_MATCHGROUP_OTHER_ID);
-            String paramTeamId1 = request.params(PARAM_TEAM_ID);
-            String paramTeamId2 = request.params(PARAM_TEAM_OTHER_ID);
+            NewTradingMatchGroupsPayload newSwapPayload = getGson().fromJson(request.body(), NewTradingMatchGroupsPayload.class);
 
-            Team teamToTrade1 = teamManager.getById(new GeneratedId(paramTeamId1));
-            Team teamToTrade2 = teamManager.getById(new GeneratedId(paramTeamId2));
-            matchGroupManager.tradeTeamsInMatchGroups(new GeneratedId(paramMatchGroupId1), teamToTrade1, new GeneratedId(paramMatchGroupId2), teamToTrade2);
+            GeneratedId firstMatchGroupId = newSwapPayload.getFirstMatchGroupId();
+            GeneratedId secondMatchGroupId = newSwapPayload.getSecondMatchGroupId();
+            GeneratedId firstTeamId = newSwapPayload.getFirstTeamId();
+            GeneratedId secondTeamId = newSwapPayload.getSecondTeamId();
+
+            Team teamToTrade1 = teamManager.getById(firstTeamId);
+            Team teamToTrade2 = teamManager.getById(secondTeamId);
+            matchGroupManager.tradeTeamsInMatchGroups(firstMatchGroupId, teamToTrade1, secondMatchGroupId, teamToTrade2);
         } catch (EntityNotFoundException e) {
             response.status(HttpStatus.NOT_FOUND_404);
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_TEAM_MATCHGROUP_FOUND);
         } catch (TeamNotFoundException e) {
             response.status(HttpStatus.BAD_REQUEST_400);
             responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
+        } catch (JsonSyntaxException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (RuntimeException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
+            response.status(HttpStatus.BAD_REQUEST_400);
         }
         return responseBody.toString();
     }
