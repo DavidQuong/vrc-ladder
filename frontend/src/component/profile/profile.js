@@ -7,7 +7,7 @@ import {SubmitBtn} from '../button';
 import {withRouter} from 'react-router';
 import {getTeamInfo} from '../../action/users';
 import map from 'lodash/fp/map';
-import styles from './create-team.css';
+import styles from './profile.css';
 import Heading from '../heading/heading';
 import classNames from 'classnames';
 import isEmpty from 'lodash/fp/isEmpty';
@@ -72,8 +72,7 @@ const UpdateAttendanceForm = reduxForm({
       <option value=''>Select a team...</option>
       {map((teams) => (
         <option value={teams.teamId}key={teams.teamId}>
-          {teams.firstPlayer.name} {teams.secondPlayer.name}
-        }
+          With:  {teams.secondPlayer.name}
         </option>
       ), teams)}
     </select>
@@ -167,25 +166,33 @@ const CreateTeamForm = reduxForm({
 ));
 const displayMyInfo = (userInfo) => (
   <div>
-    <div>
+    <div className={styles.profileDetailsField}>
       <FormattedMessage
         id='firstName'
         defaultMessage='Name: '
       />
+    </div>
+    <div className={styles.profileDetails}>
       {userInfo.firstName} {userInfo.lastName}
     </div>
-    <div>
+    <br/>
+    <div className={styles.profileDetailsField}>
       <FormattedMessage
         id='phoneNumber'
         defaultMessage='Phone Number: '
       />
+    </div>
+    <div className={styles.profileDetails}>
       {userInfo.phoneNumber}
     </div>
-    <div>
+    <br/>
+    <div className={styles.profileDetailsField}>
       <FormattedMessage
         id='emailAddress'
         defaultMessage='Email: '
       />
+    </div>
+    <div className={styles.profileDetails}>
       {userInfo.emailAddress}
     </div>
   </div>
@@ -201,29 +208,27 @@ const getTime = (time) => {
 const displayTeamInfo = map((teamInfo) => (
   <div
     key={teamInfo.teamId}
-    className={styles.table}
+    className={styles.inactiveProfileTeams}
   >
-    <div>
-    <FormattedMessage
-      id='firstPlayer'
-      defaultMessage='First Player: '
-    />
+    <div className={styles.profileDetailsField}>
+      <FormattedMessage
+        id='firstPlayer'
+        defaultMessage='Team With: '
+      />
     </div>
-    {teamInfo.firstPlayer.name}
-    <div>
-    <FormattedMessage
-      id='firstPlayer'
-      defaultMessage='Second Player: '
-    />
+    <div className={styles.profileDetails}>
+      {teamInfo.secondPlayer.name}
     </div>
-    {teamInfo.secondPlayer.name}
-    <div>
-    <FormattedMessage
-      id='playTime'
-      defaultMessage='PlayTime: '
-    />
+    <br/>
+    <div className={styles.profileDetailsField}>
+      <FormattedMessage
+        id='playTime'
+        defaultMessage='Preferred Play Time: '
+      />
     </div>
-    {getTime(teamInfo.playTime)}
+    <div className={styles.profileDetails}>
+      {getTime(teamInfo.playTime)}
+    </div>
   </div>
 ));
 const CreateTeam = withRouter(({
@@ -238,26 +243,26 @@ const CreateTeam = withRouter(({
   updateTeamStatus,
 }) : Element => (
   <div className={styles.createTeam}>
-    <Heading kind='huge'>
-      <FormattedMessage
-        id='myInfo'
-        defaultMessage='My Info'
-      />
-    </Heading>
+      <div className={styles.sectionHeaders}>
+        <FormattedMessage
+          id='myInfo'
+          defaultMessage='My Profile'
+        />
+      </div>
     {displayMyInfo(userInfo)}
-    <Heading kind='huge'>
+    <div className={styles.sectionHeaders}>
       <FormattedMessage
         id='myTeams'
         defaultMessage='My Teams'
       />
-    </Heading>
+    </div>
     {displayTeamInfo(teamInfo)}
-    <Heading kind='huge'>
+    <div className={styles.sectionHeaders}>
       <FormattedMessage
         id='teamAttendance'
         defaultMessage='Update Attendance'
       />
-    </Heading>
+    </div>
     <UpdateAttendanceForm
       teams={teamInfo}
       userInfo={userInfo}
@@ -276,12 +281,12 @@ const CreateTeam = withRouter(({
         });
       }}
     />
-    <Heading kind='huge'>
-      <FormattedMessage
-        id='createTeam'
-        defaultMessage='Create Team'
-      />
-    </Heading>
+  <div className={styles.sectionHeaders}>
+    <FormattedMessage
+      id='createTeam'
+      defaultMessage='Create Team'
+    />
+   </div>
     <CreateTeamForm
       players={players}
       teams={teams}
@@ -299,7 +304,7 @@ const CreateTeam = withRouter(({
             router.push('/ladder');
           });
         }).catch((errors) => {
-          errors = {'secondPlayerId': 'team exists'}
+          // errors = {'secondPlayerId': 'team exists'}
           return Promise.reject(errors);
         });
       }}
