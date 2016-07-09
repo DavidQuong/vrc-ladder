@@ -1,9 +1,10 @@
 package ca.sfu.cmpt373.alpha.vrcladder.notifications;
 
 
-import ca.sfu.cmpt373.alpha.vrcladder.notifications.methods.NotificationType;
-import ca.sfu.cmpt373.alpha.vrcladder.notifications.methods.email.Email;
-import ca.sfu.cmpt373.alpha.vrcladder.notifications.methods.email.EmailSettings;
+import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
+import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.NotificationType;
+import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.Email;
+import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.EmailSettings;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 
@@ -19,20 +20,24 @@ import java.util.Map;
 public class NotificationManager {
 
     private Email email;
+    private static final String GAME_REPORTED_THREE_TEAMS = "threeteams";
+    private static final String GAME_REPORTED_FOUR_TEAMS  = "fourteams";
+    private static final int FIRST_PLAYER = 1;
+    private static final int SECOND_PLAYER = 2;
 
     public NotificationManager() {
         email = new Email();
     }
 
-    public void notifyUserAboutTeamRelatedActivity(User user, Team team, NotificationType type, String activity) {
-        Map values = new HashMap();
+    public void notifyUserAboutTeamRelatedActivity(User user, Team team, NotificationType type) {
+        Map<String, String> values = new HashMap<>();
         values.put("#fullname", user.getDisplayName());
-        setTeamValues(team, type, values);
-        String receiver = getReceiver(user, type);
-        String currentType = type.toString().toLowerCase();
+        setTeamValues(team, values);
+        String receiver = user.getEmailAddress().toString();
+        String currentTemplate = type.getTemplate();
 
         try {
-            FileReader file = new FileReader("src\\main\\java\\ca\\sfu\\cmpt373\\alpha\\vrcladder\\notifications\\templates\\team\\" + currentType + "_" + activity + "." + EmailSettings.EMAILS_FORMAT);
+            FileReader file = new FileReader("src\\main\\java\\ca\\sfu\\cmpt373\\alpha\\vrcladder\\notifications\\templates\\team\\email_" + currentTemplate + "." + EmailSettings.EMAILS_FORMAT);
             BufferedReader reader = new BufferedReader(file);
             String messageContent = "";
             List<String> messageTags = new ArrayList<>();
@@ -41,8 +46,7 @@ public class NotificationManager {
             while ((line = reader.readLine()) != null) {
                 messageContent += line;
                 if (line.contains("#")) {
-                    String tag = findNotificationTags(line);
-                    messageTags.add(tag);
+                    messageTags.addAll(findNotificationTags(line));
                 }
                 messageContent += "\n";
             }
@@ -51,24 +55,21 @@ public class NotificationManager {
             messageContent = replaceTags(messageContent, messageTags, values);
             System.out.println(messageContent);
 
-            sendNotification(receiver, messageContent, activity, type);
-        } catch (FileNotFoundException e) {
-            // TODO: handle this exception.
-            e.printStackTrace();
+            email.sendEmail(receiver, messageContent, type);
         } catch (IOException e) {
             // TODO: handle this exception.
             e.printStackTrace();
         }
     }
 
-    public void notifyUserAboutAccountRelatedActivity(User user, NotificationType type, String activity){
-        Map values = new HashMap();
+    public void notifyUserAboutAccountRelatedActivity(User user, NotificationType type) {
+        Map<String, String> values = new HashMap<>();
         values.put("#fullname", user.getDisplayName());
-        String receiver = getReceiver(user, type);
-        String currentType = type.toString().toLowerCase();
+        String receiver = user.getEmailAddress().toString();
+        String currentTemplate = type.getTemplate();
 
         try {
-            FileReader file = new FileReader("src\\main\\java\\ca\\sfu\\cmpt373\\alpha\\vrcladder\\notifications\\templates\\account\\" + currentType + "_" + activity + "." + EmailSettings.EMAILS_FORMAT);
+            FileReader file = new FileReader("src\\main\\java\\ca\\sfu\\cmpt373\\alpha\\vrcladder\\notifications\\templates\\account\\email_" + currentTemplate + "." + EmailSettings.EMAILS_FORMAT);
             BufferedReader reader = new BufferedReader(file);
             String messageContent = "";
             List<String> messageTags = new ArrayList<>();
@@ -77,8 +78,7 @@ public class NotificationManager {
             while ((line = reader.readLine()) != null) {
                 messageContent += line;
                 if (line.contains("#")) {
-                    String tag = findNotificationTags(line);
-                    messageTags.add(tag);
+                    messageTags.addAll(findNotificationTags(line));
                 }
                 messageContent += "\n";
             }
@@ -87,27 +87,24 @@ public class NotificationManager {
             messageContent = replaceTags(messageContent, messageTags, values);
             System.out.println(messageContent);
 
-            sendNotification(receiver, messageContent, activity, type);
-        } catch (FileNotFoundException e) {
-            // TODO: handle this exception.
-            e.printStackTrace();
+            email.sendEmail(receiver, messageContent, type);
         } catch (IOException e) {
             // TODO: handle this exception.
             e.printStackTrace();
         }
     }
 
-    public void notifyUserTokenBasedRequests(User user, NotificationType type, String activity, String token){
-        Map values = new HashMap();
+    public void notifyUserTokenBasedRequests(User user, NotificationType type, String token) {
+        Map<String, String> values = new HashMap<>();
         values.put("#fullname", user.getDisplayName());
         values.put("#token", token);
         values.put("#userid", user.getUserId().toString());
         values.put("#sitelink", "http://www.vrc.ca");
-        String receiver = getReceiver(user, type);
-        String currentType = type.toString().toLowerCase();
+        String receiver = user.getEmailAddress().toString();
+        String currentTemplate = type.getTemplate();
 
         try {
-            FileReader file = new FileReader("src\\main\\java\\ca\\sfu\\cmpt373\\alpha\\vrcladder\\notifications\\templates\\account\\" + currentType + "_" + activity + "." + EmailSettings.EMAILS_FORMAT);
+            FileReader file = new FileReader("src\\main\\java\\ca\\sfu\\cmpt373\\alpha\\vrcladder\\notifications\\templates\\account\\email_" + currentTemplate + "." + EmailSettings.EMAILS_FORMAT);
             BufferedReader reader = new BufferedReader(file);
             String messageContent = "";
             List<String> messageTags = new ArrayList<>();
@@ -116,119 +113,141 @@ public class NotificationManager {
             while ((line = reader.readLine()) != null) {
                 messageContent += line;
                 if (line.contains("#")) {
-                    String tag = findNotificationTags(line);
-                    messageTags.add(tag);
+                    messageTags.addAll(findNotificationTags(line));
                 }
                 messageContent += "\n";
             }
-            messageTags.add("#userid");
-            messageTags.add("#token");
 
             file.close();
             messageContent = replaceTags(messageContent, messageTags, values);
             System.out.println(messageContent);
 
-            sendNotification(receiver, messageContent, activity, type);
-        } catch (FileNotFoundException e) {
-            // TODO: handle this exception.
-            e.printStackTrace();
+            email.sendEmail(receiver, messageContent, type);
         } catch (IOException e) {
             // TODO: handle this exception.
             e.printStackTrace();
         }
     }
 
-    public void notifyUserAboutGameRelatedActivity(User user, NotificationType type, String activity){
+    public void notifyUserAboutGameScores(MatchGroup group, NotificationType type) {
+        String currentTemplate = type.getTemplate();
+        if (group.getTeamCount() == MatchGroup.MIN_NUM_TEAMS) {
+            currentTemplate = currentTemplate + GAME_REPORTED_THREE_TEAMS;
+        } else {
+            currentTemplate = currentTemplate + GAME_REPORTED_FOUR_TEAMS;
+        }
 
-    }
-
-    /*
-    public void notifyGameScheduled(User user, Team team) {
-        Map values = new HashMap();
-        values.put("@fullname", user.getDisplayName());
-        values.put("@preferrdtime", team.getAttendanceCard().getPreferredPlayTime());
-        values.put("@ladderposition", team.getLadderPosition().getValue().toString());
-        values.put("@firstteammember", team.getFirstPlayer().getDisplayName());
-        values.put("@secondteammember", team.getSecondPlayer().getDisplayName());
-        String receiver = user.getEmailAddress().toString();
-        String subject = "You have a new scheduled game";
+        Map<String, String> values = new HashMap<>();
+        List<Team> teams = group.getScoreCard().getRankedTeams();
+        List<String> receivers = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        setReceiverValues(teams, receivers, names, type);
+        setGameValues(values, teams);
 
         try {
-            FileReader file = new FileReader("src\\main\\java\\ca\\sfu\\cmpt373\\alpha\\vrcladder\\notifications\\templates\\email_registrationconfirmed.txt");
-            BufferedReader reader = new BufferedReader(file);
-            List<String> messageTags = new ArrayList<>();
-            String line;
-            String messageContent = "";
+            values.put("#fullname", "");
 
-            while ((line = reader.readLine()) != null) {
-                messageContent += line;
+            for (int counter = 0; counter < names.size(); counter++) {
+                FileReader file = new FileReader("src\\main\\java\\ca\\sfu\\cmpt373\\alpha\\vrcladder\\notifications\\templates\\game\\email_" + currentTemplate + "." + EmailSettings.EMAILS_FORMAT);
+                BufferedReader reader = new BufferedReader(file);
+                List<String> messageTags = new ArrayList<>();
+                String messageContent = "";
+                String receiver = receivers.get(counter);
+                values.replace("#fullname", names.get(counter));
 
-                if (line.contains("@")) {
-                    String tag = findNotificationTags(line);
-                    messageTags.add(tag);
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    messageContent += line;
+                    if (line.contains("#")) {
+                        messageTags.addAll(findNotificationTags(line));
+                    }
+                    messageContent += "\n";
                 }
-                messageContent += "\n";
+
+                messageContent = replaceTags(messageContent, messageTags, values);
+                System.out.println(messageContent);
+                email.sendEmail(receiver, messageContent, type);
+                file.close();
             }
 
-            messageContent = replaceTags(messageContent, messageTags, values);
-            email.sendTextEmail(receiver, subject, messageContent);
-            file.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
+            // TODO: handle this exception.
             e.printStackTrace();
         }
     }
-    */
 
-
-    private static void setTeamValues(Team team, NotificationType type, Map values){
-        if(type.equals(NotificationType.EMAIL)){
-            values.put("#preferrdtime", team.getAttendanceCard().getPreferredPlayTime());
-            values.put("#ladderposition", team.getLadderPosition().getValue().toString());
-            values.put("#firstteammember", team.getFirstPlayer().getDisplayName());
-            values.put("#secondteammember", team.getSecondPlayer().getDisplayName());
-        }
-    }
-
-    private String findNotificationTags(String currentLine) {
-        String results = "";
+    private List<String> findNotificationTags(String currentLine) {
+        List<String> results = new ArrayList<>();
+        String currentTag = "";
         char[] lineContents = currentLine.toCharArray();
-        boolean status = false;
+        boolean currentStatus = false;
+        boolean addToTags = false;
         for (char c : lineContents) {
-            if (c == '#') {
-                status = true;
+            if (addToTags) {
+                results.add(currentTag);
+                addToTags = false;
+                currentTag = "";
             }
 
-            if (status) {
-                if(c == ',' || c == '/'){
-                    break;
-                }
-                results = results + c;
+            if (c == '#') {
+                currentStatus = true;
             }
+
+            if (currentStatus) {
+                if (isEndOfTag(c)) {
+                    currentStatus = false;
+                    addToTags = true;
+                    continue;
+                }
+                currentTag = currentTag + c;
+            }
+        }
+
+        if (!currentTag.isEmpty()) {
+            results.add(currentTag);
         }
         return results;
     }
 
     private String replaceTags(String messageContent, List<String> tags, Map values) {
         for (String tag : tags) {
-            String value = values.get(tag).toString();
-            messageContent = messageContent.replaceAll(tag, value);
+            if (values.containsKey(tag)) {
+                String value = values.get(tag).toString();
+                messageContent = messageContent.replaceAll(tag, value);
+            }
         }
         return messageContent;
     }
 
-    private void sendNotification(String reciever, String content, String activity, NotificationType type){
-        if(type.equals(NotificationType.EMAIL)){
-            email.sendEmail(reciever, content, activity);
+    private boolean isEndOfTag(char currentLetter) {
+        return (currentLetter == ',' || currentLetter == '/' || currentLetter == '<');
+    }
+
+    private static void setTeamValues(Team team, Map<String, String> values) {
+            values.put("#preferrdtime", team.getAttendanceCard().getPreferredPlayTime().toString());
+            values.put("#ladderposition", team.getLadderPosition().getValue().toString());
+            values.put("#firstteammember", team.getFirstPlayer().getDisplayName());
+            values.put("#secondteammember", team.getSecondPlayer().getDisplayName());
+    }
+
+    private static void setReceiverValues(List<Team> teams, List<String> receivers, List<String> names, NotificationType type) {
+        for (Team team : teams) {
+            String firstReceiver = team.getFirstPlayer().getEmailAddress().toString();
+            receivers.add(firstReceiver);
+            String secondReceiver = team.getSecondPlayer().getEmailAddress().toString();
+            receivers.add(secondReceiver);
+
+            names.add(team.getFirstPlayer().getDisplayName());
+            names.add(team.getSecondPlayer().getDisplayName());
         }
     }
 
-    private String getReceiver(User user, NotificationType type){
-        if(type.equals(NotificationType.EMAIL)){
-            return user.getEmailAddress().toString();
+    private static void setGameValues(Map<String, String> values, List<Team> teams) {
+        for (int counter = 0; counter < teams.size(); counter++) {
+            int currentTeam = counter + 1;
+            values.put("#team" + currentTeam + "player" + FIRST_PLAYER, teams.get(counter).getFirstPlayer().getDisplayName());
+            values.put("#team" + currentTeam + "player" + SECOND_PLAYER, teams.get(counter).getSecondPlayer().getDisplayName());
         }
-        return user.getPhoneNumber().toString();
     }
 
 }

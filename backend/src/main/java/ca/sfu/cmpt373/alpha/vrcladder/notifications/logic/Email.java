@@ -1,4 +1,4 @@
-package ca.sfu.cmpt373.alpha.vrcladder.notifications.methods.email;
+package ca.sfu.cmpt373.alpha.vrcladder.notifications.logic;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -37,9 +37,9 @@ public class Email {
         }
     }
 
-    public void sendEmail(String receiver, String messageContent, String activity) {
+    public void sendEmail(String receiver, String messageContent, NotificationType type) {
         try {
-            String subject = getEmailSubject(activity);
+            String subject = getEmailSubject(type.getTemplate());
             message.addRecipients(Message.RecipientType.TO, receiver);
             message.setSubject(subject);
             message.setContent(messageContent, contentType);

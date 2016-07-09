@@ -1,0 +1,27 @@
+Dear #fullname,
+
+Someone from the game you played reported a game score.
+
+The score for the game is shown below: -
+-------------------------------------------
+
+Team ranked first:
+#team1player1
+#team1player2
+
+Team ranked second:
+#team2player1
+#team2player2
+
+Team ranked third:
+#team3player1
+#team3player2
+
+Team ranked fourth:
+#team4player1
+#team4player2
+
+If the reported scores are incorrect please notify us through your account, or by telling us at the front desk.
+
+Sincerely Yours,
+VRC
