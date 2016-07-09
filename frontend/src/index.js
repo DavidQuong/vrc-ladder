@@ -69,9 +69,21 @@ export default ({store}) : Element => (
       <Router history={browserHistory}>
         <Route path='/' component={Layout}>
           <IndexRoute navbarTitle='Login' component={LogIn}/>
-          <Route path='/signup' navbarTitle='Sign Up' component={SignUp}/>
-          <Route path='/login' navbarTitle='Login' component={LogIn}/>
-          <Route path='/profile' navbarTitle='Profile' component={CreateTeam}/>
+          <Route
+            path='/signup'
+            navbarTitle='Sign Up'
+            component={SignUp}
+          />
+          <Route
+            path='/login'
+            navbarTitle='Login'
+            component={LogIn}
+          />
+          <Route
+            path='/profile'
+            navbarTitle='Profile'
+            component={CreateTeam}
+          />
           <Route
             path='/match-groups'
             navbarTitle='Match Schedule'

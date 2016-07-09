@@ -5,7 +5,6 @@ import {connect} from 'react-redux';
 import {createAction} from 'redux-actions';
 
 import SignUp from './component/signup/signup';
-import CreateTeam from './component/create-team/create-team';
 import Ladder from './component/ladder/ladder';
 import styles from './app.css';
 
@@ -55,7 +54,6 @@ const App = ({
     <button onClick={saveToBrowser}>SAVE</button>
     <button onClick={restoreFromBrowser}>RESTORE</button>
     <SignUp/>
-    <CreateTeam/>
     <Ladder/>
   </div>
 );

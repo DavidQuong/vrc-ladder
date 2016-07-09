@@ -6,13 +6,13 @@ import {withRouter} from 'react-router';
 import {logInUser} from '../../action/login';
 import {getUserInfo, getTeamInfo} from '../../action/users';
 import {createAction} from 'redux-actions';
+import {
+  Well, Col, ControlLabel, Button, FormControl, FormGroup, Form,
+} from 'react-bootstrap';
 
 import styles from './login.css';
 import Heading from '../heading/heading';
 import isEmpty from 'lodash/fp/isEmpty';
-import {
-  Well, Col, ControlLabel, Button, FormControl, FormGroup, Form,
-} from 'react-bootstrap';
 
 const validate = (values) => {
   const errors = {};
@@ -107,7 +107,7 @@ const LogIn = withRouter(({
       </Heading>
       <LogInForm
         onSubmit={(props) => {
-          const errors = validate(props);
+          let errors = validate(props);
           if (!isEmpty(errors)) {
             return Promise.reject(errors);
           }
@@ -121,8 +121,8 @@ const LogIn = withRouter(({
                 router.push('/ladder');
               });
             });
-          }).catch((errors) => {
-            // TODO: Error object to expected.
+          }).catch(() => {
+            errors = {userId: 'Incorrect ID or Password'};
             return Promise.reject(errors);
           });
         }}
