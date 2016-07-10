@@ -1,74 +1,53 @@
 import {createElement, Element} from 'react';
-import {createAction} from 'redux-actions';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import map from 'lodash/fp/map';
 import sortBy from 'lodash/fp/sortBy';
 import styles from './ladder.css';
 
-// import styles from './ladder.css';
-import Heading from '../heading/heading';
-
-export const syncPlayers = createAction('PLAYER_SYNC');
-
-const orderPlayers = map((player) => (
-  <div key={player.userId}>
-    {player.firstName} {player.lastName}
-  </div>
-));
+const getTime = (time) => {
+  if (time === 'TIME_SLOT_A') {
+    return '8:30';
+  } else if (time === 'TIME_SLOT_B') {
+    return '9:30';
+  }
+  return 'NONE';
+};
 
 const orderTeams = map((team) => (
   <div
-    className={styles.table}
+    className={`panel panel-default ${styles.panel}`}
     key={team.teamId}
   >
-    <div className={styles.entry}>
-      <FormattedMessage
-        id='rank'
-        defaultMessage='Rank: '
-      />
-      {team.ladderPosition}
+    <div className={`panel-heading ${styles.panelHeading}`}>
+      <span className='pull-left'>Rank {team.ladderPosition}</span>
+      <span className='pull-right'>{getTime(team.playTime)}</span>
+      <br />
     </div>
-    <div className={styles.entry}>
-      <FormattedMessage
-        id='player1'
-        defaultMessage='First Player: '
-      />
-      {team.firstPlayer.name}
-    </div>
-    <div className={styles.entry}>
-      <FormattedMessage
-        id='player2'
-        defaultMessage='Second Player: '
-      />
-      {team.secondPlayer.name}
+    <div className={`panel-body ${styles.panelBody}`}>
+      <div className={styles.entry}>
+        <FormattedMessage
+          id='player1'
+          defaultMessage='First Player: '
+        />
+        {team.firstPlayer.name}
+      </div>
+      <div className={styles.entry}>
+        <FormattedMessage
+          id='player2'
+          defaultMessage='Second Player: '
+        />
+        {team.secondPlayer.name}
+      </div>
     </div>
   </div>
 ));
 
 const Ladder = ({
-  players,
   teams,
 }) : Element => (
-  <div className={styles.ladder}>
-    <div>
-      <Heading kind='huge'>
-        <FormattedMessage
-          id='playerList'
-          defaultMessage='Players'
-        />
-      </Heading>
-    {orderPlayers(players)}
-    </div>
-    <div>
-      <Heading kind='huge'>
-        <FormattedMessage
-          id='teamList'
-          defaultMessage='Teams'
-        />
-      </Heading>
-      {orderTeams(teams)}
-    </div>
+  <div className={styles.center}>
+    {orderTeams(teams)}
   </div>
 );
 

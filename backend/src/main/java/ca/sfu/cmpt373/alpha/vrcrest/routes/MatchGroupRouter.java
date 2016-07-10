@@ -5,6 +5,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.CourtManager;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.TeamNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchGroupGenerator;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic.MatchScheduler;
 import ca.sfu.cmpt373.alpha.vrcladder.scores.ScoreCard;
@@ -12,6 +13,8 @@ import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.IdType;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewTeamIdListPayload;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewTradingMatchGroupsPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.ScoreCardPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.CourtSerializer;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.MatchGroupSerializer;
@@ -46,7 +49,6 @@ public class MatchGroupRouter extends RestRouter {
     }
 
     private static final String PARAM_MATCHGROUP_ID = PARAM_ID + "matchGroupId";
-    private static final String PARAM_TEAM_ID = PARAM_ID + "teamId";
 
     private static final String ROUTE_MATCHGROUP = "/matchgroup";
 
@@ -55,26 +57,14 @@ public class MatchGroupRouter extends RestRouter {
     public static final String ROUTE_MATCHGROUP_ID = ROUTE_MATCHGROUP + "/" + PARAM_ID;
     public static final String ROUTE_MATCHGROUP_SCORES = ROUTE_MATCHGROUP + "/" + PARAM_ID + "/scores";
     public static final String ROUTE_MATCH_SCHEDULE = ROUTE_MATCHGROUPS + "/schedule";
-    public static final String ROUTE_MATCHGROUP_ADD_TEAM =
-            ROUTE_MATCHGROUP +
-            "/" + PARAM_MATCHGROUP_ID +
-            "/add" +
-            "/" + PARAM_TEAM_ID;
-
-    //TODO: implement these methods
+    public static final String ROUTE_MATCHGROUP_UPDATE_MATCHGROUP = ROUTE_MATCHGROUP + "/update/" + PARAM_MATCHGROUP_ID;
     public static final String ROUTE_MATCHGROUPS_TRADE_TEAMS = ROUTE_MATCHGROUPS + "/trade";
-    public static final String ROUTE_MATCHGROUP_REMOVE_TEAM =
-            ROUTE_MATCHGROUP +
-            "/" + PARAM_MATCHGROUP_ID +
-            "/remove" +
-            "/" + PARAM_TEAM_ID;
 
     private static final String JSON_PROPERTY_MATCHGROUPS = "matchGroups";
     private static final String JSON_PROPERTY_MATCHGROUP = "matchGroup";
     private static final String JSON_PROPERTY_COURTS = "courts";
     private static final String JSON_PROPERTY_SCORES = "scores";
 
-    private static final String ERROR_TEAM_NOT_FOUND = "The provided Team does not belong to the provided MatchGroup";
     private static final String ERROR_NO_MATCHGROUP_FOUND = "There was no MatchGroup found for the given Id";
     private static final String ERROR_NO_TEAM_MATCHGROUP_FOUND = "The Team or the MatchGroup couldn't be found";
 
@@ -86,10 +76,9 @@ public class MatchGroupRouter extends RestRouter {
         Spark.put(ROUTE_MATCHGROUP_SCORES, this::handleUpdateMatchGroupScores);
         Spark.delete(ROUTE_MATCHGROUP_ID, this::handleDeleteMatchGroup);
         Spark.post(ROUTE_MATCHGROUP_GENERATION, this::handleGenerateMatchGroups);
-        Spark.put(ROUTE_MATCHGROUP_ADD_TEAM, this::handleAddMatchGroupTeam);
+        Spark.put(ROUTE_MATCHGROUP_UPDATE_MATCHGROUP, this::handleUpdateMatchGroupTeams);
         Spark.get(ROUTE_MATCHGROUP_SCORES, this::handleGetMatchGroupScores);
-        Spark.put(ROUTE_MATCHGROUPS_TRADE_TEAMS, this::handleSwapMatchGroupTeams);
-        Spark.put(ROUTE_MATCHGROUP_REMOVE_TEAM, this::handleRemoveMatchGroupTeam);
+        Spark.post(ROUTE_MATCHGROUPS_TRADE_TEAMS, this::handleSwapMatchGroupTeams);
     }
 
     @Override
@@ -104,6 +93,8 @@ public class MatchGroupRouter extends RestRouter {
                 .registerTypeAdapter(Court.class, new CourtSerializer())
                 .registerTypeAdapter(ScoreCard.class, new ScoreCardSerializer())
                 .registerTypeAdapter(ScoreCardPayload.class, new ScoreCardPayload.GsonDeserializer())
+                .registerTypeAdapter(NewTeamIdListPayload.class, new NewTeamIdListPayload.GsonDeserializer())
+                .registerTypeAdapter(NewTradingMatchGroupsPayload.class, new NewTradingMatchGroupsPayload.GsonDeserializer())
                 .setPrettyPrinting()
                 .create();
     }
@@ -234,19 +225,24 @@ public class MatchGroupRouter extends RestRouter {
         return responseBody.toString();
     }
 
-    private String handleAddMatchGroupTeam(Request request, Response response) {
+    private String handleUpdateMatchGroupTeams(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
         try {
             String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_ID);
-            String paramTeamId1 =  request.params(PARAM_TEAM_ID);
 
-            Team teamToAdd = teamManager.getById(new GeneratedId(paramTeamId1));
-            matchGroupManager.addTeamToMatchGroup(new GeneratedId(paramMatchGroupId1), teamToAdd);
+            NewTeamIdListPayload newTeamPayload = getGson().fromJson(request.body(), NewTeamIdListPayload.class);
+
+            List<Team> newTeams = new ArrayList<>();
+            for(GeneratedId teamId : newTeamPayload.getTeamIds()) {
+                newTeams.add(teamManager.getById(teamId));
+            }
+
+            matchGroupManager.setTeamsInMatchGroup(new GeneratedId(paramMatchGroupId1), newTeams);
         } catch (EntityNotFoundException e) {
             response.status(HttpStatus.NOT_FOUND_404);
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_TEAM_MATCHGROUP_FOUND);
         } catch (IllegalStateException e) {
-            //This occurs if a Team is added, and there's already the max # of players
+            //This occurs if the list of teams passed in is less than 3 or more than 4 in size
             response.status(HttpStatus.BAD_REQUEST_400);
             responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
         }
@@ -254,10 +250,31 @@ public class MatchGroupRouter extends RestRouter {
     }
 
     private String handleSwapMatchGroupTeams(Request request, Response response) {
-        return null;
-    }
+        JsonObject responseBody = new JsonObject();
+        try {
+            NewTradingMatchGroupsPayload newSwapPayload = getGson().fromJson(request.body(), NewTradingMatchGroupsPayload.class);
 
-    private String handleRemoveMatchGroupTeam(Request request, Response response) {
-        return null;
+            GeneratedId firstMatchGroupId = newSwapPayload.getFirstMatchGroupId();
+            GeneratedId secondMatchGroupId = newSwapPayload.getSecondMatchGroupId();
+            GeneratedId firstTeamId = newSwapPayload.getFirstTeamId();
+            GeneratedId secondTeamId = newSwapPayload.getSecondTeamId();
+
+            Team teamToTrade1 = teamManager.getById(firstTeamId);
+            Team teamToTrade2 = teamManager.getById(secondTeamId);
+            matchGroupManager.tradeTeamsInMatchGroups(firstMatchGroupId, teamToTrade1, secondMatchGroupId, teamToTrade2);
+        } catch (EntityNotFoundException e) {
+            response.status(HttpStatus.NOT_FOUND_404);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NO_TEAM_MATCHGROUP_FOUND);
+        } catch (TeamNotFoundException e) {
+            response.status(HttpStatus.BAD_REQUEST_400);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
+        } catch (JsonSyntaxException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (RuntimeException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        }
+        return responseBody.toString();
     }
 }

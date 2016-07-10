@@ -45,7 +45,7 @@ const config = compose(
       <Layout
         styles={styles(assets)}
         scripts={scripts(assets)}
-        title='VRC Badminton Ladder'
+        title='VRC | Weekly Ladder'
         locale='en-US'
       />
     ),

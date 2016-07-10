@@ -131,21 +131,16 @@ public class MatchGroupManagerTest extends BaseTest {
 
 	@Test
 	public void testAddTeamToMatchGroup() {
-        List<Team> resultTeams = new ArrayList<>(threeTeamMatchGroupFixture.getTeams());
-        Team teamToAdd = fourTeamsFixture.get(FOURTH_TEAM_INDEX);
-        resultTeams.add(teamToAdd);
-
-		matchGroupManager.addTeamToMatchGroup(threeTeamMatchGroupFixture.getId(), teamToAdd);
+        matchGroupManager.setTeamsInMatchGroup(threeTeamMatchGroupFixture.getId(), fourTeamsFixture);
 
         Session session = sessionManager.getSession();
         MatchGroup retrievedMatchGroup = session.get(MatchGroup.class, threeTeamMatchGroupFixture.getId());
 		session.close();
 
-		Assert.assertEquals(retrievedMatchGroup.getTeams(), resultTeams);
+		Assert.assertEquals(retrievedMatchGroup.getTeams(), fourTeamsFixture);
 	}
 
-    //TODO: fix removing teams
-	@Test @Ignore
+	@Test
     public void testRemoveTeamFromMatchGroup() {
         for (int i = 0; i < fourTeamMatchGroupFixture.getTeams().size(); i++) {
             tearDown();
@@ -159,7 +154,7 @@ public class MatchGroupManagerTest extends BaseTest {
         List<Team> expectedResults = new ArrayList<>(fourTeamMatchGroupFixture.getTeams());
         expectedResults.remove(teamToRemove);
 
-		matchGroupManager.removeTeamFromMatchGroup(fourTeamMatchGroupFixture.getId(), teamToRemove);
+		matchGroupManager.setTeamsInMatchGroup(fourTeamMatchGroupFixture.getId(), expectedResults);
 
         Session session = sessionManager.getSession();
         MatchGroup retrievedMatchGroup = session.get(MatchGroup.class, fourTeamMatchGroupFixture.getId());
@@ -170,8 +165,6 @@ public class MatchGroupManagerTest extends BaseTest {
             Assert.assertEquals(expectedResults.get(i), retrievedTeams.get(i));
         }
 	}
-
-
 
 	@Test
 	public void testTradeTeamsInMatchGroups() {

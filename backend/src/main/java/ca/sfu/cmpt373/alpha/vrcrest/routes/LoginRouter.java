@@ -24,8 +24,6 @@ import java.util.List;
 
 public class LoginRouter extends RestRouter {
 
-    public static final String HEADER_ACCESS = "Access-Control-Allow-Origin";
-    public static final String HEADER_ACCESS_VALUE = "*";
     public static final String ROUTE_LOGIN = "/login";
 
     private static final String JSON_PROPERTY_AUTHORIZATION_TOKEN = "authorizationToken";
@@ -69,7 +67,6 @@ public class LoginRouter extends RestRouter {
 
     private String handleLogin(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        response.header(HEADER_ACCESS, HEADER_ACCESS_VALUE);
         try {
             LoginPayload loginPayload = getGson().fromJson(request.body(), LoginPayload.class);
 

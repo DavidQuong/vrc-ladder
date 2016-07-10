@@ -4,8 +4,23 @@ import {reducer as form} from 'redux-form';
 
 const app = handleActions({
 
+  USER_INFO_SYNC: (state, {payload}) => {
+    return {
+      ...state,
+      userInfo: payload,
+    };
+  },
+
+  TEAM_INFO_SYNC: (state, {payload}) => {
+    return {
+      ...state,
+      teamInfo: payload,
+    };
+  },
+
   USER_LOGIN: (state, {payload}) => {
     return {
+      ...state,
       loggedIn: payload,
     };
   },
@@ -21,6 +36,13 @@ const app = handleActions({
     return {
       ...state,
       teams: payload,
+    };
+  },
+
+  MATCH_GROUPS_SYNC: (state, {payload}) => {
+    return {
+      ...state,
+      matchGroups: payload,
     };
   },
 
@@ -45,7 +67,9 @@ const app = handleActions({
 }, {
   players: [],
   teams: [],
-  loggedIn: [],
+  loggedIn: {},
+  userInfo: [],
+  teamInfo: [],
 });
 
 export default combineReducers({

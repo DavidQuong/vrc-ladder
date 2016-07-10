@@ -54,6 +54,14 @@ public class RestApi {
 
     private void attachAuthorization() {
         Spark.before(ROUTE_WILDCARD, (request, response) -> {
+          if (request.requestMethod() == "OPTIONS") {
+            response.header("Access-Control-Allow-Origin", "*");
+            response.header("Access-Control-Allow-Methods", "GET, POST, PUT");
+            response.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+            Spark.halt(HttpStatus.OK_200, "");
+          }
+        });
+        Spark.before(ROUTE_WILDCARD, (request, response) -> {
             RouteSignature routeSignature = new RouteSignature(request);
 
             try {
