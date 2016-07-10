@@ -6,12 +6,14 @@ import {addTeam, updateTeamStatus} from '../../action/teams';
 import {SubmitBtn} from '../button';
 import {withRouter} from 'react-router';
 import {getTeamInfo} from '../../action/users';
+
 import map from 'lodash/fp/map';
 import styles from './profile.css';
 import Heading from '../heading/heading';
 import classNames from 'classnames';
 import isEmpty from 'lodash/fp/isEmpty';
 import sortBy from 'lodash/fp/sortBy';
+
 const validate = (values, userInfo) => {
   const errors = {};
   if (!values.secondPlayerId) {
@@ -32,6 +34,7 @@ const validateUpdateStatus = (values) => {
   }
   return errors;
 };
+
 const playTimes = [{
   time: '8:00 pm',
   value: 'TIME_SLOT_A',
@@ -42,6 +45,7 @@ const playTimes = [{
   time: 'Not Playing',
   value: 'NONE',
 }];
+
 const UpdateAttendanceForm = reduxForm({
   form: 'updateTeam',
   fields: ['teamId', 'playTime'],
@@ -117,6 +121,7 @@ const UpdateAttendanceForm = reduxForm({
     </div>
   </form>
 ));
+
 const CreateTeamForm = reduxForm({
   form: 'teamCreate',
   fields: ['secondPlayerId'],
@@ -164,6 +169,7 @@ const CreateTeamForm = reduxForm({
     </div>
   </form>
 ));
+
 const displayMyInfo = (userInfo) => (
   <div>
     <div className={styles.profileDetailsField}>
@@ -197,6 +203,7 @@ const displayMyInfo = (userInfo) => (
     </div>
   </div>
 );
+
 const getTime = (time) => {
   if (time === 'TIME_SLOT_A') {
     return '8:30';
@@ -205,6 +212,7 @@ const getTime = (time) => {
   }
   return 'NONE';
 };
+
 const displayTeamInfo = map((teamInfo) => (
   <div
     key={teamInfo.teamId}
@@ -231,6 +239,7 @@ const displayTeamInfo = map((teamInfo) => (
     </div>
   </div>
 ));
+
 const CreateTeam = withRouter(({
   addTeam,
   players,
@@ -303,8 +312,8 @@ const CreateTeam = withRouter(({
           getTeamInfo().then(() => {
             router.push('/ladder');
           });
-        }).catch((errors) => {
-          // errors = {'secondPlayerId': 'team exists'}
+        }).catch(() => {
+          const errors = {secondPlayerId: 'team exists'};
           return Promise.reject(errors);
         });
       }}
