@@ -7,7 +7,6 @@ import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.Email;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.EmailSettings;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
