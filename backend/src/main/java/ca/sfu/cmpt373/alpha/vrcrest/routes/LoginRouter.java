@@ -35,6 +35,7 @@ public class LoginRouter extends RestRouter {
     private UserManager userManager;
 
     public LoginRouter(ApplicationManager applicationManager) {
+        super(applicationManager);
         securityManager = applicationManager.getSecurityManager();
         userManager = applicationManager.getUserManager();
     }

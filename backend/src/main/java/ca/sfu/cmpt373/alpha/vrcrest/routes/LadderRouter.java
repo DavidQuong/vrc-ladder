@@ -48,6 +48,7 @@ public class LadderRouter extends RestRouter{
     private CourtManager courtManager;
 
     public LadderRouter(ApplicationManager applicationManager) {
+        super(applicationManager);
         teamManager = applicationManager.getTeamManager();
         matchGroupManager = applicationManager.getMatchGroupManager();
         courtManager = applicationManager.getCourtManager();

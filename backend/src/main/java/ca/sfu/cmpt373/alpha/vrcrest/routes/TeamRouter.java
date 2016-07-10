@@ -56,9 +56,9 @@ public class TeamRouter extends RestRouter {
     private TeamManager teamManager;
 
     public TeamRouter(ApplicationManager applicationManager) {
-        super();
-        notify = new NotificationManager();
+        super(applicationManager);
         teamManager = applicationManager.getTeamManager();
+        notify = new NotificationManager();
     }
 
     @Override

@@ -64,7 +64,7 @@ public class UserRouter extends RestRouter {
     private Gson playerGson;
 
     public UserRouter(ApplicationManager applicationManager) {
-        super();
+        super(applicationManager);
         securityManager = applicationManager.getSecurityManager();
         userManager = applicationManager.getUserManager();
         teamManager = applicationManager.getTeamManager();

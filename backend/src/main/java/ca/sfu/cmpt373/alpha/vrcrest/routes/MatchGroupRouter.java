@@ -44,6 +44,7 @@ public class MatchGroupRouter extends RestRouter {
     private CourtManager courtManager;
 
     public MatchGroupRouter(ApplicationManager applicationManager) {
+        super(applicationManager);
         matchGroupManager = applicationManager.getMatchGroupManager();
         teamManager = applicationManager.getTeamManager();
         courtManager = applicationManager.getCourtManager();
