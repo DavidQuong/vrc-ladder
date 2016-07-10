@@ -54,20 +54,11 @@ public class RestApplication implements SparkApplication {
                 matchGroupManager,
                 courtManager);
 
-        LoginRouter loginRouter = new LoginRouter(appManager.getSecurityManager(), appManager.getUserManager());
-        UserRouter userRouter = new UserRouter(
-                appManager.getSecurityManager(),
-                appManager.getUserManager(),
-                appManager.getTeamManager());
-        TeamRouter teamRouter = new TeamRouter(appManager.getTeamManager());
-        MatchGroupRouter matchGroupRouter = new MatchGroupRouter(
-                appManager.getMatchGroupManager(),
-                appManager.getTeamManager(),
-                appManager.getCourtManager());
-        LadderRouter ladderRouter = new LadderRouter(
-                appManager.getTeamManager(),
-                appManager.getMatchGroupManager(),
-                appManager.getCourtManager());
+        LoginRouter loginRouter = new LoginRouter(appManager);
+        UserRouter userRouter = new UserRouter(appManager);
+        TeamRouter teamRouter = new TeamRouter(appManager);
+        MatchGroupRouter matchGroupRouter = new MatchGroupRouter(appManager);
+        LadderRouter ladderRouter = new LadderRouter(appManager);
         List<RestRouter> routers = Arrays.asList(loginRouter, userRouter, teamRouter, matchGroupRouter, ladderRouter);
         restApi = new RestApi(appManager, routers);
     }

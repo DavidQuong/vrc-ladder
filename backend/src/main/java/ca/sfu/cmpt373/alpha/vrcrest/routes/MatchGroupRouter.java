@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
+import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MatchMakingException;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.CourtManager;
@@ -42,10 +43,10 @@ public class MatchGroupRouter extends RestRouter {
     private TeamManager teamManager;
     private CourtManager courtManager;
 
-    public MatchGroupRouter(MatchGroupManager matchGroupManager, TeamManager teamManager, CourtManager courtManager) {
-        this.matchGroupManager = matchGroupManager;
-        this.teamManager = teamManager;
-        this.courtManager = courtManager;
+    public MatchGroupRouter(ApplicationManager applicationManager) {
+        matchGroupManager = applicationManager.getMatchGroupManager();
+        teamManager = applicationManager.getTeamManager();
+        courtManager = applicationManager.getCourtManager();
     }
 
     private static final String PARAM_MATCHGROUP_ID = PARAM_ID + "matchGroupId";

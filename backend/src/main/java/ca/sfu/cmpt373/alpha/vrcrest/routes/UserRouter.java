@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
+import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.NotificationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.NotificationType;
@@ -62,13 +63,12 @@ public class UserRouter extends RestRouter {
     private TeamManager teamManager;
     private Gson playerGson;
 
-    public UserRouter(SecurityManager securityManager, UserManager userManager, TeamManager teamManager) {
+    public UserRouter(ApplicationManager applicationManager) {
         super();
-        this.securityManager = securityManager;
-        this.userManager = userManager;
-        this.teamManager = teamManager;
-        this.teamManager = teamManager;
-        this.playerGson = buildGsonForPlayer();
+        securityManager = applicationManager.getSecurityManager();
+        userManager = applicationManager.getUserManager();
+        teamManager = applicationManager.getTeamManager();
+        playerGson = buildGsonForPlayer();
         notify = new NotificationManager();
     }
 

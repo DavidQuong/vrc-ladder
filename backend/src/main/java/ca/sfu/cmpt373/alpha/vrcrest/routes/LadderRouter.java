@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
+import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.ladder.Ladder;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.CourtManager;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
@@ -46,10 +47,10 @@ public class LadderRouter extends RestRouter{
     private MatchGroupManager matchGroupManager;
     private CourtManager courtManager;
 
-    public LadderRouter(TeamManager teamManager, MatchGroupManager matchGroupManager, CourtManager courtManager) {
-        this.teamManager = teamManager;
-        this.matchGroupManager = matchGroupManager;
-        this.courtManager = courtManager;
+    public LadderRouter(ApplicationManager applicationManager) {
+        teamManager = applicationManager.getTeamManager();
+        matchGroupManager = applicationManager.getMatchGroupManager();
+        courtManager = applicationManager.getCourtManager();
     }
 
     @Override
