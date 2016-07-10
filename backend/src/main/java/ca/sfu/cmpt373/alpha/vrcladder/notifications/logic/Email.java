@@ -4,6 +4,7 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 public class Email {
@@ -15,8 +16,6 @@ public class Email {
     public Email() {
         contentType = getCharset();
         String xMailer = "JAVA/" + Runtime.class.getPackage().getImplementationVersion();
-
-        // TODO: Must change to VRC SMTP server.
         Properties properties = System.getProperties();
         properties.put("mail.smtp.host", EmailSettings.SERVER);
         properties.put("mail.transport.protocol", "smtp");
@@ -26,13 +25,13 @@ public class Email {
         message = new MimeMessage(session);
 
         try {
-            message.setFrom(new InternetAddress(EmailSettings.USERNAME));
-            message.setHeader("Content-Type", contentType);
+            message.setFrom(new InternetAddress(EmailSettings.USERNAME, EmailSettings.FROM_NAME));
             message.setHeader("MIME-VERSION", MimeMessage.class.getPackage().getImplementationVersion());
             message.setHeader("X-Mailer", xMailer);
-
             transport = session.getTransport("smtp");
         } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
@@ -40,13 +39,17 @@ public class Email {
     public void sendEmail(String receiver, String messageContent, NotificationType type) {
         try {
             String subject = getEmailSubject(type.getTemplate());
-            message.addRecipients(Message.RecipientType.TO, receiver);
-            message.setSubject(subject);
-            message.setContent(messageContent, contentType);
+            MimeMessage currentMessage = message;
+            currentMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(receiver));
+            currentMessage.setSubject(subject);
+            currentMessage.setContent(messageContent, contentType);
+            currentMessage.setHeader("Content-Type", contentType);
 
-            transport.connect(EmailSettings.SERVER, EmailSettings.USERNAME, EmailSettings.PASSWORD);
-            transport.sendMessage(message, message.getAllRecipients());
-            transport.close();
+            synchronized(this) {
+                transport.connect(EmailSettings.SERVER, EmailSettings.USERNAME, EmailSettings.PASSWORD);
+                transport.sendMessage(currentMessage, currentMessage.getAllRecipients());
+                transport.close();
+            }
         } catch (MessagingException e) {
             e.printStackTrace();
         }

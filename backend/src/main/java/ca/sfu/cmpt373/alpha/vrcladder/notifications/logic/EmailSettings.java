@@ -9,9 +9,18 @@ public class EmailSettings {
     // TODO: must change to VRC email account info.
     static final String SERVER   = "mail.espuresystems.com";
     static final int SERVER_PORT = 25;
-    static final String USERNAME = "hassan@espuresystems.com";
-    static final String PASSWORD = "M49D4s5";
+    static final String USERNAME = "no-reply@vrc.espuresystems.com";
+    static final String PASSWORD = "gzc4tZj+98";
+    static final String FROM_NAME = "VRC";
+    public static final String WEBSITE_LINK = "http://www.vrc.ca";
     public static final String EMAILS_FORMAT = "html"; // Can be "txt" or "html".
+
+    // Template Settings.
+    //-------------------
+    public static final String TEMPLATE_PATH_ACCOUNT = "src\\main\\resources\\notifications\\templates\\account\\email_";
+    public static final String TEMPLATE_PATH_GAME = "src\\main\\resources\\notifications\\templates\\game\\email_";
+    public static final String TEMPLATE_PATH_TEAM = "src\\main\\resources\\notifications\\templates\\team\\email_";
+
 
     // Email Subjects.
     //----------------

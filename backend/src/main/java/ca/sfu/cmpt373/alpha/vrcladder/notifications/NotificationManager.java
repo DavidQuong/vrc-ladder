@@ -14,11 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Must check with Trevor or David for SMS API from AWS.
- */
 public class NotificationManager {
-
     private Email email;
     private static final String GAME_REPORTED_THREE_TEAMS = "threeteams";
     private static final String GAME_REPORTED_FOUR_TEAMS  = "fourteams";
@@ -29,154 +25,89 @@ public class NotificationManager {
         email = new Email();
     }
 
-    public void notifyUserAboutTeamRelatedActivity(User user, Team team, NotificationType type) {
+    public void notifyUser(User user, Team team, NotificationType type) {
         Map<String, String> values = new HashMap<>();
-        values.put("#fullname", user.getDisplayName());
+        String receiver = generalInfoBuilder(user, values);
+        String currentTemplate = type.getTemplate();
         setTeamValues(team, values);
-        String receiver = user.getEmailAddress().toString();
-        String currentTemplate = type.getTemplate();
 
         try {
-            FileReader file = new FileReader("src\\main\\java\\ca\\sfu\\cmpt373\\alpha\\vrcladder\\notifications\\templates\\team\\email_" + currentTemplate + "." + EmailSettings.EMAILS_FORMAT);
-            BufferedReader reader = new BufferedReader(file);
-            String messageContent = "";
-            List<String> messageTags = new ArrayList<>();
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                messageContent += line;
-                if (line.contains("#")) {
-                    messageTags.addAll(findNotificationTags(line));
-                }
-                messageContent += "\n";
-            }
-
-            file.close();
-            messageContent = replaceTags(messageContent, messageTags, values);
-            System.out.println(messageContent);
-
+            String messageContent = getMessageContents(EmailSettings.TEMPLATE_PATH_TEAM, currentTemplate, values);
             email.sendEmail(receiver, messageContent, type);
         } catch (IOException e) {
-            // TODO: handle this exception.
             e.printStackTrace();
         }
     }
 
-    public void notifyUserAboutAccountRelatedActivity(User user, NotificationType type) {
+    public void notifyUser(User user, NotificationType type) {
         Map<String, String> values = new HashMap<>();
-        values.put("#fullname", user.getDisplayName());
-        String receiver = user.getEmailAddress().toString();
+        String receiver = generalInfoBuilder(user, values);
         String currentTemplate = type.getTemplate();
 
         try {
-            FileReader file = new FileReader("src\\main\\java\\ca\\sfu\\cmpt373\\alpha\\vrcladder\\notifications\\templates\\account\\email_" + currentTemplate + "." + EmailSettings.EMAILS_FORMAT);
-            BufferedReader reader = new BufferedReader(file);
-            String messageContent = "";
-            List<String> messageTags = new ArrayList<>();
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                messageContent += line;
-                if (line.contains("#")) {
-                    messageTags.addAll(findNotificationTags(line));
-                }
-                messageContent += "\n";
-            }
-
-            file.close();
-            messageContent = replaceTags(messageContent, messageTags, values);
-            System.out.println(messageContent);
-
+            String messageContent = getMessageContents(EmailSettings.TEMPLATE_PATH_ACCOUNT, currentTemplate, values);
             email.sendEmail(receiver, messageContent, type);
         } catch (IOException e) {
-            // TODO: handle this exception.
             e.printStackTrace();
         }
     }
 
-    public void notifyUserTokenBasedRequests(User user, NotificationType type, String token) {
+    public void notifyUser(User user, NotificationType type, String token) {
         Map<String, String> values = new HashMap<>();
-        values.put("#fullname", user.getDisplayName());
-        values.put("#token", token);
-        values.put("#userid", user.getUserId().toString());
-        values.put("#sitelink", "http://www.vrc.ca");
-        String receiver = user.getEmailAddress().toString();
+        String receiver = generalInfoBuilder(user, values);
         String currentTemplate = type.getTemplate();
+        setTokenValues(token, values);
 
         try {
-            FileReader file = new FileReader("src\\main\\java\\ca\\sfu\\cmpt373\\alpha\\vrcladder\\notifications\\templates\\account\\email_" + currentTemplate + "." + EmailSettings.EMAILS_FORMAT);
-            BufferedReader reader = new BufferedReader(file);
-            String messageContent = "";
-            List<String> messageTags = new ArrayList<>();
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                messageContent += line;
-                if (line.contains("#")) {
-                    messageTags.addAll(findNotificationTags(line));
-                }
-                messageContent += "\n";
-            }
-
-            file.close();
-            messageContent = replaceTags(messageContent, messageTags, values);
-            System.out.println(messageContent);
-
+            String messageContent = getMessageContents(EmailSettings.TEMPLATE_PATH_ACCOUNT, currentTemplate, values);
             email.sendEmail(receiver, messageContent, type);
         } catch (IOException e) {
-            // TODO: handle this exception.
             e.printStackTrace();
         }
     }
 
-    public void notifyUserAboutGameScores(MatchGroup group, NotificationType type) {
-        String currentTemplate = type.getTemplate();
-        if (group.getTeamCount() == MatchGroup.MIN_NUM_TEAMS) {
-            currentTemplate = currentTemplate + GAME_REPORTED_THREE_TEAMS;
-        } else {
-            currentTemplate = currentTemplate + GAME_REPORTED_FOUR_TEAMS;
-        }
-
+    public void notifyUser(MatchGroup group, NotificationType type) {
         Map<String, String> values = new HashMap<>();
-        List<Team> teams = group.getScoreCard().getRankedTeams();
         List<String> receivers = new ArrayList<>();
         List<String> names = new ArrayList<>();
-        setReceiverValues(teams, receivers, names, type);
-        setGameValues(values, teams);
+        List<Team> teams = group.getScoreCard().getRankedTeams();
+        String currentTemplate = getCurrentTemplate(group, type.getTemplate());
+        setGameValues(teams, receivers, names, values);
 
         try {
-            values.put("#fullname", "");
-
             for (int counter = 0; counter < names.size(); counter++) {
-                FileReader file = new FileReader("src\\main\\java\\ca\\sfu\\cmpt373\\alpha\\vrcladder\\notifications\\templates\\game\\email_" + currentTemplate + "." + EmailSettings.EMAILS_FORMAT);
-                BufferedReader reader = new BufferedReader(file);
-                List<String> messageTags = new ArrayList<>();
-                String messageContent = "";
-                String receiver = receivers.get(counter);
                 values.replace("#fullname", names.get(counter));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    messageContent += line;
-                    if (line.contains("#")) {
-                        messageTags.addAll(findNotificationTags(line));
-                    }
-                    messageContent += "\n";
-                }
-
-                messageContent = replaceTags(messageContent, messageTags, values);
-                System.out.println(messageContent);
+                String receiver = receivers.get(counter);
+                String messageContent = getMessageContents(EmailSettings.TEMPLATE_PATH_GAME, currentTemplate, values);
                 email.sendEmail(receiver, messageContent, type);
-                file.close();
             }
 
         } catch (IOException e) {
-            // TODO: handle this exception.
             e.printStackTrace();
         }
     }
 
-    private List<String> findNotificationTags(String currentLine) {
+    private String generalInfoBuilder(User user, Map<String, String> values){
+        values.put("#fullname", user.getDisplayName());
+        values.put("#userid", user.getUserId().toString());
+        return user.getEmailAddress().toString();
+    }
+
+    private String replaceTags(String messageContent, List<String> tags, Map<String, String> values) {
+        for (String tag : tags) {
+            if (values.containsKey(tag)) {
+                String value = values.get(tag);
+                messageContent = messageContent.replaceAll(tag, value);
+            }
+        }
+        return messageContent;
+    }
+
+    private static boolean isEndOfTag(char currentLetter) {
+        return (currentLetter == ',' || currentLetter == '/' || currentLetter == '<');
+    }
+
+    private static List<String> findNotificationTags(String currentLine) {
         List<String> results = new ArrayList<>();
         String currentTag = "";
         char[] lineContents = currentLine.toCharArray();
@@ -209,44 +140,63 @@ public class NotificationManager {
         return results;
     }
 
-    private String replaceTags(String messageContent, List<String> tags, Map values) {
-        for (String tag : tags) {
-            if (values.containsKey(tag)) {
-                String value = values.get(tag).toString();
-                messageContent = messageContent.replaceAll(tag, value);
-            }
+    private String getCurrentTemplate(MatchGroup group, String template){
+        if (group.getTeamCount() == MatchGroup.MIN_NUM_TEAMS) {
+            return (template + GAME_REPORTED_THREE_TEAMS);
         }
+        return (template + GAME_REPORTED_FOUR_TEAMS);
+    }
+
+    private String getMessageContents(String path, String template, Map<String, String> values) throws IOException {
+        FileReader file = new FileReader(path + template + "." + EmailSettings.EMAILS_FORMAT);
+        BufferedReader reader = new BufferedReader(file);
+        List<String> messageTags = new ArrayList<>();
+        String messageContent = setContentsAndTags(reader, messageTags);
+        messageContent = replaceTags(messageContent, messageTags, values);
+        messageTags.clear();
+        reader.close();
+        file.close();
         return messageContent;
     }
 
-    private boolean isEndOfTag(char currentLetter) {
-        return (currentLetter == ',' || currentLetter == '/' || currentLetter == '<');
+    private String setContentsAndTags(BufferedReader reader, List<String> messageTags) throws IOException {
+        String line;
+        String results = "";
+        while ((line = reader.readLine()) != null) {
+            results += line;
+            if (line.contains("#")) {
+                messageTags.addAll(findNotificationTags(line));
+            }
+            results += "\n";
+        }
+        return results;
+    }
+
+    private static void setTokenValues(String token, Map<String, String> values){
+        values.put("#token", token);
+        values.put("#sitelink", EmailSettings.WEBSITE_LINK);
     }
 
     private static void setTeamValues(Team team, Map<String, String> values) {
-            values.put("#preferrdtime", team.getAttendanceCard().getPreferredPlayTime().toString());
-            values.put("#ladderposition", team.getLadderPosition().getValue().toString());
-            values.put("#firstteammember", team.getFirstPlayer().getDisplayName());
-            values.put("#secondteammember", team.getSecondPlayer().getDisplayName());
+        values.put("#preferrdtime", team.getAttendanceCard().getPreferredPlayTime().getDisplayTime());
+        values.put("#ladderposition", team.getLadderPosition().getValue().toString());
+        values.put("#firstteammember", team.getFirstPlayer().getDisplayName());
+        values.put("#secondteammember", team.getSecondPlayer().getDisplayName());
     }
 
-    private static void setReceiverValues(List<Team> teams, List<String> receivers, List<String> names, NotificationType type) {
-        for (Team team : teams) {
-            String firstReceiver = team.getFirstPlayer().getEmailAddress().toString();
-            receivers.add(firstReceiver);
-            String secondReceiver = team.getSecondPlayer().getEmailAddress().toString();
-            receivers.add(secondReceiver);
-
-            names.add(team.getFirstPlayer().getDisplayName());
-            names.add(team.getSecondPlayer().getDisplayName());
-        }
-    }
-
-    private static void setGameValues(Map<String, String> values, List<Team> teams) {
+    private static void setGameValues(List<Team> teams, List<String> receivers, List<String> names, Map<String, String> values) {
+        values.put("#fullname", "");
         for (int counter = 0; counter < teams.size(); counter++) {
             int currentTeam = counter + 1;
-            values.put("#team" + currentTeam + "player" + FIRST_PLAYER, teams.get(counter).getFirstPlayer().getDisplayName());
-            values.put("#team" + currentTeam + "player" + SECOND_PLAYER, teams.get(counter).getSecondPlayer().getDisplayName());
+            User firstPlayer = teams.get(counter).getFirstPlayer();
+            User secondPlayer = teams.get(counter).getSecondPlayer();
+
+            receivers.add(firstPlayer.getEmailAddress().toString());
+            receivers.add(secondPlayer.getEmailAddress().toString());
+            names.add(firstPlayer.getDisplayName());
+            names.add(secondPlayer.getDisplayName());
+            values.put("#team" + currentTeam + "player" + FIRST_PLAYER, firstPlayer.getDisplayName());
+            values.put("#team" + currentTeam + "player" + SECOND_PLAYER, secondPlayer.getDisplayName());
         }
     }
 
