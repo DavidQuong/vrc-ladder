@@ -6,7 +6,6 @@ import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MessageNotDeliveredException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.SubjectNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 
-
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
