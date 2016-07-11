@@ -9,7 +9,7 @@ export const getMatchGroups = () => (dispatch, getState) => {
     if (response.error) {
       return Promise.reject();
     }
-    dispatch(syncMatchGroups(response.courts));
+    dispatch(syncMatchGroups(response.matchGroups));
     return Promise.resolve();
   }).catch((error) => {
     return Promise.reject(error);
