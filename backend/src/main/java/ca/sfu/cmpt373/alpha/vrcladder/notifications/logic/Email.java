@@ -1,6 +1,16 @@
 package ca.sfu.cmpt373.alpha.vrcladder.notifications.logic;
 
-import javax.mail.*;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.CannotSetFromEmailException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.EmailHeaderNotCreatedException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MessageNotDeliveredException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.SubjectNotFoundException;
+import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
+
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -9,8 +19,8 @@ import java.util.Properties;
 
 public class Email {
 
-    private String contentType;
-    private MimeMessage message;
+    private final String contentType;
+    private final MimeMessage message;
     private Transport transport;
 
     public Email() {
@@ -30,17 +40,17 @@ public class Email {
             message.setHeader("X-Mailer", xMailer);
             transport = session.getTransport("smtp");
         } catch (MessagingException e) {
-            e.printStackTrace();
+            throw new EmailHeaderNotCreatedException();
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            throw new CannotSetFromEmailException();
         }
     }
 
-    public void sendEmail(String receiver, String messageContent, NotificationType type) {
+    public void sendEmail(EmailAddress receiver, String messageContent, NotificationType type) {
         try {
             String subject = getEmailSubject(type.getTemplate());
             MimeMessage currentMessage = message;
-            currentMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(receiver));
+            currentMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(receiver.toString()));
             currentMessage.setSubject(subject);
             currentMessage.setContent(messageContent, contentType);
             currentMessage.setHeader("Content-Type", contentType);
@@ -51,7 +61,7 @@ public class Email {
                 transport.close();
             }
         } catch (MessagingException e) {
-            e.printStackTrace();
+            throw new MessageNotDeliveredException();
         }
     }
 
@@ -95,8 +105,7 @@ public class Email {
                 results = EmailSettings.SUBJECT_GAME_SCORES_UPDATED;
                 break;
             default:
-                results = EmailSettings.SUBJECT_GENERAL_EMAIL;
-                break;
+                throw new SubjectNotFoundException();
         }
         return results;
     }
