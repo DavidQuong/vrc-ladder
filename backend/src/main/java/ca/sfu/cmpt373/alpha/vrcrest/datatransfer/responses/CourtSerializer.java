@@ -24,7 +24,7 @@ public class CourtSerializer implements JsonSerializer<Court> {
         Map<PlayTime, MatchGroup> matches = src.getScheduledMatches();
         for (PlayTime playTime : matches.keySet()) {
             MatchGroup matchGroup = matches.get(playTime);
-            jsonCourt.addProperty(playTime.toString(), matchGroup.getId().getValue());
+            jsonCourt.addProperty(playTime.toString(), context.serialize(matchGroup).toString());
         }
 
         return jsonCourt;
