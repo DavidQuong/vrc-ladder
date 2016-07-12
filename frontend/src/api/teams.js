@@ -1,4 +1,5 @@
-const root = 'http://vrcladder.p76biyyfpm.us-west-2.elasticbeanstalk.com/';
+// const root = 'http://vrcladder.p76biyyfpm.us-west-2.elasticbeanstalk.com/';
+const root = 'http://localhost:4567/';
 
 export const addTeam = (team, login) => {
   return fetch(`${root}teams`, {
