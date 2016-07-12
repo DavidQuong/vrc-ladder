@@ -1,0 +1,7 @@
+Dear #fullname,
+
+Welcome to Vancouver Racquets Club. Click on the link below to activate your account:
+#sitelink/user/#userid/#token
+
+Sincerely Yours,
+VRC
