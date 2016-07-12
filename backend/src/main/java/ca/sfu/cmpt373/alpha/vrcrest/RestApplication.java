@@ -17,6 +17,7 @@ import ca.sfu.cmpt373.alpha.vrcrest.routes.UserRouter;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 import spark.servlet.SparkApplication;
+
 import java.security.Key;
 import java.util.Arrays;
 import java.util.List;
