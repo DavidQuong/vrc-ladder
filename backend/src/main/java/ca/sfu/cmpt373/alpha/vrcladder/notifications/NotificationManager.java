@@ -6,6 +6,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.NotificationType;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.Email;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.EmailSettings;
+import ca.sfu.cmpt373.alpha.vrcladder.tagging.TagsSystem;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
@@ -19,11 +20,12 @@ import java.util.List;
 import java.util.Map;
 
 public class NotificationManager {
-    private Email email;
+    private static final TagsSystem tags = new TagsSystem();
     private static final String GAME_REPORTED_THREE_TEAMS = "threeteams";
     private static final String GAME_REPORTED_FOUR_TEAMS  = "fourteams";
     private static final int FIRST_PLAYER = 1;
     private static final int SECOND_PLAYER = 2;
+    private Email email;
 
     public NotificationManager() {
         email = new Email();
@@ -97,66 +99,6 @@ public class NotificationManager {
         return user.getEmailAddress();
     }
 
-    private String replaceTags(String messageContent, List<String> tags, Map<String, String> values) {
-        for (String tag : tags) {
-            if (values.containsKey(tag)) {
-                String value = values.get(tag);
-                messageContent = messageContent.replaceAll(tag, value);
-            }
-        }
-        return messageContent;
-    }
-
-    private static boolean isEndOfTag(char currentLetter) {
-        return (currentLetter == ',' || currentLetter == '/' || currentLetter == '<');
-    }
-
-    private static List<String> findNotificationTags(String currentLine) {
-        List<String> results = new ArrayList<>();
-        String currentTag = "";
-        char[] lineContents = currentLine.toCharArray();
-        boolean currentStatus = false;
-        boolean addToTags = false;
-        for (char c : lineContents) {
-            if (addToTags) {
-                results.add(currentTag);
-                addToTags = false;
-                currentTag = "";
-            }
-
-            if (c == '#') {
-                currentStatus = true;
-            }
-
-            if (currentStatus) {
-                if (isEndOfTag(c)) {
-                    currentStatus = false;
-                    addToTags = true;
-                }else{
-                    currentTag = currentTag + c;
-                }
-            }
-        }
-
-        if (!currentTag.isEmpty()) {
-            results.add(currentTag);
-        }
-        return results;
-    }
-
-    private String buildContentsAndTags(BufferedReader reader, List<String> messageTags) throws IOException {
-        String line;
-        String results = "";
-        while ((line = reader.readLine()) != null) {
-            results += line;
-            if (line.contains("#")) {
-                messageTags.addAll(findNotificationTags(line));
-            }
-            results += "\n";
-        }
-        return results;
-    }
-
     private String getCurrentTemplate(MatchGroup group, String template){
         if (group.getTeamCount() == MatchGroup.MIN_NUM_TEAMS) {
             return (template + GAME_REPORTED_THREE_TEAMS);
@@ -168,8 +110,8 @@ public class NotificationManager {
         FileReader file = new FileReader(path + template + "." + EmailSettings.EMAILS_FORMAT);
         BufferedReader reader = new BufferedReader(file);
         List<String> messageTags = new ArrayList<>();
-        String messageContent = buildContentsAndTags(reader, messageTags);
-        messageContent = replaceTags(messageContent, messageTags, values);
+        String messageContent = tags.buildContentsAndTags(reader, messageTags);
+        messageContent = tags.replaceTags(messageContent, messageTags, values);
         messageTags.clear();
         reader.close();
         file.close();
