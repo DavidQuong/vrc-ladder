@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.file.logic;
 
+import com.lowagie.text.BadElementException;
 import com.lowagie.text.Image;
 import org.w3c.dom.Element;
 import org.xhtmlrenderer.extend.FSImage;
@@ -14,6 +15,7 @@ import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 import spark.utils.IOUtils;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -24,6 +26,9 @@ import java.io.InputStream;
 public class ElementsFactory implements ReplacedElementFactory {
 
     private final ReplacedElementFactory superFactory;
+    private static final String ERROR_IMAGE_NO_SOURCE = "Found an image without a source path!";
+    private static final String ERROR_IMAGE_FROM_PATH = "There was a problem in getting the image from the path.";
+    private static final String IMAGE_HTML_TAG = "img";
 
     public ElementsFactory(ReplacedElementFactory superFactory) {
         this.superFactory = superFactory;
@@ -36,30 +41,25 @@ public class ElementsFactory implements ReplacedElementFactory {
             return null;
         }
         String nodeName = element.getNodeName();
-        // Replace any <div class="media" data-src="image.png" /> with the
-        // binary data of `image.png` into the PDF.
-        if ("img".equals(nodeName)) {
-            if (!element.hasAttribute("src")) {
-                throw new RuntimeException("An element with class `media` is missing a `data-src` attribute indicating the media file.");
-            }
-
-            InputStream input;
+        if (IMAGE_HTML_TAG.equals(nodeName)) {
+            isElementValid(element);
             try {
-                input = new FileInputStream("src\\main\\resources\\pdf\\images\\" + element.getAttribute("src"));
-                final byte[] bytes = IOUtils.toByteArray(input);
-                final Image image = Image.getInstance(bytes);
-                final FSImage fsImage = new ITextFSImage(image);
-                if (fsImage != null) {
-                    if ((cssWidth != -1) || (cssHeight != -1)) {
-                        fsImage.scale(cssWidth, cssHeight);
-                    }
+                final FSImage fsImage = getImage(element);
+                boolean scaleImage = scaleImage(fsImage, cssWidth, cssHeight);
+                if(scaleImage){
                     return new ITextImageElement(fsImage);
                 }
             } catch (Exception e) {
-                throw new RuntimeException("There was a problem trying to read a template embedded graphic.", e);
+                throw new RuntimeException(ERROR_IMAGE_FROM_PATH, e);
             }
         }
         return this.superFactory.createReplacedElement(c, box, uac, cssWidth, cssHeight);
+    }
+
+    private void isElementValid(Element element) {
+        if (!element.hasAttribute(PdfSettings.IMAGE_SOURCE)) {
+            throw new RuntimeException(ERROR_IMAGE_NO_SOURCE);
+        }
     }
 
     @Override
@@ -75,5 +75,22 @@ public class ElementsFactory implements ReplacedElementFactory {
     @Override
     public void setFormSubmissionListener(FormSubmissionListener listener) {
         this.superFactory.setFormSubmissionListener(listener);
+    }
+
+    private FSImage getImage(Element element) throws IOException, BadElementException {
+        InputStream input = new FileInputStream(PdfSettings.IMAGE_PATH + element.getAttribute(PdfSettings.IMAGE_SOURCE));
+        final byte[] bytes = IOUtils.toByteArray(input);
+        final Image image = Image.getInstance(bytes);
+        return new ITextFSImage(image);
+    }
+
+    private boolean scaleImage(FSImage image, int cssWidth, int cssHeight){
+        if (image != null) {
+            if ((cssWidth != -1) || (cssHeight != -1)) {
+                image.scale(cssWidth, cssHeight);
+            }
+            return true;
+        }
+        return false;
     }
 }

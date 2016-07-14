@@ -1,10 +1,12 @@
 package ca.sfu.cmpt373.alpha.vrcladder.file;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.DirectoryNotCreatedException;
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PdfCoundNotBeCreatedException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PdfCouldNotBeCreatedException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.TemplateNotFoundException;
+import ca.sfu.cmpt373.alpha.vrcladder.file.logic.ColumnBuilder;
 import ca.sfu.cmpt373.alpha.vrcladder.file.logic.ElementsFactory;
-import ca.sfu.cmpt373.alpha.vrcladder.template.TemplateManager;
+import ca.sfu.cmpt373.alpha.vrcladder.file.logic.PdfSettings;
+import ca.sfu.cmpt373.alpha.vrcladder.util.TemplateManager;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
 import org.xhtmlrenderer.pdf.ITextFontResolver;
@@ -25,11 +27,9 @@ import java.util.*;
  */
 public class PdfManager {
     private static final TemplateManager template = new TemplateManager();
-    private static final String LAYOUT_PATH = "src\\main\\resources\\pdf\\templates\\layout.html";
-    private static final String FONT_PATH   = "src\\main\\resources\\pdf\\fonts\\Lato-Medium.ttf";
-    private static final String OUTPUT_PATH = "PDF";
 
     public void exportLadder(){
+        ColumnBuilder columns = new ColumnBuilder();
         ITextRenderer renderer = new ITextRenderer();
         Map<String, String> values = new HashMap<>();
         String currentFileName = getFileName();
@@ -37,13 +37,14 @@ public class PdfManager {
 
         String pdfContents = "";
         try {
+            String columnContents = columns.buildColumnsValues(values);
             buildContents(renderer, values, pdfContents);
             buildPdfFonts(renderer);
             exportPdf(renderer, currentFileName);
         } catch (IOException e) {
             throw new TemplateNotFoundException();
         } catch (DocumentException e) {
-            throw new PdfCoundNotBeCreatedException();
+            throw new PdfCouldNotBeCreatedException();
         }
         System.out.println("PDF " + currentFileName + " was created successfully!");
     }
@@ -55,19 +56,19 @@ public class PdfManager {
     }
 
     private void buildContents(ITextRenderer renderer, Map<String, String> values, String content) throws IOException {
-        content = template.getContents(LAYOUT_PATH, values);
+        content = template.getContents(PdfSettings.LAYOUT_PATH, values);
         renderer.setDocumentFromString(content);
         renderer.getSharedContext().setReplacedElementFactory(new ElementsFactory(renderer.getSharedContext().getReplacedElementFactory()));
     }
 
     private void buildPdfFonts(ITextRenderer renderer) throws IOException, DocumentException {
         ITextFontResolver fontResolver = renderer.getFontResolver();
-        fontResolver.addFont(FONT_PATH, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        fontResolver.addFont(PdfSettings.FONT_PATH, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
     }
 
     private void exportPdf(ITextRenderer renderer, String fileName) throws IOException, DocumentException {
         if(fixDirectoryPath()){
-            FileOutputStream writerStream = new FileOutputStream(OUTPUT_PATH + "\\" +  fileName);
+            FileOutputStream writerStream = new FileOutputStream(PdfSettings.OUTPUT_PATH + "\\" +  fileName);
             renderer.layout();
             renderer.createPDF(writerStream);
             writerStream.flush();
@@ -84,10 +85,10 @@ public class PdfManager {
     }
 
     private boolean fixDirectoryPath(){
-        File directory = new File(OUTPUT_PATH);
+        File directory = new File(PdfSettings.OUTPUT_PATH);
         if(!directory.exists()){
             return directory.mkdir();
         }
-        return false;
+        return true;
     }
 }

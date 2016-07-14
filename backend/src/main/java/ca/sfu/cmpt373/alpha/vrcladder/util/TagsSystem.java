@@ -1,4 +1,4 @@
-package ca.sfu.cmpt373.alpha.vrcladder.tagging;
+package ca.sfu.cmpt373.alpha.vrcladder.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

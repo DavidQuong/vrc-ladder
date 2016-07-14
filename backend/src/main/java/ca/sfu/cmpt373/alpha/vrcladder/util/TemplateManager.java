@@ -1,7 +1,4 @@
-package ca.sfu.cmpt373.alpha.vrcladder.template;
-
-import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.EmailSettings;
-import ca.sfu.cmpt373.alpha.vrcladder.tagging.TagsSystem;
+package ca.sfu.cmpt373.alpha.vrcladder.util;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

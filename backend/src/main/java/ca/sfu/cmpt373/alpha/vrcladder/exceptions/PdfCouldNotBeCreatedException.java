@@ -5,5 +5,5 @@ package ca.sfu.cmpt373.alpha.vrcladder.exceptions;
  * It could be either because of the font, or difficulty in the
  * library.
  */
-public class PdfCoundNotBeCreatedException extends BaseException{
+public class PdfCouldNotBeCreatedException extends BaseException{
 }
