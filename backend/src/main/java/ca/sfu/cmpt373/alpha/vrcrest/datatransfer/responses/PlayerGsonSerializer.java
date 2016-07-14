@@ -9,17 +9,14 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
-public class UserGsonSerializer implements JsonSerializer<User> {
+public class PlayerGsonSerializer implements JsonSerializer<User> {
 
     @Override
     public JsonElement serialize(User user, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonUser = new JsonObject();
 
         jsonUser.addProperty(JsonProperties.JSON_PROPERTY_USER_ID, user.getUserId().getValue());
-        jsonUser.addProperty(JsonProperties.JSON_PROPERTY_USER_ROLE, user.getUserRole().name());
         jsonUser.addProperty(JsonProperties.JSON_PROPERTY_NAME, user.getDisplayName());
-        jsonUser.addProperty(JsonProperties.JSON_PROPERTY_EMAIL_ADDRESS, user.getEmailAddress().getValue());
-        jsonUser.addProperty(JsonProperties.JSON_PROPERTY_PHONE_NUMBER, user.getPhoneNumber().getValue());
 
         return jsonUser;
     }
