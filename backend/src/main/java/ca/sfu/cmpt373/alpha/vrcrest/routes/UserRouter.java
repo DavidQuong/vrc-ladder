@@ -79,6 +79,7 @@ public class UserRouter extends RestRouter {
         Spark.post(ROUTE_USERS, this::handleCreateUser);
         Spark.get(ROUTE_PLAYERS, this::handleGetPlayers);
         Spark.get(ROUTE_USERS_SELF, this::handleGetActiveUser);
+        Spark.put(ROUTE_USERS_SELF, this::handleUpdateActiveUser);
         Spark.get(ROUTE_USER_ID, this::handleGetUserById);
         Spark.put(ROUTE_USER_ID, this::handleUpdateUserById);
         Spark.delete(ROUTE_USER_ID, this::handleDeleteUserById);
@@ -188,7 +189,32 @@ public class UserRouter extends RestRouter {
 
         try {
             User activeUser = extractUserFromRequest(request);
+
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(activeUser));
+            response.status(HttpStatus.OK_200);
+        } catch (ValidationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_INVALID_RESOURCE_ID);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (EntityNotFoundException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
+            response.status(HttpStatus.NOT_FOUND_404);
+        } catch (RuntimeException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        }
+
+        return responseBody.toString();
+    }
+
+    private String handleUpdateActiveUser(Request request, Response response) {
+        JsonObject responseBody = new JsonObject();
+
+        try {
+            UserId activeUserId = extractUserIdFromRequest(request);
+            UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
+            User updatedUser = updateUserWithPayload(activeUserId, updateUserPayload);
+
+            responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(updatedUser));
             response.status(HttpStatus.OK_200);
         } catch (ValidationException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_INVALID_RESOURCE_ID);
@@ -236,15 +262,9 @@ public class UserRouter extends RestRouter {
             UserId userId = new UserId(requestedId);
 
             UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
-            User existingUser = userManager.update(
-                userId,
-                updateUserPayload.getFirstName(),
-                updateUserPayload.getMiddleName(),
-                updateUserPayload.getLastName(),
-                updateUserPayload.getEmailAddress(),
-                updateUserPayload.getPhoneNumber());
+            User updatedUser = updateUserWithPayload(userId, updateUserPayload);
 
-            responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(existingUser));
+            responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(updatedUser));
             response.status(HttpStatus.OK_200);
         } catch (ValidationException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
@@ -303,6 +323,19 @@ public class UserRouter extends RestRouter {
         List<Team> teamsForUser = teamManager.getTeamsForUser(user);
         responseBody.add(JSON_PROPERTY_TEAMS, getGson().toJsonTree(teamsForUser));
         return responseBody.toString();
+    }
+
+    private User updateUserWithPayload(UserId userId, UpdateUserPayload updateUserPayload) {
+        User updatedUser = userManager.update(
+            userId,
+            updateUserPayload.getFirstName(),
+            updateUserPayload.getMiddleName(),
+            updateUserPayload.getLastName(),
+            updateUserPayload.getEmailAddress(),
+            updateUserPayload.getPhoneNumber()
+        );
+
+        return updatedUser;
     }
 
 }

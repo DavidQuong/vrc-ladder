@@ -33,6 +33,11 @@ public abstract class RestRouter {
         gson = buildGson();
     }
 
+    protected UserId extractUserIdFromRequest(Request request) {
+        String authorizationToken = request.headers(HEADER_AUTHORIZATION);
+        return securityManager.parseToken(authorizationToken);
+    }
+
     protected User extractUserFromRequest(Request request) {
         String authorizationToken = request.headers(HEADER_AUTHORIZATION);
         UserId userId = securityManager.parseToken(authorizationToken);
