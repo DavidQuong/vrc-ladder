@@ -189,7 +189,6 @@ public class UserRouter extends RestRouter {
 
         try {
             User activeUser = extractUserFromRequest(request);
-
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(activeUser));
             response.status(HttpStatus.OK_200);
         } catch (ValidationException ex) {
