@@ -42,6 +42,7 @@ public class UserRouter extends RestRouter {
     public static final String ROUTE_USERS = "/users";
     public static final String ROUTE_PLAYERS = "/players";
 
+    public static final String ROUTE_USERS_SELF = ROUTE_USERS + "/self";
     public static final String ROUTE_USER_ID = "/user/" + PARAM_ID;
     private static final String ROUTE_USER_ID_TEAMS = ROUTE_USER_ID + "/teams";
 
@@ -77,6 +78,7 @@ public class UserRouter extends RestRouter {
         Spark.get(ROUTE_USERS, this::handleGetUsers);
         Spark.post(ROUTE_USERS, this::handleCreateUser);
         Spark.get(ROUTE_PLAYERS, this::handleGetPlayers);
+        Spark.get(ROUTE_USERS_SELF, this::handleGetActiveUser);
         Spark.get(ROUTE_USER_ID, this::handleGetUserById);
         Spark.put(ROUTE_USER_ID, this::handleUpdateUserById);
         Spark.delete(ROUTE_USER_ID, this::handleDeleteUserById);
@@ -145,6 +147,7 @@ public class UserRouter extends RestRouter {
 
     private String handleCreateUser(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
+
         try {
             NewUserPayload newUserPayload = getGson().fromJson(request.body(), NewUserPayload.class);
             Password hashedPassword = securityManager.hashPassword(newUserPayload.getPassword());
@@ -174,6 +177,27 @@ public class UserRouter extends RestRouter {
             response.status(HttpStatus.CONFLICT_409);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST + ": " + ex.getMessage());
+            response.status(HttpStatus.BAD_REQUEST_400);
+        }
+
+        return responseBody.toString();
+    }
+
+    private String handleGetActiveUser(Request request, Response response) {
+        JsonObject responseBody = new JsonObject();
+
+        try {
+            User activeUser = extractUserFromRequest(request);
+            responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(activeUser));
+            response.status(HttpStatus.OK_200);
+        } catch (ValidationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_INVALID_RESOURCE_ID);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (EntityNotFoundException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
+            response.status(HttpStatus.NOT_FOUND_404);
+        } catch (RuntimeException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
             response.status(HttpStatus.BAD_REQUEST_400);
         }
 
