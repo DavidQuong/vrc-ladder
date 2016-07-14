@@ -124,19 +124,29 @@ frontend<br />
 -----------
 ### Backend
 
-#### Instructions:
+#### Build Configurations:
+
+In order to support different runtime configurations for development/testing and production use, there are different gradle build configurations.
+
+To switch between build configurations, see Build/Run Instructions
+
+1) debug: for developing/testing things locally using a local in-memory database
+
+2) production-debug: a persistent database for development purposes when developers want to experiment with large, persistent amounts of data, or experiment with making a change in a similar environment to production without risking breaking anything in production
+
+3) production: a persistent database that the client (vrc) will use to store their actual ladder rankings.
+
+#### Build/Run Instructions:
 1) Start a terminal session in the backend directory (\<project-dir\>/backend)
 
-2) Run `gradle clean run -Pconfiguration=debug`, or replace `gradle` with `gradlew` if gradle is not installed on your machine
+2) Run `gradle clean run -Pconfiguration=<build_configuration>`, or replace `gradle` with `gradlew` if gradle is not installed on your machine
 
-3) To run the application using the production database build, you'll have to use `gradle clean run -Pconfiguration=production`
-
-4) Note: if you're running the production build from your local machine, you must contact the team to add your IP Address to the list of authorized database IPs
+4) Note: if you're running either of the production builds from your local machine, you must contact the team to add your IP Address to the list of authorized database IPs
 
 #### Amazon Web Services Deployment:
 1) Start a terminal session in the backend directory (\<project-dir\>/backend)
 
-2) Run `gradle war -Pconfiguration=debug`, or replace `gradle` with `gradlew` if gradle is not installed on your machine
+2) Run `gradle war -Pconfiguration=<build_configuration>`, or replace `gradle` with `gradlew` if gradle is not installed on your machine
 
 3) Locate the generated WAR archive in the /build/libs directory
 
@@ -152,7 +162,8 @@ frontend<br />
 
 9) The rest of the settings can be left at their defaults
 
-Note that these instructions only apply for uploading the debug build to AWS. Running the production build requires setting up a database, then configuring the application to communicate with said database
+Note that these instructions only apply for uploading the debug build to AWS. Running either of the production builds requires setting up a database, then configuring the application to communicate with said database
+To setup a database on AWS for a production build, please contact a team member. 
 
 #### Citations:
 - src\main\java\ca\sfu\cmpt373\alpha\vrctextui\Menu.java: Idea based on design from Summer 2016 CMPT213 As0.
