@@ -192,7 +192,7 @@ const SignUp = withRouter(({
             return Promise.reject(errors);
           }
           return addUser(userInfo).then(() => {
-            router.push('/ladder');
+            router.push('/login');
           }).catch(() => {
             errors = {userId: 'exists'};
             return Promise.reject(errors);
