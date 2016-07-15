@@ -6,7 +6,7 @@
   margin-bottom: 50px;
   font-size: 16px;
   display: block;
-  background-color: ~colors.paleGreen;
+  background-color: ~colors.paleBlue;
 }
 
 .sectionHeaders{
@@ -15,7 +15,7 @@
   width: auto;
   padding-left: 1%;
   color: ~colors.charcoalGrey;
-  background-color: ~colors.darkGreen;
+  background-color: ~colors.brightBlue;
   border-radius: 4px;
   border: solid 2px #ccc;
 }

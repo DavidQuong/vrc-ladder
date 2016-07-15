@@ -11,7 +11,7 @@
   font-weight: 450;
   width: auto;
   color: ~colors.charcoalGrey;
-  background-color: ~colors.darkGreen;
+  background-color: ~colors.brightBlue;
   border-radius: 4px;
   border: solid 2px #ccc;
 }
@@ -20,7 +20,7 @@
   font-size: 18px;
   font-weight: 600;
   color: ~colors.charcoalGrey;
-  background-color: ~colors.paleGreen;
+  background-color: ~colors.paleBlue;
   margin-bottom: 0.8%;
   margin-left: 2.5%;
   width: 80%;
@@ -33,7 +33,7 @@
   font-size: 22px;
   font-weight: normal;
   color: ~colors.white;
-  background-color: ~colors.darkGreen;
+  background-color: ~colors.brightBlue;
   margin: 0px;
   width: 100%;
   padding-top: 6px;
