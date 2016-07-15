@@ -10,7 +10,7 @@
   font-size: 22px;
   font-weight: 450;
   width: auto;
-  color: ~colors.charcoalGrey;
+  color: ~colors.white;
   background-color: ~colors.brightBlue;
   border-radius: 4px;
   border: solid 2px #ccc;
@@ -19,7 +19,7 @@
 .matchGroups{
   font-size: 18px;
   font-weight: 600;
-  color: ~colors.charcoalGrey;
+  color: ~colors.white;
   background-color: ~colors.paleBlue;
   margin-bottom: 0.8%;
   margin-left: 2.5%;
