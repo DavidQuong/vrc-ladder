@@ -7,8 +7,12 @@
 :global {
   html, body {
     height: 100%;
-    /* background-color specified as fallback if background-image fails */
-    background: url(~url?limit=10000!./../src/public/wood-tile.png) repeat ~colors.woodBrown;
+    /*background: url(~url?limit=10000!./../src/public/wood-tile.png) repeat ~colors.woodBrown;*/
+    background: url(~url?limit=10000!./../src/public/vrcback.jpg) no-repeat center center fixed ~colors.white;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
   }
 
   html {

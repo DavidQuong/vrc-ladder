@@ -10,3 +10,6 @@ export const honeydewWhite = '#F2FFE9';
 export const paleYellow = '#E8FF8E';
 export const brightYellow = '#DFE029';
 export const woodBrown = '#eacda3';
+
+export const brightBlue = '#007FFF';
+export const paleBlue = '#76ADFF';

@@ -13,7 +13,8 @@
   font-size: 18px;
   font-weight: 600;
   color: ~colors.white !important;
-  background-color: ~colors.darkGreen !important;
+  /*background-color: ~colors.darkGreen !important;*/
+  background-color: ~colors.brightBlue !important;
 }
 
 .center {
@@ -25,7 +26,8 @@
 .panelBody {
   font-size: 18px;
   font-weight: 600;
-  background-color: ~colors.paleGreen;
+  /*background-color: ~colors.paleGreen;*/
+  background-color: ~colors.paleBlue;
   color: ~colors.charcoalGrey;
 }
 

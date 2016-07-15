@@ -2,7 +2,8 @@
 
 :local {
   .upperNavbar {
-    background-color: ~colors.darkGreen;
+    /*background-color: ~colors.darkGreen;*/
+    background-color: ~colors.brightBlue;
     color: ~colors.white;
     border: ~colors.charcoalGrey;
     font-size: 21px;
@@ -70,7 +71,8 @@
 
   .navItem > li > a:active {
     color: inherit !important;
-    background-color: ~colors.darkerGreen !important;
+    /*background-color: ~colors.darkerGreen !important;*/
+    background-color: ~colors.paleBlue !important;
   }
 
   /*.navItem > li > a:active, .navItem > li > a:focus {
