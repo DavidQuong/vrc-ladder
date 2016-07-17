@@ -11,6 +11,7 @@ import createStore from '../src/store';
 // styling `html` or `body` tags.
 import '../src/global.css';
 
+import 'file?name=[name].[ext]!./../src/public/favicon.ico';
 // const TIMER = 5000;
 
 // Create the initial state of the application.
