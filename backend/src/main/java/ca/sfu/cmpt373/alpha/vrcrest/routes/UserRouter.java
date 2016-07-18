@@ -10,6 +10,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonProperties;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewUserPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.UpdateUserPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.PlayerGsonSerializer;
@@ -49,8 +50,13 @@ public class UserRouter extends RestRouter {
     public static final String JSON_PROPERTY_PLAYERS = "players";
 
 
+    private static final String ERROR_EXISTING_USER_ID = "User ID already exists";
+    private static final String ERROR_EXISTING_USER_EMAIL = "Email Address already exists";
+    private static final String ERROR_CONSTRAINT_FAILURE_ID = "PUBLIC.USER(ID)";
+    private static final String ERROR_CONSTRAINT_FAILURE_EMAIL = "PUBLIC.USER(EMAIL_ADDRESS)";
+    private static final String ERROR_INVALID_PROPERTY = "The following property is invalid";
+    private static final String ERROR_INVALID_PROPERTY_VALUE = "invalid";
     private static final String ERROR_NONEXISTENT_USER = "This user does not exist.";
-    private static final String ERROR_EXISTING_USER_DETAILS = "A user with this ID or email address already exists.";
     private static final String ERROR_UNAUTHORIZED_OTHER_USERS = "This user is not authorized to access or modify " +
         "other user's data.";
 
@@ -167,10 +173,18 @@ public class UserRouter extends RestRouter {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
             response.status(HttpStatus.BAD_REQUEST_400);
         } catch (JsonParseException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_INVALID_PROPERTY);
+            responseBody.addProperty(ex.getMessage(), ERROR_INVALID_PROPERTY_VALUE);
             response.status(HttpStatus.BAD_REQUEST_400);
         } catch (ConstraintViolationException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER_DETAILS);
+            if(ex.getConstraintName().contains(ERROR_CONSTRAINT_FAILURE_ID)){
+                responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER_ID);
+                responseBody.addProperty(JsonProperties.JSON_PROPERTY_USER_ID, false);
+            }else if(ex.getConstraintName().contains(ERROR_CONSTRAINT_FAILURE_EMAIL)){
+                responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER_EMAIL);
+                responseBody.addProperty(JsonProperties.JSON_PROPERTY_EMAIL_ADDRESS, false);
+            }
+
             response.status(HttpStatus.CONFLICT_409);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST + ": " + ex.getMessage());
@@ -229,14 +243,21 @@ public class UserRouter extends RestRouter {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
             response.status(HttpStatus.BAD_REQUEST_400);
         } catch (JsonParseException | IllegalArgumentException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_INVALID_PROPERTY);
+            responseBody.addProperty(ex.getMessage(), ERROR_INVALID_PROPERTY_VALUE);
             response.status(HttpStatus.BAD_REQUEST_400);
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
         } catch (ConstraintViolationException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST + ": " +
-                ex.getConstraintName());
+            if(ex.getConstraintName().contains(ERROR_CONSTRAINT_FAILURE_ID)){
+                responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER_ID);
+                responseBody.addProperty(JsonProperties.JSON_PROPERTY_USER_ID, false);
+            }else if(ex.getConstraintName().contains(ERROR_CONSTRAINT_FAILURE_EMAIL)){
+                responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER_EMAIL);
+                responseBody.addProperty(JsonProperties.JSON_PROPERTY_EMAIL_ADDRESS, false);
+            }
+
             response.status(HttpStatus.CONFLICT_409);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST + ": " + ex.getMessage());
