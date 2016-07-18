@@ -176,10 +176,20 @@ const checkErrors = (responseErrors) => {
 
   if (responseErrors.userId === false) {
     newErrors.userId = 'A user with this ID already exists!';
-  }
-  if (responseErrors.emailAddress === false) {
+    return newErrors;
+  } else if (responseErrors.emailAddress === false) {
     newErrors.emailAddress = 'A user with this email already exists!';
+    return newErrors;
   }
+
+  if (responseErrors.userId === 'invalid') {
+    newErrors.userId = 'This userId is not valid';
+  } else if (responseErrors.emailAddress === 'invalid') {
+    newErrors.emailAddress = 'This email Address is not valid';
+  } else if (responseErrors.phoneNumber === 'invalid') {
+    newErrors.phoneNumber = 'This phone number is not valid';
+  }
+
   return newErrors;
 };
 
@@ -207,7 +217,6 @@ const SignUp = withRouter(({
             router.push('/login');
           }).catch((val) => {
             const values = val.then(function(more) {
-              console.log(more);
               errors = checkErrors(more);
               return Promise.reject(errors);
             });
