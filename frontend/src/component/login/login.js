@@ -21,6 +21,7 @@ const validate = (values) => {
   }
   if (!values.password) {
     errors.password = 'Password Required';
+
   }
   return errors;
 };
@@ -89,7 +90,7 @@ const logInBuilder = (props, response) => {
 };
 
 const userLogIn = createAction('USER_LOGIN');
-
+let IncorrectLogins=5;
 const LogIn = withRouter(({
   userLogIn,
   logInUser,
@@ -105,12 +106,20 @@ const LogIn = withRouter(({
           defaultMessage='Login'
         />
       </Heading>
+      let IncorrectLogins=0;
       <LogInForm
         onSubmit={(props) => {
+
           const errors = validate(props);
           if (!isEmpty(errors)) {
+            IncorrectLogins++;
+            if(IncorrectLogins <4){
+              // TODO: Lockout user
+             FormError;
+            }
             return Promise.reject(errors);
           }
+
           return logInUser(props).then((response) => {
             const userInfo = logInBuilder(props, response);
             userLogIn({
@@ -123,6 +132,7 @@ const LogIn = withRouter(({
             });
           }).catch((errors) => {
             // TODO: Error object to expected.
+
             return Promise.reject(errors);
           });
         }}

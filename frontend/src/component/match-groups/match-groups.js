@@ -60,7 +60,7 @@ const MatchGroups = withRouter(({
             <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: '
+                defaultMessage='Winner: '
               />
             <select>
               <option value=''>Select a team...</option>
@@ -77,7 +77,7 @@ const MatchGroups = withRouter(({
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: '
+                defaultMessage='Winner: '
               />
               <select>
                 <option value=''>Select a team...</option>
@@ -94,7 +94,7 @@ const MatchGroups = withRouter(({
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: '
+                defaultMessage='Winner:  '
               />
               <select>
                 <option value=''>Select a team...</option>
@@ -144,7 +144,7 @@ const MatchGroups = withRouter(({
             <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: '
+                defaultMessage='Winner: '
               />
               <select>
                 <option value=''>Select a team...</option>
@@ -161,7 +161,7 @@ const MatchGroups = withRouter(({
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: '
+                defaultMessage='Winner: '
               />
               <select>
                 <option value=''>Select a team...</option>
@@ -178,7 +178,7 @@ const MatchGroups = withRouter(({
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: '
+                defaultMessage='Winner: '
               />
               <select>
                 <option value=''>Select a team...</option>
@@ -235,7 +235,7 @@ const MatchGroups = withRouter(({
             <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: '
+                defaultMessage='Winner: '
               />
               <select>
                 <option value=''>Select a team...</option>
@@ -252,7 +252,7 @@ const MatchGroups = withRouter(({
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: '
+                defaultMessage='Winner: '
               />
               <select>
                 <option value=''>Select a team...</option>
@@ -269,7 +269,7 @@ const MatchGroups = withRouter(({
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults3'
-                defaultMessage='Results: '
+                defaultMessage='Winner: '
               />
               <select>
                 <option value=''>Select a team...</option>
@@ -286,7 +286,7 @@ const MatchGroups = withRouter(({
               <div className={styles.matchGroupResultsFORM}>
               <FormattedMessage
                 id='matchResults4'
-                defaultMessage='Results: '
+                defaultMessage='Winner: '
               />
               <select>
                 <option value=''>Select a team...</option>
