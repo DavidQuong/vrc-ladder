@@ -52,8 +52,8 @@ public class UserRouter extends RestRouter {
 
     private static final String ERROR_EXISTING_USER_ID = "User ID already exists";
     private static final String ERROR_EXISTING_USER_EMAIL = "Email Address already exists";
-    private static final String ERROR_CONSTRAINT_FAILURE_ID = "PUBLIC.USER(ID)";
-    private static final String ERROR_CONSTRAINT_FAILURE_EMAIL = "PUBLIC.USER(EMAIL_ADDRESS)";
+    private static final String ERROR_CONSTRAINT_CONFLICT_ID = "PUBLIC.USER(ID)";
+    private static final String ERROR_CONSTRAINT_CONFLICT_EMAIL = "PUBLIC.USER(EMAIL_ADDRESS)";
     private static final String ERROR_INVALID_PROPERTY = "The following property is invalid";
     private static final String ERROR_INVALID_PROPERTY_VALUE = "invalid";
     private static final String ERROR_NONEXISTENT_USER = "This user does not exist.";
@@ -177,10 +177,10 @@ public class UserRouter extends RestRouter {
             responseBody.addProperty(ex.getMessage(), ERROR_INVALID_PROPERTY_VALUE);
             response.status(HttpStatus.BAD_REQUEST_400);
         } catch (ConstraintViolationException ex) {
-            if(ex.getConstraintName().contains(ERROR_CONSTRAINT_FAILURE_ID)){
+            if(ex.getConstraintName().contains(ERROR_CONSTRAINT_CONFLICT_ID)){
                 responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER_ID);
                 responseBody.addProperty(JsonProperties.JSON_PROPERTY_USER_ID, false);
-            }else if(ex.getConstraintName().contains(ERROR_CONSTRAINT_FAILURE_EMAIL)){
+            }else if(ex.getConstraintName().contains(ERROR_CONSTRAINT_CONFLICT_EMAIL)){
                 responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER_EMAIL);
                 responseBody.addProperty(JsonProperties.JSON_PROPERTY_EMAIL_ADDRESS, false);
             }
@@ -250,10 +250,10 @@ public class UserRouter extends RestRouter {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
         } catch (ConstraintViolationException ex) {
-            if(ex.getConstraintName().contains(ERROR_CONSTRAINT_FAILURE_ID)){
+            if(ex.getConstraintName().contains(ERROR_CONSTRAINT_CONFLICT_ID)){
                 responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER_ID);
                 responseBody.addProperty(JsonProperties.JSON_PROPERTY_USER_ID, false);
-            }else if(ex.getConstraintName().contains(ERROR_CONSTRAINT_FAILURE_EMAIL)){
+            }else if(ex.getConstraintName().contains(ERROR_CONSTRAINT_CONFLICT_EMAIL)){
                 responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER_EMAIL);
                 responseBody.addProperty(JsonProperties.JSON_PROPERTY_EMAIL_ADDRESS, false);
             }
