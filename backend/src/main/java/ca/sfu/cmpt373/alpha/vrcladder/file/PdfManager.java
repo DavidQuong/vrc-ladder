@@ -6,6 +6,8 @@ import ca.sfu.cmpt373.alpha.vrcladder.exceptions.TemplateNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.file.logic.ColumnBuilder;
 import ca.sfu.cmpt373.alpha.vrcladder.file.logic.ElementsFactory;
 import ca.sfu.cmpt373.alpha.vrcladder.file.logic.PdfSettings;
+import ca.sfu.cmpt373.alpha.vrcladder.ladder.Ladder;
+import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.util.TemplateManager;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
@@ -16,7 +18,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -27,18 +32,24 @@ import java.util.*;
  */
 public class PdfManager {
     private static final TemplateManager template = new TemplateManager();
+    private static final ColumnBuilder columns = new ColumnBuilder();
+    private final Ladder ladder;
+
+
+    public PdfManager(Ladder ladder){
+        this.ladder = ladder;
+    }
 
     public void exportLadder(){
-        ColumnBuilder columns = new ColumnBuilder();
         ITextRenderer renderer = new ITextRenderer();
         Map<String, String> values = new HashMap<>();
         String currentFileName = getFileName();
-        setDateValue(values);
+        List<Team> teams = ladder.getLadder();
+        setPdfValues(values, teams.size());
 
-        String pdfContents = "";
         try {
-            String columnContents = columns.buildColumnsValues(values);
-            buildContents(renderer, values, pdfContents);
+            buildColumns(values);
+            buildContents(renderer, values);
             buildPdfFonts(renderer);
             exportPdf(renderer, currentFileName);
         } catch (IOException e) {
@@ -49,14 +60,32 @@ public class PdfManager {
         System.out.println("PDF " + currentFileName + " was created successfully!");
     }
 
-    private void setDateValue(Map<String, String> values){
+    // TODO: refactor them and columns class functions associated with this function.
+    private void buildColumns(Map<String, String> values) throws IOException {
+        String columnsContainer = columns.getColumnsContainer(values);
+        columnsContainer = columns.buildColumnsValues(this.ladder, values, columnsContainer);
+        values.put("#content", columnsContainer);
+    }
+
+    private void setPdfValues(Map<String, String> values, int teamsSize){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
         String date = dateFormat.format(new Date());
         values.put("#dateandtime", date);
+
+        String columnWidth = columns.getColumnsWidth();
+        values.put("#columnwidth", columnWidth + "%");
+        String pgTotal = getNumberOfPages(teamsSize);
+        values.put("#pgtotal", pgTotal);
     }
 
-    private void buildContents(ITextRenderer renderer, Map<String, String> values, String content) throws IOException {
-        content = template.getContents(PdfSettings.LAYOUT_PATH, values);
+    private String getNumberOfPages(int teamsSize){
+        int teamsPerPage = PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN * PdfSettings.NUMBER_OF_COLUMNS;
+        String pgTotal = String.valueOf((int) Math.ceil(teamsSize/(double) teamsPerPage));
+        return pgTotal;
+    }
+
+    private void buildContents(ITextRenderer renderer, Map<String, String> values) throws IOException {
+        String content = template.getContents(PdfSettings.LAYOUT_PATH, values);
         renderer.setDocumentFromString(content);
         renderer.getSharedContext().setReplacedElementFactory(new ElementsFactory(renderer.getSharedContext().getReplacedElementFactory()));
     }
@@ -84,11 +113,8 @@ public class PdfManager {
         return (results + ".pdf");
     }
 
-    private boolean fixDirectoryPath(){
+    private boolean fixDirectoryPath() {
         File directory = new File(PdfSettings.OUTPUT_PATH);
-        if(!directory.exists()){
-            return directory.mkdir();
-        }
-        return true;
+        return directory.exists() || directory.mkdir();
     }
 }

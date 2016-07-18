@@ -70,7 +70,7 @@ public class TagsSystem {
     }
 
     private static boolean isEndOfTag(char currentLetter) {
-        return (currentLetter == ',' || currentLetter == '/' || currentLetter == '<');
+        return (currentLetter == ',' || currentLetter == '/' || currentLetter == '<' || currentLetter == ';' || currentLetter == ' ' || currentLetter == '"');
     }
 
 }

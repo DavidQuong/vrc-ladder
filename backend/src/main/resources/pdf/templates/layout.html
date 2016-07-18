@@ -44,6 +44,7 @@
 
     .HeaderTitle{
     	font-family: "Lato Medium";
+    	width: 60%;
     }
 
     .mottoContainer{
@@ -60,7 +61,7 @@
     }
 
     .ladderColumnContainer{
-    	width: 24%;
+    	width: #columnwidth;
     }
 
     .ladderColumnSeparator{
@@ -69,6 +70,15 @@
 
     .column{
         height: 80px;
+    }
+
+    .teamHolder{
+        width: 80%;
+        border: 1px solid #000000;
+    }
+
+    .teamName{
+        font-size: 9pt;
     }
 
     .legends{
@@ -109,9 +119,11 @@
                     <td>
                         <table>
                             <tr>
-                                <td class="HeaderTitle" colspan="2">
+                                <td class="HeaderTitle">
                                     Vancouver Racquets
                                     Club</td>
+                                <td class="filetime">
+                                    Page #pgnumber of #pgtotal</td>
                             </tr>
                             <tr>
                                 <td class="mottoContainer">
@@ -134,13 +146,7 @@
             <!-- Start Ladder Table -->
             <table>
                 <tr>
-                    <td class="ladderColumnContainer">#column1content</td>
-                    <td class="ladderColumnSeparator"> </td>
-                    <td class="ladderColumnContainer">#column2content</td>
-                    <td class="ladderColumnSeparator"> </td>
-                    <td class="ladderColumnContainer">#column3content</td>
-                    <td class="ladderColumnSeparator"> </td>
-                    <td class="ladderColumnContainer">#column4content</td>
+                    #content
                 </tr>
             </table>
             <p class="legends"> <br />
