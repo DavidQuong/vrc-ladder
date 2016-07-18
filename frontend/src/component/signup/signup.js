@@ -3,8 +3,7 @@ import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {withRouter} from 'react-router';
-import {addUser} from '../../action/users';
-
+import {addUser, getUserInfo} from '../../action/users';
 import styles from './signup.css';
 import Heading from '../heading/heading';
 import isEmpty from 'lodash/fp/isEmpty';
@@ -172,6 +171,18 @@ const BaseSignUpForm = ({
 
 const SignUpForm = formEnhancer(BaseSignUpForm);
 
+const checkErrors = (responseErrors) => {
+  const newErrors = {};
+
+  if (responseErrors.userId === false) {
+    newErrors.userId = 'A user with this ID already exists!';
+  }
+  if (responseErrors.emailAddress === false) {
+    newErrors.emailAddress = 'A user with this email already exists!';
+  }
+  return newErrors;
+};
+
 const SignUp = withRouter(({
   addUser,
   router,
@@ -191,11 +202,17 @@ const SignUp = withRouter(({
           if (!isEmpty(errors)) {
             return Promise.reject(errors);
           }
-          return addUser(userInfo).then(() => {
+          const akon = addUser(userInfo);
+          return akon.then(() => {
             router.push('/login');
-          }).catch(() => {
-            errors = {userId: 'exists'};
-            return Promise.reject(errors);
+          }).catch((val) => {
+            const values = val.then(function(more) {
+              console.log(more);
+              errors = checkErrors(more);
+              return Promise.reject(errors);
+            });
+            // errors = checkErrors();
+            return values;
           });
         }}
       />
@@ -206,6 +223,9 @@ const SignUp = withRouter(({
 export default connect(
   (state) => ({
     players: state.app.players,
+    userInfo: state.app.userInfo,
   }),
-  {addUser}
+  {addUser,
+  getUserInfo,
+  }
 )(SignUp);
