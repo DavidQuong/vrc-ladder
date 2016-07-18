@@ -67,12 +67,10 @@ const app = handleActions({
 }, {
   players: [],
   teams: [],
-  loggedIn: {
-    authorizationToken: '',
-    userId: '',
-  },
+  loggedIn: {},
   userInfo: [],
   teamInfo: [],
+  matchGroups: [],
 });
 
 export default combineReducers({

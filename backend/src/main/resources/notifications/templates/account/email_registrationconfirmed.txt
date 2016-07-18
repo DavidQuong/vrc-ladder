@@ -1,0 +1,9 @@
+Dear #fullname,
+
+Your registration in Vancouver Racquets Club has been confirmed. We welcome you to our club and wish you
+a pleasant time.
+
+If you didn't register, or receiving this email by mistake please contact us at support@vrc.com
+
+Sincerely Yours,
+VRC

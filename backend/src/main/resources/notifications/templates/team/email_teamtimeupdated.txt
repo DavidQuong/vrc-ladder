@@ -1,0 +1,16 @@
+Dear #fullname,
+
+Your team preferred time in Vancouver Racquets Club has been changed, new preferred time shown below: -
+
+New Preferred Time: #preferrdtime
+
+Details about this team are: -
+
+Ladder Position: #ladderposition
+First Team Member: #firstteammember
+Second Team Member: #secondteammember
+
+if this change was by mistake, you can change it back by using your account or inform us about it.
+
+Sincerely Yours,
+VRC

@@ -2,7 +2,6 @@ import {createElement, Element} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
-// import {SubmitBtn} from '../button';
 import {withRouter} from 'react-router';
 import {addUser} from '../../action/users';
 
@@ -78,10 +77,6 @@ const FormError = ({touched, error}) => {
   }
   return null;
 };
-
-// const Foo = (props) => <div>{props.message}</div>;
-// const Foo = ({message}) => <div>{message}</div>;
-// <Foo message='...'/>
 
 const BaseSignUpForm = ({
   fields: {
@@ -191,15 +186,15 @@ const SignUp = withRouter(({
         </Heading>
       <SignUpForm
         onSubmit={(props) => {
-          const errors = validate(props);
+          let errors = validate(props);
           const userInfo = parseUser(props);
           if (!isEmpty(errors)) {
             return Promise.reject(errors);
           }
           return addUser(userInfo).then(() => {
             router.push('/ladder');
-          }).catch((errors) => {
-            // TODO: Error object to expected.
+          }).catch(() => {
+            errors = {userId: 'exists'};
             return Promise.reject(errors);
           });
         }}

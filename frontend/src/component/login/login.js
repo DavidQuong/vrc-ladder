@@ -6,13 +6,13 @@ import {withRouter} from 'react-router';
 import {logInUser} from '../../action/login';
 import {getUserInfo, getTeamInfo} from '../../action/users';
 import {createAction} from 'redux-actions';
+import {
+  Well, Col, ControlLabel, Button, FormControl, FormGroup, Form,
+} from 'react-bootstrap';
 
 import styles from './login.css';
 import Heading from '../heading/heading';
 import isEmpty from 'lodash/fp/isEmpty';
-import {
-  Well, Col, ControlLabel, Button, FormControl, FormGroup, Form,
-} from 'react-bootstrap';
 
 const validate = (values) => {
   const errors = {};
@@ -21,7 +21,6 @@ const validate = (values) => {
   }
   if (!values.password) {
     errors.password = 'Password Required';
-
   }
   return errors;
 };
@@ -90,7 +89,7 @@ const logInBuilder = (props, response) => {
 };
 
 const userLogIn = createAction('USER_LOGIN');
-let IncorrectLogins=5;
+
 const LogIn = withRouter(({
   userLogIn,
   logInUser,
@@ -106,20 +105,12 @@ const LogIn = withRouter(({
           defaultMessage='Login'
         />
       </Heading>
-      let IncorrectLogins=0;
       <LogInForm
         onSubmit={(props) => {
-
-          const errors = validate(props);
+          let errors = validate(props);
           if (!isEmpty(errors)) {
-            IncorrectLogins++;
-            if(IncorrectLogins <4){
-              // TODO: Lockout user
-             FormError;
-            }
             return Promise.reject(errors);
           }
-
           return logInUser(props).then((response) => {
             const userInfo = logInBuilder(props, response);
             userLogIn({
@@ -130,9 +121,8 @@ const LogIn = withRouter(({
                 router.push('/ladder');
               });
             });
-          }).catch((errors) => {
-            // TODO: Error object to expected.
-
+          }).catch(() => {
+            errors = {userId: 'Incorrect ID or Password'};
             return Promise.reject(errors);
           });
         }}
