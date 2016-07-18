@@ -172,25 +172,25 @@ const BaseSignUpForm = ({
 const SignUpForm = formEnhancer(BaseSignUpForm);
 
 const checkErrors = (responseErrors) => {
-  const newErrors = {};
+  const errors = {};
 
   if (responseErrors.userId === false) {
-    newErrors.userId = 'A user with this ID already exists!';
-    return newErrors;
+    errors.userId = 'A user with this ID already exists!';
+    return errors;
   } else if (responseErrors.emailAddress === false) {
-    newErrors.emailAddress = 'A user with this email already exists!';
-    return newErrors;
+    errors.emailAddress = 'A user with this email already exists!';
+    return errors;
   }
 
   if (responseErrors.userId === 'invalid') {
-    newErrors.userId = 'This userId is not valid';
+    errors.userId = 'This userId is not valid';
   } else if (responseErrors.emailAddress === 'invalid') {
-    newErrors.emailAddress = 'This email Address is not valid';
+    errors.emailAddress = 'This email Address is not valid';
   } else if (responseErrors.phoneNumber === 'invalid') {
-    newErrors.phoneNumber = 'This phone number is not valid';
+    errors.phoneNumber = 'This phone number is not valid';
   }
 
-  return newErrors;
+  return errors;
 };
 
 const SignUp = withRouter(({
@@ -212,16 +212,13 @@ const SignUp = withRouter(({
           if (!isEmpty(errors)) {
             return Promise.reject(errors);
           }
-          const akon = addUser(userInfo);
-          return akon.then(() => {
+          return addUser(userInfo).then(() => {
             router.push('/login');
-          }).catch((val) => {
-            const values = val.then(function(more) {
+          }).catch((response) => {
+            return response.then(function(more) {
               errors = checkErrors(more);
               return Promise.reject(errors);
             });
-            // errors = checkErrors();
-            return values;
           });
         }}
       />
