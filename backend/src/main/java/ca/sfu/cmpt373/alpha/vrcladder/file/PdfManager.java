@@ -18,10 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -48,7 +45,6 @@ public class PdfManager {
         setPdfValues(values, teams.size());
 
         try {
-            buildColumns(values);
             buildContents(renderer, values);
             buildPdfFonts(renderer);
             exportPdf(renderer, currentFileName);
@@ -60,7 +56,6 @@ public class PdfManager {
         System.out.println("PDF " + currentFileName + " was created successfully!");
     }
 
-    // TODO: refactor them and columns class functions associated with this function.
     private void buildColumns(Map<String, String> values) throws IOException {
         String columnsContainer = columns.getColumnsContainer(values);
         columnsContainer = columns.buildColumnsValues(this.ladder, values, columnsContainer);
@@ -85,9 +80,31 @@ public class PdfManager {
     }
 
     private void buildContents(ITextRenderer renderer, Map<String, String> values) throws IOException {
+        int numberOfTeams = ladder.getTeamCount();
+        int teamsPerPage = PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN * PdfSettings.NUMBER_OF_COLUMNS;
+        List<String> pageContents = new ArrayList<>();
+
+        int pgNumber = 1;
+        for(int counter = 0; counter < numberOfTeams; counter += teamsPerPage){
+            values.put("#pgnumber", String.valueOf(pgNumber));
+            buildColumns(values);
+            String content = template.getContents(PdfSettings.CONTENT_PATH, values);
+            pageContents.add(content);
+            pgNumber++;
+        }
+
+        String pdfContent = "";
+        for(String currentPage : pageContents){
+            pdfContent += currentPage;
+        }
+
+        System.out.println(pdfContent);
+        values.put("#pdfcontent", pdfContent);
         String content = template.getContents(PdfSettings.LAYOUT_PATH, values);
+
         renderer.setDocumentFromString(content);
         renderer.getSharedContext().setReplacedElementFactory(new ElementsFactory(renderer.getSharedContext().getReplacedElementFactory()));
+        renderer.layout();
     }
 
     private void buildPdfFonts(ITextRenderer renderer) throws IOException, DocumentException {
@@ -98,7 +115,6 @@ public class PdfManager {
     private void exportPdf(ITextRenderer renderer, String fileName) throws IOException, DocumentException {
         if(fixDirectoryPath()){
             FileOutputStream writerStream = new FileOutputStream(PdfSettings.OUTPUT_PATH + "\\" +  fileName);
-            renderer.layout();
             renderer.createPDF(writerStream);
             writerStream.flush();
             writerStream.close();

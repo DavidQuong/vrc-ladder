@@ -22,6 +22,8 @@ import java.io.InputStream;
  * This class is to create a replacement factory which will
  * replace the images in the HTML layout file into an actual
  * image that we can use in the pdf file.
+ * REFERENCE : http://stackoverflow.com/questions/11477065/using-flying-saucer-to-render-images-to-pdf-in-memory
+ *             (Alex, 1st Answer)
  */
 public class ElementsFactory implements ReplacedElementFactory {
 

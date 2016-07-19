@@ -26,6 +26,7 @@ public class ColumnBuilder {
     private String getColumnContents(Map<String, String> values, List<Team> teams, String results) throws IOException {
         for(int counter = 0; counter < PdfSettings.NUMBER_OF_COLUMNS; counter++){
             buildColumnTeams(teams, values);
+            checkAndClearRemainingSpots(teams, values);
             String content = template.getContents(PdfSettings.COLUMNS_CONTENT_PATH, values);
             results = results.replace("#column" + (counter + 1) + "content", content);
         }
@@ -41,6 +42,13 @@ public class ColumnBuilder {
                 currentTeam = teamsCounter + 1;
             }
 
+            boolean isAttending = teams.get(teamsCounter).getAttendanceCard().isAttending();
+            if(isAttending){
+                values.replace("#attendingStatus", "attendingTeam");
+            }else{
+                values.replace("#attendingStatus" , "notAttendingTeam");
+            }
+
             String teamName = teams.get(teamsCounter).getFirstPlayer().getDisplayName();
             teamName += "\n" +  teams.get(teamsCounter).getSecondPlayer().getDisplayName();
             values.replace("#teamName", teamName);
@@ -51,7 +59,30 @@ public class ColumnBuilder {
                 break;
             }
         }
-        System.out.println("Done iteration");
+    }
+
+    private void checkAndClearRemainingSpots(List<Team> teams, Map<String, String> values) {
+        int spotsToClean = teamsCounter % PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN;
+        if(teamsCounter >= teams.size()){
+            if(teams.size() % PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN == 0){
+                spotsToClean = 0;
+            }else{
+                if(spotsToClean == 0){
+                    spotsToClean = 8;
+                }
+            }
+
+            for(int counter = 0; counter < spotsToClean; counter++){
+                int position;
+                if(teamsCounter >= PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN){
+                    position = (teamsCounter % PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN) + 1;
+                }else{
+                    position = teamsCounter + 1;
+                }
+                values.put("#team" + position, "");
+                teamsCounter++;
+            }
+        }
     }
 
     private void placeTeamIntoHolder(Map<String, String> values, int currentTeam) throws IOException {
@@ -61,6 +92,7 @@ public class ColumnBuilder {
 
     private void initiateDefaultTeamsValues(Map<String, String> values) {
         values.put("#teamName", "");
+        values.put("#attendingStatus", "");
         for(int counter = 0; counter < PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN; counter++){
             values.put("#team" + (counter+1), "");
         }
