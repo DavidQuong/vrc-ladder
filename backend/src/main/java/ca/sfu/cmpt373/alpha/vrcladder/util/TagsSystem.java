@@ -12,7 +12,7 @@ import java.util.Map;
  * also used in text emails.
  */
 public class TagsSystem {
-
+    private static final String NEW_LINE = "\n";
     private static final char TAG_INDICATOR = '#';
     private static final char TAG_END_INDICATOR[] = {',', '/', '<', ';', ' ', '"'};
 
@@ -36,7 +36,7 @@ public class TagsSystem {
             if (line.contains(tagIndicator)) {
                 tags.addAll(findTags(line));
             }
-            results += "\n";
+            results += NEW_LINE;
         }
         return results;
     }
