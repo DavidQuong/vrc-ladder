@@ -16,6 +16,7 @@ public class UserBuilder {
     private static final String ERROR_MSG_NULL_EMAIL_ADDRESS = "Email address cannot be null.";
     private static final String ERROR_MSG_NULL_PHONE_NUMBER = "Phone number cannot be null.";
     private static final String ERROR_MSG_NULL_PASSWORD = "Password cannot be null.";
+    private static final String ERROR_MSG_NULL_ATTEMPTS = "Attempts cannot be null.";
 
     private UserId userId;
     private UserRole userRole;
@@ -25,6 +26,7 @@ public class UserBuilder {
     private EmailAddress emailAddress;
     private PhoneNumber phoneNumber;
     private Password password;
+    private int attempts;
 
     public UserBuilder() {
         userId = null;
@@ -136,7 +138,7 @@ public class UserBuilder {
             throw new IllegalStateException(ERROR_MSG_NULL_PASSWORD);
         }
 
-        return new User(userId, userRole, firstName, middleName, lastName, emailAddress, phoneNumber, password);
+        return new User(userId, userRole, firstName, middleName, lastName, emailAddress, phoneNumber, password, attempts);
     }
 
 }
