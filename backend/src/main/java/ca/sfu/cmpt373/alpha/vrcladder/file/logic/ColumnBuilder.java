@@ -10,9 +10,17 @@ import java.util.Map;
 
 
 public class ColumnBuilder {
-    private static final TemplateManager template = new TemplateManager();
-    private static final int TABLE_WIDTH_IN_PERCENT = 100;
-    private static int teamsCounter = 0;
+    private static final int TABLE_WIDTH_IN_PERCENT   = 100;
+    private static final String COLUMN_CONTENT_TAG    = "#columncontent";
+    private static final String TEAM_NAME_TAG         = "#teamName";
+    private static final String ATTENDING_STATUS_TAG  = "#attendingStatus";
+    private static final String TEAM_ATTENDING        = "attendingTeam";
+    private static final String TEAM_NOT_ATTENDING    = "notAttendingTeam";
+    private static final String COLUMN_REPLACER_LEFT  = "#column";
+    private static final String COLUMN_REPLACER_RIGHT = "content";
+    private static final String TEAM_TAG_INDICATOR    = "#team";
+    private static int teamsCounter                   = 0;
+    private static final TemplateManager template     = new TemplateManager();
     private final Ladder ladder;
 
     public ColumnBuilder(Ladder ladder){
@@ -37,7 +45,8 @@ public class ColumnBuilder {
         String columnContainerTemplate = template.getContents(PdfSettings.COLUMNS_CONTAINER_PATH, values);
         String columnSeparatorTemplate = template.getContents(PdfSettings.COLUMNS_SEPARATOR_PATH, values);
         for(int counter = 0; counter < PdfSettings.NUMBER_OF_COLUMNS; counter++){
-            String currentColumn = columnContainerTemplate.replace("#columncontent", "#column" + (counter + 1) + "content");
+            String currentColumn = columnContainerTemplate.replace(COLUMN_CONTENT_TAG,
+                                    COLUMN_REPLACER_LEFT + (counter + 1) + COLUMN_REPLACER_RIGHT);
             if(counter != (PdfSettings.NUMBER_OF_COLUMNS - 1)){
                 currentColumn += columnSeparatorTemplate;
             }
@@ -59,7 +68,7 @@ public class ColumnBuilder {
             setAttendingStatus(values, teams.get(teamsCounter));
             String teamName = teams.get(teamsCounter).getFirstPlayer().getDisplayName();
             teamName += "\n" +  teams.get(teamsCounter).getSecondPlayer().getDisplayName();
-            values.replace("#teamName", teamName);
+            values.replace(TEAM_NAME_TAG, teamName);
             setCurrentTeam(values, currentTeam);
 
             teamsCounter++;
@@ -70,25 +79,25 @@ public class ColumnBuilder {
     }
 
     private void initiateDefaultTeamsValues(Map<String, String> values) {
-        values.put("#teamName", "");
-        values.put("#attendingStatus", "");
+        values.put(TEAM_NAME_TAG, "");
+        values.put(ATTENDING_STATUS_TAG, "");
         for(int counter = 0; counter < PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN; counter++){
-            values.put("#team" + (counter+1), "");
+            values.put(TEAM_TAG_INDICATOR + (counter+1), "");
         }
     }
 
     private void setAttendingStatus(Map<String, String> values, Team team) {
         boolean isAttending = team.getAttendanceCard().isAttending();
         if(isAttending){
-            values.replace("#attendingStatus", "attendingTeam");
+            values.replace(ATTENDING_STATUS_TAG, TEAM_ATTENDING);
         }else{
-            values.replace("#attendingStatus" , "notAttendingTeam");
+            values.replace(ATTENDING_STATUS_TAG , TEAM_NOT_ATTENDING);
         }
     }
 
     private void setCurrentTeam(Map<String, String> values, int currentTeam) throws IOException {
         String content = template.getContents(PdfSettings.COLUMNS_TEAM_HOLDER, values);
-        values.replace("#team" + currentTeam, content);
+        values.replace(TEAM_TAG_INDICATOR + currentTeam, content);
     }
 
     private String getColumnContents(Map<String, String> values, String results) throws IOException {
@@ -96,7 +105,7 @@ public class ColumnBuilder {
             initiateDefaultTeamsValues(values);
             constructColumnTeams(values);
             String content = template.getContents(PdfSettings.COLUMNS_CONTENT_PATH, values);
-            results = results.replace("#column" + (counter + 1) + "content", content);
+            results = results.replace(COLUMN_REPLACER_LEFT + (counter + 1) + COLUMN_REPLACER_RIGHT, content);
         }
         return results;
     }

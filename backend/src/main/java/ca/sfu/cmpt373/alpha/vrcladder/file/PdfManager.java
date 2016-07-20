@@ -10,6 +10,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.ladder.Ladder;
 import ca.sfu.cmpt373.alpha.vrcladder.util.TemplateManager;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
+import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.pdf.ITextFontResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
@@ -31,7 +32,17 @@ import java.util.Map;
  * folder.
  */
 public class PdfManager {
+    private static final String PATH_SEPARATOR    = "\\";
+    private static final String DAT_EXPRESSION    = "yyyy-MM-dd hh:mm a";
+    private static final String PDF_EXTENSION     = ".pdf";
+    private static final String CONTENT_TAG       = "#content";
+    private static final String DATETIME_TAG      = "#dateandtime";
+    private static final String COLUMN_WIDTH_TAG  = "#columnwidth";
+    private static final String NUM_OF_PAGES_TAG   = "#pgtotal";
+    private static final String PAD_CONTENTS_TAG   = "#pdfcontent";
+    private static final String CURRENT_PAGE_TAG   = "#pgnumber";
     private static final TemplateManager template = new TemplateManager();
+    private static final String PERCENTAGE_SYMBOL = "%";
     private final ColumnBuilder columns;
     private final Ladder ladder;
 
@@ -56,12 +67,11 @@ public class PdfManager {
         } catch (DocumentException e) {
             throw new PdfCouldNotBeCreatedException();
         }
-        System.out.println("PDF " + currentFileName + " was created successfully!");
     }
 
     private void createPdf(ITextRenderer renderer, String fileName) throws IOException, DocumentException {
         if(isDirectoryAvailable()){
-            FileOutputStream writerStream = new FileOutputStream(PdfSettings.OUTPUT_PATH + "\\" +  fileName);
+            FileOutputStream writerStream = new FileOutputStream(PdfSettings.OUTPUT_PATH + PATH_SEPARATOR +  fileName);
             renderer.createPDF(writerStream);
             writerStream.flush();
             writerStream.close();
@@ -78,13 +88,15 @@ public class PdfManager {
 
         String content = template.getContents(PdfSettings.LAYOUT_PATH, values);
         renderer.setDocumentFromString(content);
-        renderer.getSharedContext().setReplacedElementFactory(new ElementsFactory(renderer.getSharedContext().getReplacedElementFactory()));
+        ReplacedElementFactory elementToReplace = renderer.getSharedContext().getReplacedElementFactory();
+        ElementsFactory currentElement = new ElementsFactory(elementToReplace);
+        renderer.getSharedContext().setReplacedElementFactory(currentElement);
         renderer.layout();
     }
 
     private void constructColumnContents(Map<String, String> values) throws IOException {
         String columnsContent = columns.getColumns(values);
-        values.put("#content", columnsContent);
+        values.put(CONTENT_TAG, columnsContent);
     }
 
     private boolean isDirectoryAvailable() {
@@ -98,20 +110,20 @@ public class PdfManager {
     }
 
     private void initializePdfGeneralValues(Map<String, String> values){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DAT_EXPRESSION);
         String date = dateFormat.format(new Date());
-        values.put("#dateandtime", date);
+        values.put(DATETIME_TAG, date);
 
         String columnWidth = columns.getColumnsWidth();
-        values.put("#columnwidth", columnWidth + "%");
+        values.put(COLUMN_WIDTH_TAG, columnWidth + PERCENTAGE_SYMBOL);
         String pgTotal = getNumberOfPages();
-        values.put("#pgtotal", pgTotal);
+        values.put(NUM_OF_PAGES_TAG, pgTotal);
     }
 
     private String generateFileName(){
         Long number = new Date().getTime();
         String results = String.valueOf(number);
-        return (results + ".pdf");
+        return (results + PDF_EXTENSION);
     }
 
     private void setPdfContent(Map<String, String> values, List<String> pageContents) {
@@ -119,14 +131,14 @@ public class PdfManager {
         for(String currentPage : pageContents){
             pdfContent += currentPage;
         }
-        values.put("#pdfcontent", pdfContent);
+        values.put(PAD_CONTENTS_TAG, pdfContent);
     }
 
     private List<String> getPages(Map<String, String> values, int numberOfTeams, int teamsPerPage) throws IOException {
         int pgNumber = 1;
         List<String> results = new ArrayList<>();
         for(int counter = 0; counter < numberOfTeams; counter += teamsPerPage){
-            values.put("#pgnumber", String.valueOf(pgNumber));
+            values.put(CURRENT_PAGE_TAG, String.valueOf(pgNumber));
             constructColumnContents(values);
             String content = template.getContents(PdfSettings.CONTENT_PATH, values);
             results.add(content);
