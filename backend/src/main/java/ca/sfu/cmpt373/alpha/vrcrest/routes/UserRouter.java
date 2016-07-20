@@ -10,6 +10,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewUserPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.UpdateUserPayload;
+import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.PlayerGsonSerializer;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.TeamGsonSerializer;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.responses.UserGsonSerializer;
 import ca.sfu.cmpt373.alpha.vrcrest.security.RouteSignature;
@@ -36,11 +37,15 @@ import static ca.sfu.cmpt373.alpha.vrcrest.routes.TeamRouter.JSON_PROPERTY_TEAMS
 public class UserRouter extends RestRouter {
 
     public static final String ROUTE_USERS = "/users";
+    public static final String ROUTE_PLAYERS = "/players";
+
     public static final String ROUTE_USER_ID = "/user/" + PARAM_ID;
     private static final String ROUTE_USER_ID_TEAMS = ROUTE_USER_ID + "/teams";
 
     public static final String JSON_PROPERTY_USERS = "users";
     public static final String JSON_PROPERTY_USER = "user";
+    public static final String JSON_PROPERTY_PLAYERS = "players";
+
 
     private static final String ERROR_NONEXISTENT_USER = "This user does not exist.";
     private static final String ERROR_EXISTING_USER_DETAILS = "A user with this ID or email address already exists.";
@@ -52,6 +57,7 @@ public class UserRouter extends RestRouter {
     private SecurityManager securityManager;
     private UserManager userManager;
     private TeamManager teamManager;
+    private Gson playerGson;
 
     public UserRouter(SecurityManager securityManager, UserManager userManager, TeamManager teamManager) {
         super();
@@ -59,12 +65,14 @@ public class UserRouter extends RestRouter {
         this.userManager = userManager;
         this.teamManager = teamManager;
         this.teamManager = teamManager;
+        this.playerGson = buildGsonForPlayer();
     }
 
     @Override
     public void attachRoutes() {
         Spark.get(ROUTE_USERS, this::handleGetUsers);
         Spark.post(ROUTE_USERS, this::handleCreateUser);
+        Spark.get(ROUTE_PLAYERS, this::handleGetPlayers);
         Spark.get(ROUTE_USER_ID, this::handleGetUserById);
         Spark.put(ROUTE_USER_ID, this::handleUpdateUserById);
         Spark.delete(ROUTE_USER_ID, this::handleDeleteUserById);
@@ -96,11 +104,32 @@ public class UserRouter extends RestRouter {
             .create();
     }
 
+    private Gson buildGsonForPlayer() {
+        return new GsonBuilder()
+            .registerTypeAdapter(User.class, new PlayerGsonSerializer())
+            .setPrettyPrinting()
+            .create();
+    }
+
     private String handleGetUsers(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
         try {
             List<User> users = userManager.getAll();
             responseBody.add(JSON_PROPERTY_USERS, getGson().toJsonTree(users));
+            response.status(HttpStatus.OK_200);
+        } catch (RuntimeException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        }
+
+        return responseBody.toString();
+    }
+
+    private String handleGetPlayers(Request request, Response response) {
+        JsonObject responseBody = new JsonObject();
+        try {
+            List<User> players = userManager.getAllPlayers();
+            responseBody.add(JSON_PROPERTY_PLAYERS, playerGson.toJsonTree(players));
             response.status(HttpStatus.OK_200);
         } catch (RuntimeException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);

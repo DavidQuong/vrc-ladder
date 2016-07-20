@@ -13,6 +13,7 @@ public class JsonProperties {
     public static final String JSON_PROPERTY_EMAIL_ADDRESS = "emailAddress";
     public static final String JSON_PROPERTY_PHONE_NUMBER = "phoneNumber";
     public static final String JSON_PROPERTY_PASSWORD = "password";
+    public static final String JSON_PROPERTY_NAME = "name";
 
     public static final String JSON_PROPERTY_TEAM_ID = "teamId";
     public static final String JSON_PROPERTY_PLAY_TIME = "playTime";
