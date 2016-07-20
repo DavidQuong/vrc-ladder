@@ -25,7 +25,7 @@ export const getUserInfo = (state) => {
 };
 
 export const getUser = (state) => {
-  return fetch(`${root}users`, {
+  return fetch(`${root}players`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: state.app.loggedIn.authorizationToken,
