@@ -10,92 +10,19 @@ import java.util.Map;
 
 
 public class ColumnBuilder {
-
     private static final TemplateManager template = new TemplateManager();
     private static final int TABLE_WIDTH_IN_PERCENT = 100;
     private static int teamsCounter = 0;
+    private final Ladder ladder;
 
-    public String buildColumnsValues(Ladder ladder, Map<String, String> values, String columnsContainer) throws IOException {
-        List<Team> teams = ladder.getLadder();
-        String results = columnsContainer;
+    public ColumnBuilder(Ladder ladder){
+        this.ladder = ladder;
+    }
+
+    public String getColumns(Map<String, String> values) throws IOException {
+        String columns = generateColumns(values);
         initiateDefaultTeamsValues(values);
-        results = getColumnContents(values, teams, results);
-        return results;
-    }
-
-    private String getColumnContents(Map<String, String> values, List<Team> teams, String results) throws IOException {
-        for(int counter = 0; counter < PdfSettings.NUMBER_OF_COLUMNS; counter++){
-            buildColumnTeams(teams, values);
-            checkAndClearRemainingSpots(teams, values);
-            String content = template.getContents(PdfSettings.COLUMNS_CONTENT_PATH, values);
-            results = results.replace("#column" + (counter + 1) + "content", content);
-        }
-        return results;
-    }
-
-    private void buildColumnTeams(List<Team> teams, Map<String, String> values) throws IOException {
-        int currentTeam;
-        while(teamsCounter < teams.size()){
-            if(teamsCounter >= PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN){
-                currentTeam = (teamsCounter % PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN) + 1;
-            }else{
-                currentTeam = teamsCounter + 1;
-            }
-
-            boolean isAttending = teams.get(teamsCounter).getAttendanceCard().isAttending();
-            if(isAttending){
-                values.replace("#attendingStatus", "attendingTeam");
-            }else{
-                values.replace("#attendingStatus" , "notAttendingTeam");
-            }
-
-            String teamName = teams.get(teamsCounter).getFirstPlayer().getDisplayName();
-            teamName += "\n" +  teams.get(teamsCounter).getSecondPlayer().getDisplayName();
-            values.replace("#teamName", teamName);
-            placeTeamIntoHolder(values, currentTeam);
-
-            teamsCounter++;
-            if(teamsCounter % PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN == 0){
-                break;
-            }
-        }
-    }
-
-    private void checkAndClearRemainingSpots(List<Team> teams, Map<String, String> values) {
-        int spotsToClean = teamsCounter % PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN;
-        if(teamsCounter >= teams.size()){
-            if(teams.size() % PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN == 0){
-                spotsToClean = 0;
-            }else{
-                if(spotsToClean == 0){
-                    spotsToClean = 8;
-                }
-            }
-
-            for(int counter = 0; counter < spotsToClean; counter++){
-                int position;
-                if(teamsCounter >= PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN){
-                    position = (teamsCounter % PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN) + 1;
-                }else{
-                    position = teamsCounter + 1;
-                }
-                values.put("#team" + position, "");
-                teamsCounter++;
-            }
-        }
-    }
-
-    private void placeTeamIntoHolder(Map<String, String> values, int currentTeam) throws IOException {
-        String content = template.getContents(PdfSettings.COLUMNS_TEAM_HOLDER, values);
-        values.replace("#team" + currentTeam, content);
-    }
-
-    private void initiateDefaultTeamsValues(Map<String, String> values) {
-        values.put("#teamName", "");
-        values.put("#attendingStatus", "");
-        for(int counter = 0; counter < PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN; counter++){
-            values.put("#team" + (counter+1), "");
-        }
+        return getColumnContents(values, columns);
     }
 
     public String getColumnsWidth(){
@@ -105,7 +32,7 @@ public class ColumnBuilder {
         return String.valueOf(results);
     }
 
-    public String getColumnsContainer(Map<String, String> values) throws IOException {
+    private String generateColumns(Map<String, String> values) throws IOException {
         String results = "";
         String columnContainerTemplate = template.getContents(PdfSettings.COLUMNS_CONTAINER_PATH, values);
         String columnSeparatorTemplate = template.getContents(PdfSettings.COLUMNS_SEPARATOR_PATH, values);
@@ -119,4 +46,58 @@ public class ColumnBuilder {
         return results;
     }
 
+    private void constructColumnTeams(Map<String, String> values) throws IOException {
+        List<Team> teams = ladder.getLadder();
+        int currentTeam;
+        while(teamsCounter < teams.size()){
+            if(teamsCounter >= PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN){
+                currentTeam = (teamsCounter % PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN) + 1;
+            }else{
+                currentTeam = teamsCounter + 1;
+            }
+
+            setAttendingStatus(values, teams.get(teamsCounter));
+            String teamName = teams.get(teamsCounter).getFirstPlayer().getDisplayName();
+            teamName += "\n" +  teams.get(teamsCounter).getSecondPlayer().getDisplayName();
+            values.replace("#teamName", teamName);
+            setCurrentTeam(values, currentTeam);
+
+            teamsCounter++;
+            if(teamsCounter % PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN == 0){
+                break;
+            }
+        }
+    }
+
+    private void initiateDefaultTeamsValues(Map<String, String> values) {
+        values.put("#teamName", "");
+        values.put("#attendingStatus", "");
+        for(int counter = 0; counter < PdfSettings.NUMBER_OF_TEAMS_PER_COLUMN; counter++){
+            values.put("#team" + (counter+1), "");
+        }
+    }
+
+    private void setAttendingStatus(Map<String, String> values, Team team) {
+        boolean isAttending = team.getAttendanceCard().isAttending();
+        if(isAttending){
+            values.replace("#attendingStatus", "attendingTeam");
+        }else{
+            values.replace("#attendingStatus" , "notAttendingTeam");
+        }
+    }
+
+    private void setCurrentTeam(Map<String, String> values, int currentTeam) throws IOException {
+        String content = template.getContents(PdfSettings.COLUMNS_TEAM_HOLDER, values);
+        values.replace("#team" + currentTeam, content);
+    }
+
+    private String getColumnContents(Map<String, String> values, String results) throws IOException {
+        for(int counter = 0; counter < PdfSettings.NUMBER_OF_COLUMNS; counter++){
+            initiateDefaultTeamsValues(values);
+            constructColumnTeams(values);
+            String content = template.getContents(PdfSettings.COLUMNS_CONTENT_PATH, values);
+            results = results.replace("#column" + (counter + 1) + "content", content);
+        }
+        return results;
+    }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 public class PdfManagerTest {
     public static void main(String[] args){
         List<Team> teams = new ArrayList<>();
-        for(int counter = 0; counter < 999; counter++){
+        for(int counter = 0; counter < 33; counter++){
             teams.add(MockTeamGenerator.generateTeam());
         }
         Ladder ladder = new Ladder(teams);
@@ -21,6 +21,5 @@ public class PdfManagerTest {
 
         PdfManager pdf = new PdfManager(ladder);
         pdf.exportLadder();
-
     }
 }
