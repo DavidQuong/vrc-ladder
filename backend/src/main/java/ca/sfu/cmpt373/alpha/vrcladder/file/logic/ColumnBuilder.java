@@ -20,10 +20,11 @@ public class ColumnBuilder {
     private static final String COLUMN_REPLACER_RIGHT = "content";
     private static final String TEAM_TAG_INDICATOR    = "#team";
     private static int teamsCounter                   = 0;
-    private static final TemplateManager template     = new TemplateManager();
+    private final TemplateManager template;
     private final Ladder ladder;
 
     public ColumnBuilder(Ladder ladder){
+        template = new TemplateManager();
         this.ladder = ladder;
     }
 
