@@ -13,6 +13,10 @@ import java.util.Map;
  */
 public class TagsSystem {
 
+    private static final char TAG_INDICATOR = '#';
+    private static final char TAG_END_INDICATOR[] = {',', '/', '<', ';', ' ', '"'};
+
+
     public String replaceTags(String content, List<String> tags, Map<String, String> values) {
         for (String tag : tags) {
             if (values.containsKey(tag)) {
@@ -28,7 +32,8 @@ public class TagsSystem {
         String results = "";
         while ((line = reader.readLine()) != null) {
             results += line;
-            if (line.contains("#")) {
+            String tagIndicator = String.valueOf(TAG_INDICATOR);
+            if (line.contains(tagIndicator)) {
                 tags.addAll(findTags(line));
             }
             results += "\n";
@@ -49,7 +54,7 @@ public class TagsSystem {
                 currentTag = "";
             }
 
-            if (c == '#') {
+            if (c == TAG_INDICATOR) {
                 currentStatus = true;
             }
 
@@ -70,7 +75,12 @@ public class TagsSystem {
     }
 
     private static boolean isEndOfTag(char currentLetter) {
-        return (currentLetter == ',' || currentLetter == '/' || currentLetter == '<' || currentLetter == ';' || currentLetter == ' ' || currentLetter == '"');
+        for(char indicator : TAG_END_INDICATOR){
+            if(currentLetter == indicator){
+                return true;
+            }
+        }
+        return false;
     }
 
 }

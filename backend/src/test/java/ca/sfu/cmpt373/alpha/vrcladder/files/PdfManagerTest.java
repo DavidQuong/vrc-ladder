@@ -17,7 +17,8 @@ public class PdfManagerTest {
             teams.add(MockTeamGenerator.generateTeam());
         }
         Ladder ladder = new Ladder(teams);
-        ladder.getLadder().get(0).getAttendanceCard().setPreferredPlayTime(PlayTime.TIME_SLOT_A);
+        Team firstTeam = ladder.getLadder().get(0);
+        firstTeam.getAttendanceCard().setPreferredPlayTime(PlayTime.TIME_SLOT_A);
 
         PdfManager pdf = new PdfManager(ladder);
         pdf.exportLadder();
