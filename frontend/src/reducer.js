@@ -70,6 +70,7 @@ const app = handleActions({
   loggedIn: {},
   userInfo: [],
   teamInfo: [],
+  matchGroups: [],
 });
 
 export default combineReducers({

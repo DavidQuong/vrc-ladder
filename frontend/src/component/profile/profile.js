@@ -64,7 +64,7 @@ const UpdateAttendanceForm = reduxForm({
     >
       <FormattedMessage
         id='selectTeam'
-        defaultMessage='SelectTeam'
+        defaultMessage='Select Team'
       />
     </label>
     <select
@@ -102,7 +102,7 @@ const UpdateAttendanceForm = reduxForm({
                             playTime.touched})}
       {...playTime}
     >
-      <option value=''>Select a Time...</option>
+      <option value=''>Select a time...</option>
       {map((playTimes) => (
         <option value={playTimes.value}key={playTimes.value}>
           {playTimes.time}
@@ -141,7 +141,7 @@ const CreateTeamForm = reduxForm({
       >
         <FormattedMessage
           id='secondPlayerId'
-          defaultMessage='Select Team Members Name'
+          defaultMessage="Select Team Member's Name"
         />
       </label>
       <select

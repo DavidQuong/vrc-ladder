@@ -2,7 +2,7 @@ new File("$buildDir/resources/main/configuration.properties").withWriter { w ->
     Properties p = new Properties()
     p[projectVersion] = project.version.toString()
 
-    p[databaseUrl] = "jdbc:mysql://aav0d2qno3h5i0.c1rdxzw1gmrb.us-west-2.rds.amazonaws.com:3306/ebdb"
+    p[databaseUrl] = "jdbc:mysql://aaj8xf11er6bud.cch0k3twveuk.us-west-2.rds.amazonaws.com:3306/ebdb"
     p[databaseUsername] = "vrcadmin"
     p[databasePassword] = "vrc_is_1337"
     p[databaseDriver] = "com.mysql.jdbc.Driver"
