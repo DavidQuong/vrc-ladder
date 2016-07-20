@@ -3,7 +3,7 @@ import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {withRouter} from 'react-router';
-import {addUser, getUserInfo} from '../../action/users';
+import {addUser} from '../../action/users';
 import styles from './signup.css';
 import Heading from '../heading/heading';
 import isEmpty from 'lodash/fp/isEmpty';
@@ -176,21 +176,27 @@ const checkErrors = (responseErrors) => {
 
   if (responseErrors.userId === false) {
     errors.userId = 'A user with this ID already exists!';
-    return errors;
-  } else if (responseErrors.emailAddress === false) {
+  }
+  if (responseErrors.emailAddress === false) {
     errors.emailAddress = 'A user with this email already exists!';
-    return errors;
   }
 
   if (responseErrors.userId === 'invalid') {
     errors.userId = 'This userId is not valid';
-  } else if (responseErrors.emailAddress === 'invalid') {
+  }
+  if (responseErrors.emailAddress === 'invalid') {
     errors.emailAddress = 'This email Address is not valid';
-  } else if (responseErrors.phoneNumber === 'invalid') {
+  }
+  if (responseErrors.phoneNumber === 'invalid') {
     errors.phoneNumber = 'This phone number is not valid';
   }
 
   return errors;
+};
+
+const handleResponse = (body) => {
+  const errors = checkErrors(body);
+  return Promise.reject(errors);
 };
 
 const SignUp = withRouter(({
@@ -207,7 +213,7 @@ const SignUp = withRouter(({
         </Heading>
       <SignUpForm
         onSubmit={(props) => {
-          let errors = validate(props);
+          const errors = validate(props);
           const userInfo = parseUser(props);
           if (!isEmpty(errors)) {
             return Promise.reject(errors);
@@ -215,10 +221,7 @@ const SignUp = withRouter(({
           return addUser(userInfo).then(() => {
             router.push('/login');
           }).catch((response) => {
-            return response.then(function(more) {
-              errors = checkErrors(more);
-              return Promise.reject(errors);
-            });
+            return response.then(handleResponse());
           });
         }}
       />
@@ -232,6 +235,5 @@ export default connect(
     userInfo: state.app.userInfo,
   }),
   {addUser,
-  getUserInfo,
   }
 )(SignUp);

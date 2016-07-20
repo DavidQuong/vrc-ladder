@@ -307,17 +307,11 @@ const MatchGroupForms = ({matchGroup, teams}) => {
         <div>
           <ResultFormFour
             teams={matchTeams}
-            onSubmit={(props) => {
-              console.log('submitted: ', props);
-            }}
           />
         </div> :
         <div>
           <ResultFormThree
             matchTeams={matchTeams}
-            onSubmit={(props) => {
-              console.log('submitted: ', props);
-            }}
           />
         </div>}
     </div>
