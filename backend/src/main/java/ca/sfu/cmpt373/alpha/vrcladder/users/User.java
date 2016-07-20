@@ -8,7 +8,6 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.AuthorizationException;
 
 import javax.persistence.Column;
@@ -42,6 +41,9 @@ public class User {
     @Column(name = PersistenceConstants.COLUMN_LAST_NAME, nullable = false, length = PersistenceConstants.MAX_NAME_LENGTH)
     private String lastName;
 
+    @Column(name = PersistenceConstants.COLUMN_FAILED_ATTEMPTS, nullable = false)
+    private int attempts;
+
     @Embedded
     private EmailAddress emailAddress;
 
@@ -56,7 +58,7 @@ public class User {
     }
 
     public User(UserId userId, UserRole userRole, String firstName, String middleName, String lastName,
-        EmailAddress emailAddress, PhoneNumber phoneNumber, Password password) {
+        EmailAddress emailAddress, PhoneNumber phoneNumber, Password password, int attempts) {
         this.userId = userId;
         setUserRole(userRole);
         setFirstName(firstName);
@@ -65,6 +67,7 @@ public class User {
         setEmailAddress(emailAddress);
         setPhoneNumber(phoneNumber);
         setPassword(password);
+        setAttempts(attempts);
     }
 
     public UserId getUserId() {
@@ -162,6 +165,14 @@ public class User {
             String errorMsg = String.format(ERROR_FORMAT_INVALID_AUTHORIZATION, action.name());
             throw new AuthorizationException(errorMsg);
         }
+    }
+
+    public int getAttempts(){
+        return this.attempts;
+    }
+
+    public void setAttempts(int attempts){
+        this.attempts = attempts;
     }
 
     @Override

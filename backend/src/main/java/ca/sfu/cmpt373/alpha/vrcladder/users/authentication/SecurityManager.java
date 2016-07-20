@@ -1,5 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.authentication;
 
+import ca.sfu.cmpt373.alpha.vrcladder.notifications.NotificationManager;
+import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.NotificationType;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import io.jsonwebtoken.Claims;
@@ -32,10 +34,14 @@ public class SecurityManager {
     private static final String TOKEN_TYPE = "JWT";
     private static final int TTL_IN_SECONDS = 3600;
     private static final int MILLISECONDS_TO_SECONDS_MULTIPLIER = 1000;
+    private static final int NUMBER_OF_ATTEMPTS_TO_NOTIFY_USER = 5;
+    private static final int RESET_ATTEMPTS_WITH_SUCCESSFUL_LOGIN = 0;
 
     private PasswordService passwordService;
     private SignatureAlgorithm signatureAlgorithm;
     private Key signatureKey;
+
+    private static final NotificationManager notify = new NotificationManager();
 
     public SecurityManager(SignatureAlgorithm signatureAlgorithm, Key signatureKey) {
         this.passwordService = new DefaultPasswordService();
@@ -47,9 +53,15 @@ public class SecurityManager {
         Password password = user.getPassword();
 
         if (!doesPasswordMatch(plaintextPassword, password)) {
+            int attempts = user.getAttempts();
+            attempts++;
+            if(attempts % NUMBER_OF_ATTEMPTS_TO_NOTIFY_USER == 0){
+                notify.notifyUser(user, NotificationType.FAILED_LOGIN);
+            }
+            user.setAttempts(attempts);
             throw new AuthenticationException(ERROR_INVALID_CREDENTIALS);
         }
-
+        user.setAttempts(RESET_ATTEMPTS_WITH_SUCCESSFUL_LOGIN);
         return createAuthorizationToken(user);
     }
 
