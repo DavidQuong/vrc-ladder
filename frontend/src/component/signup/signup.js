@@ -194,11 +194,6 @@ const checkErrors = (responseErrors) => {
   return errors;
 };
 
-const handleResponse = (body) => {
-  const errors = checkErrors(body);
-  return Promise.reject(errors);
-};
-
 const SignUp = withRouter(({
   addUser,
   router,
@@ -221,7 +216,10 @@ const SignUp = withRouter(({
           return addUser(userInfo).then(() => {
             router.push('/login');
           }).catch((response) => {
-            return response.then(handleResponse());
+            return response.then(function(bodyContent) {
+              const errors = checkErrors(bodyContent);
+              return Promise.reject(errors);
+            });
           });
         }}
       />
