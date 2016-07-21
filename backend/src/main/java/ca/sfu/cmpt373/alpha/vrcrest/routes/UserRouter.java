@@ -1,6 +1,8 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
+import ca.sfu.cmpt373.alpha.vrcladder.notifications.NotificationManager;
+import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.NotificationType;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
@@ -54,6 +56,7 @@ public class UserRouter extends RestRouter {
 
     private static final List<RouteSignature> PUBLIC_ROUTE_SIGNATURES = createPublicRouteSignatures();
 
+    private final NotificationManager notify;
     private SecurityManager securityManager;
     private UserManager userManager;
     private TeamManager teamManager;
@@ -66,6 +69,7 @@ public class UserRouter extends RestRouter {
         this.teamManager = teamManager;
         this.teamManager = teamManager;
         this.playerGson = buildGsonForPlayer();
+        this.notify = new NotificationManager();
     }
 
     @Override
@@ -155,6 +159,7 @@ public class UserRouter extends RestRouter {
                 newUserPayload.getPhoneNumber(),
                 hashedPassword);
 
+            notify.notifyUser(newUser, NotificationType.ACCOUNT_ACTIVATED);
             JsonElement jsonUser = getGson().toJsonTree(newUser);
             responseBody.add(JSON_PROPERTY_USER, jsonUser);
             response.status(HttpStatus.CREATED_201);
