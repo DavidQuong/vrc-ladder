@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {withRouter} from 'react-router';
 import {logInUser} from '../../action/login';
-import {getUserInfo, getTeamInfo} from '../../action/users';
+import {getCurrentActiveUserInfo, getTeamInfo} from '../../action/users';
 import {createAction} from 'redux-actions';
 import {
   Well, Col, ControlLabel, Button, FormControl, FormGroup, Form,
@@ -93,7 +93,7 @@ const userLogIn = createAction('USER_LOGIN');
 const LogIn = withRouter(({
   userLogIn,
   logInUser,
-  getUserInfo,
+  getCurrentActiveUserInfo,
   getTeamInfo,
   router,
 }) : Element => (
@@ -116,7 +116,7 @@ const LogIn = withRouter(({
             userLogIn({
               ...userInfo,
             });
-            getUserInfo().then(() => {
+            getCurrentActiveUserInfo().then(() => {
               getTeamInfo().then(() => {
                 router.push('/ladder');
               });
@@ -137,6 +137,6 @@ export default connect(
   }), {
     logInUser,
     userLogIn,
-    getUserInfo,
+    getCurrentActiveUserInfo,
     getTeamInfo}
 )(LogIn);

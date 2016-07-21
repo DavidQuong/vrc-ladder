@@ -24,7 +24,29 @@ export const getUserInfo = (state) => {
   });
 };
 
+export const getCurrentActiveUserInfo = (state) => {
+  return fetch(`${root}users/self`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: state.app.loggedIn.authorizationToken,
+    },
+  }).then((response) => {
+    return response.json();
+  });
+};
+
 export const getUser = (state) => {
+  return fetch(`${root}users`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: state.app.loggedIn.authorizationToken,
+    },
+  }).then((response) => {
+    return response.json();
+  });
+};
+
+export const getPlayer = (state) => {
   return fetch(`${root}players`, {
     headers: {
       'Content-Type': 'application/json',
