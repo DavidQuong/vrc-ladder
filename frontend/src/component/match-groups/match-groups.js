@@ -291,7 +291,7 @@ const MatchGroupForms = ({matchGroup, teams}) => {
   const matchTeams = matchGroupTeams({matchGroup, teams});
   return (
     <Well>
-      <Panel header='Teams' bsStyle='primary'>
+      <Panel header={`Court ID: ${matchGroup.matchGroupId}`} bsStyle='primary'>
         <div className={classNames(styles.teamNames)}>
           {matchTeams.map((team) => (
             <div key={team.teamId}>
