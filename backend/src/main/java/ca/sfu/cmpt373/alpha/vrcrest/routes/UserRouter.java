@@ -69,7 +69,7 @@ public class UserRouter extends RestRouter {
         this.teamManager = teamManager;
         this.teamManager = teamManager;
         this.playerGson = buildGsonForPlayer();
-        this.notify = new NotificationManager();
+        notify = new NotificationManager();
     }
 
     @Override
