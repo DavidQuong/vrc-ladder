@@ -24,7 +24,6 @@ public class User {
 
     private static final String DISPLAY_NAME_INITIAL_DOT = ". ";
     private static final String ERROR_FORMAT_INVALID_AUTHORIZATION = "This user is not authorized to %s.";
-    private static final int RESET_ATTEMPTS = 0;
 
     @EmbeddedId
     private UserId userId;
@@ -59,7 +58,7 @@ public class User {
     }
 
     public User(UserId userId, UserRole userRole, String firstName, String middleName, String lastName,
-        EmailAddress emailAddress, PhoneNumber phoneNumber, Password password, int attempts) {
+        EmailAddress emailAddress, PhoneNumber phoneNumber, Password password) {
         this.userId = userId;
         setUserRole(userRole);
         setFirstName(firstName);
@@ -68,7 +67,7 @@ public class User {
         setEmailAddress(emailAddress);
         setPhoneNumber(phoneNumber);
         setPassword(password);
-        setAttempts(attempts);
+        attempts = 0;
     }
 
     public UserId getUserId() {
@@ -169,19 +168,15 @@ public class User {
     }
 
     public int getAttempts(){
-        return this.attempts;
-    }
-
-    public void setAttempts(int attempts){
-        this.attempts = attempts;
+        return attempts;
     }
 
     public void resetApttempts(){
-        this.attempts = RESET_ATTEMPTS;
+        attempts = 0;
     }
 
     public void incrementAttempts(){
-        this.attempts++;
+        attempts++;
     }
 
     @Override
