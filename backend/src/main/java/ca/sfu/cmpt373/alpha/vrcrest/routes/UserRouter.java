@@ -219,6 +219,12 @@ public class UserRouter extends RestRouter {
         } catch (ValidationException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_INVALID_RESOURCE_ID);
             response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (JsonSyntaxException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (JsonParseException | IllegalArgumentException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
+            response.status(HttpStatus.BAD_REQUEST_400);
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
