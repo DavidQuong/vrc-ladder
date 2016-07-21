@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
+import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.DuplicateTeamMemberException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.NotificationManager;
@@ -54,9 +55,9 @@ public class TeamRouter extends RestRouter {
     private final NotificationManager notify;
     private TeamManager teamManager;
 
-    public TeamRouter(TeamManager teamManager) {
-        super();
-        this.teamManager = teamManager;
+    public TeamRouter(ApplicationManager applicationManager) {
+        super(applicationManager);
+        teamManager = applicationManager.getTeamManager();
         notify = new NotificationManager();
     }
 

@@ -2,6 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PropertyInstantiationException;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
+import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.NotificationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.NotificationType;
@@ -43,6 +44,7 @@ public class UserRouter extends RestRouter {
     public static final String ROUTE_USERS = "/users";
     public static final String ROUTE_PLAYERS = "/players";
 
+    public static final String ROUTE_USERS_SELF = ROUTE_USERS + "/self";
     public static final String ROUTE_USER_ID = "/user/" + PARAM_ID;
     private static final String ROUTE_USER_ID_TEAMS = ROUTE_USER_ID + "/teams";
 
@@ -51,13 +53,8 @@ public class UserRouter extends RestRouter {
     public static final String JSON_PROPERTY_PLAYERS = "players";
 
 
-    private static final String ERROR_EXISTING_USER_ID = "User ID already exists";
-    private static final String ERROR_EXISTING_USER_EMAIL = "Email Address already exists";
-    private static final String ERROR_CONSTRAINT_CONFLICT_ID = "PUBLIC.USER(ID)";
-    private static final String ERROR_CONSTRAINT_CONFLICT_EMAIL = "PUBLIC.USER(EMAIL_ADDRESS)";
-    private static final String ERROR_INVALID_PROPERTY = "The following property is invalid";
-    private static final String ERROR_INVALID_PROPERTY_VALUE = "invalid";
     private static final String ERROR_NONEXISTENT_USER = "This user does not exist.";
+    private static final String ERROR_EXISTING_USER_DETAILS = "A user with this ID or email address already exists.";
     private static final String ERROR_UNAUTHORIZED_OTHER_USERS = "This user is not authorized to access or modify " +
         "other user's data.";
 
@@ -69,13 +66,12 @@ public class UserRouter extends RestRouter {
     private TeamManager teamManager;
     private Gson playerGson;
 
-    public UserRouter(SecurityManager securityManager, UserManager userManager, TeamManager teamManager) {
-        super();
-        this.securityManager = securityManager;
-        this.userManager = userManager;
-        this.teamManager = teamManager;
-        this.teamManager = teamManager;
-        this.playerGson = buildGsonForPlayer();
+    public UserRouter(ApplicationManager applicationManager) {
+        super(applicationManager);
+        securityManager = applicationManager.getSecurityManager();
+        userManager = applicationManager.getUserManager();
+        teamManager = applicationManager.getTeamManager();
+        playerGson = buildGsonForPlayer();
         notify = new NotificationManager();
     }
 
@@ -84,6 +80,8 @@ public class UserRouter extends RestRouter {
         Spark.get(ROUTE_USERS, this::handleGetUsers);
         Spark.post(ROUTE_USERS, this::handleCreateUser);
         Spark.get(ROUTE_PLAYERS, this::handleGetPlayers);
+        Spark.get(ROUTE_USERS_SELF, this::handleGetActiveUser);
+        Spark.put(ROUTE_USERS_SELF, this::handleUpdateActiveUser);
         Spark.get(ROUTE_USER_ID, this::handleGetUserById);
         Spark.put(ROUTE_USER_ID, this::handleUpdateUserById);
         Spark.delete(ROUTE_USER_ID, this::handleDeleteUserById);
@@ -199,6 +197,57 @@ public class UserRouter extends RestRouter {
         return responseBody.toString();
     }
 
+    private String handleGetActiveUser(Request request, Response response) {
+        JsonObject responseBody = new JsonObject();
+
+        try {
+            User activeUser = extractUserFromRequest(request);
+
+            responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(activeUser));
+            response.status(HttpStatus.OK_200);
+        } catch (ValidationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_INVALID_RESOURCE_ID);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (EntityNotFoundException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
+            response.status(HttpStatus.NOT_FOUND_404);
+        } catch (RuntimeException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        }
+
+        return responseBody.toString();
+    }
+
+    private String handleUpdateActiveUser(Request request, Response response) {
+        JsonObject responseBody = new JsonObject();
+
+        try {
+            UserId activeUserId = extractUserIdFromRequest(request);
+            User updatedUser = updateUserWithPayload(request, activeUserId);
+
+            responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(updatedUser));
+            response.status(HttpStatus.OK_200);
+        } catch (ValidationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_INVALID_RESOURCE_ID);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (JsonSyntaxException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (JsonParseException | IllegalArgumentException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (EntityNotFoundException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
+            response.status(HttpStatus.NOT_FOUND_404);
+        } catch (RuntimeException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        }
+
+        return responseBody.toString();
+    }
+
     private String handleGetUserById(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
 
@@ -229,6 +278,7 @@ public class UserRouter extends RestRouter {
         try {
             String requestedId = request.params(PARAM_ID);
             UserId userId = new UserId(requestedId);
+            User updatedUser = updateUserWithPayload(request, userId);
 
             UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
             User existingUser = userManager.update(
@@ -308,6 +358,21 @@ public class UserRouter extends RestRouter {
         List<Team> teamsForUser = teamManager.getTeamsForUser(user);
         responseBody.add(JSON_PROPERTY_TEAMS, getGson().toJsonTree(teamsForUser));
         return responseBody.toString();
+    }
+
+    private User updateUserWithPayload(Request request, UserId userId) {
+        UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
+
+        User updatedUser = userManager.update(
+            userId,
+            updateUserPayload.getFirstName(),
+            updateUserPayload.getMiddleName(),
+            updateUserPayload.getLastName(),
+            updateUserPayload.getEmailAddress(),
+            updateUserPayload.getPhoneNumber()
+        );
+
+        return updatedUser;
     }
 
 }
