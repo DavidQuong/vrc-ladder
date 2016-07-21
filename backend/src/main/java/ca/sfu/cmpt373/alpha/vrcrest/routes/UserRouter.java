@@ -211,8 +211,7 @@ public class UserRouter extends RestRouter {
 
         try {
             UserId activeUserId = extractUserIdFromRequest(request);
-            UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
-            User updatedUser = updateUserWithPayload(activeUserId, updateUserPayload);
+            User updatedUser = updateUserWithPayload(request, activeUserId);
 
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(updatedUser));
             response.status(HttpStatus.OK_200);
@@ -266,9 +265,7 @@ public class UserRouter extends RestRouter {
         try {
             String requestedId = request.params(PARAM_ID);
             UserId userId = new UserId(requestedId);
-
-            UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
-            User updatedUser = updateUserWithPayload(userId, updateUserPayload);
+            User updatedUser = updateUserWithPayload(request, userId);
 
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(updatedUser));
             response.status(HttpStatus.OK_200);
@@ -331,7 +328,9 @@ public class UserRouter extends RestRouter {
         return responseBody.toString();
     }
 
-    private User updateUserWithPayload(UserId userId, UpdateUserPayload updateUserPayload) {
+    private User updateUserWithPayload(Request request, UserId userId) {
+        UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
+
         User updatedUser = userManager.update(
             userId,
             updateUserPayload.getFirstName(),
