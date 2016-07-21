@@ -35,7 +35,6 @@ public class SecurityManager {
     private static final int TTL_IN_SECONDS = 3600;
     private static final int MILLISECONDS_TO_SECONDS_MULTIPLIER = 1000;
     private static final int NUMBER_OF_ATTEMPTS_TO_NOTIFY_USER = 5;
-    private static final int RESET_ATTEMPTS = 0;
 
     private PasswordService passwordService;
     private SignatureAlgorithm signatureAlgorithm;
@@ -53,15 +52,13 @@ public class SecurityManager {
         Password password = user.getPassword();
 
         if (!doesPasswordMatch(plaintextPassword, password)) {
-            int attempts = user.getAttempts();
-            attempts++;
-            if(attempts % NUMBER_OF_ATTEMPTS_TO_NOTIFY_USER == 0){
+            if(user.getAttempts() % NUMBER_OF_ATTEMPTS_TO_NOTIFY_USER == 0){
                 notify.notifyUser(user, NotificationType.FAILED_LOGIN);
             }
-            user.setAttempts(attempts);
+            user.incrementAttempts();
             throw new AuthenticationException(ERROR_INVALID_CREDENTIALS);
         }
-        user.setAttempts(RESET_ATTEMPTS);
+        user.resetApttempts();
         return createAuthorizationToken(user);
     }
 

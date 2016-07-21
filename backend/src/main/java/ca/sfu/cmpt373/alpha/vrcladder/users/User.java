@@ -24,6 +24,7 @@ public class User {
 
     private static final String DISPLAY_NAME_INITIAL_DOT = ". ";
     private static final String ERROR_FORMAT_INVALID_AUTHORIZATION = "This user is not authorized to %s.";
+    private static final int RESET_ATTEMPTS = 0;
 
     @EmbeddedId
     private UserId userId;
@@ -173,6 +174,14 @@ public class User {
 
     public void setAttempts(int attempts){
         this.attempts = attempts;
+    }
+
+    public void resetApttempts(){
+        this.attempts = RESET_ATTEMPTS;
+    }
+
+    public void incrementAttempts(){
+        this.attempts++;
     }
 
     @Override
