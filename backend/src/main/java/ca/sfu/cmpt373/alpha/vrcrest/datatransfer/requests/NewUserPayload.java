@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PropertyInstantiationException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
@@ -31,7 +32,7 @@ public class NewUserPayload {
             try{
                 userId = new UserId(jsonUserId.getAsString());
             }catch (ValidationException ex){
-                throw new JsonParseException(JsonProperties.JSON_PROPERTY_USER_ID);
+                throw new PropertyInstantiationException(JsonProperties.JSON_PROPERTY_USER_ID);
             }
 
             JsonElement jsonUserRole = jsonObject.get(JsonProperties.JSON_PROPERTY_USER_ROLE);
@@ -49,7 +50,7 @@ public class NewUserPayload {
             try{
                 emailAddress = new EmailAddress(jsonEmailAddress.getAsString());
             }catch (ValidationException ex){
-                throw new JsonParseException(JsonProperties.JSON_PROPERTY_EMAIL_ADDRESS);
+                throw new PropertyInstantiationException(JsonProperties.JSON_PROPERTY_EMAIL_ADDRESS);
             }
 
             JsonElement jsonPhoneNumber = jsonObject.get(JsonProperties.JSON_PROPERTY_PHONE_NUMBER);
@@ -57,7 +58,7 @@ public class NewUserPayload {
             try{
                 phoneNumber = new PhoneNumber(jsonPhoneNumber.getAsString());
             }catch (ValidationException ex){
-                throw new JsonParseException(JsonProperties.JSON_PROPERTY_PHONE_NUMBER);
+                throw new PropertyInstantiationException(JsonProperties.JSON_PROPERTY_PHONE_NUMBER);
             }
 
             JsonElement jsonPassword = jsonObject.get(JsonProperties.JSON_PROPERTY_PASSWORD);

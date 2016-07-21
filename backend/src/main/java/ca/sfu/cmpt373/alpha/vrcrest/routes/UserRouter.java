@@ -1,5 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PropertyInstantiationException;
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.NotificationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.NotificationType;
@@ -29,7 +31,6 @@ import spark.Request;
 import spark.Response;
 import spark.Spark;
 import spark.route.HttpMethod;
-
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -173,15 +174,19 @@ public class UserRouter extends RestRouter {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
             response.status(HttpStatus.BAD_REQUEST_400);
         } catch (JsonParseException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_INVALID_PROPERTY);
-            responseBody.addProperty(ex.getMessage(), ERROR_INVALID_PROPERTY_VALUE);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
-        } catch (ConstraintViolationException ex) {
-            if(ex.getConstraintName().contains(ERROR_CONSTRAINT_CONFLICT_ID)){
-                responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER_ID);
+        }  catch (PropertyInstantiationException ex){
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_INVALID_PROPERTY);
+            responseBody.addProperty(ex.getMessage(), PersistenceConstants.INVALID_PROPERTY_VALUE);
+            response.status(HttpStatus.UNPROCESSABLE_ENTITY_422);
+        }
+        catch (ConstraintViolationException ex) {
+            if(ex.getConstraintName().contains(PersistenceConstants.CONSTRAINT_CONFLICT_ID)){
+                responseBody.addProperty(JSON_PROPERTY_ERROR, PersistenceConstants.EXISTING_USER_ID);
                 responseBody.addProperty(JsonProperties.JSON_PROPERTY_USER_ID, false);
-            }else if(ex.getConstraintName().contains(ERROR_CONSTRAINT_CONFLICT_EMAIL)){
-                responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER_EMAIL);
+            }else if(ex.getConstraintName().contains(PersistenceConstants.CONSTRAINT_CONFLICT_EMAIL)){
+                responseBody.addProperty(JSON_PROPERTY_ERROR, PersistenceConstants.EXISTING_USER_EMAIL);
                 responseBody.addProperty(JsonProperties.JSON_PROPERTY_EMAIL_ADDRESS, false);
             }
 
@@ -243,18 +248,21 @@ public class UserRouter extends RestRouter {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
             response.status(HttpStatus.BAD_REQUEST_400);
         } catch (JsonParseException | IllegalArgumentException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_INVALID_PROPERTY);
-            responseBody.addProperty(ex.getMessage(), ERROR_INVALID_PROPERTY_VALUE);
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ex.getMessage());
             response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (PropertyInstantiationException ex){
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_INVALID_PROPERTY);
+            responseBody.addProperty(ex.getMessage(), PersistenceConstants.INVALID_PROPERTY_VALUE);
+            response.status(HttpStatus.UNPROCESSABLE_ENTITY_422);
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
         } catch (ConstraintViolationException ex) {
-            if(ex.getConstraintName().contains(ERROR_CONSTRAINT_CONFLICT_ID)){
-                responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER_ID);
+            if(ex.getConstraintName().contains(PersistenceConstants.CONSTRAINT_CONFLICT_ID)){
+                responseBody.addProperty(JSON_PROPERTY_ERROR, PersistenceConstants.EXISTING_USER_ID);
                 responseBody.addProperty(JsonProperties.JSON_PROPERTY_USER_ID, false);
-            }else if(ex.getConstraintName().contains(ERROR_CONSTRAINT_CONFLICT_EMAIL)){
-                responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_EXISTING_USER_EMAIL);
+            }else if(ex.getConstraintName().contains(PersistenceConstants.CONSTRAINT_CONFLICT_EMAIL)){
+                responseBody.addProperty(JSON_PROPERTY_ERROR, PersistenceConstants.EXISTING_USER_EMAIL);
                 responseBody.addProperty(JsonProperties.JSON_PROPERTY_EMAIL_ADDRESS, false);
             }
 
