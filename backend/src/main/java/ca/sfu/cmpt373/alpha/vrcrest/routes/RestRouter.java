@@ -15,6 +15,7 @@ public abstract class RestRouter {
     protected static final String ERROR_MALFORMED_JSON = "The provided JSON in the request body is malformed.";
     protected static final String ERROR_INVALID_RESOURCE_ID = "The provided resource identifier is invalid.";
 
+
     private Gson gson;
 
     public RestRouter() {

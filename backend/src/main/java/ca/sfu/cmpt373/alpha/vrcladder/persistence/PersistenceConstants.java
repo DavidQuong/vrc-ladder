@@ -27,5 +27,10 @@ public class PersistenceConstants {
     public static final String TABLE_MATCH_GROUP = "MATCH_GROUP";
 
     public static final String TABLE_COURT = "COURT";
+    public static final String INVALID_PROPERTY_VALUE = "invalid";
+    public static final String EXISTING_USER_ID = "User ID already exists";
+    public static final String EXISTING_USER_EMAIL = "Email Address already exists";
+    public static final String CONSTRAINT_CONFLICT_ID = "PUBLIC.USER(ID)";
+    public static final String CONSTRAINT_CONFLICT_EMAIL = "PUBLIC.USER(EMAIL_ADDRESS)";
 
 }
