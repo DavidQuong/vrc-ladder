@@ -58,7 +58,7 @@ public class SecurityManager {
             user.incrementAttempts();
             throw new AuthenticationException(ERROR_INVALID_CREDENTIALS);
         }
-        user.resetApttempts();
+        user.resetAttempts();
         return createAuthorizationToken(user);
     }
 

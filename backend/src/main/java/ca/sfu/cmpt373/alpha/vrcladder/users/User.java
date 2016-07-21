@@ -171,7 +171,7 @@ public class User {
         return attempts;
     }
 
-    public void resetApttempts(){
+    public void resetAttempts(){
         attempts = 0;
     }
 
