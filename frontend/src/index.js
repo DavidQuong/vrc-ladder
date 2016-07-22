@@ -12,10 +12,11 @@ import {Nav, NavItem, Navbar, Grid} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import styles from './index.css';
 import LogIn from './component/login/login';
+import {UserLabel} from './component/user-label/user-label';
 
 const Layout = ({children}) => (
   <div>
-    <div>
+     <div>
       <Navbar fixedTop className={styles.upperNavbar}>
         <Navbar.Header>
           <Navbar.Brand>
@@ -28,6 +29,7 @@ const Layout = ({children}) => (
           </Navbar.Text>
           <Navbar.Toggle />
         </Navbar.Header>
+        <UserLabel/>
         <Navbar.Collapse>
           <Nav pullRight className={styles.navItem}>
             <LinkContainer to='/'>
