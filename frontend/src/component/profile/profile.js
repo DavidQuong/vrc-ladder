@@ -413,10 +413,9 @@ const CreateTeam = withRouter(({
     />
   </div>
 ));
-
+/*
 const updateProfile = withRouter(({
 players,router, login, userinfo, UPd
-
 }): Element)
 
 export default connect(
@@ -432,3 +431,4 @@ export default connect(
     getTeamInfo,
     updateTeamStatus}
 )(CreateTeam);
+*/
