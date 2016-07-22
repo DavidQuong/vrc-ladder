@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
+import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
@@ -33,9 +34,10 @@ public class LoginRouter extends RestRouter {
     private SecurityManager securityManager;
     private UserManager userManager;
 
-    public LoginRouter(SecurityManager securityManager, UserManager userManager) {
-        this.securityManager = securityManager;
-        this.userManager = userManager;
+    public LoginRouter(ApplicationManager applicationManager) {
+        super(applicationManager);
+        securityManager = applicationManager.getSecurityManager();
+        userManager = applicationManager.getUserManager();
     }
 
     @Override

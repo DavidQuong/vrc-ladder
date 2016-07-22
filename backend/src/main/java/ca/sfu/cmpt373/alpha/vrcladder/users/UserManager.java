@@ -100,6 +100,18 @@ public class UserManager extends DatabaseManager<User> {
         return user;
     }
 
+    public List<User> getAllPlayers() {
+        Session session = sessionManager.getSession();
+
+        Criterion isPlayerCriterion = Restrictions.eq(CriterionConstants.USER_ROLE, UserRole.PLAYER);
+        Criteria isPlayerCriteria = session.createCriteria(User.class).add(isPlayerCriterion);
+
+        List<User> players = isPlayerCriteria.list();
+        session.close();
+
+        return players;
+    }
+
     private List<Team> getTeamsOfPlayer(UserId playerId) {
         Session session = sessionManager.getSession();
 
