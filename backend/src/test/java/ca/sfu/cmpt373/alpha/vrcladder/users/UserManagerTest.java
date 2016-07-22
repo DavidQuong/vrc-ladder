@@ -2,6 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcladder.users;
 
 import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockTeamGenerator;
@@ -77,9 +78,10 @@ public class UserManagerTest extends BaseTest {
         final String newMiddleName = "Jimmy";
         final PhoneNumber newPhoneNumber = new PhoneNumber("(778) 111-2222");
         final EmailAddress newEmailAddress = new EmailAddress("billyj@vrc.ca");
+        final Password password = new Password("123");
 
         userManager.update(userFixture.getUserId(), newFirstName, newMiddleName, userFixture.getLastName(),
-            newEmailAddress, newPhoneNumber);
+            newEmailAddress, newPhoneNumber,password);
 
         Session session = sessionManager.getSession();
         User user = session.get(User.class, userFixture.getUserId());

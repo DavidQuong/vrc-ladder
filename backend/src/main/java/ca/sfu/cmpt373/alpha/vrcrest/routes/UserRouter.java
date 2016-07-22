@@ -184,7 +184,8 @@ public class UserRouter extends RestRouter {
                 updateUserPayload.getMiddleName(),
                 updateUserPayload.getLastName(),
                 updateUserPayload.getEmailAddress(),
-                updateUserPayload.getPhoneNumber());
+                updateUserPayload.getPhoneNumber(),
+                updateUserPayload.getPassword());
 
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(existingUser));
             response.status(HttpStatus.OK_200);

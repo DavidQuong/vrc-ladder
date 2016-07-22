@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests;
 
+import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonProperties;
@@ -30,7 +31,10 @@ public class UpdateUserPayload {
             JsonElement jsonPhoneNumber = jsonObject.get(JsonProperties.JSON_PROPERTY_PHONE_NUMBER);
             PhoneNumber phoneNumber = new PhoneNumber(jsonPhoneNumber.getAsString());
 
-            return new UpdateUserPayload(firstName, middleName, lastName, emailAddress, phoneNumber);
+            JsonElement jsonPassword = jsonObject.get(JsonProperties.JSON_PROPERTY_PASSWORD);
+            Password password = new Password(jsonPassword.getAsString());
+
+            return new UpdateUserPayload(firstName, middleName, lastName, emailAddress, phoneNumber, password);
         }
 
         @Override
@@ -54,6 +58,9 @@ public class UpdateUserPayload {
             if (!jsonObject.has(JsonProperties.JSON_PROPERTY_PHONE_NUMBER)) {
                 throwMissingPropertyException(JsonProperties.JSON_PROPERTY_PHONE_NUMBER);
             }
+            if (!jsonObject.has(JsonProperties.JSON_PROPERTY_PASSWORD)) {
+                throwMissingPropertyException(JsonProperties.JSON_PROPERTY_PASSWORD);
+            }
         }
     }
 
@@ -62,14 +69,16 @@ public class UpdateUserPayload {
     private String lastName;
     private EmailAddress emailAddress;
     private PhoneNumber phoneNumber;
+    private Password password;
 
     public UpdateUserPayload(String firstName, String middleName, String lastName, EmailAddress emailAddress,
-        PhoneNumber phoneNumber) {
+        PhoneNumber phoneNumber, Password newPassword) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
+        this.password=newPassword;
     }
 
     public String getFirstName() {
@@ -87,6 +96,8 @@ public class UpdateUserPayload {
     public EmailAddress getEmailAddress() {
         return emailAddress;
     }
+
+    public Password getPassword(){return  password;}
 
     public PhoneNumber getPhoneNumber() {
         return phoneNumber;
