@@ -81,7 +81,7 @@ const formEnhancer = reduxForm({
 
 const LogInForm = formEnhancer(BaseLogInForm);
 
-const logInBuilder = (props, response) => {
+const LogInBuilder = (props, response) => {
   const user = props;
   delete user.password;
   return ({
