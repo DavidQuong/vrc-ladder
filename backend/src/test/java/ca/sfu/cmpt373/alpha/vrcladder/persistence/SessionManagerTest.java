@@ -1,14 +1,11 @@
-package ca.sfu.cmpt373.alpha.vrcladder.persistance;
+package ca.sfu.cmpt373.alpha.vrcladder.persistence;
 
-import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
-import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcladder.util.ConfigurationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.util.MockUserGenerator;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.After;

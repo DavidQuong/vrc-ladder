@@ -1,4 +1,4 @@
-package ca.sfu.cmpt373.alpha.vrcladder.util;
+package ca.sfu.cmpt373.alpha.vrcladder.persistence;
 
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
@@ -14,7 +14,7 @@ import org.hibernate.exception.ConstraintViolationException;
  * Given a String for a csv file in the form (Last Name,First Name,Player #,Status,,Last Name,First Name,Player #,Status,Ranking)
  * This class will add all the data to the database. Note: there is currently little error handling done.
  */
-public class CsvUtil {
+public class CsvImporter {
     private static final String NEW_LINE = "\n";
     private static final String COMMA = ",";
     private static final String ERROR_ADDING_TEAM = "There was an error adding team on row";
@@ -23,7 +23,7 @@ public class CsvUtil {
     private TeamManager teamManager;
     private SecurityManager securityManager;
 
-    public CsvUtil(UserManager userManager, TeamManager teamManager, SecurityManager securityManager) {
+    public CsvImporter(UserManager userManager, TeamManager teamManager, SecurityManager securityManager) {
         this.userManager = userManager;
         this.teamManager = teamManager;
         this.securityManager = securityManager;

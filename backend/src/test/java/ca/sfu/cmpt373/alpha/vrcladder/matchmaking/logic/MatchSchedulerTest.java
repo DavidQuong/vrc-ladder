@@ -1,8 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcladder.matchmaking.logic;
 
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MatchMakingException;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
-import ca.sfu.cmpt373.alpha.vrcladder.persistance.MockDatabase;
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.MockDatabase;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
 import org.junit.Assert;
 import org.junit.Test;

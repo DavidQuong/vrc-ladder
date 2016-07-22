@@ -1,28 +1,27 @@
-package ca.sfu.cmpt373.alpha.vrcladder.util;
+package ca.sfu.cmpt373.alpha.vrcladder.persistence;
 
 import ca.sfu.cmpt373.alpha.vrcladder.BaseTest;
-import ca.sfu.cmpt373.alpha.vrcladder.persistence.SessionManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
+import ca.sfu.cmpt373.alpha.vrcladder.util.ConfigurationManager;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.security.Key;
-import java.util.List;
 
-public class CsvUtilTest extends BaseTest {
-    SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-    Key signatureKey = MacProvider.generateKey();
-    SecurityManager securityManager = new SecurityManager(signatureAlgorithm, signatureKey);
-    SessionManager sessionManager = new SessionManager(new ConfigurationManager());
-    UserManager userManager = new UserManager(sessionManager);
-    TeamManager teamManager = new TeamManager(sessionManager);
+public class CsvImporterTest extends BaseTest {
+    private SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+    private Key signatureKey = MacProvider.generateKey();
+    private SecurityManager securityManager = new SecurityManager(signatureAlgorithm, signatureKey);
+    private SessionManager sessionManager = new SessionManager(new ConfigurationManager());
+    private UserManager userManager = new UserManager(sessionManager);
+    private TeamManager teamManager = new TeamManager(sessionManager);
 
     @Test
     public void testAddTeam() {
@@ -30,8 +29,8 @@ public class CsvUtilTest extends BaseTest {
         String userIdAlex = "5447";
         String csvString = "Last Name,First Name,Player #,Status,,Last Name,First Name,Player #,Status,Ranking\n" +
                 "Truong,Cindy," + userIdCindy + ",,&,Wong,Alex," + userIdAlex+ ",,1\n";
-        CsvUtil csvUtil = new CsvUtil(userManager, teamManager, securityManager);
-        String errorLog = csvUtil.insertData(csvString);
+        CsvImporter csvImporter = new CsvImporter(userManager, teamManager, securityManager);
+        String errorLog = csvImporter.insertData(csvString);
 
         Assert.assertEquals("", errorLog);
 
@@ -52,8 +51,8 @@ public class CsvUtilTest extends BaseTest {
         String csvString = "Last Name,First Name,Player #,Status,,Last Name,First Name,Player #,Status,Ranking\n" +
                 "Truong,Cindy," + userIdCindy + ",,&,Wong,Alex," + userIdAlex+ ",,1\n" +
                 "Joe,Bob," + userIdBob + ",,&,Truong,Cindy," + userIdCindy + ",,2\n";
-        CsvUtil csvUtil = new CsvUtil(userManager, teamManager, securityManager);
-        String errorLog = csvUtil.insertData(csvString);
+        CsvImporter csvImporter = new CsvImporter(userManager, teamManager, securityManager);
+        String errorLog = csvImporter.insertData(csvString);
 
         Assert.assertEquals("", errorLog);
 
