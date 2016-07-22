@@ -47,8 +47,7 @@ export const getTeamInfo = (state) => {
 };
 
 export const updateUserInfo = (user) => {
-
-  return fetch(`${root}user/${state.app.loggedIn.userId}`, {
+  return fetch(`${root}user/${user.app.loggedIn.userId}`, {
     method: 'PUT',
     body: JSON.stringify(user),
   }).then((response) => {

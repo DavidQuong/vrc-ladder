@@ -14,8 +14,6 @@ import styles from './login.css';
 import Heading from '../heading/heading';
 import isEmpty from 'lodash/fp/isEmpty';
 
-
-
 const validate = (values) => {
   const errors = {};
   if (!values.userId) {
@@ -114,7 +112,7 @@ const LogIn = withRouter(({
             return Promise.reject(errors);
           }
           return logInUser(props).then((response) => {
-            const userInfo = logInBuilder(props, response);
+            const userInfo = LogInBuilder(props, response);
             userLogIn({
               ...userInfo,
             });
