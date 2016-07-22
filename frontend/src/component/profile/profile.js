@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {addTeam, updateTeamStatus} from '../../action/teams';
 import {SubmitBtn} from '../button';
+
 import {withRouter} from 'react-router';
 import {getTeamInfo} from '../../action/users';
 
@@ -412,6 +413,12 @@ const CreateTeam = withRouter(({
     />
   </div>
 ));
+
+const updateProfile = withRouter(({
+players,router, login, userinfo, UPd
+
+}): Element)
+
 export default connect(
   (state) => ({
     players: sortBy('firstName', state.app.players),

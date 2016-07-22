@@ -2,6 +2,7 @@ import {
   addUser as addUserAPI,
   getUser as getUserAPI,
   getUserInfo as getUserInfoAPI,
+  updateUserInfo as updateUserInfoAPI,
   getTeamInfo as getTeamInfoAPI} from '../api/users';
 import {syncPlayers, syncUserInfo, syncTeamInfo} from './types';
 
