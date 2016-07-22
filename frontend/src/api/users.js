@@ -13,30 +13,8 @@ export const addUser = (user) => {
   });
 };
 
-export const getUserInfo = (state) => {
-  return fetch(`${root}user/${state.app.loggedIn.userId}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: state.app.loggedIn.authorizationToken,
-    },
-  }).then((response) => {
-    return response.json();
-  });
-};
-
 export const getCurrentActiveUserInfo = (state) => {
   return fetch(`${root}users/self`, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: state.app.loggedIn.authorizationToken,
-    },
-  }).then((response) => {
-    return response.json();
-  });
-};
-
-export const getUser = (state) => {
-  return fetch(`${root}users`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: state.app.loggedIn.authorizationToken,
