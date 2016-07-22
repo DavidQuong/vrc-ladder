@@ -54,9 +54,7 @@ public class UserRouter extends RestRouter {
 
 
     private static final String ERROR_NONEXISTENT_USER = "This user does not exist.";
-    private static final String ERROR_EXISTING_USER_DETAILS = "A user with this ID or email address already exists.";
-    private static final String ERROR_UNAUTHORIZED_OTHER_USERS = "This user is not authorized to access or modify " +
-        "other user's data.";
+    private static final String ERROR_INVALID_PROPERTY = "The following property is invalid: ";
 
     private static final List<RouteSignature> PUBLIC_ROUTE_SIGNATURES = createPublicRouteSignatures();
 
