@@ -368,7 +368,8 @@ public class UserRouter extends RestRouter {
             updateUserPayload.getMiddleName(),
             updateUserPayload.getLastName(),
             updateUserPayload.getEmailAddress(),
-            updateUserPayload.getPhoneNumber()
+            updateUserPayload.getPhoneNumber(),
+                updateUserPayload.getPassword()
         );
 
         return updatedUser;
