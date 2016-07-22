@@ -13,8 +13,8 @@ export const addUser = (user) => {
   });
 };
 
-export const getUserInfo = (state) => {
-  return fetch(`${root}user/${state.app.loggedIn.userId}`, {
+export const getCurrentActiveUserInfo = (state) => {
+  return fetch(`${root}users/self`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: state.app.loggedIn.authorizationToken,
@@ -24,7 +24,7 @@ export const getUserInfo = (state) => {
   });
 };
 
-export const getUser = (state) => {
+export const getPlayer = (state) => {
   return fetch(`${root}players`, {
     headers: {
       'Content-Type': 'application/json',

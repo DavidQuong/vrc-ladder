@@ -2,7 +2,7 @@ import {createElement, Element} from 'react';
 import {Provider} from 'react-redux';
 import {IntlProvider} from 'react-intl';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
-import {getUser} from './action/users';
+import {getPlayer} from './action/users';
 import {getTeams} from './action/teams';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
@@ -94,7 +94,7 @@ export default ({store}) : Element => (
             navbarTitle='Weekly Doubles Leaderboard'
             component={Ladder}
             onEnter={(nextState, replace, callback) => {
-              store.dispatch(getUser()).then(callback);
+              store.dispatch(getPlayer()).then(callback);
               store.dispatch(getTeams()).then(callback);
             }}
           />
