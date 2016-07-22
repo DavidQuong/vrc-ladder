@@ -24,7 +24,6 @@ import javax.persistence.Table;
 public class User {
 
     private static final String DISPLAY_NAME_INITIAL_DOT = ". ";
-    private static final String ERROR_FORMAT_INVALID_AUTHORIZATION = "This user is not authorized to %s.";
 
     @EmbeddedId
     private UserId userId;
@@ -157,11 +156,8 @@ public class User {
         this.password = password;
     }
 
-    public void checkPermission(UserAction action) {
-        if (!userRole.hasAuthorizationToPerform(action)) {
-            String errorMsg = String.format(ERROR_FORMAT_INVALID_AUTHORIZATION, action.name());
-            throw new AuthorizationException(errorMsg);
-        }
+    public boolean hasPermission(UserAction action) {
+        return userRole.hasAuthorizationToPerform(action);
     }
 
     @Override
