@@ -14,27 +14,7 @@ import styles from './login.css';
 import Heading from '../heading/heading';
 import isEmpty from 'lodash/fp/isEmpty';
 
-const checkLogins = (values) => {
-var failedLogins = new logins();
 
-  if (failedLogins.counter>0){
-      //Lock out the user until email is validated
-
-   }
-return true;
-};
-
-var logins = (function() {
-
-    var counter = 0;
-
-    return function() {
-        counter++;
-        if(counter>4)
-        alert("You have failed to login "+counter+" times.");//just to make sure incorrect logins is working
-
-    }
-})();
 
 const validate = (values) => {
   const errors = {};
@@ -130,7 +110,6 @@ const LogIn = withRouter(({
       <LogInForm
         onSubmit={(props) => {
           let errors = validate(props);
-          let allowed = checkLogins(props);
           if (!isEmpty(errors)) {
             return Promise.reject(errors);
           }
