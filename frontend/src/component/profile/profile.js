@@ -1,6 +1,6 @@
 import {createElement, Element} from 'react';
 import {FormattedMessage} from 'react-intl';
-import {connect} from 'react-redux';
+//import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {addTeam, updateTeamStatus} from '../../action/teams';
 import {SubmitBtn} from '../button';
