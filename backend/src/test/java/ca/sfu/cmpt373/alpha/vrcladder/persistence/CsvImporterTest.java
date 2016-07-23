@@ -16,6 +16,7 @@ import org.junit.Test;
 import java.security.Key;
 
 public class CsvImporterTest extends BaseTest {
+    private static final String CSV_COLUMNS_HEADING = "Last Name,First Name,Player #,Status,,Last Name,First Name,Player #,Status,Ranking\n";
     private SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
     private Key signatureKey = MacProvider.generateKey();
     private SecurityManager securityManager = new SecurityManager(signatureAlgorithm, signatureKey);
@@ -27,7 +28,7 @@ public class CsvImporterTest extends BaseTest {
     public void testAddTeam() {
         String userIdCindy = "9217";
         String userIdAlex = "5447";
-        String csvString = "Last Name,First Name,Player #,Status,,Last Name,First Name,Player #,Status,Ranking\n" +
+        String csvString = CSV_COLUMNS_HEADING +
                 "Truong,Cindy," + userIdCindy + ",,&,Wong,Alex," + userIdAlex+ ",,1\n";
         CsvImporter csvImporter = new CsvImporter(userManager, teamManager, securityManager);
         String errorLog = csvImporter.insertData(csvString);
@@ -48,7 +49,7 @@ public class CsvImporterTest extends BaseTest {
         String userIdCindy = "9217";
         String userIdAlex = "5447";
         String userIdBob = "1234";
-        String csvString = "Last Name,First Name,Player #,Status,,Last Name,First Name,Player #,Status,Ranking\n" +
+        String csvString = CSV_COLUMNS_HEADING +
                 "Truong,Cindy," + userIdCindy + ",,&,Wong,Alex," + userIdAlex+ ",,1\n" +
                 "Joe,Bob," + userIdBob + ",,&,Truong,Cindy," + userIdCindy + ",,2\n";
         CsvImporter csvImporter = new CsvImporter(userManager, teamManager, securityManager);
