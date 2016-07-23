@@ -1,6 +1,6 @@
 import {createElement, Element} from 'react';
 import {FormattedMessage} from 'react-intl';
-//import {connect} from 'react-redux';
+import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {addTeam, updateTeamStatus} from '../../action/teams';
 import {SubmitBtn} from '../button';
@@ -40,79 +40,79 @@ const updateProfileInfo = ({
  <Form horizontal onSubmit={handleSubmit}>
    <div>
      <FormGroup>
-       <Col componentClass={ControlLabel} sm={4}>User ID</Col>
-       <Col sm={4}>
+       <col componentClass={ControlLabel} sm={4}>User ID</col>
+       <col sm={4}>
          <FormControl type='userID' placeholder='Your ID #' {...userId} />
-       </Col>
-       <Col sm={3}><FormError {...userId}/></Col>
+       </col>
+       <col sm={3}><FormError {...userId}/></col>
      </FormGroup>
 
      <FormGroup>
-       <Col componentClass={ControlLabel} sm={4}>First Name</Col>
-       <Col sm={4}>
+       <col componentClass={ControlLabel} sm={4}>First Name</col>
+       <col sm={4}>
          <FormControl
            type='firstName'
            placeholder='eg. Jane'
            {...firstName}
          />
-       </Col>
-       <Col sm={3}><FormError {...firstName}/></Col>
+       </col>
+       <col sm={3}><FormError {...firstName}/></col>
      </FormGroup>
 
      <FormGroup>
-       <Col componentClass={ControlLabel} sm={4}>Last Name</Col>
-       <Col sm={4}>
+       <col componentClass={ControlLabel} sm={4}>Last Name</col>
+       <col sm={4}>
          <FormControl type='lastName' placeholder='eg. Doe' {...lastName} />
-       </Col>
-       <Col sm={3}><FormError {...lastName}/></Col>
+       </col>
+       <col sm={3}><FormError {...lastName}/></col>
      </FormGroup>
 
      <FormGroup>
-       <Col componentClass={ControlLabel} sm={4}>Email</Col>
-       <Col sm={5}>
+       <col componentClass={ControlLabel} sm={4}>Email</col>
+       <col sm={5}>
          <FormControl
            type='emailAddress'
            placeholder='eg. jane.doe@example.com'
            {...emailAddress}
          />
-       </Col>
-       <Col sm={3}><FormError {...emailAddress}/></Col>
+       </col>
+       <col sm={3}><FormError {...emailAddress}/></col>
      </FormGroup>
 
      <FormGroup>
-       <Col componentClass={ControlLabel} sm={4}>Phone Number</Col>
-       <Col sm={4}>
+       <col componentClass={ControlLabel} sm={4}>Phone Number</col>
+       <col sm={4}>
          <FormControl
            type='phoneNumber'
            placeholder='eg. 6041234567'
            {...phoneNumber}
          />
-       </Col>
-       <Col sm={3}><FormError {...phoneNumber}/></Col>
+       </col>
+       <col sm={3}><FormError {...phoneNumber}/></col>
      </FormGroup>
 
      <FormGroup>
-       <Col componentClass={ControlLabel} sm={4}>Password</Col>
-       <Col sm={5}>
+       <col componentClass={ControlLabel} sm={4}>Password</col>
+       <col sm={5}>
          <FormControl type='password' placeholder='Password' {...password} />
-       </Col>
-       <Col sm={3}><FormError {...password}/></Col>
+       </col>
+       <col sm={3}><FormError {...password}/></col>
      </FormGroup>
 
      <FormGroup>
-       <Col componentClass={ControlLabel} sm={4}>Confirm Password</Col>
-       <Col sm={5}>
+       <col componentClass={ControlLabel} sm={4}>Confirm Password</col>
+       <col sm={5}>
          <FormControl
            type='password'
            placeholder='Password confirmation'
            {...confirmPassword}
          />
-       </Col>
-       <Col sm={3}><FormError {...confirmPassword}/></Col>
+       </col>
+       <col sm={3}><FormError {...confirmPassword}/></col>
      </FormGroup>
 
      <div className={classNames(styles.center)}>
-       <Button bsStyle='primary' bsSize='large' type='submit'>Sign Up</Button>
+       <button bsStyle='primary' bsSize='large' type='submit'>Sign Up</Button>
      </div>
    </div>
  </Form>
