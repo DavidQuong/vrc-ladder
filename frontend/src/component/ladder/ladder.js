@@ -1,5 +1,6 @@
 import {createElement, Element} from 'react';
 import {FormattedMessage} from 'react-intl';
+import {Well} from 'react-bootstrap';
 import {connect} from 'react-redux';
 import map from 'lodash/fp/map';
 import sortBy from 'lodash/fp/sortBy';
@@ -34,7 +35,7 @@ const orderTeams = map((team) => (
 const Ladder = ({
   teams,
 }) : Element => (
-  <div>
+  <Well className={styles.ladderTableContainer}>
     <table className={styles.ladderTable}>
       <thead>
         <tr className={styles.ladderTableHeading}>
@@ -56,7 +57,7 @@ const Ladder = ({
         {orderTeams(teams)}
       </tbody>
     </table>
-  </div>
+  </Well>
 );
 
 export default connect(

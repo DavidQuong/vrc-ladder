@@ -1,6 +1,7 @@
 export const white = '#fff';
 export const offWhite = '#FAEBD7';
 export const greyDark = '#444';
+export const lightGrey = '#f3f4f5';
 
 /* wood theme */
 export const darkGreen = '#01A108';

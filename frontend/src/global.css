@@ -13,7 +13,7 @@
     -o-background-size: cover;
     background-size: cover;
   }
-  
+
   html {
     box-sizing: border-box;
   }
@@ -52,12 +52,14 @@
   figure, figcaption, footer, header, hgroup,
   menu, nav, output, ruby, section, summary,
   time, mark, audio, video {
+    zoom: 1;
   	margin: 0;
   	padding: 0;
   	border: 0;
   	font-size: 100%;
     color: inherit;
     font: inherit;
+    line-height: normal;
   	vertical-align: baseline;
   }
 
