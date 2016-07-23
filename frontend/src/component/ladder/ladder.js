@@ -11,43 +11,51 @@ const getTime = (time) => {
   } else if (time === 'TIME_SLOT_B') {
     return '9:30';
   }
-  return 'NONE';
+  return 'N/A';
 };
 
 const orderTeams = map((team) => (
-  <div
-    className={`panel panel-default ${styles.panel}`}
-    key={team.teamId}
-  >
-    <div className={`panel-heading ${styles.panelHeading}`}>
-      <span className='pull-left'>Rank {team.ladderPosition}</span>
-      <span className='pull-right'>{getTime(team.playTime)}</span>
-      <br />
-    </div>
-    <div className={`panel-body ${styles.panelBody}`}>
-      <div className={styles.entry}>
-        <FormattedMessage
-          id='player1'
-          defaultMessage='First Player: '
-        />
-        {team.firstPlayer.name}
-      </div>
-      <div className={styles.entry}>
-        <FormattedMessage
-          id='player2'
-          defaultMessage='Second Player: '
-        />
-        {team.secondPlayer.name}
-      </div>
-    </div>
-  </div>
+  <tr className={styles.ladderTeamRow} key={team.teamId}>
+    <td className={styles.ladderTeamPlace}>
+      <span>{team.ladderPosition}</span>
+    </td>
+    <td className={styles.ladderTeamPlayer}>
+      <span>{team.firstPlayer.name}</span>
+    </td>
+    <td className={styles.ladderTeamPlayer}>
+      <span>{team.secondPlayer.name}</span>
+    </td>
+    <td className={styles.ladderTeamGameTime}>
+      <span>{getTime(team.playTime)}</span>
+    </td>
+  </tr>
 ));
 
 const Ladder = ({
   teams,
 }) : Element => (
-  <div className={styles.center}>
-    {orderTeams(teams)}
+  <div>
+    <table className={styles.ladderTable}>
+      <thead>
+        <tr className={styles.ladderTableHeading}>
+          <th className={styles.ladderTableHeadingCol}>
+            <h3 className={styles.columnHeadline}>#</h3>
+          </th>
+          <th className={styles.ladderTableHeadingCol}>
+            <h3 className={styles.columnHeadline}>First Player</h3>
+          </th>
+          <th className={styles.ladderTableHeadingCol}>
+            <h3 className={styles.columnHeadline}>Second Player</h3>
+          </th>
+          <th className={styles.ladderTableHeadingCol}>
+            <h3 className={styles.columnHeadline}>Game Time</h3>
+          </th>
+        </tr>
+      </thead>
+      <tbody className={styles.ladderTableBody}>
+        {orderTeams(teams)}
+      </tbody>
+    </table>
   </div>
 );
 

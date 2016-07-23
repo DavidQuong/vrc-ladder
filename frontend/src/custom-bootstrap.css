@@ -1,4 +1,5 @@
 :global {
+
     @media (max-width: 1000px) {
       .navbar-header {
           float: none;
