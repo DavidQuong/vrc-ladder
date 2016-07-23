@@ -8,11 +8,12 @@ import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import MatchGroups from './component/match-groups/match-groups';
 import CreateTeam from './component/profile/profile';
-import {Nav, NavItem, Navbar, Grid} from 'react-bootstrap';
+import {Nav, Navbar, Grid} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import styles from './index.css';
 import LogIn from './component/login/login';
 import {UserLabel} from './component/user-label/user-label';
+import {NavTabs} from './component/nav-tabs/nav-tabs';
 
 const Layout = ({children}) => (
   <div>
@@ -31,26 +32,9 @@ const Layout = ({children}) => (
         </Navbar.Header>
         <UserLabel/>
         <Navbar.Collapse>
-          <Nav pullRight className={styles.navItem}>
-            <LinkContainer to='/'>
-              <NavItem>Log in</NavItem>
-            </LinkContainer>
-            <LinkContainer to='/profile'>
-              <NavItem>Profile</NavItem>
-            </LinkContainer>
-            <LinkContainer to='/ladder'>
-              <NavItem>Ladder</NavItem>
-            </LinkContainer>
-            <LinkContainer to='/match-groups'>
-              <NavItem>Match Groups</NavItem>
-            </LinkContainer>
-            <LinkContainer to='/signup'>
-              <NavItem>Sign up</NavItem>
-            </LinkContainer>
-          </Nav>
+          <NavTabs/>
         </Navbar.Collapse>
       </Navbar>
-
       <Navbar fixedTop className={styles.lowerNavbar}>
         <Nav className={styles.lowerNavContainer}>
           <Navbar.Text className={styles.lowerNavbarHeading}>

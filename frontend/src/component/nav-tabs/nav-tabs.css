@@ -1,0 +1,13 @@
+.navItem > li > a {
+  color: inherit !important;
+  background-color: transparent !important;
+}
+
+.navItem > li > a:hover {
+  color: ~colors.brightYellow !important;
+}
+
+.navItem > li > a:active {
+  color: inherit !important;
+  background-color: ~colors.paleBlue !important;
+}
