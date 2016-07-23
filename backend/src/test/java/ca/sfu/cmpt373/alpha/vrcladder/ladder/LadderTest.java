@@ -611,13 +611,6 @@ public class LadderTest extends BaseTest {
             ladderTestGroups.get(4).getScoreCard().setRankedTeams(matchResults);
             matchResults.clear();
 
-            System.out.println("Test Case #" + testCase + ":");
-            for(int i = 0;i < expectedResults.get(testCase).size();i++) {
-                User firstPlayer = expectedResults.get(testCase).get(i).getFirstPlayer();
-                User secondPlayer = expectedResults.get(testCase).get(i).getSecondPlayer();
-                System.out.println(i + ": " + firstPlayer.getFirstName() + " " + firstPlayer.getLastName() + ", " + secondPlayer.getFirstName() + " " + secondPlayer.getLastName());
-            }
-
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups);
 
@@ -673,8 +666,8 @@ public class LadderTest extends BaseTest {
                     expectedResults.get(i).add(sourceResults2.get(0));
                     expectedResults.get(i).add(sourceResults1.get(4));
                     expectedResults.get(i).add(sourceResults2.get(1));
-                    expectedResults.get(i).add(sourceResults1.get(1));
                     expectedResults.get(i).add(sourceResults2.get(2));
+                    expectedResults.get(i).add(sourceResults1.get(1));
                     expectedResults.get(i).add(sourceResults1.get(3));
                     expectedResults.get(i).add(sourceResults1.get(5));
                     break;
@@ -745,18 +738,8 @@ public class LadderTest extends BaseTest {
             ladderTestGroups.get(1).getScoreCard().setRankedTeams(matchResults);
             matchResults.clear();
 
-            System.out.println("Test Case #" + testCase + ":");
-            for(int i = 0;i < expectedResults.get(testCase).size();i++) {
-                User firstPlayer = expectedResults.get(testCase).get(i).getFirstPlayer();
-                User secondPlayer = expectedResults.get(testCase).get(i).getSecondPlayer();
-                System.out.println(i + ": " + firstPlayer.getFirstName() + " " + firstPlayer.getLastName() + ", " + secondPlayer.getFirstName() + " " + secondPlayer.getLastName());
-            }
-
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups);
-
-            System.out.println("\nResults:");
-            System.out.println(testLadder.toString());
 
             assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
 		}
@@ -908,18 +891,8 @@ public class LadderTest extends BaseTest {
             ladderTestGroups.get(1).getScoreCard().setRankedTeams(matchResults);
             matchResults.clear();
 
-            System.out.println("Test Case #" + testCase + ":");
-            for(int i = 0;i < expectedResults.get(testCase).size();i++) {
-                User firstPlayer = expectedResults.get(testCase).get(i).getFirstPlayer();
-                User secondPlayer = expectedResults.get(testCase).get(i).getSecondPlayer();
-                System.out.println(i + ": " + firstPlayer.getFirstName() + " " + firstPlayer.getLastName() + ", " + secondPlayer.getFirstName() + " " + secondPlayer.getLastName());
-            }
-
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups);
-
-            System.out.println("\nResults:");
-            System.out.println(testLadder.toString());
 
             assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
 		}
@@ -1171,544 +1144,10 @@ public class LadderTest extends BaseTest {
             matchResults.add(ladderTestGroups.get(0).getTeams().get(1));
             matchResults.add(ladderTestGroups.get(0).getTeams().get(0));
             ladderTestGroups.get(0).getScoreCard().setRankedTeams(matchResults);
-            for(int i = 0;i < ladderTestGroups.get(0).getScoreCard().getRankedTeams().size();i++) {
-                User firstPlayer = ladderTestGroups.get(0).getScoreCard().getRankedTeams().get(i).getFirstPlayer();
-                User secondPlayer = ladderTestGroups.get(0).getScoreCard().getRankedTeams().get(i).getSecondPlayer();
-                System.out.println(i + ": " + firstPlayer.getFirstName() + " " + firstPlayer.getLastName() + ", " + secondPlayer.getFirstName() + " " + secondPlayer.getLastName());
-            }
             matchResults.clear();
 
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups);
-
-            assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
-		}
-	}
-
-	@Test
-	public void groupSize3NonAdjacentAllIntersecting() throws SizeLimitExceededException { //Case 8: Groups have non-attending teams beside and inside them, groups of 3 only, all overlapping
-		int teamCount = 13;
-		List<List<Team>> expectedResults = new ArrayList<>();
-		for(int i = 0;i < TEST_CASE_COUNT;i++) {
-			List<Team> sourceResults1 = getTeams(teamCount, i).get(ATTENDING);
-			List<Team> sourceResults2 = getTeams(teamCount, i).get(NOT_ATTENDING);
-			expectedResults.add(new ArrayList<>());
-			switch(i) {
-				case (0):
-					expectedResults.get(i).add(sourceResults1.get(4));
-                    expectedResults.get(i).add(sourceResults1.get(1));
-                    expectedResults.get(i).add(sourceResults1.get(5));
-                    expectedResults.get(i).add(sourceResults1.get(0));
-                    expectedResults.get(i).add(sourceResults2.get(0));
-                    expectedResults.get(i).add(sourceResults2.get(1));
-                    expectedResults.get(i).add(sourceResults1.get(3));
-                    expectedResults.get(i).add(sourceResults2.get(2));
-                    expectedResults.get(i).add(sourceResults1.get(7));
-                    expectedResults.get(i).add(sourceResults1.get(6));
-                    expectedResults.get(i).add(sourceResults2.get(3));
-                    expectedResults.get(i).add(sourceResults2.get(4));
-                    expectedResults.get(i).add(sourceResults1.get(2));
-                    expectedResults.get(i).add(sourceResults2.get(5));
-                    expectedResults.get(i).add(sourceResults2.get(6));
-                    expectedResults.get(i).add(sourceResults2.get(7));
-                    expectedResults.get(i).add(sourceResults1.get(8));
-                    expectedResults.get(i).add(sourceResults2.get(8));
-                    expectedResults.get(i).add(sourceResults2.get(9));
-                    expectedResults.get(i).add(sourceResults2.get(10));
-                    expectedResults.get(i).add(sourceResults2.get(11));
-                    expectedResults.get(i).add(sourceResults2.get(12));
-                    break;
-				case (1):
-					expectedResults.get(i).add(sourceResults2.get(0));
-                    expectedResults.get(i).add(sourceResults2.get(1));
-                    expectedResults.get(i).add(sourceResults2.get(2));
-                    expectedResults.get(i).add(sourceResults2.get(3));
-                    expectedResults.get(i).add(sourceResults1.get(4));
-                    expectedResults.get(i).add(sourceResults1.get(1));
-                    expectedResults.get(i).add(sourceResults2.get(4));
-                    expectedResults.get(i).add(sourceResults2.get(5));
-                    expectedResults.get(i).add(sourceResults1.get(5));
-                    expectedResults.get(i).add(sourceResults2.get(6));
-                    expectedResults.get(i).add(sourceResults1.get(0));
-                    expectedResults.get(i).add(sourceResults1.get(3));
-                    expectedResults.get(i).add(sourceResults2.get(7));
-                    expectedResults.get(i).add(sourceResults2.get(8));
-                    expectedResults.get(i).add(sourceResults1.get(7));
-                    expectedResults.get(i).add(sourceResults2.get(9));
-                    expectedResults.get(i).add(sourceResults2.get(10));
-                    expectedResults.get(i).add(sourceResults2.get(11));
-                    expectedResults.get(i).add(sourceResults1.get(6));
-                    expectedResults.get(i).add(sourceResults1.get(2));
-                    expectedResults.get(i).add(sourceResults2.get(12));
-                    expectedResults.get(i).add(sourceResults1.get(8));
-                    break;
-				case (2):
-					expectedResults.get(i).add(sourceResults2.get(0));
-                    expectedResults.get(i).add(sourceResults2.get(1));
-                    expectedResults.get(i).add(sourceResults2.get(2));
-                    expectedResults.get(i).add(sourceResults2.get(3));
-                    expectedResults.get(i).add(sourceResults2.get(4));
-                    expectedResults.get(i).add(sourceResults2.get(5));
-                    expectedResults.get(i).add(sourceResults2.get(6));
-                    expectedResults.get(i).add(sourceResults2.get(7));
-                    expectedResults.get(i).add(sourceResults2.get(8));
-                    expectedResults.get(i).add(sourceResults2.get(9));
-                    expectedResults.get(i).add(sourceResults1.get(4));
-                    expectedResults.get(i).add(sourceResults1.get(1));
-                    expectedResults.get(i).add(sourceResults2.get(10));
-                    expectedResults.get(i).add(sourceResults2.get(11));
-                    expectedResults.get(i).add(sourceResults1.get(5));
-                    expectedResults.get(i).add(sourceResults2.get(12));
-                    expectedResults.get(i).add(sourceResults1.get(0));
-                    expectedResults.get(i).add(sourceResults1.get(3));
-                    expectedResults.get(i).add(sourceResults1.get(7));
-                    expectedResults.get(i).add(sourceResults1.get(6));
-                    expectedResults.get(i).add(sourceResults1.get(2));
-                    expectedResults.get(i).add(sourceResults1.get(8));
-                    break;
-				case (3):
-					expectedResults.get(i).add(sourceResults2.get(0));
-                    expectedResults.get(i).add(sourceResults2.get(1));
-                    expectedResults.get(i).add(sourceResults2.get(2));
-                    expectedResults.get(i).add(sourceResults2.get(3));
-                    expectedResults.get(i).add(sourceResults1.get(4));
-                    expectedResults.get(i).add(sourceResults1.get(1));
-                    expectedResults.get(i).add(sourceResults2.get(4));
-                    expectedResults.get(i).add(sourceResults2.get(5));
-                    expectedResults.get(i).add(sourceResults1.get(5));
-                    expectedResults.get(i).add(sourceResults2.get(6));
-                    expectedResults.get(i).add(sourceResults1.get(0));
-                    expectedResults.get(i).add(sourceResults1.get(3));
-                    expectedResults.get(i).add(sourceResults2.get(7));
-                    expectedResults.get(i).add(sourceResults2.get(8));
-                    expectedResults.get(i).add(sourceResults1.get(7));
-                    expectedResults.get(i).add(sourceResults2.get(9));
-                    expectedResults.get(i).add(sourceResults2.get(10));
-                    expectedResults.get(i).add(sourceResults2.get(11));
-                    expectedResults.get(i).add(sourceResults1.get(6));
-                    expectedResults.get(i).add(sourceResults1.get(2));
-                    expectedResults.get(i).add(sourceResults2.get(12));
-                    expectedResults.get(i).add(sourceResults1.get(8));
-                    break;
-				case (4):
-					expectedResults.get(i).add(sourceResults2.get(0));
-                    expectedResults.get(i).add(sourceResults2.get(1));
-                    expectedResults.get(i).add(sourceResults2.get(2));
-                    expectedResults.get(i).add(sourceResults2.get(3));
-                    expectedResults.get(i).add(sourceResults1.get(4));
-                    expectedResults.get(i).add(sourceResults2.get(4));
-                    expectedResults.get(i).add(sourceResults2.get(5));
-                    expectedResults.get(i).add(sourceResults2.get(6));
-                    expectedResults.get(i).add(sourceResults1.get(2));
-                    expectedResults.get(i).add(sourceResults2.get(7));
-                    expectedResults.get(i).add(sourceResults1.get(0));
-                    expectedResults.get(i).add(sourceResults1.get(1));
-                    expectedResults.get(i).add(sourceResults2.get(8));
-                    expectedResults.get(i).add(sourceResults2.get(9));
-                    expectedResults.get(i).add(sourceResults2.get(10));
-                    expectedResults.get(i).add(sourceResults2.get(11));
-                    expectedResults.get(i).add(sourceResults1.get(3));
-                    expectedResults.get(i).add(sourceResults2.get(12));
-                    expectedResults.get(i).add(sourceResults1.get(6));
-                    expectedResults.get(i).add(sourceResults1.get(8));
-                    expectedResults.get(i).add(sourceResults1.get(7));
-                    expectedResults.get(i).add(sourceResults1.get(5));
-                    break;
-				case (5):
-					expectedResults.get(i).add(sourceResults1.get(4));
-					expectedResults.get(i).add(sourceResults1.get(1));
-					expectedResults.get(i).add(sourceResults1.get(5));
-					expectedResults.get(i).add(sourceResults1.get(0));
-					expectedResults.get(i).add(sourceResults1.get(3));
-					expectedResults.get(i).add(sourceResults2.get(1));
-					expectedResults.get(i).add(sourceResults1.get(7));
-					expectedResults.get(i).add(sourceResults1.get(6));
-					expectedResults.get(i).add(sourceResults1.get(2));
-					expectedResults.get(i).add(sourceResults1.get(8));
-					expectedResults.get(i).add(sourceResults2.get(3));
-					expectedResults.get(i).add(sourceResults2.get(0));
-					expectedResults.get(i).add(sourceResults2.get(5));
-					expectedResults.get(i).add(sourceResults2.get(7));
-					expectedResults.get(i).add(sourceResults2.get(2));
-					expectedResults.get(i).add(sourceResults2.get(9));
-					expectedResults.get(i).add(sourceResults2.get(4));
-					expectedResults.get(i).add(sourceResults2.get(11));
-					expectedResults.get(i).add(sourceResults2.get(6));
-					expectedResults.get(i).add(sourceResults2.get(8));
-					expectedResults.get(i).add(sourceResults2.get(10));
-					expectedResults.get(i).add(sourceResults2.get(12));
-                    break;
-				case (6):
-					expectedResults.get(i).add(sourceResults1.get(1));
-					expectedResults.get(i).add(sourceResults1.get(5));
-					expectedResults.get(i).add(sourceResults2.get(0));
-					expectedResults.get(i).add(sourceResults2.get(1));
-					expectedResults.get(i).add(sourceResults1.get(4));
-					expectedResults.get(i).add(sourceResults1.get(3));
-					expectedResults.get(i).add(sourceResults2.get(2));
-					expectedResults.get(i).add(sourceResults1.get(0));
-					expectedResults.get(i).add(sourceResults1.get(7));
-					expectedResults.get(i).add(sourceResults2.get(3));
-					expectedResults.get(i).add(sourceResults2.get(4));
-					expectedResults.get(i).add(sourceResults2.get(5));
-					expectedResults.get(i).add(sourceResults2.get(6));
-					expectedResults.get(i).add(sourceResults1.get(6));
-					expectedResults.get(i).add(sourceResults2.get(7));
-					expectedResults.get(i).add(sourceResults2.get(8));
-					expectedResults.get(i).add(sourceResults1.get(2));
-					expectedResults.get(i).add(sourceResults2.get(9));
-					expectedResults.get(i).add(sourceResults2.get(10));
-					expectedResults.get(i).add(sourceResults2.get(11));
-					expectedResults.get(i).add(sourceResults1.get(8));
-					expectedResults.get(i).add(sourceResults2.get(12));
-                    break;
-			}
-		}
-
-		for(int testCase = 0;testCase < TEST_CASE_COUNT;testCase++) {
-			List<List<Team>> ladderTestTeamsSeg = getTeams(teamCount, testCase);
-			List<Team> ladderTestTeams = new ArrayList<>();
-			List<Team> sourceResults = getTeams(teamCount, testCase).get(ATTENDING);
-
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(0));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(1));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(0));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(1));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(2));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(2));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(3));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(4));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(3));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(4));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(5));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(5));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(6));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(7));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(6));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(7));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(8));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(8));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(9));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(10));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(11));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(12));
-
-			List<MatchGroup> ladderTestGroups = new ArrayList<>();
-			ladderTestGroups.add(new MatchGroup(sourceResults.get(0), sourceResults.get(1), sourceResults.get(4)));
-			ladderTestGroups.add(new MatchGroup(sourceResults.get(3), sourceResults.get(5), sourceResults.get(7)));
-			ladderTestGroups.add(new MatchGroup(sourceResults.get(2), sourceResults.get(6), sourceResults.get(8)));
-
-			//The following sets the 3 groups final scores to: 3-2-1, 1-3-2, 1-2-3
-            List<Team> matchResults = new ArrayList<>();
-
-            matchResults.add(ladderTestGroups.get(0).getTeams().get(2));
-            matchResults.add(ladderTestGroups.get(0).getTeams().get(1));
-            matchResults.add(ladderTestGroups.get(0).getTeams().get(0));
-            ladderTestGroups.get(0).getScoreCard().setRankedTeams(matchResults);
-            matchResults.clear();
-
-            matchResults.add(ladderTestGroups.get(1).getTeams().get(0));
-            matchResults.add(ladderTestGroups.get(1).getTeams().get(2));
-            matchResults.add(ladderTestGroups.get(1).getTeams().get(1));
-            ladderTestGroups.get(1).getScoreCard().setRankedTeams(matchResults);
-            matchResults.clear();
-
-            matchResults.add(ladderTestGroups.get(2).getTeams().get(0));
-            matchResults.add(ladderTestGroups.get(2).getTeams().get(1));
-            matchResults.add(ladderTestGroups.get(2).getTeams().get(2));
-            ladderTestGroups.get(2).getScoreCard().setRankedTeams(matchResults);
-            matchResults.clear();
-
-            System.out.println("Test Case #" + testCase + ":");
-            for(int i = 0;i < expectedResults.get(testCase).size();i++) {
-                User firstPlayer = expectedResults.get(testCase).get(i).getFirstPlayer();
-                User secondPlayer = expectedResults.get(testCase).get(i).getSecondPlayer();
-                System.out.println(i + ": " + firstPlayer.getFirstName() + " " + firstPlayer.getLastName() + ", " + secondPlayer.getFirstName() + " " + secondPlayer.getLastName());
-            }
-
-			Ladder testLadder = new Ladder(ladderTestTeams);
-			testLadder.updateLadder(ladderTestGroups);
-
-            System.out.println("\nResults:");
-            System.out.println(testLadder.toString());
-
-            assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
-		}
-	}
-
-	@Test
-	public void groupSize4NonAdjacentAllIntersecting() throws SizeLimitExceededException { //Case 9: Groups have non-attending teams beside and inside them, groups of 4 only, all overlapping
-		int teamCount = 13;
-		List<List<Team>> expectedResults = new ArrayList<>();
-		for(int i = 0;i < TEST_CASE_COUNT;i++) {
-			List<Team> sourceResults1 = getTeams(teamCount, i).get(ATTENDING);
-			List<Team> sourceResults2 = getTeams(teamCount, i).get(NOT_ATTENDING);
-			expectedResults.add(new ArrayList<>());
-			switch(i) {
-				case (0):
-					expectedResults.get(i).add(sourceResults1.get(7));
-					expectedResults.get(i).add(sourceResults1.get(6));
-					expectedResults.get(i).add(sourceResults1.get(1));
-					expectedResults.get(i).add(sourceResults1.get(3));
-					expectedResults.get(i).add(sourceResults2.get(0));
-					expectedResults.get(i).add(sourceResults2.get(1));
-					expectedResults.get(i).add(sourceResults1.get(0));
-					expectedResults.get(i).add(sourceResults1.get(5));
-					expectedResults.get(i).add(sourceResults2.get(2));
-					expectedResults.get(i).add(sourceResults1.get(4));
-					expectedResults.get(i).add(sourceResults1.get(9));
-					expectedResults.get(i).add(sourceResults2.get(3));
-					expectedResults.get(i).add(sourceResults2.get(4));
-					expectedResults.get(i).add(sourceResults1.get(2));
-					expectedResults.get(i).add(sourceResults2.get(5));
-					expectedResults.get(i).add(sourceResults2.get(6));
-					expectedResults.get(i).add(sourceResults2.get(7));
-					expectedResults.get(i).add(sourceResults1.get(10));
-					expectedResults.get(i).add(sourceResults1.get(11));
-					expectedResults.get(i).add(sourceResults2.get(8));
-					expectedResults.get(i).add(sourceResults1.get(8));
-					expectedResults.get(i).add(sourceResults2.get(9));
-					expectedResults.get(i).add(sourceResults2.get(10));
-					expectedResults.get(i).add(sourceResults2.get(11));
-					expectedResults.get(i).add(sourceResults2.get(12));
-                    break;
-				case (1):
-					expectedResults.get(i).add(sourceResults2.get(0));
-					expectedResults.get(i).add(sourceResults2.get(1));
-					expectedResults.get(i).add(sourceResults2.get(2));
-					expectedResults.get(i).add(sourceResults2.get(3));
-					expectedResults.get(i).add(sourceResults1.get(7));
-					expectedResults.get(i).add(sourceResults1.get(6));
-					expectedResults.get(i).add(sourceResults1.get(1));
-					expectedResults.get(i).add(sourceResults1.get(3));
-					expectedResults.get(i).add(sourceResults2.get(4));
-					expectedResults.get(i).add(sourceResults2.get(5));
-					expectedResults.get(i).add(sourceResults1.get(0));
-					expectedResults.get(i).add(sourceResults1.get(5));
-					expectedResults.get(i).add(sourceResults2.get(6));
-					expectedResults.get(i).add(sourceResults1.get(4));
-					expectedResults.get(i).add(sourceResults1.get(9));
-					expectedResults.get(i).add(sourceResults2.get(7));
-					expectedResults.get(i).add(sourceResults2.get(8));
-					expectedResults.get(i).add(sourceResults1.get(2));
-					expectedResults.get(i).add(sourceResults2.get(9));
-					expectedResults.get(i).add(sourceResults2.get(10));
-					expectedResults.get(i).add(sourceResults2.get(11));
-					expectedResults.get(i).add(sourceResults1.get(10));
-					expectedResults.get(i).add(sourceResults1.get(11));
-					expectedResults.get(i).add(sourceResults2.get(12));
-					expectedResults.get(i).add(sourceResults1.get(8));
-                    break;
-				case (2):
-					expectedResults.get(i).add(sourceResults2.get(0));
-					expectedResults.get(i).add(sourceResults2.get(1));
-					expectedResults.get(i).add(sourceResults2.get(2));
-					expectedResults.get(i).add(sourceResults2.get(3));
-					expectedResults.get(i).add(sourceResults1.get(7));
-					expectedResults.get(i).add(sourceResults1.get(6));
-					expectedResults.get(i).add(sourceResults1.get(1));
-					expectedResults.get(i).add(sourceResults1.get(3));
-					expectedResults.get(i).add(sourceResults1.get(0));
-					expectedResults.get(i).add(sourceResults1.get(5));
-					expectedResults.get(i).add(sourceResults1.get(4));
-					expectedResults.get(i).add(sourceResults1.get(9));
-					expectedResults.get(i).add(sourceResults1.get(2));
-					expectedResults.get(i).add(sourceResults1.get(10));
-					expectedResults.get(i).add(sourceResults1.get(11));
-					expectedResults.get(i).add(sourceResults1.get(8));
-					expectedResults.get(i).add(sourceResults2.get(4));
-					expectedResults.get(i).add(sourceResults2.get(5));
-					expectedResults.get(i).add(sourceResults2.get(6));
-					expectedResults.get(i).add(sourceResults2.get(7));
-					expectedResults.get(i).add(sourceResults2.get(8));
-					expectedResults.get(i).add(sourceResults2.get(9));
-					expectedResults.get(i).add(sourceResults2.get(10));
-					expectedResults.get(i).add(sourceResults2.get(11));
-					expectedResults.get(i).add(sourceResults2.get(12));
-                    break;
-				case (3):
-					expectedResults.get(i).add(sourceResults1.get(7));
-					expectedResults.get(i).add(sourceResults1.get(6));
-					expectedResults.get(i).add(sourceResults1.get(1));
-					expectedResults.get(i).add(sourceResults1.get(3));
-					expectedResults.get(i).add(sourceResults1.get(0));
-					expectedResults.get(i).add(sourceResults1.get(5));
-					expectedResults.get(i).add(sourceResults1.get(4));
-					expectedResults.get(i).add(sourceResults1.get(9));
-					expectedResults.get(i).add(sourceResults1.get(2));
-					expectedResults.get(i).add(sourceResults1.get(10));
-					expectedResults.get(i).add(sourceResults1.get(11));
-					expectedResults.get(i).add(sourceResults1.get(8));
-					expectedResults.get(i).add(sourceResults2.get(0));
-					expectedResults.get(i).add(sourceResults2.get(1));
-					expectedResults.get(i).add(sourceResults2.get(2));
-					expectedResults.get(i).add(sourceResults2.get(3));
-					expectedResults.get(i).add(sourceResults2.get(4));
-					expectedResults.get(i).add(sourceResults2.get(5));
-					expectedResults.get(i).add(sourceResults2.get(6));
-					expectedResults.get(i).add(sourceResults2.get(7));
-					expectedResults.get(i).add(sourceResults2.get(8));
-					expectedResults.get(i).add(sourceResults2.get(9));
-					expectedResults.get(i).add(sourceResults2.get(10));
-					expectedResults.get(i).add(sourceResults2.get(11));
-					expectedResults.get(i).add(sourceResults2.get(12));
-                    break;
-				case (4):
-					expectedResults.get(i).add(sourceResults2.get(1));
-					expectedResults.get(i).add(sourceResults2.get(3));
-					expectedResults.get(i).add(sourceResults2.get(0));
-					expectedResults.get(i).add(sourceResults2.get(5));
-					expectedResults.get(i).add(sourceResults1.get(7));
-					expectedResults.get(i).add(sourceResults1.get(6));
-					expectedResults.get(i).add(sourceResults1.get(1));
-					expectedResults.get(i).add(sourceResults1.get(3));
-					expectedResults.get(i).add(sourceResults1.get(0));
-					expectedResults.get(i).add(sourceResults2.get(7));
-					expectedResults.get(i).add(sourceResults1.get(5));
-					expectedResults.get(i).add(sourceResults1.get(4));
-					expectedResults.get(i).add(sourceResults1.get(9));
-					expectedResults.get(i).add(sourceResults1.get(2));
-					expectedResults.get(i).add(sourceResults1.get(10));
-					expectedResults.get(i).add(sourceResults2.get(2));
-					expectedResults.get(i).add(sourceResults2.get(4));
-					expectedResults.get(i).add(sourceResults1.get(11));
-					expectedResults.get(i).add(sourceResults2.get(9));
-					expectedResults.get(i).add(sourceResults2.get(6));
-					expectedResults.get(i).add(sourceResults2.get(11));
-					expectedResults.get(i).add(sourceResults1.get(8));
-					expectedResults.get(i).add(sourceResults2.get(8));
-					expectedResults.get(i).add(sourceResults2.get(10));
-					expectedResults.get(i).add(sourceResults2.get(12));
-                    break;
-				case (5):
-					expectedResults.get(i).add(sourceResults1.get(7));
-					expectedResults.get(i).add(sourceResults1.get(6));
-					expectedResults.get(i).add(sourceResults1.get(1));
-					expectedResults.get(i).add(sourceResults1.get(3));
-					expectedResults.get(i).add(sourceResults1.get(0));
-					expectedResults.get(i).add(sourceResults2.get(1));
-					expectedResults.get(i).add(sourceResults1.get(5));
-					expectedResults.get(i).add(sourceResults1.get(4));
-					expectedResults.get(i).add(sourceResults1.get(9));
-					expectedResults.get(i).add(sourceResults1.get(2));
-					expectedResults.get(i).add(sourceResults1.get(10));
-					expectedResults.get(i).add(sourceResults2.get(3));
-					expectedResults.get(i).add(sourceResults2.get(0));
-					expectedResults.get(i).add(sourceResults1.get(11));
-					expectedResults.get(i).add(sourceResults2.get(5));
-					expectedResults.get(i).add(sourceResults2.get(7));
-					expectedResults.get(i).add(sourceResults2.get(2));
-					expectedResults.get(i).add(sourceResults1.get(8));
-					expectedResults.get(i).add(sourceResults2.get(4));
-					expectedResults.get(i).add(sourceResults2.get(9));
-					expectedResults.get(i).add(sourceResults2.get(6));
-					expectedResults.get(i).add(sourceResults2.get(11));
-					expectedResults.get(i).add(sourceResults2.get(8));
-					expectedResults.get(i).add(sourceResults2.get(10));
-					expectedResults.get(i).add(sourceResults2.get(12));
-                    break;
-				case (6):
-					expectedResults.get(i).add(sourceResults1.get(7));
-					expectedResults.get(i).add(sourceResults1.get(1));
-					expectedResults.get(i).add(sourceResults1.get(3));
-					expectedResults.get(i).add(sourceResults2.get(0));
-					expectedResults.get(i).add(sourceResults2.get(1));
-					expectedResults.get(i).add(sourceResults1.get(6));
-					expectedResults.get(i).add(sourceResults1.get(5));
-					expectedResults.get(i).add(sourceResults2.get(2));
-					expectedResults.get(i).add(sourceResults1.get(9));
-					expectedResults.get(i).add(sourceResults2.get(3));
-					expectedResults.get(i).add(sourceResults1.get(0));
-					expectedResults.get(i).add(sourceResults2.get(4));
-					expectedResults.get(i).add(sourceResults2.get(5));
-					expectedResults.get(i).add(sourceResults1.get(4));
-					expectedResults.get(i).add(sourceResults2.get(6));
-					expectedResults.get(i).add(sourceResults2.get(7));
-					expectedResults.get(i).add(sourceResults1.get(11));
-					expectedResults.get(i).add(sourceResults1.get(2));
-					expectedResults.get(i).add(sourceResults2.get(8));
-					expectedResults.get(i).add(sourceResults2.get(9));
-					expectedResults.get(i).add(sourceResults2.get(10));
-					expectedResults.get(i).add(sourceResults1.get(10));
-					expectedResults.get(i).add(sourceResults2.get(11));
-					expectedResults.get(i).add(sourceResults2.get(12));
-					expectedResults.get(i).add(sourceResults1.get(8));
-                    break;
-			}
-		}
-
-		for(int testCase = 0;testCase < TEST_CASE_COUNT;testCase++) {
-			List<List<Team>> ladderTestTeamsSeg = getTeams(teamCount, testCase);
-			List<Team> ladderTestTeams = new ArrayList<>();
-			List<Team> sourceResults = getTeams(teamCount, testCase).get(ATTENDING);
-
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(0));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(1));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(0));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(1));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(2));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(3));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(2));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(4));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(5));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(3));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(4));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(6));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(5));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(6));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(7));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(7));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(8));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(8));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(9));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(9));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(10));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(11));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(10));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(11));
-			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(12));
-
-			List<MatchGroup> ladderTestGroups = new ArrayList<>();
-			ladderTestGroups.add(new MatchGroup(sourceResults.get(0), sourceResults.get(4), sourceResults.get(6), sourceResults.get(7)));
-			ladderTestGroups.add(new MatchGroup(sourceResults.get(1), sourceResults.get(9), sourceResults.get(10), sourceResults.get(11)));
-			ladderTestGroups.add(new MatchGroup(sourceResults.get(2), sourceResults.get(3), sourceResults.get(5), sourceResults.get(8)));
-
-			//The following sets the 3 groups final scores to: 4-1-2-3, 2-3-4-1, 4-2-3-1
-            List<Team> matchResults = new ArrayList<>();
-
-            matchResults.add(ladderTestGroups.get(0).getTeams().get(3));
-            matchResults.add(ladderTestGroups.get(0).getTeams().get(0));
-            matchResults.add(ladderTestGroups.get(0).getTeams().get(1));
-            matchResults.add(ladderTestGroups.get(0).getTeams().get(2));
-            ladderTestGroups.get(0).getScoreCard().setRankedTeams(matchResults);
-            matchResults.clear();
-
-            matchResults.add(ladderTestGroups.get(1).getTeams().get(1));
-            matchResults.add(ladderTestGroups.get(1).getTeams().get(2));
-            matchResults.add(ladderTestGroups.get(1).getTeams().get(3));
-            matchResults.add(ladderTestGroups.get(1).getTeams().get(0));
-            ladderTestGroups.get(1).getScoreCard().setRankedTeams(matchResults);
-            matchResults.clear();
-
-            matchResults.add(ladderTestGroups.get(2).getTeams().get(3));
-            matchResults.add(ladderTestGroups.get(2).getTeams().get(1));
-            matchResults.add(ladderTestGroups.get(2).getTeams().get(2));
-            matchResults.add(ladderTestGroups.get(2).getTeams().get(0));
-            ladderTestGroups.get(2).getScoreCard().setRankedTeams(matchResults);
-            matchResults.clear();
-
-            System.out.println("Test Case #" + testCase + ":");
-            for(int i = 0;i < expectedResults.get(testCase).size();i++) {
-                User firstPlayer = expectedResults.get(testCase).get(i).getFirstPlayer();
-                User secondPlayer = expectedResults.get(testCase).get(i).getSecondPlayer();
-                System.out.println(i + ": " + firstPlayer.getFirstName() + " " + firstPlayer.getLastName() + ", " + secondPlayer.getFirstName() + " " + secondPlayer.getLastName());
-            }
-
-			Ladder testLadder = new Ladder(ladderTestTeams);
-			testLadder.updateLadder(ladderTestGroups);
-
-            System.out.println("\nResults:");
-            System.out.println(testLadder.toString());
 
             assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
 		}
@@ -1723,7 +1162,7 @@ public class LadderTest extends BaseTest {
 			List<Team> sourceResults2 = getTeams(teamCount, i).get(NOT_ATTENDING);
 			expectedResults.add(new ArrayList<>());
 			switch(i) {
-				case (0):
+				case(0):
 					expectedResults.get(i).add(sourceResults1.get(0));
 					expectedResults.get(i).add(sourceResults1.get(1));
 					expectedResults.get(i).add(sourceResults2.get(0));
@@ -1746,143 +1185,143 @@ public class LadderTest extends BaseTest {
 					expectedResults.get(i).add(sourceResults2.get(9));
 					expectedResults.get(i).add(sourceResults2.get(10));
                     break;
-				case (1):
-					expectedResults.get(i).add(sourceResults2.get(0));
-					expectedResults.get(i).add(sourceResults2.get(1));
-					expectedResults.get(i).add(sourceResults2.get(2));
-					expectedResults.get(i).add(sourceResults2.get(3));
-					expectedResults.get(i).add(sourceResults1.get(0));
-					expectedResults.get(i).add(sourceResults1.get(1));
-					expectedResults.get(i).add(sourceResults2.get(4));
-					expectedResults.get(i).add(sourceResults1.get(7));
-					expectedResults.get(i).add(sourceResults1.get(5));
-					expectedResults.get(i).add(sourceResults2.get(5));
-					expectedResults.get(i).add(sourceResults1.get(3));
-					expectedResults.get(i).add(sourceResults1.get(9));
-					expectedResults.get(i).add(sourceResults1.get(6));
-					expectedResults.get(i).add(sourceResults2.get(6));
-					expectedResults.get(i).add(sourceResults2.get(7));
-					expectedResults.get(i).add(sourceResults2.get(8));
-					expectedResults.get(i).add(sourceResults1.get(2));
-					expectedResults.get(i).add(sourceResults2.get(9));
-					expectedResults.get(i).add(sourceResults2.get(10));
-					expectedResults.get(i).add(sourceResults1.get(4));
-					expectedResults.get(i).add(sourceResults1.get(8));
+				case(1):
+                    expectedResults.get(i).add(sourceResults2.get(0));
+                    expectedResults.get(i).add(sourceResults2.get(1));
+                    expectedResults.get(i).add(sourceResults2.get(2));
+                    expectedResults.get(i).add(sourceResults2.get(3));
+                    expectedResults.get(i).add(sourceResults2.get(4));
+                    expectedResults.get(i).add(sourceResults1.get(0));
+                    expectedResults.get(i).add(sourceResults1.get(1));
+                    expectedResults.get(i).add(sourceResults2.get(5));
+                    expectedResults.get(i).add(sourceResults1.get(7));
+                    expectedResults.get(i).add(sourceResults1.get(5));
+                    expectedResults.get(i).add(sourceResults1.get(3));
+                    expectedResults.get(i).add(sourceResults2.get(6));
+                    expectedResults.get(i).add(sourceResults2.get(7));
+                    expectedResults.get(i).add(sourceResults2.get(8));
+                    expectedResults.get(i).add(sourceResults1.get(9));
+                    expectedResults.get(i).add(sourceResults2.get(9));
+                    expectedResults.get(i).add(sourceResults2.get(10));
+                    expectedResults.get(i).add(sourceResults1.get(6));
+                    expectedResults.get(i).add(sourceResults1.get(2));
+                    expectedResults.get(i).add(sourceResults1.get(4));
+                    expectedResults.get(i).add(sourceResults1.get(8));
                     break;
-				case (2):
-					expectedResults.get(i).add(sourceResults2.get(0));
-					expectedResults.get(i).add(sourceResults2.get(1));
-					expectedResults.get(i).add(sourceResults2.get(2));
-					expectedResults.get(i).add(sourceResults2.get(3));
-					expectedResults.get(i).add(sourceResults1.get(0));
-					expectedResults.get(i).add(sourceResults1.get(1));
-					expectedResults.get(i).add(sourceResults1.get(7));
-					expectedResults.get(i).add(sourceResults1.get(5));
-					expectedResults.get(i).add(sourceResults1.get(3));
-					expectedResults.get(i).add(sourceResults1.get(9));
-					expectedResults.get(i).add(sourceResults1.get(6));
-					expectedResults.get(i).add(sourceResults1.get(2));
-					expectedResults.get(i).add(sourceResults1.get(4));
-					expectedResults.get(i).add(sourceResults1.get(8));
-					expectedResults.get(i).add(sourceResults2.get(4));
-					expectedResults.get(i).add(sourceResults2.get(5));
-					expectedResults.get(i).add(sourceResults2.get(6));
-					expectedResults.get(i).add(sourceResults2.get(7));
-					expectedResults.get(i).add(sourceResults2.get(8));
-					expectedResults.get(i).add(sourceResults2.get(9));
-					expectedResults.get(i).add(sourceResults2.get(10));
+				case(2):
+                    expectedResults.get(i).add(sourceResults2.get(0));
+                    expectedResults.get(i).add(sourceResults2.get(1));
+                    expectedResults.get(i).add(sourceResults2.get(2));
+                    expectedResults.get(i).add(sourceResults2.get(3));
+                    expectedResults.get(i).add(sourceResults2.get(4));
+                    expectedResults.get(i).add(sourceResults2.get(5));
+                    expectedResults.get(i).add(sourceResults2.get(6));
+                    expectedResults.get(i).add(sourceResults2.get(7));
+                    expectedResults.get(i).add(sourceResults2.get(8));
+                    expectedResults.get(i).add(sourceResults2.get(9));
+                    expectedResults.get(i).add(sourceResults2.get(10));
+                    expectedResults.get(i).add(sourceResults1.get(0));
+                    expectedResults.get(i).add(sourceResults1.get(1));
+                    expectedResults.get(i).add(sourceResults1.get(7));
+                    expectedResults.get(i).add(sourceResults1.get(5));
+                    expectedResults.get(i).add(sourceResults1.get(3));
+                    expectedResults.get(i).add(sourceResults1.get(9));
+                    expectedResults.get(i).add(sourceResults1.get(6));
+                    expectedResults.get(i).add(sourceResults1.get(2));
+                    expectedResults.get(i).add(sourceResults1.get(4));
+                    expectedResults.get(i).add(sourceResults1.get(8));
                     break;
-				case (3):
-					expectedResults.get(i).add(sourceResults1.get(0));
-					expectedResults.get(i).add(sourceResults1.get(1));
-					expectedResults.get(i).add(sourceResults1.get(7));
-					expectedResults.get(i).add(sourceResults1.get(5));
-					expectedResults.get(i).add(sourceResults1.get(3));
-					expectedResults.get(i).add(sourceResults1.get(9));
-					expectedResults.get(i).add(sourceResults1.get(6));
-					expectedResults.get(i).add(sourceResults1.get(2));
-					expectedResults.get(i).add(sourceResults1.get(4));
-					expectedResults.get(i).add(sourceResults1.get(8));
-					expectedResults.get(i).add(sourceResults2.get(0));
-					expectedResults.get(i).add(sourceResults2.get(1));
-					expectedResults.get(i).add(sourceResults2.get(2));
-					expectedResults.get(i).add(sourceResults2.get(3));
-					expectedResults.get(i).add(sourceResults2.get(4));
-					expectedResults.get(i).add(sourceResults2.get(5));
-					expectedResults.get(i).add(sourceResults2.get(6));
-					expectedResults.get(i).add(sourceResults2.get(7));
-					expectedResults.get(i).add(sourceResults2.get(8));
-					expectedResults.get(i).add(sourceResults2.get(9));
-					expectedResults.get(i).add(sourceResults2.get(10));
+				case(3):
+                    expectedResults.get(i).add(sourceResults1.get(1));
+                    expectedResults.get(i).add(sourceResults1.get(7));
+                    expectedResults.get(i).add(sourceResults2.get(0));
+                    expectedResults.get(i).add(sourceResults1.get(5));
+                    expectedResults.get(i).add(sourceResults2.get(1));
+                    expectedResults.get(i).add(sourceResults1.get(0));
+                    expectedResults.get(i).add(sourceResults1.get(3));
+                    expectedResults.get(i).add(sourceResults1.get(9));
+                    expectedResults.get(i).add(sourceResults2.get(2));
+                    expectedResults.get(i).add(sourceResults2.get(3));
+                    expectedResults.get(i).add(sourceResults2.get(4));
+                    expectedResults.get(i).add(sourceResults2.get(5));
+                    expectedResults.get(i).add(sourceResults2.get(6));
+                    expectedResults.get(i).add(sourceResults2.get(7));
+                    expectedResults.get(i).add(sourceResults2.get(8));
+                    expectedResults.get(i).add(sourceResults2.get(9));
+                    expectedResults.get(i).add(sourceResults2.get(10));
+                    expectedResults.get(i).add(sourceResults1.get(6));
+                    expectedResults.get(i).add(sourceResults1.get(2));
+                    expectedResults.get(i).add(sourceResults1.get(4));
+                    expectedResults.get(i).add(sourceResults1.get(8));
                     break;
-				case (4):
-					expectedResults.get(i).add(sourceResults2.get(1));
-					expectedResults.get(i).add(sourceResults2.get(3));
-					expectedResults.get(i).add(sourceResults2.get(0));
-					expectedResults.get(i).add(sourceResults2.get(5));
-					expectedResults.get(i).add(sourceResults1.get(0));
-					expectedResults.get(i).add(sourceResults1.get(1));
-					expectedResults.get(i).add(sourceResults1.get(7));
-					expectedResults.get(i).add(sourceResults1.get(5));
-					expectedResults.get(i).add(sourceResults1.get(3));
-					expectedResults.get(i).add(sourceResults2.get(7));
-					expectedResults.get(i).add(sourceResults1.get(9));
-					expectedResults.get(i).add(sourceResults1.get(6));
-					expectedResults.get(i).add(sourceResults1.get(2));
-					expectedResults.get(i).add(sourceResults2.get(2));
-					expectedResults.get(i).add(sourceResults2.get(4));
-					expectedResults.get(i).add(sourceResults1.get(4));
-					expectedResults.get(i).add(sourceResults1.get(8));
-					expectedResults.get(i).add(sourceResults2.get(9));
-					expectedResults.get(i).add(sourceResults2.get(6));
-					expectedResults.get(i).add(sourceResults2.get(8));
-					expectedResults.get(i).add(sourceResults2.get(10));
+				case(4):
+                    expectedResults.get(i).add(sourceResults2.get(0));
+                    expectedResults.get(i).add(sourceResults2.get(1));
+                    expectedResults.get(i).add(sourceResults2.get(2));
+                    expectedResults.get(i).add(sourceResults2.get(3));
+                    expectedResults.get(i).add(sourceResults2.get(4));
+                    expectedResults.get(i).add(sourceResults1.get(0));
+                    expectedResults.get(i).add(sourceResults2.get(5));
+                    expectedResults.get(i).add(sourceResults2.get(6));
+                    expectedResults.get(i).add(sourceResults1.get(1));
+                    expectedResults.get(i).add(sourceResults2.get(7));
+                    expectedResults.get(i).add(sourceResults1.get(4));
+                    expectedResults.get(i).add(sourceResults1.get(7));
+                    expectedResults.get(i).add(sourceResults1.get(5));
+                    expectedResults.get(i).add(sourceResults2.get(8));
+                    expectedResults.get(i).add(sourceResults1.get(6));
+                    expectedResults.get(i).add(sourceResults2.get(9));
+                    expectedResults.get(i).add(sourceResults2.get(10));
+                    expectedResults.get(i).add(sourceResults1.get(2));
+                    expectedResults.get(i).add(sourceResults1.get(8));
+                    expectedResults.get(i).add(sourceResults1.get(9));
+                    expectedResults.get(i).add(sourceResults1.get(3));
                     break;
-				case (5):
-					expectedResults.get(i).add(sourceResults1.get(0));
-					expectedResults.get(i).add(sourceResults1.get(1));
-					expectedResults.get(i).add(sourceResults1.get(7));
-					expectedResults.get(i).add(sourceResults1.get(5));
-					expectedResults.get(i).add(sourceResults1.get(3));
-					expectedResults.get(i).add(sourceResults2.get(1));
-					expectedResults.get(i).add(sourceResults1.get(9));
-					expectedResults.get(i).add(sourceResults1.get(6));
-					expectedResults.get(i).add(sourceResults1.get(2));
-					expectedResults.get(i).add(sourceResults2.get(3));
-					expectedResults.get(i).add(sourceResults2.get(0));
-					expectedResults.get(i).add(sourceResults1.get(4));
-					expectedResults.get(i).add(sourceResults1.get(8));
-					expectedResults.get(i).add(sourceResults2.get(5));
-					expectedResults.get(i).add(sourceResults2.get(7));
-					expectedResults.get(i).add(sourceResults2.get(2));
-					expectedResults.get(i).add(sourceResults2.get(4));
-					expectedResults.get(i).add(sourceResults2.get(9));
-					expectedResults.get(i).add(sourceResults2.get(6));
-					expectedResults.get(i).add(sourceResults2.get(8));
-					expectedResults.get(i).add(sourceResults2.get(10));
+				case(5):
+                    expectedResults.get(i).add(sourceResults1.get(1));
+                    expectedResults.get(i).add(sourceResults1.get(7));
+                    expectedResults.get(i).add(sourceResults2.get(0));
+                    expectedResults.get(i).add(sourceResults1.get(5));
+                    expectedResults.get(i).add(sourceResults1.get(9));
+                    expectedResults.get(i).add(sourceResults2.get(1));
+                    expectedResults.get(i).add(sourceResults1.get(3));
+                    expectedResults.get(i).add(sourceResults2.get(2));
+                    expectedResults.get(i).add(sourceResults2.get(3));
+                    expectedResults.get(i).add(sourceResults2.get(4));
+                    expectedResults.get(i).add(sourceResults2.get(5));
+                    expectedResults.get(i).add(sourceResults2.get(6));
+                    expectedResults.get(i).add(sourceResults2.get(7));
+                    expectedResults.get(i).add(sourceResults2.get(8));
+                    expectedResults.get(i).add(sourceResults1.get(0));
+                    expectedResults.get(i).add(sourceResults1.get(6));
+                    expectedResults.get(i).add(sourceResults1.get(8));
+                    expectedResults.get(i).add(sourceResults2.get(9));
+                    expectedResults.get(i).add(sourceResults2.get(10));
+                    expectedResults.get(i).add(sourceResults1.get(2));
+                    expectedResults.get(i).add(sourceResults1.get(4));
                     break;
-				case (6):
-					expectedResults.get(i).add(sourceResults1.get(1));
-					expectedResults.get(i).add(sourceResults2.get(0));
-					expectedResults.get(i).add(sourceResults1.get(7));
-					expectedResults.get(i).add(sourceResults1.get(5));
-					expectedResults.get(i).add(sourceResults1.get(0));
-					expectedResults.get(i).add(sourceResults2.get(1));
-					expectedResults.get(i).add(sourceResults1.get(3));
-					expectedResults.get(i).add(sourceResults1.get(9));
-					expectedResults.get(i).add(sourceResults2.get(2));
-					expectedResults.get(i).add(sourceResults2.get(3));
-					expectedResults.get(i).add(sourceResults2.get(4));
-					expectedResults.get(i).add(sourceResults2.get(5));
-					expectedResults.get(i).add(sourceResults1.get(6));
-					expectedResults.get(i).add(sourceResults2.get(6));
-					expectedResults.get(i).add(sourceResults2.get(7));
-					expectedResults.get(i).add(sourceResults2.get(8));
-					expectedResults.get(i).add(sourceResults1.get(2));
-					expectedResults.get(i).add(sourceResults2.get(9));
-					expectedResults.get(i).add(sourceResults2.get(10));
-					expectedResults.get(i).add(sourceResults1.get(4));
-					expectedResults.get(i).add(sourceResults1.get(8));
+				case(6):
+                    expectedResults.get(i).add(sourceResults1.get(1));
+                    expectedResults.get(i).add(sourceResults1.get(7));
+                    expectedResults.get(i).add(sourceResults2.get(0));
+                    expectedResults.get(i).add(sourceResults1.get(4));
+                    expectedResults.get(i).add(sourceResults2.get(1));
+                    expectedResults.get(i).add(sourceResults2.get(2));
+                    expectedResults.get(i).add(sourceResults2.get(3));
+                    expectedResults.get(i).add(sourceResults2.get(4));
+                    expectedResults.get(i).add(sourceResults2.get(5));
+                    expectedResults.get(i).add(sourceResults2.get(6));
+                    expectedResults.get(i).add(sourceResults2.get(7));
+                    expectedResults.get(i).add(sourceResults1.get(0));
+                    expectedResults.get(i).add(sourceResults1.get(6));
+                    expectedResults.get(i).add(sourceResults2.get(8));
+                    expectedResults.get(i).add(sourceResults1.get(5));
+                    expectedResults.get(i).add(sourceResults2.get(9));
+                    expectedResults.get(i).add(sourceResults2.get(10));
+                    expectedResults.get(i).add(sourceResults1.get(2));
+                    expectedResults.get(i).add(sourceResults1.get(8));
+                    expectedResults.get(i).add(sourceResults1.get(9));
+                    expectedResults.get(i).add(sourceResults1.get(3));
                     break;
 			}
 		}
@@ -1941,18 +1380,8 @@ public class LadderTest extends BaseTest {
             ladderTestGroups.get(2).getScoreCard().setRankedTeams(matchResults);
             matchResults.clear();
 
-            System.out.println("Test Case #" + testCase + ":");
-            for(int i = 0;i < expectedResults.get(testCase).size();i++) {
-                User firstPlayer = expectedResults.get(testCase).get(i).getFirstPlayer();
-                User secondPlayer = expectedResults.get(testCase).get(i).getSecondPlayer();
-                System.out.println(i + ": " + firstPlayer.getFirstName() + " " + firstPlayer.getLastName() + ", " + secondPlayer.getFirstName() + " " + secondPlayer.getLastName());
-            }
-
 			Ladder testLadder = new Ladder(ladderTestTeams);
 			testLadder.updateLadder(ladderTestGroups);
-
-            System.out.println("\nResults:");
-            System.out.println(testLadder.toString());
 
             assertTrue(expectedResults.get(testCase).equals(testLadder.getLadder()));
 		}
