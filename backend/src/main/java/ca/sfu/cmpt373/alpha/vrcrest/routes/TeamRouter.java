@@ -52,13 +52,13 @@ public class TeamRouter extends RestRouter {
     private static final String ERROR_IDENTICAL_PLAYER_ID = "Cannot create a team consisting of the two same players.";
     private static final String ERROR_NONEXISTENT_TEAM = "This team does not exist.";
 
-    private final NotificationManager notify;
+    // private final NotificationManager notify;
     private TeamManager teamManager;
 
     public TeamRouter(ApplicationManager applicationManager) {
         super(applicationManager);
         teamManager = applicationManager.getTeamManager();
-        notify = new NotificationManager();
+        // notify = new NotificationManager();
     }
 
     @Override
@@ -114,7 +114,7 @@ public class TeamRouter extends RestRouter {
         try {
             NewTeamPayload newTeamPayload = getGson().fromJson(request.body(), NewTeamPayload.class);
             Team newTeam = teamManager.create(newTeamPayload.getFirstPlayerId(), newTeamPayload.getSecondPlayerId());
-            notify.notifyUser(newTeam, NotificationType.ADDED_TO_TEAM);
+            // notify.notifyUser(newTeam, NotificationType.ADDED_TO_TEAM);
             JsonElement jsonTeam = getGson().toJsonTree(newTeam);
             responseBody.add(JSON_PROPERTY_TEAM, jsonTeam);
             response.status(HttpStatus.CREATED_201);
@@ -221,7 +221,7 @@ public class TeamRouter extends RestRouter {
             NewPlayTimePayload playTimePayload = getGson().fromJson(request.body(), NewPlayTimePayload.class);
             Team existingTeam = teamManager.updateAttendancePlaytime(generatedId, playTimePayload.getPlayTime());
             AttendanceCard attendanceCard = existingTeam.getAttendanceCard();
-            notify.notifyUser(existingTeam, NotificationType.TEAM_TIME_UPDATED);
+            // notify.notifyUser(existingTeam, NotificationType.TEAM_TIME_UPDATED);
 
             responseBody.add(JSON_PROPERTY_ATTENDANCE, getGson().toJsonTree(attendanceCard));
             response.status(HttpStatus.OK_200);
