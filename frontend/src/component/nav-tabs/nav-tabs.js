@@ -7,7 +7,7 @@ import styles from './nav-tabs.css';
 export const NavTabsDummy = React.createClass({
   render() {
     return (this.props.loggedIn.authorizationToken) ?
-      (<Nav pullRight>
+      (<Nav pullRight className={styles.navTab}>
         <LinkContainer to='/logout'>
           <NavItem>Log out</NavItem>
         </LinkContainer>
@@ -21,7 +21,7 @@ export const NavTabsDummy = React.createClass({
           <NavItem>Match Groups</NavItem>
         </LinkContainer>
       </Nav>) :
-      (<Nav pullRight className={styles.navBar}>
+      (<Nav pullRight className={styles.navTab}>
        <LinkContainer to='/'>
          <NavItem>Log in</NavItem>
        </LinkContainer>
