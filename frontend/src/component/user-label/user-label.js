@@ -7,7 +7,7 @@ import styles from './user-label.css';
 const UserLabelDummy = (userInfo) => {
   return map((userInfo) => (
   <Navbar.Text className={styles.userLabel}>
-    {userInfo.firstName} {userInfo.lastName}
+    {userInfo.name}
   </Navbar.Text>), userInfo)[0];
 };
 
