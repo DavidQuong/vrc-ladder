@@ -12,6 +12,7 @@ import {Nav, Navbar, Grid} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import styles from './index.css';
 import LogIn from './component/login/login';
+import Logout from './component/logout/logout';
 import {UserLabel} from './component/user-label/user-label';
 import {NavTabs} from './component/nav-tabs/nav-tabs';
 
@@ -64,6 +65,10 @@ export default ({store}) : Element => (
             path='/login'
             navbarTitle='Login'
             component={LogIn}
+          />
+          <Route
+            path='/logout'
+            component={Logout}
           />
           <Route
             path='/profile'
