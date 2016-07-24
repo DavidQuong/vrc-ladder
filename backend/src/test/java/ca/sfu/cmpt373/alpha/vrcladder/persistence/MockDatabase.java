@@ -1,4 +1,4 @@
-package ca.sfu.cmpt373.alpha.vrcladder.persistance;
+package ca.sfu.cmpt373.alpha.vrcladder.persistence;
 
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.LadderPosition;
