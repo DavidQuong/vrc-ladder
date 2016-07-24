@@ -4,7 +4,7 @@ import {LinkContainer} from 'react-router-bootstrap';
 import {connect} from 'react-redux';
 import styles from './nav-tabs.css';
 
-export const NavTabsDummy = React.createClass({
+const NavTabsDummy = React.createClass({
   render() {
     return (this.props.loggedIn.authorizationToken) ?
       (<Nav pullRight className={styles.navTab}>
