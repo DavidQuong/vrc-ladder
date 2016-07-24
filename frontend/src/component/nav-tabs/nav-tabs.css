@@ -1,3 +1,5 @@
+~colors: "./../../config/colors.config";
+
 .navTab > li > a {
   color: inherit !important;
   background-color: transparent !important;
