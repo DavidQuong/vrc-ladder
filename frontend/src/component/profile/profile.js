@@ -297,55 +297,6 @@ const displayMyInfo = (userInfo) => (
   </div>
 );
 
-const getTime = (time) => {
-  if (time === 'TIME_SLOT_A') {
-    return '8:30';
-  } else if (time === 'TIME_SLOT_B') {
-    return '9:30';
-  }
-  return 'NONE';
-};
-export default connect(
-  (state) => ({
-    players: sortBy('firstName', state.app.players),
-    teams: state.app.teams,
-    login: state.app.loggedIn,
-    userInfo: state.app.userInfo,
-    teamInfo: state.app.teamInfo,
-  }), {
-    addTeam,
-    displayMyInfo,
-    getTeamInfo,
-    updateTeamStatus}
-)(CreateTeam);
-
-const displayTeamInfo = map((teamInfo) => (
-  <div
-    key={teamInfo.teamId}
-    className={styles.inactiveProfileTeams}
-  >
-    <div className={styles.profileDetailsField}>
-      <FormattedMessage
-        id='firstPlayer'
-        defaultMessage='Team With: '
-      />
-    </div>
-    <div className={styles.profileDetails}>
-      {teamInfo.secondPlayer.name}
-    </div>
-    <br/>
-    <div className={styles.profileDetailsField}>
-      <FormattedMessage
-        id='playTime'
-        defaultMessage='Preferred Play Time: '
-      />
-    </div>
-    <div className={styles.profileDetails}>
-      {getTime(teamInfo.playTime)}
-    </div>
-  </div>
-));
-
 const CreateTeam = withRouter(({
   addTeam,
   players,
@@ -424,6 +375,55 @@ const CreateTeam = withRouter(({
         });
       }}
     />
+  </div>
+));
+
+const getTime = (time) => {
+  if (time === 'TIME_SLOT_A') {
+    return '8:30';
+  } else if (time === 'TIME_SLOT_B') {
+    return '9:30';
+  }
+  return 'NONE';
+};
+export default connect(
+  (state) => ({
+    players: sortBy('firstName', state.app.players),
+    teams: state.app.teams,
+    login: state.app.loggedIn,
+    userInfo: state.app.userInfo,
+    teamInfo: state.app.teamInfo,
+  }), {
+    addTeam,
+    displayMyInfo,
+    getTeamInfo,
+    updateTeamStatus}
+)(CreateTeam);
+
+const displayTeamInfo = map((teamInfo) => (
+  <div
+    key={teamInfo.teamId}
+    className={styles.inactiveProfileTeams}
+  >
+    <div className={styles.profileDetailsField}>
+      <FormattedMessage
+        id='firstPlayer'
+        defaultMessage='Team With: '
+      />
+    </div>
+    <div className={styles.profileDetails}>
+      {teamInfo.secondPlayer.name}
+    </div>
+    <br/>
+    <div className={styles.profileDetailsField}>
+      <FormattedMessage
+        id='playTime'
+        defaultMessage='Preferred Play Time: '
+      />
+    </div>
+    <div className={styles.profileDetails}>
+      {getTime(teamInfo.playTime)}
+    </div>
   </div>
 ));
 
