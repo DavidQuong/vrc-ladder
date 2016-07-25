@@ -81,7 +81,7 @@ public class UserManagerTest extends BaseTest {
         final Password password = new Password("123");
 
         userManager.update(userFixture.getUserId(), newFirstName, newMiddleName, userFixture.getLastName(),
-            newEmailAddress, newPhoneNumber,password);
+            newEmailAddress, newPhoneNumber, password);
 
         Session session = sessionManager.getSession();
         User user = session.get(User.class, userFixture.getUserId());
@@ -94,6 +94,7 @@ public class UserManagerTest extends BaseTest {
         Assert.assertEquals(userFixture.getLastName(), user.getLastName());
         Assert.assertEquals(newEmailAddress, user.getEmailAddress());
         Assert.assertEquals(newPhoneNumber, user.getPhoneNumber());
+        Assert.assertEquals(userFixture.getPassword(), user.getPassword());
     }
 
     @Test

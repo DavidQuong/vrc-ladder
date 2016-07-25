@@ -69,8 +69,7 @@ public class UserManager extends DatabaseManager<User> {
         user.setLastName(lastName);
         user.setEmailAddress(emailAddress);
         user.setPhoneNumber(phoneNumber);
-        if(!password.equals(""))
-            user.setPassword(password);
+        user.setPassword(password);
         return update(user);
     }
 
