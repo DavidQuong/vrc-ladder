@@ -15,6 +15,28 @@ import classNames from 'classnames';
 import isEmpty from 'lodash/fp/isEmpty';
 import sortBy from 'lodash/fp/sortBy';
 
+const getTime = (time) => {
+  if (time === 'TIME_SLOT_A') {
+    return '8:30';
+  } else if (time === 'TIME_SLOT_B') {
+    return '9:30';
+  }
+  return 'NONE';
+};
+export default connect(
+  (state) => ({
+    players: sortBy('firstName', state.app.players),
+    teams: state.app.teams,
+    login: state.app.loggedIn,
+    userInfo: state.app.userInfo,
+    teamInfo: state.app.teamInfo,
+  }), {
+    addTeam,
+    displayMyInfo,
+    getTeamInfo,
+    updateTeamStatus}
+)(CreateTeam);
+
 const validate = (values, userInfo) => {
   const errors = {};
   if (!values.secondPlayerId) {
@@ -25,7 +47,6 @@ const validate = (values, userInfo) => {
   }
   return errors;
 };
-
 
 const playTimes = [{
   time: '8:00 pm',
@@ -323,6 +344,3 @@ export default connect(
     getTeamInfo,
     updateTeamStatus}
 )(CreateTeam);
-
-
-
