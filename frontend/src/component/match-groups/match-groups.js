@@ -361,3 +361,4 @@ export default connect(
   }), {
     getMatchGroups,
     generateMatchGroups}
+)(MatchGroups);
