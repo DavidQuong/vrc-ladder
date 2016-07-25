@@ -225,7 +225,7 @@ public class TeamManager extends DatabaseManager<Team> {
     public List<Team> updateLadderPositions(List<Team> teams) {
         //TODO: add more verification that every team in the ladder is actually passed in
         Session session = sessionManager.getSession();
-        int numTeamsInLadder = (int) (long) session.createCriteria(Team.class)
+        long numTeamsInLadder = (long) session.createCriteria(Team.class)
                 .setProjection(Projections.rowCount())
                 .uniqueResult();
         if (teams.size() != numTeamsInLadder) {
