@@ -35,7 +35,7 @@ const orderTeams = map((team) => (
 const Ladder = ({
   teams,
 }) : Element => (
-  <Well className={styles.ladderTableContainer}>
+  <Well className={`${styles.ladderTableContainer} table-responsive`}>
     <table className={styles.ladderTable}>
       <thead>
         <tr className={styles.ladderTableHeading}>
