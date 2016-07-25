@@ -112,7 +112,7 @@ const updateProfileInfo = ({
      </FormGroup>
 
      <div className={classNames(styles.center)}>
-       <button bsStyle='primary' bsSize='large' type='submit'>Sign Up</Button>
+       <button bsStyle='primary' bsSize='large' type='submit'>Sign Up</button>
      </div>
    </div>
  </Form>
@@ -305,6 +305,19 @@ const getTime = (time) => {
   }
   return 'NONE';
 };
+export default connect(
+  (state) => ({
+    players: sortBy('firstName', state.app.players),
+    teams: state.app.teams,
+    login: state.app.loggedIn,
+    userInfo: state.app.userInfo,
+    teamInfo: state.app.teamInfo,
+  }), {
+    addTeam,
+    displayMyInfo,
+    getTeamInfo,
+    updateTeamStatus}
+)(CreateTeam);
 
 const displayTeamInfo = map((teamInfo) => (
   <div
