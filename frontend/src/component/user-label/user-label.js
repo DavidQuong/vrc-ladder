@@ -1,15 +1,15 @@
-import {createElement} from 'react';
+import React, {createElement} from 'react';
 import {connect} from 'react-redux';
 import {Navbar} from 'react-bootstrap';
-import map from 'lodash/fp/map';
 import styles from './user-label.css';
 
-const UserLabelDummy = (userInfo) => {
-  return map((userInfo) => (
-  <Navbar.Text className={styles.userLabel}>
-    {userInfo.firstName} {userInfo.lastName}
-  </Navbar.Text>), userInfo)[0];
-};
+const UserLabelDummy = React.createClass({
+  render: function() {
+    return (<Navbar.Text className={styles.userLabel}>
+      {this.props.userInfo.name}
+    </Navbar.Text>);
+  },
+});
 
 const mapStateToProps = (state) => (
   {
