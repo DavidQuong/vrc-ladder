@@ -26,107 +26,6 @@ const validate = (values, userInfo) => {
   return errors;
 };
 
-const updateProfileInfo = ({
- fields: {
-   userId,
-   firstName,
-   lastName,
-   emailAddress,
-   phoneNumber,
-   password,
-   confirmPassword},
- handleSubmit,
-}) => (
- <Form horizontal onSubmit={handleSubmit}>
-   <div>
-     <FormGroup>
-       <col componentClass={ControlLabel} sm={4}>User ID</col>
-       <col sm={4}>
-         <FormControl type='userID' placeholder='Your ID #' {...userId} />
-       </col>
-       <col sm={3}><FormError {...userId}/></col>
-     </FormGroup>
-
-     <FormGroup>
-       <col componentClass={ControlLabel} sm={4}>First Name</col>
-       <col sm={4}>
-         <FormControl
-           type='firstName'
-           placeholder='eg. Jane'
-           {...firstName}
-         />
-       </col>
-       <col sm={3}><FormError {...firstName}/></col>
-     </FormGroup>
-
-     <FormGroup>
-       <col componentClass={ControlLabel} sm={4}>Last Name</col>
-       <col sm={4}>
-         <FormControl type='lastName' placeholder='eg. Doe' {...lastName} />
-       </col>
-       <col sm={3}><FormError {...lastName}/></col>
-     </FormGroup>
-
-     <FormGroup>
-       <col componentClass={ControlLabel} sm={4}>Email</col>
-       <col sm={5}>
-         <FormControl
-           type='emailAddress'
-           placeholder='eg. jane.doe@example.com'
-           {...emailAddress}
-         />
-       </col>
-       <col sm={3}><FormError {...emailAddress}/></col>
-     </FormGroup>
-
-     <FormGroup>
-       <col componentClass={ControlLabel} sm={4}>Phone Number</col>
-       <col sm={4}>
-         <FormControl
-           type='phoneNumber'
-           placeholder='eg. 6041234567'
-           {...phoneNumber}
-         />
-       </col>
-       <col sm={3}><FormError {...phoneNumber}/></col>
-     </FormGroup>
-
-     <FormGroup>
-       <col componentClass={ControlLabel} sm={4}>Password</col>
-       <col sm={5}>
-         <FormControl type='password' placeholder='Password' {...password} />
-       </col>
-       <col sm={3}><FormError {...password}/></col>
-     </FormGroup>
-
-     <FormGroup>
-       <col componentClass={ControlLabel} sm={4}>Confirm Password</col>
-       <col sm={5}>
-         <FormControl
-           type='password'
-           placeholder='Password confirmation'
-           {...confirmPassword}
-         />
-       </col>
-       <col sm={3}><FormError {...confirmPassword}/></col>
-     </FormGroup>
-
-     <div className={classNames(styles.center)}>
-       <button bsStyle='primary' bsSize='large' type='submit'>Sign Up</button>
-     </div>
-   </div>
- </Form>
-);
-const validateUpdateStatus = (values) => {
-  const errors = {};
-  if (!values.playTime) {
-    errors.playTime = 'Required';
-  }
-  if (!values.teamId) {
-    errors.teamId = 'Required';
-  }
-  return errors;
-};
 
 const playTimes = [{
   time: '8:00 pm',
@@ -296,7 +195,32 @@ const displayMyInfo = (userInfo) => (
     </div>
   </div>
 );
-
+const displayTeamInfo = map((teamInfo) => (
+  <div
+    key={teamInfo.teamId}
+    className={styles.inactiveProfileTeams}
+  >
+    <div className={styles.profileDetailsField}>
+      <FormattedMessage
+        id='firstPlayer'
+        defaultMessage='Team With: '
+      />
+    </div>
+    <div className={styles.profileDetails}>
+      {teamInfo.secondPlayer.name}
+    </div>
+    <br/>
+    <div className={styles.profileDetailsField}>
+      <FormattedMessage
+        id='playTime'
+        defaultMessage='Preferred Play Time: '
+      />
+    </div>
+    <div className={styles.profileDetails}>
+      {getTime(teamInfo.playTime)}
+    </div>
+  </div>
+));
 const CreateTeam = withRouter(({
   addTeam,
   players,
@@ -400,30 +324,5 @@ export default connect(
     updateTeamStatus}
 )(CreateTeam);
 
-const displayTeamInfo = map((teamInfo) => (
-  <div
-    key={teamInfo.teamId}
-    className={styles.inactiveProfileTeams}
-  >
-    <div className={styles.profileDetailsField}>
-      <FormattedMessage
-        id='firstPlayer'
-        defaultMessage='Team With: '
-      />
-    </div>
-    <div className={styles.profileDetails}>
-      {teamInfo.secondPlayer.name}
-    </div>
-    <br/>
-    <div className={styles.profileDetailsField}>
-      <FormattedMessage
-        id='playTime'
-        defaultMessage='Preferred Play Time: '
-      />
-    </div>
-    <div className={styles.profileDetails}>
-      {getTime(teamInfo.playTime)}
-    </div>
-  </div>
-));
+
 
