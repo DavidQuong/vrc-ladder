@@ -4,7 +4,7 @@ import {getMatchGroups, generateMatchGroups} from '../../action/matchgroups';
 import {withRouter} from 'react-router';
 import {reduxForm} from 'redux-form';
 import {FormattedMessage} from 'react-intl';
-import {SubmitBtn} from '../button';
+import {SubmitBtn} from '../button/button';
 import {Form, Panel, Well} from 'react-bootstrap';
 
 import Heading from '../heading/heading';

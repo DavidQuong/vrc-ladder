@@ -8,13 +8,13 @@ import {
   getCurrentActiveUserInfo, getPlayer, getTeamInfo,
 } from '../../action/users';
 import {createAction} from 'redux-actions';
-import {
-  Well, Col, ControlLabel, Button, FormControl, FormGroup, Form,
-} from 'react-bootstrap';
-
 import styles from './login.css';
 import Heading from '../heading/heading';
 import isEmpty from 'lodash/fp/isEmpty';
+import {SubmitBtn} from '../button/button';
+import {
+  Well, Col, ControlLabel, FormControl, FormGroup, Form,
+} from 'react-bootstrap';
 
 const validate = (values) => {
   const errors = {};
@@ -65,7 +65,7 @@ const BaseLogInForm = ({
       </FormGroup>
 
       <div className={styles.center}>
-        <Button bsStyle='primary' bsSize='large' type='submit'>Log In</Button>
+        <SubmitBtn type='submit'>Log In</SubmitBtn>
       </div>
     </div>
   </Form>
