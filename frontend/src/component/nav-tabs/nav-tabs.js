@@ -41,4 +41,6 @@ const mapStateToProps = (state) => (
   }
 );
 
-export const NavTabs = connect(mapStateToProps, null, null, {pure: false})(NavTabsDummy);
+export const NavTabs = connect(
+  mapStateToProps, null, null, {pure: false}
+)(NavTabsDummy);
