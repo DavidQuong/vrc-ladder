@@ -103,12 +103,12 @@ public class LadderStepsTest {
     private void testApplySinglePenalty(List<Team> teamsList, Team penalizedTeam, int penalty) {
         Ladder ladder = new Ladder(teamsList);
 
-        int originalLadderPosition = ladder.findTeamPosition(penalizedTeam);
+        int originalLadderPosition = ladder.rankOfTeam(penalizedTeam);
 
         // test with no MatchGroups to isolate attendance penalties
         ladder.updateLadder(new ArrayList<>());
 
-        int newLadderPosition = ladder.findTeamPosition(penalizedTeam);
+        int newLadderPosition = ladder.rankOfTeam(penalizedTeam);
         boolean isTeamPenaltyWithinLadderBounds =
                 (originalLadderPosition + penalty <= ladder.getTeamCount());
         if (isTeamPenaltyWithinLadderBounds) {
@@ -133,7 +133,7 @@ public class LadderStepsTest {
         teamTestData.get(4).getAttendanceCard().setAttendanceStatus(AttendanceStatus.LATE);
 
         //TODO: add more test data
-        testApplyMultiplePenalties(teamTestData, new Integer[] {1, 3, 5, 6, 2, 0, 7, 8, 4});
+        testApplyMultiplePenalties(teamTestData, new Integer[] {1, 3, 5, 2, 0, 6, 7, 8, 4});
     }
 
     private void testApplyMultiplePenalties(List<Team> inputTeams, Integer[] resultsIndices) {
@@ -238,10 +238,10 @@ public class LadderStepsTest {
      */
     private Pair<Integer, Integer> getLastAndFirstTeamPositions(Ladder ladder, MatchGroup firstMatchGroup, MatchGroup nextMatchGroup) {
         List<Team> firstMatchGroupRankedTeams = firstMatchGroup.getScoreCard().getRankedTeams();
-        int positionLastTeamOfFirstMatchGroup = ladder.findTeamPosition(firstMatchGroupRankedTeams.get(firstMatchGroupRankedTeams.size() - 1));
+        int positionLastTeamOfFirstMatchGroup = ladder.rankOfTeam(firstMatchGroupRankedTeams.get(firstMatchGroupRankedTeams.size() - 1));
 
         List<Team> nextMatchGroupRankedTeams = nextMatchGroup.getScoreCard().getRankedTeams();
-        int positionFirstTeamOfNextMatchGroup = ladder.findTeamPosition(nextMatchGroupRankedTeams.get(0));
+        int positionFirstTeamOfNextMatchGroup = ladder.rankOfTeam(nextMatchGroupRankedTeams.get(0));
 
         return new ImmutablePair<>(positionLastTeamOfFirstMatchGroup, positionFirstTeamOfNextMatchGroup);
     }
