@@ -1,13 +1,4 @@
 ~colors: "./config/colors.config";
-
-:global {
-  .navbar-default .navbar-nav > .active > a,
-  .navbar-default .navbar-nav > .active > a:focus,
-  .navbar-default .navbar-nav > .active > a:hover {
-    background-color: ~colors.paleBlue !important;
-  }
-}
-
 :local {
   .upperNavbar {
     font-family: 'Lato', sans-serif;
