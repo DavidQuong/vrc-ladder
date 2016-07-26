@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* eslint-env browser */
 import {createElement} from 'react';
 import {render} from 'react-dom';
