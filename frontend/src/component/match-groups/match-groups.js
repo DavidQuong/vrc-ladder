@@ -165,125 +165,125 @@ const ResultFormFour = reduxForm({
   handleSubmit,
 }) => (
   <Form horizontal onSubmit={handleSubmit}>
-  <div className={classNames(styles.formGroup)}>
-    <label
-      className={classNames(styles.colXsTitle)}
-    >
-      <FormattedMessage
-        id='rank1'
-        defaultMessage='Rank 1:'
-      />
-    </label>
-    <select
-      className={classNames(styles.goodForm, {
-        [styles.errorForm]: rank1.error &&
-                            rank1.touched})}
-      {...rank1}
-    >
-      <option value=''>Select a team...</option>
-      {map((teams) => (
-        <option value={teams.teamId}key={teams.teamId}>
-          {teams.firstPlayer.name} & {teams.secondPlayer.name}
-        </option>
-      ), matchTeams)}
-    </select>
-    {rank1.touched && rank1.error &&
-      <div className={classNames(styles.errorMsg)}>
-      <Heading kind='error'>
-            {rank1.error}
-          </Heading>
-      </div>}
-  </div>
-  <div className={classNames(styles.formGroup)}>
-    <label
-      className={classNames(styles.colXsTitle)}
-    >
-      <FormattedMessage
-        id='rank2'
-        defaultMessage='Rank 2:'
-      />
-    </label>
-    <select
-      className={classNames(styles.goodForm, {
-        [styles.errorForm]: rank2.error &&
-                            rank2.touched})}
-      {...rank2}
-    >
-      <option value=''>Select a team...</option>
-      {map((teams) => (
-        <option value={teams.teamId}key={teams.teamId}>
-          {teams.firstPlayer.name} & {teams.secondPlayer.name}
-        </option>
-      ), matchTeams)}
-    </select>
-    {rank2.touched && rank2.error &&
-      <div className={classNames(styles.errorMsg)}>
-      <Heading kind='error'>
-            {rank2.error}
-          </Heading>
-      </div>}
-  </div>
-  <div className={classNames(styles.formGroup)}>
-    <label
-      className={classNames(styles.colXsTitle)}
-    >
-      <FormattedMessage
-        id='rank3'
-        defaultMessage='Rank 3:'
-      />
-    </label>
-    <select
-      className={classNames(styles.goodForm, {
-        [styles.errorForm]: rank3.error &&
-                            rank3.touched})}
-      {...rank3}
-    >
-      <option value=''>Select a team...</option>
-      {map((teams) => (
-        <option value={teams.teamId}key={teams.teamId}>
-          {teams.firstPlayer.name} & {teams.secondPlayer.name}
-        </option>
-      ), matchTeams)}
-    </select>
-    {rank3.touched && rank3.error &&
-      <div className={classNames(styles.errorMsg)}>
-      <Heading kind='error'>
-            {rank3.error}
-          </Heading>
-      </div>}
-  </div>
-  <div className={classNames(styles.formGroup)}>
-    <label
-      className={classNames(styles.colXsTitle)}
-    >
-      <FormattedMessage
-        id='rank4'
-        defaultMessage='Rank 4:'
-      />
-    </label>
-    <select
-      className={classNames(styles.goodForm, {
-        [styles.errorForm]: rank4.error &&
-                            rank4.touched})}
-      {...rank4}
-    >
-      <option value=''>Select a team...</option>
-      {map((teams) => (
-        <option value={teams.teamId}key={teams.teamId}>
-          {teams.firstPlayer.name} & {teams.secondPlayer.name}
-        </option>
-      ), matchTeams)}
-    </select>
-    {rank4.touched && rank4.error &&
-      <div className={classNames(styles.errorMsg)}>
-      <Heading kind='error'>
-            {rank4.error}
-          </Heading>
-      </div>}
-  </div>
-  <div className={classNames(styles.center)}>
-    <SubmitBtn type='submit'>Submit Results</SubmitBtn>
-  </div>
+    <div className={classNames(styles.formGroup)}>
+      <label
+        className={classNames(styles.colXsTitle)}
+      >
+        <FormattedMessage
+          id='rank1'
+          defaultMessage='Rank 1:'
+        />
+      </label>
+      <select
+        className={classNames(styles.goodForm, {
+          [styles.errorForm]: rank1.error &&
+                              rank1.touched})}
+        {...rank1}
+      >
+        <option value=''>Select a team...</option>
+        {map((teams) => (
+          <option value={teams.teamId}key={teams.teamId}>
+            {teams.firstPlayer.name} & {teams.secondPlayer.name}
+          </option>
+        ), matchTeams)}
+      </select>
+      {rank1.touched && rank1.error &&
+        <div className={classNames(styles.errorMsg)}>
+        <Heading kind='error'>
+              {rank1.error}
+            </Heading>
+        </div>}
+    </div>
+    <div className={classNames(styles.formGroup)}>
+      <label
+        className={classNames(styles.colXsTitle)}
+      >
+        <FormattedMessage
+          id='rank2'
+          defaultMessage='Rank 2:'
+        />
+      </label>
+      <select
+        className={classNames(styles.goodForm, {
+          [styles.errorForm]: rank2.error &&
+                              rank2.touched})}
+        {...rank2}
+      >
+        <option value=''>Select a team...</option>
+        {map((teams) => (
+          <option value={teams.teamId}key={teams.teamId}>
+            {teams.firstPlayer.name} & {teams.secondPlayer.name}
+          </option>
+        ), matchTeams)}
+      </select>
+      {rank2.touched && rank2.error &&
+        <div className={classNames(styles.errorMsg)}>
+        <Heading kind='error'>
+              {rank2.error}
+            </Heading>
+        </div>}
+    </div>
+    <div className={classNames(styles.formGroup)}>
+      <label
+        className={classNames(styles.colXsTitle)}
+      >
+        <FormattedMessage
+          id='rank3'
+          defaultMessage='Rank 3:'
+        />
+      </label>
+      <select
+        className={classNames(styles.goodForm, {
+          [styles.errorForm]: rank3.error &&
+                              rank3.touched})}
+        {...rank3}
+      >
+        <option value=''>Select a team...</option>
+        {map((teams) => (
+          <option value={teams.teamId}key={teams.teamId}>
+            {teams.firstPlayer.name} & {teams.secondPlayer.name}
+          </option>
+        ), matchTeams)}
+      </select>
+      {rank3.touched && rank3.error &&
+        <div className={classNames(styles.errorMsg)}>
+        <Heading kind='error'>
+              {rank3.error}
+            </Heading>
+        </div>}
+    </div>
+    <div className={classNames(styles.formGroup)}>
+      <label
+        className={classNames(styles.colXsTitle)}
+      >
+        <FormattedMessage
+          id='rank4'
+          defaultMessage='Rank 4:'
+        />
+      </label>
+      <select
+        className={classNames(styles.goodForm, {
+          [styles.errorForm]: rank4.error &&
+                              rank4.touched})}
+        {...rank4}
+      >
+        <option value=''>Select a team...</option>
+        {map((teams) => (
+          <option value={teams.teamId}key={teams.teamId}>
+            {teams.firstPlayer.name} & {teams.secondPlayer.name}
+          </option>
+        ), matchTeams)}
+      </select>
+      {rank4.touched && rank4.error &&
+        <div className={classNames(styles.errorMsg)}>
+        <Heading kind='error'>
+              {rank4.error}
+            </Heading>
+        </div>}
+    </div>
+    <div className={classNames(styles.center)}>
+      <SubmitBtn type='submit'>Submit Results</SubmitBtn>
+    </div>
   </Form>
 ));
 

@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {addTeam, updateTeamStatus} from '../../action/teams';
 import {SubmitBtn} from '../button/button';
+import {Form, Panel, Well} from 'react-bootstrap';
 import {withRouter} from 'react-router';
 import {getTeamInfo} from '../../action/users';
 
@@ -251,74 +252,61 @@ const CreateTeam = withRouter(({
   updateTeamStatus,
   router,
 }) : Element => (
-  <div className={styles.createTeam}>
-      <div className={styles.sectionHeaders}>
-        <FormattedMessage
-          id='myInfo'
-          defaultMessage='My Profile'
-        />
-      </div>
-    {displayMyInfo(userInfo)}
-    <div className={styles.sectionHeaders}>
-      <FormattedMessage
-        id='myTeams'
-        defaultMessage='My Teams'
+  <Well>
+    <Panel header='My Profile' bsStyle='primary'>
+      {displayMyInfo(userInfo)}
+    </Panel>
+
+    <Panel header='My Teams' bsStyle='primary'>
+      {displayTeamInfo(teamInfo)}
+    </Panel>
+
+    <Panel header='Update Attendance' bsStyle='primary'>
+      <UpdateAttendanceForm
+        teams={teamInfo}
+        userInfo={userInfo}
+        onSubmit={(props) => {
+          const errors = validateUpdateStatus(props);
+          if (!isEmpty(errors)) {
+            return Promise.reject(errors);
+          }
+          return updateTeamStatus({
+            ...props,
+            authorizationToken: login.authorizationToken,
+          }).then(() => {
+            getTeamInfo();
+            router.replace('/profile');
+            // TODO: Show a popup here!
+          });
+        }}
       />
-    </div>
-    {displayTeamInfo(teamInfo)}
-    <div className={styles.sectionHeaders}>
-      <FormattedMessage
-        id='teamAttendance'
-        defaultMessage='Update Attendance'
+    </Panel>
+
+    <Panel header='Create Team' bsStyle='primary'>
+      <CreateTeamForm
+        players={players}
+        teams={teams}
+        userInfo={userInfo}
+        onSubmit={(props) => {
+          const errors = validate(props, userInfo);
+          if (!isEmpty(errors)) {
+            return Promise.reject(errors);
+          }
+          return addTeam({
+            ...props,
+            firstPlayerId: userInfo.userId,
+          }, login).then(() => {
+            getTeamInfo();
+            router.replace('/profile');
+            // TODO: Show a popup here!
+          }).catch(() => {
+            const errors = {secondPlayerId: 'team exists'};
+            return Promise.reject(errors);
+          });
+        }}
       />
-    </div>
-    <UpdateAttendanceForm
-      teams={teamInfo}
-      userInfo={userInfo}
-      onSubmit={(props) => {
-        const errors = validateUpdateStatus(props);
-        if (!isEmpty(errors)) {
-          return Promise.reject(errors);
-        }
-        return updateTeamStatus({
-          ...props,
-          authorizationToken: login.authorizationToken,
-        }).then(() => {
-          getTeamInfo();
-          router.replace('/profile');
-          // TODO: Show a popup here!
-        });
-      }}
-    />
-  <div className={styles.sectionHeaders}>
-    <FormattedMessage
-      id='createTeam'
-      defaultMessage='Create Team'
-    />
-   </div>
-    <CreateTeamForm
-      players={players}
-      teams={teams}
-      userInfo={userInfo}
-      onSubmit={(props) => {
-        const errors = validate(props, userInfo);
-        if (!isEmpty(errors)) {
-          return Promise.reject(errors);
-        }
-        return addTeam({
-          ...props,
-          firstPlayerId: userInfo.userId,
-        }, login).then(() => {
-          getTeamInfo();
-          router.replace('/profile');
-          // TODO: Show a popup here!
-        }).catch(() => {
-          const errors = {secondPlayerId: 'team exists'};
-          return Promise.reject(errors);
-        });
-      }}
-    />
-  </div>
+    </Panel>
+  </Well>
 ));
 export default connect(
   (state) => ({
