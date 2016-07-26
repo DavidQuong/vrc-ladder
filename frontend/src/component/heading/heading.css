@@ -10,7 +10,7 @@
 }
 
 .error {
-  color: #a94442;
+  color: ~colors.red;
   padding-top: 6px;
   padding-bottom: 6px;
   font-size: 12px;
