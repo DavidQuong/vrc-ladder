@@ -29,8 +29,6 @@ public class SecurityManager {
     private static final String HEADER_PROPERTY_TYPE = "typ";
     private static final String HEADER_PROPERTY_ALGORITHM = "alg";
 
-    private static final String ERROR_FORMAT_INVALID_AUTHORIZATION = "This user is not authorized to %s.";
-
     private static final String TOKEN_TYPE = "JWT";
     private static final int TTL_IN_SECONDS = 3600;
     private static final int MILLISECONDS_TO_SECONDS_MULTIPLIER = 1000;

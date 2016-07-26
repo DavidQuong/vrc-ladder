@@ -53,14 +53,14 @@ public class SessionManagerTest {
         User newUser = MockUserGenerator.generatePlayer();
         saveOrUpdateUser(newUser);
 
-        final UserRole userRole = UserRole.MODERATOR;
+        final UserRole userRole = UserRole.VOLUNTEER;
         final String firstName = "Bob";
         final String middleName = "David";
         final String lastName = "Doe";
         final PhoneNumber phoneNumber = new PhoneNumber("(604) 456-7890");
         final EmailAddress emailAddress = new EmailAddress("bobdoe@vrc.ca");
 
-        newUser.setUserRole(UserRole.MODERATOR);
+        newUser.setUserRole(userRole);
         newUser.setFirstName(firstName);
         newUser.setMiddleName(middleName);
         newUser.setLastName(lastName);
