@@ -4,14 +4,14 @@ import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MatchMakingException;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.Court;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
+import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MatchScheduler {
-    public static final int DEFAULT_NUM_COURTS = 6;
-    public static final int DEFAULT_NUM_PLAYTIME = 2;
     private static final String ERROR_MESSAGE_COURTS_FULL = "There were not enough courts available to schedule all matches";
+    private static final String ERROR_MESSAGE_NOT_ATTENDING = "A team in a group has indicated they are not attending.";
 
     /**
      * @throws MatchMakingException if Courts are full, and matches cannot be scheduled
@@ -19,11 +19,32 @@ public class MatchScheduler {
     public static List<Court> scheduleMatches(List<MatchGroup> matchGroups) {
         // Schedule matches into the courts.
         List<Court> courts = new ArrayList<>();
-        for (int i = 0; i < DEFAULT_NUM_COURTS; i++) {
+        for (int i = 0; i < matchGroups.size(); i++) {
             courts.add(new Court());
         }
 
-        for (MatchGroup matchGroup : matchGroups) {
+        if(matchGroups.size() < 13) {
+            assert(matchGroups.size() == courts.size());
+
+            for(int index = 0;index < matchGroups.size();index++) {
+                courts.get(index).scheduleMatch(matchGroups.get(index), PlayTime.TIME_SLOT_A);
+            }
+        } else {
+            List<MatchGroup> slotAGroups = new ArrayList<>();
+            List<MatchGroup> slotBGroups = new ArrayList<>();
+
+            for(MatchGroup matchGroup : matchGroups) {
+                if(matchGroup.getPreferredGroupPlayTime() == PlayTime.TIME_SLOT_A) {
+                    slotAGroups.add(matchGroup);
+                } else if(matchGroup.getPreferredGroupPlayTime() == PlayTime.TIME_SLOT_B) {
+                    slotBGroups.add(matchGroup);
+                } else {
+                    throw new MatchMakingException(ERROR_MESSAGE_NOT_ATTENDING);
+                }
+            }
+        }
+
+        /*for (MatchGroup matchGroup : matchGroups) {
             PlayTime preferredPlayTime = matchGroup.getPreferredGroupPlayTime();
             preferredPlayTime.checkPlayablePlayTime();
 
@@ -56,7 +77,7 @@ public class MatchScheduler {
                     throw new MatchMakingException(ERROR_MESSAGE_COURTS_FULL);
                 }
             }
-        }
+        }*/
         return courts;
     }
 }
