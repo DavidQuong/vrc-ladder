@@ -1,7 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.authentication;
 
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
-import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserAction;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -81,13 +80,6 @@ public class SecurityManager {
         String passwordHash = passwordService.encryptPassword(plaintext);
 
         return new Password(passwordHash);
-    }
-
-    public void checkUserPermission(User user, UserAction action) {
-        if (!user.hasPermission(action)) {
-            String errorMsg = String.format(ERROR_FORMAT_INVALID_AUTHORIZATION, action.name());
-            throw new AuthorizationException(errorMsg);
-        }
     }
 
     private boolean doesPasswordMatch(String plaintext, Password password) {

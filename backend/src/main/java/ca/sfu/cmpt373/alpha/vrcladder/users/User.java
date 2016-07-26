@@ -3,13 +3,10 @@ package ca.sfu.cmpt373.alpha.vrcladder.users;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
-import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserAction;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.AuthorizationException;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -154,10 +151,6 @@ public class User {
 
     public void setPassword(Password password) {
         this.password = password;
-    }
-
-    public boolean hasPermission(UserAction action) {
-        return userRole.hasAuthorizationToPerform(action);
     }
 
     @Override

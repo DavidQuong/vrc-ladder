@@ -4,7 +4,6 @@ import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
-import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserAction;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcrest.security.RouteSignature;
 import com.google.gson.Gson;
