@@ -56,6 +56,11 @@
   height: 50px;
 }
 
+.currentUserLadderRow {
+  composes: ladderTeamRow;
+  background: ~colors.paleYellow !important;
+}
+
 .ladderTableHeadingCol {
   border: 4px solid white;
   /*border-left: none;*/
@@ -86,10 +91,7 @@
   color: ~colors.charcoalGrey;
   text-align: center;
   position: relative;
-  /*width: 60px;*/
   height: 50px;
-  /*bottom: 8px;*/
-  /*display: block;*/
   left: 0;
 }
 
@@ -98,11 +100,8 @@
   color: ~colors.charcoalGrey;
   text-align: left;
   text-transform: none;
-  /*position: relative;*/
   height: 50px;
   width: auto;
-  /*display: block;*/
-  /*left: 0;*/
 }
 
 .ladderTeamGameTime {
@@ -112,6 +111,16 @@
   height: 50px;
   width: 70px;
   text-align: center;
+}
+
+.ladderAttendingGameTime {
+  composes: ladderTeamGameTime;
+  color: ~colors.darkGreen;
+}
+
+.ladderNotAttendingGameTime {
+  composes: ladderTeamGameTime;
+  color: ~colors.red;
 }
 
 .panelHeading {
