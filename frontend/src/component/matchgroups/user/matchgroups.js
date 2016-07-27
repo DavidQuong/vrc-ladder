@@ -7,7 +7,7 @@ import map from 'lodash/fp/map';
 import {Panel} from 'react-bootstrap';
 
 const getMatchGroupTeams = (matchGroup, allTeams) => {
-  const teamIds = matchGroup.teamid4 ? [
+  const teamIds = matchGroup.teamId4 ? [
     matchGroup.teamId1,
     matchGroup.teamId2,
     matchGroup.teamId3,
