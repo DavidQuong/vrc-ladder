@@ -153,7 +153,7 @@ const CreateTeamForm = reduxForm({
         <option value=''>Select a player...</option>
         {map((player) => (
           <option value={player.userId}key={player.userId}>
-            {player.firstName} {player.userId}
+            {player.name} {player.userId}
           </option>
         ), players)}
       </select>
@@ -322,7 +322,7 @@ const CreateTeam = withRouter(({
 ));
 export default connect(
   (state) => ({
-    players: sortBy('firstName', state.app.players),
+    players: sortBy('name', state.app.players),
     teams: state.app.teams,
     login: state.app.loggedIn,
     userInfo: state.app.userInfo,
@@ -333,4 +333,3 @@ export default connect(
     getTeamInfo,
     updateTeamStatus}
 )(CreateTeam);
-
