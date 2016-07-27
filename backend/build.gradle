@@ -36,6 +36,7 @@ dependencies {
     compile group: 'org.apache.shiro', name: 'shiro-core', version: '1.2.5'
     compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.6.0'
     compile group: 'javax.mail', name: 'mail', version: '1.4'
+    compile group: 'org.xhtmlrenderer', name: 'flying-saucer-pdf', version: '9.0.9'
     compile 'mysql:mysql-connector-java:5.1.31'
 
     // For Spark REST

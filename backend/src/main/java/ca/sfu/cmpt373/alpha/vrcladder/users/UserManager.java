@@ -61,7 +61,7 @@ public class UserManager extends DatabaseManager<User> {
     }
 
     public User update(UserId userId, String firstName, String middleName, String lastName, EmailAddress emailAddress,
-        PhoneNumber phoneNumber) {
+        PhoneNumber phoneNumber, Password password) {
         User user = getById(userId);
 
         user.setFirstName(firstName);
@@ -69,7 +69,7 @@ public class UserManager extends DatabaseManager<User> {
         user.setLastName(lastName);
         user.setEmailAddress(emailAddress);
         user.setPhoneNumber(phoneNumber);
-
+        user.setPassword(password);
         return update(user);
     }
 
@@ -98,6 +98,18 @@ public class UserManager extends DatabaseManager<User> {
         User user = getById(id);
         delete(user);
         return user;
+    }
+
+    public List<User> getAllPlayers() {
+        Session session = sessionManager.getSession();
+
+        Criterion isPlayerCriterion = Restrictions.eq(CriterionConstants.USER_ROLE, UserRole.PLAYER);
+        Criteria isPlayerCriteria = session.createCriteria(User.class).add(isPlayerCriterion);
+
+        List<User> players = isPlayerCriteria.list();
+        session.close();
+
+        return players;
     }
 
     private List<Team> getTeamsOfPlayer(UserId playerId) {

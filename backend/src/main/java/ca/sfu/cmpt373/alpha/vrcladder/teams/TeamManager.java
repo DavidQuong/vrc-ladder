@@ -32,9 +32,10 @@ public class TeamManager extends DatabaseManager<Team> {
 
     private static final Class TEAM_CLASS_TYPE = Team.class;
     private static final Integer FIRST_POSITION = 1;
-    private static final Order ASCENDING_POSITION_ORDER = Order.asc(CriterionConstants.TEAM_LADDER_POSITION_PROPERTY);
-    private static final String ERROR_NOT_ALL_TEAMS = "All teams must be present in order to update ladder positions";
 
+    private static final Order ASCENDING_POSITION_ORDER = Order.asc(CriterionConstants.TEAM_LADDER_POSITION_PROPERTY);
+
+    private static final String ERROR_NOT_ALL_TEAMS = "All teams must be present in order to update ladder positions";
     public TeamManager(SessionManager sessionManager) {
         super(TEAM_CLASS_TYPE, sessionManager);
     }
@@ -88,6 +89,16 @@ public class TeamManager extends DatabaseManager<Team> {
         }
 
         return newTeam;
+    }
+
+    @Override
+    public Team deleteById(IdType id) {
+        Team team = super.deleteById(id);
+
+        //update ladder positions to fill in the missing hole caused by removing a team
+        List<Team> teams = getAll();
+        updateLadderPositions(teams);
+        return team;
     }
 
     /**
@@ -214,7 +225,7 @@ public class TeamManager extends DatabaseManager<Team> {
     public List<Team> updateLadderPositions(List<Team> teams) {
         //TODO: add more verification that every team in the ladder is actually passed in
         Session session = sessionManager.getSession();
-        Long numTeamsInLadder = (Long) session.createCriteria(Team.class)
+        long numTeamsInLadder = (long) session.createCriteria(Team.class)
                 .setProjection(Projections.rowCount())
                 .uniqueResult();
         if (teams.size() != numTeamsInLadder) {
@@ -223,12 +234,13 @@ public class TeamManager extends DatabaseManager<Team> {
 
         //TODO: figure out a less-hacky way to do this!
         //since ladderPositions have a unique constraint,
-        //we must overwrite all the values with dummy values before continuing
+        //we must overwrite all the values with dummy values
+        //to assure no teams ever have the same ladderPosition
         Transaction transaction = session.beginTransaction();
         for (int i = 0; i < teams.size(); i++) {
-            long placeHolderLadderPosition = numTeamsInLadder + i + 1;
+            int placeHolderLadderPosition = Integer.MAX_VALUE - i;
             Team team = teams.get(i);
-            team.setLadderPosition(new LadderPosition((int) placeHolderLadderPosition));
+            team.setLadderPosition(new LadderPosition(placeHolderLadderPosition));
             session.update(team);
         }
         transaction.commit();

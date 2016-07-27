@@ -13,8 +13,8 @@ export const addUser = (user) => {
   });
 };
 
-export const getUserInfo = (state) => {
-  return fetch(`${root}user/${state.app.loggedIn.userId}`, {
+export const getCurrentActiveUserInfo = (state) => {
+  return fetch(`${root}users/self`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: state.app.loggedIn.authorizationToken,
@@ -24,8 +24,8 @@ export const getUserInfo = (state) => {
   });
 };
 
-export const getUser = (state) => {
-  return fetch(`${root}users`, {
+export const getPlayer = (state) => {
+  return fetch(`${root}players`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: state.app.loggedIn.authorizationToken,
@@ -43,5 +43,18 @@ export const getTeamInfo = (state) => {
     },
   }).then((response) => {
     return response.json();
+  });
+};
+
+export const updateUserInfo = (user) => {
+  return fetch(`${root}user/${user.app.loggedIn.userId}`, {
+    method: 'PUT',
+    body: JSON.stringify(user),
+  }).then((response) => {
+    const body = response.json();
+    if (response.ok) {
+      return Promise.resolve(body);
+    }
+    return Promise.reject(body);
   });
 };

@@ -3,12 +3,10 @@ package ca.sfu.cmpt373.alpha.vrcladder.users;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
-import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserAction;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
-import org.apache.shiro.authz.AuthorizationException;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -23,7 +21,6 @@ import javax.persistence.Table;
 public class User {
 
     private static final String DISPLAY_NAME_INITIAL_DOT = ". ";
-    private static final String ERROR_FORMAT_INVALID_AUTHORIZATION = "This user is not authorized to %s.";
 
     @EmbeddedId
     private UserId userId;
@@ -158,13 +155,6 @@ public class User {
 
     public void setPassword(Password password) {
         this.password = password;
-    }
-
-    public void checkPermission(UserAction action) {
-        if (!userRole.hasAuthorizationToPerform(action)) {
-            String errorMsg = String.format(ERROR_FORMAT_INVALID_AUTHORIZATION, action.name());
-            throw new AuthorizationException(errorMsg);
-        }
     }
 
     public int getAttempts(){

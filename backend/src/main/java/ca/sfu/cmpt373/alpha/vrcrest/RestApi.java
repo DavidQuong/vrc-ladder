@@ -15,7 +15,6 @@ public class RestApi {
 
     public static final String ROUTE_WILDCARD = "/*";
 
-    public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String HEADER_ACCESS = "Access-Control-Allow-Origin";
     public static final String HEADER_ACCESS_VALUE = "*";
 
@@ -87,7 +86,7 @@ public class RestApi {
     }
 
     private String extractAuthorizationToken(Request request) {
-        String authorizationHeader = request.headers(HEADER_AUTHORIZATION);
+        String authorizationHeader = request.headers(RestRouter.HEADER_AUTHORIZATION);
         if (authorizationHeader == null) {
             throw new AuthorizationException(ERROR_MISSING_AUTHORIZATION_TOKEN);
         }

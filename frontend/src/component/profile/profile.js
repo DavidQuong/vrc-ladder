@@ -333,3 +333,4 @@ export default connect(
     getTeamInfo,
     updateTeamStatus}
 )(CreateTeam);
+

@@ -4,7 +4,6 @@ import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {withRouter} from 'react-router';
 import {addUser} from '../../action/users';
-
 import styles from './signup.css';
 import Heading from '../heading/heading';
 import isEmpty from 'lodash/fp/isEmpty';
@@ -172,6 +171,29 @@ const BaseSignUpForm = ({
 
 const SignUpForm = formEnhancer(BaseSignUpForm);
 
+const checkErrors = (responseErrors) => {
+  const errors = {};
+
+  if (responseErrors.userId === false) {
+    errors.userId = 'A user with this ID already exists!';
+  }
+  if (responseErrors.emailAddress === false) {
+    errors.emailAddress = 'A user with this email already exists!';
+  }
+
+  if (responseErrors.userId === 'invalid') {
+    errors.userId = 'This userId is not valid';
+  }
+  if (responseErrors.emailAddress === 'invalid') {
+    errors.emailAddress = 'This email Address is not valid';
+  }
+  if (responseErrors.phoneNumber === 'invalid') {
+    errors.phoneNumber = 'This phone number is not valid';
+  }
+
+  return errors;
+};
+
 const SignUp = withRouter(({
   addUser,
   router,
@@ -186,16 +208,18 @@ const SignUp = withRouter(({
         </Heading>
       <SignUpForm
         onSubmit={(props) => {
-          let errors = validate(props);
+          const errors = validate(props);
           const userInfo = parseUser(props);
           if (!isEmpty(errors)) {
             return Promise.reject(errors);
           }
           return addUser(userInfo).then(() => {
-            router.push('/ladder');
-          }).catch(() => {
-            errors = {userId: 'exists'};
-            return Promise.reject(errors);
+            router.push('/login');
+          }).catch((response) => {
+            return response.then(function(bodyContent) {
+              const errors = checkErrors(bodyContent);
+              return Promise.reject(errors);
+            });
           });
         }}
       />
@@ -206,6 +230,8 @@ const SignUp = withRouter(({
 export default connect(
   (state) => ({
     players: state.app.players,
+    userInfo: state.app.userInfo,
   }),
-  {addUser}
+  {addUser,
+  }
 )(SignUp);

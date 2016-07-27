@@ -2,8 +2,16 @@ import {handleActions} from 'redux-actions';
 import {combineReducers} from 'redux';
 import {reducer as form} from 'redux-form';
 
-const app = handleActions({
+const emptyState =  {
+  players: [],
+  teams: [],
+  loggedIn: {},
+  userInfo: [],
+  teamInfo: [],
+  matchGroups: [],
+};
 
+const app = handleActions({
   USER_INFO_SYNC: (state, {payload}) => {
     return {
       ...state,
@@ -23,6 +31,10 @@ const app = handleActions({
       ...state,
       loggedIn: payload,
     };
+  },
+
+  USER_LOGOUT: () => {
+    return emptyState;
   },
 
   PLAYER_SYNC: (state, {payload}) => {
@@ -64,14 +76,7 @@ const app = handleActions({
     };
   },
 
-}, {
-  players: [],
-  teams: [],
-  loggedIn: {},
-  userInfo: [],
-  teamInfo: [],
-  matchGroups: [],
-});
+}, emptyState);
 
 export default combineReducers({
   app,

@@ -5,13 +5,14 @@ import {withRouter} from 'react-router';
 import {reduxForm} from 'redux-form';
 import {FormattedMessage} from 'react-intl';
 import {SubmitBtn} from '../button';
+import {Form, Panel, Well} from 'react-bootstrap';
 
 import Heading from '../heading/heading';
 import map from 'lodash/fp/map';
 import reduce from 'lodash/fp/reduce';
 import find from 'lodash/fp/find';
 import classNames from 'classnames';
-import styles from '../profile/profile.css';
+import styles from './match-groups.css';
 
 const getTeams = (state) => {
   const matchGroups = state.app.matchGroups;
@@ -61,10 +62,7 @@ const ResultFormThree = reduxForm({
   matchTeams,
   handleSubmit,
 }) => (
-  <form
-    className={styles.formHorizontal}
-    onSubmit={handleSubmit}
-  >
+  <Form horizontal onSubmit={handleSubmit}>
   <div className={classNames(styles.formGroup)}>
     <label
       className={classNames(styles.colXsTitle)}
@@ -155,7 +153,7 @@ const ResultFormThree = reduxForm({
   <div className={classNames(styles.center)}>
     <SubmitBtn type='submit'>Submit Results</SubmitBtn>
   </div>
-  </form>
+  </Form>
 ));
 
 const ResultFormFour = reduxForm({
@@ -166,10 +164,7 @@ const ResultFormFour = reduxForm({
   matchTeams,
   handleSubmit,
 }) => (
-  <form
-    className={styles.formHorizontal}
-    onSubmit={handleSubmit}
-  >
+  <Form horizontal onSubmit={handleSubmit}>
   <div className={classNames(styles.formGroup)}>
     <label
       className={classNames(styles.colXsTitle)}
@@ -289,38 +284,44 @@ const ResultFormFour = reduxForm({
   <div className={classNames(styles.center)}>
     <SubmitBtn type='submit'>Submit Results</SubmitBtn>
   </div>
-  </form>
+  </Form>
 ));
 
 const MatchGroupForms = ({matchGroup, teams}) => {
   const matchTeams = matchGroupTeams({matchGroup, teams});
   return (
-    <div>
-      <div>
-        {matchTeams.map((team) => (
-          <div key={team.teamId}>
-            {team.firstPlayer.name} & {team.secondPlayer.name} & {team.teamId}
-          </div>
-        ))}
-      </div>
+    <Well>
+      <Panel header={`Court ID: ${matchGroup.matchGroupId}`} bsStyle='primary'>
+        <div className={classNames(styles.teamNames)}>
+          {matchTeams.map((team) => (
+            <div key={team.teamId}>
+              {team.firstPlayer.name} & {team.secondPlayer.name} & {team.teamId}
+            </div>
+          ))}
+        </div>
+      </Panel>
+      <Panel header='Result Submission' bsStyle='primary'>
       {matchGroup.teamId4 ?
-        <div>
           <ResultFormFour
             teams={matchTeams}
             onSubmit={(props) => {
-              console.log('submitted: ', props);
+              // below code is a placeholder for more functional code later
+              const temp = props;
+              temp.rank1 = props.rank1;
+              // console.log('submitted: ', props);
             }}
-          />
-        </div> :
-        <div>
+          />  :
           <ResultFormThree
             matchTeams={matchTeams}
             onSubmit={(props) => {
-              console.log('submitted: ', props);
+              // below code is a placeholder for more functional code later
+              const temp = props;
+              temp.rank1 = props.rank1;
+              // console.log('submitted: ', props);
             }}
-          />
-        </div>}
-    </div>
+          />}
+        </Panel>
+    </Well>
   );
 };
 

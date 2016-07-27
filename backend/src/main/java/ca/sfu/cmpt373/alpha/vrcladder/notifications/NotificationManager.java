@@ -7,37 +7,59 @@ import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.NotificationType;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.Email;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.EmailSettings;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
+import ca.sfu.cmpt373.alpha.vrcladder.util.TemplateManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class handles all notifications sent to users. It uses
+ * TemplateManager class to open HTML and TEXT tempaltes of this
+ * class. Templates are located in the resources folder.
+ */
 public class NotificationManager {
-    private Email email;
     private static final String GAME_REPORTED_THREE_TEAMS = "threeteams";
     private static final String GAME_REPORTED_FOUR_TEAMS  = "fourteams";
+    private static final String RECEIVER_NAME_TAG         = "#fullname";
+    private static final String RECEIVER_ID_TAG           = "#userid";
+    private static final String TOKEN_TAG                 = "#token";
+    private static final String WEBSITE_LINK_TAG          = "#sitelink";
+    private static final String TEAM_TIME_TAG             = "#preferrdtime";
+    private static final String LADDER_POSITION_TAG       = "#ladderposition";
+    private static final String FIRST_PLAYER_TAG          = "#firstteammember";
+    private static final String SECOND_PLAYER_TAG         = "#secondteammember";
+    private static final String SCORE_TEAM_LEFT_TAG       = "#team";
+    private static final String SCORE_TEAM_CLOSE_TAG      = "player";
+    private static final String EXTENSION_SEPARATOR       = ".";
     private static final int FIRST_PLAYER = 1;
     private static final int SECOND_PLAYER = 2;
+    private final TemplateManager template;
+    private Email email;
 
     public NotificationManager() {
+        template = new TemplateManager();
         email = new Email();
     }
 
-    public void notifyUser(User user, Team team, NotificationType type) {
+    public void notifyUser(Team team, NotificationType type) {
         Map<String, String> values = new HashMap<>();
-        EmailAddress receiver = buildUserInfoAndGetEmail(user, values);
+        List<EmailAddress> receivers = new ArrayList<>();
+        List<String> names = new ArrayList<>();
         String currentTemplate = type.getTemplate();
-        setTeamValues(team, values);
+        String path = EmailSettings.TEMPLATE_PATH_TEAM + currentTemplate + EXTENSION_SEPARATOR + EmailSettings.EMAILS_FORMAT;
+        setTeamValues(team, receivers, names, values);
 
         try {
-            String messageContent = getMessageContents(EmailSettings.TEMPLATE_PATH_TEAM, currentTemplate, values);
-            email.sendEmail(receiver, messageContent, type);
+            for(int counter = 0; counter < names.size(); counter++){
+                values.replace(RECEIVER_NAME_TAG, names.get(counter));
+                String messageContent = template.getContents(path, values);
+                email.sendEmail(receivers.get(counter), messageContent, type);
+            }
         } catch (IOException e) {
             throw new TemplateNotFoundException();
         }
@@ -47,9 +69,10 @@ public class NotificationManager {
         Map<String, String> values = new HashMap<>();
         EmailAddress receiver = buildUserInfoAndGetEmail(user, values);
         String currentTemplate = type.getTemplate();
+        String path = EmailSettings.TEMPLATE_PATH_ACCOUNT + currentTemplate + EXTENSION_SEPARATOR + EmailSettings.EMAILS_FORMAT;
 
         try {
-            String messageContent = getMessageContents(EmailSettings.TEMPLATE_PATH_ACCOUNT, currentTemplate, values);
+            String messageContent = template.getContents(path, values);
             email.sendEmail(receiver, messageContent, type);
         } catch (IOException e) {
             throw new TemplateNotFoundException();
@@ -60,10 +83,11 @@ public class NotificationManager {
         Map<String, String> values = new HashMap<>();
         EmailAddress receiver = buildUserInfoAndGetEmail(user, values);
         String currentTemplate = type.getTemplate();
+        String path = EmailSettings.TEMPLATE_PATH_ACCOUNT + currentTemplate + EXTENSION_SEPARATOR + EmailSettings.EMAILS_FORMAT;
         setTokenValues(token, values);
 
         try {
-            String messageContent = getMessageContents(EmailSettings.TEMPLATE_PATH_ACCOUNT, currentTemplate, values);
+            String messageContent = template.getContents(path, values);
             email.sendEmail(receiver, messageContent, type);
         } catch (IOException e) {
             throw new TemplateNotFoundException();
@@ -76,13 +100,14 @@ public class NotificationManager {
         List<String> names = new ArrayList<>();
         List<Team> teams = group.getScoreCard().getRankedTeams();
         String currentTemplate = getCurrentTemplate(group, type.getTemplate());
+        String path = EmailSettings.TEMPLATE_PATH_GAME + currentTemplate + EXTENSION_SEPARATOR + EmailSettings.EMAILS_FORMAT;
         setGameValues(teams, receivers, names, values);
 
         try {
             for (int counter = 0; counter < names.size(); counter++) {
-                values.replace("#fullname", names.get(counter));
+                values.replace(RECEIVER_NAME_TAG, names.get(counter));
                 EmailAddress receiver = receivers.get(counter);
-                String messageContent = getMessageContents(EmailSettings.TEMPLATE_PATH_GAME, currentTemplate, values);
+                String messageContent = template.getContents(path, values);
                 email.sendEmail(receiver, messageContent, type);
             }
 
@@ -92,69 +117,9 @@ public class NotificationManager {
     }
 
     private EmailAddress buildUserInfoAndGetEmail(User user, Map<String, String> values){
-        values.put("#fullname", user.getDisplayName());
-        values.put("#userid", user.getUserId().toString());
+        values.put(RECEIVER_NAME_TAG, user.getDisplayName());
+        values.put(RECEIVER_ID_TAG, user.getUserId().toString());
         return user.getEmailAddress();
-    }
-
-    private String replaceTags(String messageContent, List<String> tags, Map<String, String> values) {
-        for (String tag : tags) {
-            if (values.containsKey(tag)) {
-                String value = values.get(tag);
-                messageContent = messageContent.replaceAll(tag, value);
-            }
-        }
-        return messageContent;
-    }
-
-    private static boolean isEndOfTag(char currentLetter) {
-        return (currentLetter == ',' || currentLetter == '/' || currentLetter == '<');
-    }
-
-    private static List<String> findNotificationTags(String currentLine) {
-        List<String> results = new ArrayList<>();
-        String currentTag = "";
-        char[] lineContents = currentLine.toCharArray();
-        boolean currentStatus = false;
-        boolean addToTags = false;
-        for (char c : lineContents) {
-            if (addToTags) {
-                results.add(currentTag);
-                addToTags = false;
-                currentTag = "";
-            }
-
-            if (c == '#') {
-                currentStatus = true;
-            }
-
-            if (currentStatus) {
-                if (isEndOfTag(c)) {
-                    currentStatus = false;
-                    addToTags = true;
-                }else{
-                    currentTag = currentTag + c;
-                }
-            }
-        }
-
-        if (!currentTag.isEmpty()) {
-            results.add(currentTag);
-        }
-        return results;
-    }
-
-    private String buildContentsAndTags(BufferedReader reader, List<String> messageTags) throws IOException {
-        String line;
-        String results = "";
-        while ((line = reader.readLine()) != null) {
-            results += line;
-            if (line.contains("#")) {
-                messageTags.addAll(findNotificationTags(line));
-            }
-            results += "\n";
-        }
-        return results;
     }
 
     private String getCurrentTemplate(MatchGroup group, String template){
@@ -164,32 +129,30 @@ public class NotificationManager {
         return (template + GAME_REPORTED_FOUR_TEAMS);
     }
 
-    private String getMessageContents(String path, String template, Map<String, String> values) throws IOException {
-        FileReader file = new FileReader(path + template + "." + EmailSettings.EMAILS_FORMAT);
-        BufferedReader reader = new BufferedReader(file);
-        List<String> messageTags = new ArrayList<>();
-        String messageContent = buildContentsAndTags(reader, messageTags);
-        messageContent = replaceTags(messageContent, messageTags, values);
-        messageTags.clear();
-        reader.close();
-        file.close();
-        return messageContent;
-    }
-
     private static void setTokenValues(String token, Map<String, String> values){
-        values.put("#token", token);
-        values.put("#sitelink", EmailSettings.WEBSITE_LINK);
+        values.put(TOKEN_TAG, token);
+        values.put(WEBSITE_LINK_TAG, EmailSettings.WEBSITE_LINK);
     }
 
-    private static void setTeamValues(Team team, Map<String, String> values) {
-        values.put("#preferrdtime", team.getAttendanceCard().getPreferredPlayTime().getDisplayTime());
-        values.put("#ladderposition", team.getLadderPosition().getValue().toString());
-        values.put("#firstteammember", team.getFirstPlayer().getDisplayName());
-        values.put("#secondteammember", team.getSecondPlayer().getDisplayName());
+    private static void setTeamValues(Team team, List<EmailAddress> receivers, List<String> names, Map<String, String> values) {
+        values.put(RECEIVER_NAME_TAG, "");
+        values.put(TEAM_TIME_TAG, team.getAttendanceCard().getPreferredPlayTime().getDisplayTime());
+        values.put(LADDER_POSITION_TAG, team.getLadderPosition().getValue().toString());
+
+        String firstPlayer = team.getFirstPlayer().getDisplayName();
+        String secondPlayer = team.getSecondPlayer().getDisplayName();
+
+        values.put(FIRST_PLAYER_TAG, firstPlayer);
+        values.put(SECOND_PLAYER_TAG, secondPlayer);
+        names.add(firstPlayer);
+        names.add(secondPlayer);
+
+        receivers.add(team.getFirstPlayer().getEmailAddress());
+        receivers.add(team.getSecondPlayer().getEmailAddress());
     }
 
     private static void setGameValues(List<Team> teams, List<EmailAddress> receivers, List<String> names, Map<String, String> values) {
-        values.put("#fullname", "");
+        values.put(RECEIVER_NAME_TAG, "");
         for (int counter = 0; counter < teams.size(); counter++) {
             int currentTeam = counter + 1;
             User firstPlayer = teams.get(counter).getFirstPlayer();
@@ -199,9 +162,8 @@ public class NotificationManager {
             receivers.add(secondPlayer.getEmailAddress());
             names.add(firstPlayer.getDisplayName());
             names.add(secondPlayer.getDisplayName());
-            values.put("#team" + currentTeam + "player" + FIRST_PLAYER, firstPlayer.getDisplayName());
-            values.put("#team" + currentTeam + "player" + SECOND_PLAYER, secondPlayer.getDisplayName());
+            values.put(SCORE_TEAM_LEFT_TAG + currentTeam + SCORE_TEAM_CLOSE_TAG + FIRST_PLAYER, firstPlayer.getDisplayName());
+            values.put(SCORE_TEAM_LEFT_TAG + currentTeam + SCORE_TEAM_CLOSE_TAG + SECOND_PLAYER, secondPlayer.getDisplayName());
         }
     }
-
 }

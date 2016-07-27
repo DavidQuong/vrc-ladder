@@ -1,7 +1,7 @@
 ~colors: "./config/colors.config";
-
 :local {
   .upperNavbar {
+    font-family: 'Lato', sans-serif;
     background-color: ~colors.brightBlue;
     color: ~colors.white;
     border: ~colors.charcoalGrey;
@@ -19,6 +19,7 @@
   }
 
   .lowerNavbar {
+    font-family: 'Lato', sans-serif;
     top: 50px;
     z-index: 100;
     background-color: ~colors.brightYellow;
@@ -58,19 +59,6 @@
     background-color: red !important;
   }*/
 
-  .navItem > li > a {
-    color: inherit !important;
-    background-color: transparent !important;
-  }
-
-  .navItem > li > a:hover {
-    color: ~colors.brightYellow !important;
-  }
-
-  .navItem > li > a:active {
-    color: inherit !important;
-    background-color: ~colors.paleBlue !important;
-  }
 
   /*.navItem > li > a:active, .navItem > li > a:focus {
     color: inherit !important;

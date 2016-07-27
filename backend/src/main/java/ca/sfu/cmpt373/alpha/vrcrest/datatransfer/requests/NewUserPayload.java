@@ -1,5 +1,7 @@
 package ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PropertyInstantiationException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.PhoneNumber;
@@ -26,7 +28,12 @@ public class NewUserPayload {
             checkForMissingProperties(jsonObject);
 
             JsonElement jsonUserId = jsonObject.get(JsonProperties.JSON_PROPERTY_USER_ID);
-            UserId userId = new UserId(jsonUserId.getAsString());
+            UserId userId;
+            try{
+                userId = new UserId(jsonUserId.getAsString());
+            }catch (ValidationException ex){
+                throw new PropertyInstantiationException(JsonProperties.JSON_PROPERTY_USER_ID);
+            }
 
             JsonElement jsonUserRole = jsonObject.get(JsonProperties.JSON_PROPERTY_USER_ROLE);
             UserRole userRole = EnumUtils.getEnum(UserRole.class, jsonUserRole.getAsString());
@@ -39,10 +46,20 @@ public class NewUserPayload {
             String lastName = jsonObject.get(JsonProperties.JSON_PROPERTY_LAST_NAME).getAsString();
 
             JsonElement jsonEmailAddress = jsonObject.get(JsonProperties.JSON_PROPERTY_EMAIL_ADDRESS);
-            EmailAddress emailAddress = new EmailAddress(jsonEmailAddress.getAsString());
+            EmailAddress emailAddress;
+            try{
+                emailAddress = new EmailAddress(jsonEmailAddress.getAsString());
+            }catch (ValidationException ex){
+                throw new PropertyInstantiationException(JsonProperties.JSON_PROPERTY_EMAIL_ADDRESS);
+            }
 
             JsonElement jsonPhoneNumber = jsonObject.get(JsonProperties.JSON_PROPERTY_PHONE_NUMBER);
-            PhoneNumber phoneNumber = new PhoneNumber(jsonPhoneNumber.getAsString());
+            PhoneNumber phoneNumber;
+            try{
+                phoneNumber = new PhoneNumber(jsonPhoneNumber.getAsString());
+            }catch (ValidationException ex){
+                throw new PropertyInstantiationException(JsonProperties.JSON_PROPERTY_PHONE_NUMBER);
+            }
 
             JsonElement jsonPassword = jsonObject.get(JsonProperties.JSON_PROPERTY_PASSWORD);
             String plaintextPassword = jsonPassword.getAsString();
