@@ -45,3 +45,16 @@ export const getTeamInfo = (state) => {
     return response.json();
   });
 };
+
+export const updateUserInfo = (user) => {
+  return fetch(`${root}user/${user.app.loggedIn.userId}`, {
+    method: 'PUT',
+    body: JSON.stringify(user),
+  }).then((response) => {
+    const body = response.json();
+    if (response.ok) {
+      return Promise.resolve(body);
+    }
+    return Promise.reject(body);
+  });
+};

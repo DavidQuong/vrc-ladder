@@ -79,7 +79,7 @@ const formEnhancer = reduxForm({
 
 const LogInForm = formEnhancer(BaseLogInForm);
 
-const logInBuilder = (props, response) => {
+const LogInBuilder = (props, response) => {
   const user = props;
   delete user.password;
   return ({
@@ -112,7 +112,7 @@ const LogIn = withRouter(({
             return Promise.reject(errors);
           }
           return logInUser(props).then((response) => {
-            const userInfo = logInBuilder(props, response);
+            const userInfo = LogInBuilder(props, response);
             userLogIn({
               ...userInfo,
             });

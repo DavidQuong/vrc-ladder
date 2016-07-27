@@ -18,6 +18,7 @@ public class MockUserGenerator {
     private static final String LAST_NAME_BASE = "lastName";
     private static final String HASH_BASE = "hash";
 
+
     private static int userCount;
 
     static {
