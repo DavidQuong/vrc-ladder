@@ -43,18 +43,20 @@ const displayTeams = (teams) => {
 const displayMatchGroup = (matchGroup, allTeams) => {
   return matchGroup ?
     displayTeams(getMatchGroupTeams(matchGroup, allTeams)) :
-    'You\'re not in any MatchGroups!';
+    'Try fetching MatchGroups';
 };
 
 const MatchResultsDummy = React.createClass({
   render: function() {
     return (<div>
       <button onClick={() => this.props.getMatchGroups()}>FETCH</button>
-      {displayMatchGroup(findUserMatchGroup(
-        this.props.matchGroups,
-        this.props.teams,
-        this.props.teamInfo.teamId),
-        this.props.teams)}
+      {this.props.teamInfo.teamId ?
+        displayMatchGroup(findUserMatchGroup(
+          this.props.matchGroups,
+          this.props.teams,
+          this.props.teamInfo.teamId),
+          this.props.teams) :
+        'You\'re not in any MatchGroups!'}
       </div>);
   },
 });
