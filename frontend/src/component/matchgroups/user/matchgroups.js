@@ -20,11 +20,15 @@ const getMatchGroupTeams = (matchGroup, allTeams) => {
     teamIds);
 };
 
-const displayMatchGroup = (matchGroup, allTeams) => {
-  const matchGroupTeams = getMatchGroupTeams(matchGroup, allTeams);
+const displayTeams = (teams) => {
   return map((team) => (<div>
     {team.firstPlayer.name} & {team.secondPlayer.name}
-  </div>), matchGroupTeams);
+  </div>), teams);
+};
+
+const displayMatchGroup = (matchGroup, allTeams) => {
+  const matchGroupTeams = getMatchGroupTeams(matchGroup, allTeams);
+  return displayTeams(matchGroupTeams);
 };
 
 const displayCourt = (courtNumber, court, allTeams) => {
