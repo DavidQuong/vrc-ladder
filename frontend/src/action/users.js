@@ -28,7 +28,7 @@ export const getPlayer =  () => (dispatch, getState) => {
     if (response.error) {
       return Promise.reject();
     }
-    dispatch(syncPlayers(response.users));
+    dispatch(syncPlayers(response.players));
     return Promise.resolve();
   }).catch((error) => {
     return Promise.reject(error);
