@@ -45,3 +45,14 @@ export const getTeamInfo = (state) => {
     return response.json();
   });
 };
+
+export const updateProfieInfo = (state) => {
+  return fetch(`${root}user/${state.app.loggedIn.userId}/user`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: state.app.loggedIn.authorizationToken,
+    },
+  }).then ((response) =>{
+    return response.json;
+  });
+}
