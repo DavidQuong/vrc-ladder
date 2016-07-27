@@ -11,6 +11,17 @@ export const getMatchGroups = (state) => {
   });
 };
 
+export const getMatchSchedule = (state) => {
+  return fetch(`${root}matchgroups/schedule`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: state.app.loggedIn.authorizationToken,
+    },
+  }).then((response) => {
+    return response.json();
+  });
+};
+
 export const generateMatchGroups = (state) => {
   return fetch(`${root}matchgroups/generate`, {
     method: 'POST',

@@ -4,20 +4,20 @@ import {
   getMatchGroups,
   generateMatchGroups,
   reportMatchResults,
-  regenerateMatchGroups} from '../../action/matchgroups';
+  regenerateMatchGroups} from '../../../action/matchgroups';
 import {withRouter} from 'react-router';
 import {reduxForm} from 'redux-form';
 import {FormattedMessage} from 'react-intl';
-import {SubmitBtn} from '../button';
+import {SubmitBtn} from '../../button';
 import {Form, Panel, Well} from 'react-bootstrap';
 
-import Heading from '../heading/heading';
+import Heading from '../../heading/heading';
 import map from 'lodash/fp/map';
 import isEmpty from 'lodash/fp/isEmpty';
 import reduce from 'lodash/fp/reduce';
 import find from 'lodash/fp/find';
 import classNames from 'classnames';
-import styles from './match-groups.css';
+import styles from './matchgroups-admin.css';
 
 const getTeams = (state) => {
   const matchGroups = state.app.matchGroups;
