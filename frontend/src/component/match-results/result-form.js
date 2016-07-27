@@ -38,8 +38,8 @@ const generateRankingSubmissionRow = (teams, rank, rankNumber) => (
       </div>}
   </div>);
 
-const ResultFormThree = reduxForm({
-  form: 'resultFour',
+const ResultFormRows = reduxForm({
+  form: 'resultForm',
   fields: ['rank1', 'rank2', 'rank3', 'rank4'],
 })(({
   fields: {rank1, rank2, rank3, rank4},
@@ -52,7 +52,7 @@ const ResultFormThree = reduxForm({
   {generateRankingSubmissionRow(matchTeams, rank3, 3)}
   {matchTeams.length === 4 ?
     generateRankingSubmissionRow(matchTeams, rank4, 4) :
-    console.log("nay")}
+    null}
   <div className={classNames(styles.center)}>
     <SubmitBtn type='submit'>Submit Results</SubmitBtn>
   </div>
@@ -63,7 +63,7 @@ export const ResultForm = (matchGroupTeams) => {
   return (
     <Well>
       <Panel header='Result Submission' bsStyle='primary'>
-        <ResultFormThree
+        <ResultFormRows
           matchTeams={matchGroupTeams}
           onSubmit={(props) => {
             // below code is a placeholder for more functional code later
