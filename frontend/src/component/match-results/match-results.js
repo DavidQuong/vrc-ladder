@@ -5,7 +5,7 @@ import {getMatchGroups} from '../../action/matchgroups';
 import {ResultForm} from './result-form';
 
 const getMatchGroupTeams = (matchGroup, allTeams) => {
-  const teamIds = matchGroup.teamid4 ? [
+  const teamIds = matchGroup.teamId4 ? [
     matchGroup.teamId1,
     matchGroup.teamId2,
     matchGroup.teamId3,

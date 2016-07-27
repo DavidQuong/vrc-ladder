@@ -40,9 +40,9 @@ const generateRankingSubmissionRow = (teams, rank, rankNumber) => (
 
 const ResultFormThree = reduxForm({
   form: 'resultFour',
-  fields: ['rank1', 'rank2', 'rank3'],
+  fields: ['rank1', 'rank2', 'rank3', 'rank4'],
 })(({
-  fields: {rank1, rank2, rank3},
+  fields: {rank1, rank2, rank3, rank4},
   matchTeams,
   handleSubmit,
 }) => (
@@ -50,6 +50,9 @@ const ResultFormThree = reduxForm({
   {generateRankingSubmissionRow(matchTeams, rank1, 1)}
   {generateRankingSubmissionRow(matchTeams, rank2, 2)}
   {generateRankingSubmissionRow(matchTeams, rank3, 3)}
+  {matchTeams.length === 4 ?
+    generateRankingSubmissionRow(matchTeams, rank4, 4) :
+    console.log("nay")}
   <div className={classNames(styles.center)}>
     <SubmitBtn type='submit'>Submit Results</SubmitBtn>
   </div>
