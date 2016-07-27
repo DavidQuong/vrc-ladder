@@ -156,6 +156,7 @@ public class TeamManagerTest extends BaseTest {
         Assert.assertEquals(newPlayTime3, attendanceCard.getPreferredPlayTime());
         session.close();
     }
+
     @Test
     public void testUpdateAttendanceStatus(){
         final AttendanceStatus newAttStatus1 = AttendanceStatus.PRESENT;
@@ -180,7 +181,6 @@ public class TeamManagerTest extends BaseTest {
         session.refresh(attendanceCard);
         Assert.assertEquals(newAttStatus3, attendanceCard.getAttendanceStatus());
         session.close();
-
     }
 
     @Test(expected = MultiplePlayTimeException.class)
@@ -203,13 +203,11 @@ public class TeamManagerTest extends BaseTest {
         teamManager.updateAttendancePlaytime(newTeam.getId(), PlayTime.TIME_SLOT_B);
     }
 
-
     @Test(expected = EntityNotFoundException.class)
     public void testUpdateNonExistentTeamAttendance() {
         final GeneratedId nonExistentTeamId = new GeneratedId();
         teamManager.updateAttendancePlaytime(nonExistentTeamId, PlayTime.TIME_SLOT_A);
     }
-
 
     @Test
     public void testDeleteTeam() {
@@ -233,6 +231,36 @@ public class TeamManagerTest extends BaseTest {
         // Ensure that the individual players are not deleted.
         Assert.assertNotNull(firstPlayer);
         Assert.assertNotNull(secondPlayer);
+    }
+
+    @Test
+    public void testUpdateLadderPositionsAfterDeleteTeam() {
+        //note with the teamFixture, there will be +1 team in the database
+        int teamCount = 3;
+        List<Team> teamsToAdd = new ArrayList<>();
+        for (int i = 0; i < teamCount; i++) {
+            teamsToAdd.add(MockTeamGenerator.generateTeam());
+        }
+
+        Session session = sessionManager.getSession();
+        Transaction transaction = session.beginTransaction();
+        saveTeams(teamsToAdd, session);
+        transaction.commit();
+        session.close();
+
+        int teamToDeleteIndex = 0;
+        Team teamToDelete = teamsToAdd.get(teamToDeleteIndex);
+
+        teamManager.deleteById(teamToDelete.getId());
+
+        List<Team> teamsAfterDeletion = teamManager.getAll();
+
+        Assert.assertTrue(!teamsAfterDeletion.contains(teamToDelete));
+        for (Integer position = 1; position <= teamsAfterDeletion.size(); position++) {
+            Team team = teamsAfterDeletion.get(position - 1);
+            Integer teamLadderPosition = team.getLadderPosition().getValue();
+            Assert.assertEquals(teamLadderPosition, position);
+        }
     }
 
     @Test(expected = DuplicateTeamMemberException.class)
@@ -306,5 +334,4 @@ public class TeamManagerTest extends BaseTest {
             session.save(team);
         }
     }
-
 }
