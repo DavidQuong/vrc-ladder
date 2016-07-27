@@ -52,7 +52,7 @@ public class SecurityManager {
         Password password = user.getPassword();
 
         if (!doesPasswordMatch(plaintextPassword, password)) {
-            if(user.getAttempts() % NUMBER_OF_ATTEMPTS_TO_NOTIFY_USER == 0){
+            if(user.getAttempts() % NUMBER_OF_ATTEMPTS_TO_NOTIFY_USER == 0 && user.getAttempts() > 0){
                 notify.notifyUser(user, NotificationType.FAILED_LOGIN);
             }
             user.incrementAttempts();
