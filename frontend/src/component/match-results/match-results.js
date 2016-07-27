@@ -2,6 +2,7 @@ import React, {createElement} from 'react';
 import {connect} from 'react-redux';
 import map from 'lodash/fp/map';
 import {getMatchGroups} from '../../action/matchgroups';
+import {ResultForm} from './result-form';
 
 const getMatchGroupTeams = (matchGroup, allTeams) => {
   const teamIds = matchGroup.teamid4 ? [
@@ -29,10 +30,14 @@ const findUserMatchGroup = (matchGroups, allTeams, teamId) => {
 };
 // TODO: move duplicate methods in component/matchgroups/matchgroups.js
 // to a common file
+// const displayTeams = (teams) => {
+//   return map((team) => (<div>
+//     {team.firstPlayer.name} & {team.secondPlayer.name}
+//   </div>), teams);
+// };
+
 const displayTeams = (teams) => {
-  return map((team) => (<div>
-    {team.firstPlayer.name} & {team.secondPlayer.name}
-  </div>), teams);
+  return ResultForm(teams);
 };
 
 const displayMatchGroup = (matchGroup, allTeams) => {
