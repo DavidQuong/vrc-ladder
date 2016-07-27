@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {addTeam, updateTeamStatus} from '../../action/teams';
 import {SubmitBtn} from '../button/button';
-import {Form, Panel, Well} from 'react-bootstrap';
+import {Grid, Col, Row, ListGroup, ListGroupItem, Form, Panel, Well} from 'react-bootstrap';
 import {withRouter} from 'react-router';
 import {getTeamInfo} from '../../action/users';
 
@@ -172,37 +172,29 @@ const CreateTeamForm = reduxForm({
 ));
 
 const displayMyInfo = (userInfo) => (
-  <div>
-    <div className={styles.profileDetailsField}>
-      <FormattedMessage
-        id='firstName'
-        defaultMessage='Name: '
-      />
-    </div>
-    <div className={styles.profileDetails}>
-      {userInfo.name}
-    </div>
-    <br/>
-    <div className={styles.profileDetailsField}>
-      <FormattedMessage
-        id='phoneNumber'
-        defaultMessage='Phone Number: '
-      />
-    </div>
-    <div className={styles.profileDetails}>
-      {userInfo.phoneNumber}
-    </div>
-    <br/>
-    <div className={styles.profileDetailsField}>
-      <FormattedMessage
-        id='emailAddress'
-        defaultMessage='Email: '
-      />
-    </div>
-    <div className={styles.profileDetails}>
-      {userInfo.emailAddress}
-    </div>
-  </div>
+  <ListGroup fill>
+    <ListGroupItem>
+      <Grid>
+        <Col sm={3} md={2}><strong>Name:</strong></Col>
+        <Col sm={10} md={6}>{userInfo.name}</Col>
+      </Grid>
+    </ListGroupItem>
+
+    <ListGroupItem>
+      <Grid>
+        <Col sm={3} md={2}><strong>Phone Number:</strong></Col>
+        <Col sm={6} md={4}>{userInfo.phoneNumber}</Col>
+      </Grid>
+    </ListGroupItem>
+
+    <ListGroupItem>
+      <Grid>
+        <Col sm={3} md={2}><strong>Email:</strong></Col>
+        <Col sm={10} md={6}>{userInfo.emailAddress}</Col>
+      </Grid>
+    </ListGroupItem>
+
+  </ListGroup>
 );
 
 const getTime = (time) => {
@@ -215,30 +207,20 @@ const getTime = (time) => {
 };
 
 const displayTeamInfo = map((teamInfo) => (
-  <div
-    key={teamInfo.teamId}
-    className={styles.inactiveProfileTeams}
-  >
-    <div className={styles.profileDetailsField}>
-      <FormattedMessage
-        id='firstPlayer'
-        defaultMessage='Team With: '
-      />
-    </div>
-    <div className={styles.profileDetails}>
-      {teamInfo.secondPlayer.name}
-    </div>
-    <br/>
-    <div className={styles.profileDetailsField}>
-      <FormattedMessage
-        id='playTime'
-        defaultMessage='Preferred Play Time: '
-      />
-    </div>
-    <div className={styles.profileDetails}>
-      {getTime(teamInfo.playTime)}
-    </div>
-  </div>
+  <ListGroup fill>
+    <ListGroupItem>
+      <Grid>
+        <Row className={styles.row}>
+          <Col sm={5} md={3}><strong>Team With:</strong></Col>
+          <Col sm={8} md={5}>{teamInfo.secondPlayer.name}</Col>
+        </Row>
+        <Row>
+          <Col sm={5} md={3}><strong>Preferred Play Time:</strong></Col>
+          <Col sm={3} md={2}>{getTime(teamInfo.playTime)}</Col>
+        </Row>
+      </Grid>
+    </ListGroupItem>
+  </ListGroup>
 ));
 
 const CreateTeam = withRouter(({
