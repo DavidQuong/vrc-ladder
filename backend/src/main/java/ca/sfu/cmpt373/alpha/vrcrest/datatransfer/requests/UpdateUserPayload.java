@@ -78,7 +78,7 @@ public class UpdateUserPayload {
         this.lastName = lastName;
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
-        this.password=newPassword;
+        this.password = newPassword;
     }
 
     public String getFirstName() {
@@ -97,7 +97,9 @@ public class UpdateUserPayload {
         return emailAddress;
     }
 
-    public Password getPassword(){return  password;}
+    public Password getPassword(){
+        return  password;
+    }
 
     public PhoneNumber getPhoneNumber() {
         return phoneNumber;
