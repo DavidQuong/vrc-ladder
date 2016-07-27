@@ -119,6 +119,8 @@ public class UserRouter extends RestRouter {
     }
 
     private String handleGetUsers(Request request, Response response) {
+        checkForVolunteerRole(request);
+
         JsonObject responseBody = new JsonObject();
         try {
             List<User> users = userManager.getAll();
@@ -247,6 +249,8 @@ public class UserRouter extends RestRouter {
     }
 
     private String handleGetUserById(Request request, Response response) {
+        checkForVolunteerRole(request);
+
         JsonObject responseBody = new JsonObject();
 
         try {
@@ -324,8 +328,9 @@ public class UserRouter extends RestRouter {
     }
 
     private String handleDeleteUserById(Request request, Response response) {
-        JsonObject responseBody = new JsonObject();
+        checkForVolunteerRole(request);
 
+        JsonObject responseBody = new JsonObject();
         try {
             String requestedId = request.params(PARAM_ID);
             UserId userId = new UserId(requestedId);
@@ -348,8 +353,9 @@ public class UserRouter extends RestRouter {
     }
 
     private String handleGetAllTeamsForUser(Request request, Response response) {
-        JsonObject responseBody = new JsonObject();
+        checkForVolunteerRole(request);
 
+        JsonObject responseBody = new JsonObject();
         String userIdParam = request.params(PARAM_ID);
         User user = userManager.getById(new UserId(userIdParam));
 

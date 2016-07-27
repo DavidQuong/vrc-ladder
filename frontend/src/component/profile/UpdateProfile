@@ -1,0 +1,110 @@
+import {createElement, Element} from 'react';
+import {FormattedMessage} from 'react-intl';
+import {connect} from 'react-redux';
+import {reduxForm} from 'redux-form';
+import {addTeam, updateTeamStatus} from '../../action/teams';
+import {SubmitBtn} from '../button';
+
+import {withRouter} from 'react-router';
+import {getTeamInfo} from '../../action/users';
+
+import map from 'lodash/fp/map';
+import styles from './profile.css';
+import Heading from '../heading/heading';
+import classNames from 'classnames';
+import isEmpty from 'lodash/fp/isEmpty';
+import sortBy from 'lodash/fp/sortBy';
+
+
+
+const updateProfileInfo = ({
+ fields: {
+   userId,
+   firstName,
+   lastName,
+   emailAddress,
+   phoneNumber,
+   password,
+   confirmPassword},
+ handleSubmit,
+}) => (
+ <Form horizontal onSubmit={handleSubmit}>
+   <div>
+     <FormGroup>
+       <col componentClass={ControlLabel} sm={4}>User ID</col>
+       <col sm={4}>
+         <FormControl type='userID' placeholder='Your ID #' {...userId} />
+       </col>
+       <col sm={3}><FormError {...userId}/></col>
+     </FormGroup>
+
+     <FormGroup>
+       <col componentClass={ControlLabel} sm={4}>First Name</col>
+       <col sm={4}>
+         <FormControl
+           type='firstName'
+           placeholder='eg. Jane'
+           {...firstName}
+         />
+       </col>
+       <col sm={3}><FormError {...firstName}/></col>
+     </FormGroup>
+
+     <FormGroup>
+       <col componentClass={ControlLabel} sm={4}>Last Name</col>
+       <col sm={4}>
+         <FormControl type='lastName' placeholder='eg. Doe' {...lastName} />
+       </col>
+       <col sm={3}><FormError {...lastName}/></col>
+     </FormGroup>
+
+     <FormGroup>
+       <col componentClass={ControlLabel} sm={4}>Email</col>
+       <col sm={5}>
+         <FormControl
+           type='emailAddress'
+           placeholder='eg. jane.doe@example.com'
+           {...emailAddress}
+         />
+       </col>
+       <col sm={3}><FormError {...emailAddress}/></col>
+     </FormGroup>
+
+     <FormGroup>
+       <col componentClass={ControlLabel} sm={4}>Phone Number</col>
+       <col sm={4}>
+         <FormControl
+           type='phoneNumber'
+           placeholder='eg. 6041234567'
+           {...phoneNumber}
+         />
+       </col>
+       <col sm={3}><FormError {...phoneNumber}/></col>
+     </FormGroup>
+
+     <FormGroup>
+       <col componentClass={ControlLabel} sm={4}>Password</col>
+       <col sm={5}>
+         <FormControl type='password' placeholder='Password' {...password} />
+       </col>
+       <col sm={3}><FormError {...password}/></col>
+     </FormGroup>
+
+     <FormGroup>
+       <col componentClass={ControlLabel} sm={4}>Confirm Password</col>
+       <col sm={5}>
+         <FormControl
+           type='password'
+           placeholder='Password confirmation'
+           {...confirmPassword}
+         />
+       </col>
+       <col sm={3}><FormError {...confirmPassword}/></col>
+     </FormGroup>
+
+     <div className={classNames(styles.center)}>
+       <button bsStyle='primary' bsSize='large' type='submit'>Sign Up</button>
+     </div>
+   </div>
+ </Form>
+);

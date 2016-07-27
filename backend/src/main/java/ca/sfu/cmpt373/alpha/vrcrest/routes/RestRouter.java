@@ -4,11 +4,14 @@ import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
-import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserAction;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcrest.security.RouteSignature;
 import com.google.gson.Gson;
+import org.eclipse.jetty.http.HttpStatus;
 import spark.Request;
+import spark.Spark;
+
 import java.util.List;
 
 public abstract class RestRouter {
@@ -42,6 +45,18 @@ public abstract class RestRouter {
         UserId userId = securityManager.parseToken(authorizationToken);
         return userManager.getById(userId);
     }
+
+    /**
+     * Get the active (calling) user of the provided request and check if the callee is a
+     * volunteer. If not, halt the request with a status code of 403 (Forbidden).
+     */
+    protected void checkForVolunteerRole(Request request) {
+        User callingUser = extractUserFromRequest(request);
+        if (callingUser.getUserRole() != UserRole.VOLUNTEER) {
+            Spark.halt(HttpStatus.FORBIDDEN_403);
+        }
+    }
+
 
     protected Gson getGson() {
         return gson;
