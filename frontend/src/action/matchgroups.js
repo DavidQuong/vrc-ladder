@@ -2,8 +2,9 @@ import {
   getMatchGroups as getMatchGroupsAPI,
   generateMatchGroups as generateMatchGroupsAPI,
   reportMatchResults as reportMatchResultsAPI,
-  regenerateMatchGroups as regenerateMatchGroupsAPI} from '../api/matchgroups';
-import {syncMatchGroups} from './types';
+  regenerateMatchGroups as regenerateMatchGroupsAPI,
+  getMatchSchedule as getMatchScheduleAPI} from '../api/matchgroups';
+import {syncMatchGroups, syncMatchSchedule} from './types';
 
 export const getMatchGroups = () => (dispatch, getState) => {
   const state = getState();
@@ -15,6 +16,17 @@ export const getMatchGroups = () => (dispatch, getState) => {
     return Promise.resolve();
   }).catch((error) => {
     return Promise.reject(error);
+  });
+};
+
+export const getMatchSchedule = () => (dispatch, getState) => {
+  const state = getState();
+  return getMatchScheduleAPI(state).then((response) => {
+    if (response.error) {
+      return Promise.reject();
+    }
+    dispatch(syncMatchSchedule(response.courts));
+    return Promise.resolve();
   });
 };
 
