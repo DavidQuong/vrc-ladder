@@ -15,6 +15,7 @@ import LogIn from './component/login/login';
 import Logout from './component/logout/logout';
 import {UserLabel} from './component/user-label/user-label';
 import {NavTabs} from './component/nav-tabs/nav-tabs';
+import {MatchResults} from './component/match-results/match-results';
 
 const Layout = ({children}) => (
   <div>
@@ -79,6 +80,11 @@ export default ({store}) : Element => (
             path='/match-groups'
             navbarTitle='Match Schedule'
             component={MatchGroups}
+          />
+          <Route
+            path='/match-results'
+            navbarTitle='Match Results'
+            component={MatchResults}
           />
           <Route
             path='/ladder'
