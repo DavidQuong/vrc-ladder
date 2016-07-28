@@ -8,6 +8,7 @@ import {Row, Col, Navbar, Grid} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import {UserLabel} from './component/user-label/user-label';
 import {NavTabs} from './component/nav-tabs/nav-tabs';
+import Admin from './component/admin/admin';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import MatchGroups from './component/match-groups/match-groups';
@@ -85,11 +86,19 @@ export default ({store}) : Element => (
             component={MatchGroups}
           />
           <Route
+            path='/admin'
+            navbarTitle='Admin'
+            component={Admin}
+            onEnter={(nextState, replace, callback) => {
+              store.dispatch(getPlayer()).then(callback);
+              store.dispatch(getTeams()).then(callback);
+            }}
+          />
+          <Route
             path='/ladder'
             navbarTitle='Weekly Doubles Leaderboard'
             component={Ladder}
             onEnter={(nextState, replace, callback) => {
-              store.dispatch(getPlayer()).then(callback);
               store.dispatch(getTeams()).then(callback);
             }}
           />
