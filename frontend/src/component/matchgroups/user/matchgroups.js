@@ -33,15 +33,15 @@ const displayMatchGroup = (matchGroup, allTeams) => {
 
 const displayCourt = (courtNumber, court, allTeams) => {
   return (<Panel header={`Court ${courtNumber}`}>
-    <Panel header='Time Slot A'>
+    <Panel header='8:00PM'>
       {court.TIME_SLOT_A ?
         displayMatchGroup(court.TIME_SLOT_A, allTeams) :
         'Nothing Scheduled'}
     </Panel>
-    <Panel header='Time Slot B'>
+    <Panel header='9:30PM'>
       {court.TIME_SLOT_B ?
         displayMatchGroup(court.TIME_SLOT_B, allTeams) :
-        'Nothing scheduled'}
+        'Nothing Scheduled'}
     </Panel>
   </Panel>);
 };
@@ -54,18 +54,11 @@ const displayCourts = (courts, allTeams) => {
   }, courts);
 };
 
-// const gotoResultsSubmission = () {
-//
-// }
-
 export const MatchGroups = React.createClass({
   render: function() {
     return (<div>
-      Test text
-      <button onClick={() => this.props.generateMatchGroups()}>GENERATE</button>
-      <button onClick={() => this.props.getMatchSchedule()}>FETCH</button>
       <button onClick={() => this.props.router.push('/match-results')}>
-        Submit Match Results
+        Goto Match Results Submission
       </button>
       <div>{this.props.matchSchedule.length === 0 ?
         'No Match Schedule. Try fetching!' :

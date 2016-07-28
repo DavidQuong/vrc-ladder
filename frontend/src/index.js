@@ -4,6 +4,7 @@ import {IntlProvider} from 'react-intl';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 import {getPlayer} from './action/users';
 import {getTeams} from './action/teams';
+import {getMatchSchedule, getMatchGroups} from './action/matchgroups';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import MatchGroups from './component/matchgroups/user/matchgroups';
@@ -80,11 +81,17 @@ export default ({store}) : Element => (
             path='/match-groups'
             navbarTitle='Match Schedule'
             component={MatchGroups}
+            onEnter={(nextState, replace, callback) => {
+              store.dispatch(getMatchSchedule()).then(callback);
+            }}
           />
           <Route
             path='/match-results'
             navbarTitle='Match Results'
             component={MatchResults}
+            onEnter={(nextState, replace, callback) => {
+              store.dispatch(getMatchGroups()).then(callback);
+            }}
           />
           <Route
             path='/ladder'

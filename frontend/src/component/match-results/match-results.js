@@ -28,13 +28,6 @@ const findUserMatchGroup = (matchGroups, allTeams, teamId) => {
   });
   return userMatchGroup;
 };
-// TODO: move duplicate methods in component/matchgroups/matchgroups.js
-// to a common file
-// const displayTeams = (teams) => {
-//   return map((team) => (<div>
-//     {team.firstPlayer.name} & {team.secondPlayer.name}
-//   </div>), teams);
-// };
 
 const displayTeams = (teams) => {
   return ResultForm(teams);
@@ -49,7 +42,6 @@ const displayMatchGroup = (matchGroup, allTeams) => {
 const MatchResultsDummy = React.createClass({
   render: function() {
     return (<div>
-      <button onClick={() => this.props.getMatchGroups()}>FETCH</button>
       {this.props.teamInfo.teamId ?
         displayMatchGroup(findUserMatchGroup(
           this.props.matchGroups,
