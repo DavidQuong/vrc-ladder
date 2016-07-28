@@ -2,69 +2,18 @@ import {createElement, Element} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
+import {SubmitBtn} from '../button';
 import {withRouter} from 'react-router';
-import {updateUser} from '../../action/users';
-import styles from './updateProfile.css';
+import {getTeamInfo} from '../../action/users';
+import map from 'lodash/fp/map';
+import styles from './profile.css';
 import Heading from '../heading/heading';
-import isEmpty from 'lodash/fp/isEmpty';
 import classNames from 'classnames';
-
+// import isEmpty from 'lodash/fp/isEmpty';
+// import sortBy from 'lodash/fp/sortBy';
 import {
-  Well, Col, ControlLabel, Button, FormControl, FormGroup, Form,
+  Col, ControlLabel, Button, FormControl, FormGroup, Form,
 } from 'react-bootstrap';
-
-const validate = (values) => {
-  const errors = {};
-
-  if  (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.emailAddress)) {
-    errors.emailAddress = 'Invalid email address';
-  }
-  if (values.password !== values.confirmPassword) {
-    errors.password = 'Password does not match';
-  }
-  return errors;
-};
-
-const parseUser = (props, userInfo) => {
-  if (!props.userId) {
-    props.userId = userInfo.userId;
-  }
-  if (!props.firstName) {
-    props.firstName = userInfo.name;
-  }
-  if (!props.lastName) {
-    props.lastName = userInfo.lastName;
-  }
-  if (!props.emailAddress) {
-    props.emailAddress = userInfo.emailAddress;
-  }
-  if (!props.phoneNumber) {
-    props.phoneNumber = userInfo.phoneNumber;
-  }
-  if (!props.password) {
-    props.password = userInfo.password;
-  }
-
-  const user = props;
-  delete user.confirmPassword;
-  return ({
-    ...user,
-    userRole: 'PLAYER',
-    middleName: '',
-  });
-};
-
-const formEnhancer = reduxForm({
-  form: 'updateProfile',
-  fields: [
-    'firstName',
-    'lastName',
-    'emailAddress',
-    'phoneNumber',
-    'password',
-    'confirmPassword'],
-  validate,
-});
 
 const FormError = ({touched, error}) => {
   if (touched && error) {
@@ -79,18 +28,27 @@ const FormError = ({touched, error}) => {
   return null;
 };
 
-const UpdateProfileInfoForm = ({
+const updateProfileInfo = ({
  fields: {
+   userId,
    firstName,
    lastName,
    emailAddress,
    phoneNumber,
    password,
    confirmPassword},
-   handleSubmit}) => (
+   handleSubmit,
+}) => (
  <Form horizontal onSubmit={handleSubmit}>
    <div>
-    <FormGroup>
+     <FormGroup>
+       <Col componentClass={ControlLabel} sm={4}>User ID</Col>
+       <Col sm={4}>
+         <FormControl type='userID' placeholder='Your ID #' {...userId} />
+       </Col>
+       <Col sm={3}><FormError {...userId}/></Col>
+     </FormGroup>
+     <FormGroup>
        <Col componentClass={ControlLabel} sm={4}>First Name</Col>
        <Col sm={4}>
          <FormControl
@@ -133,7 +91,6 @@ const UpdateProfileInfoForm = ({
        </Col>
        <Col sm={3}><FormError {...phoneNumber}/></Col>
      </FormGroup>
-
      <FormGroup>
        <Col componentClass={ControlLabel} sm={4}>Password</Col>
        <Col sm={5}>
@@ -141,7 +98,6 @@ const UpdateProfileInfoForm = ({
        </Col>
        <Col sm={3}><FormError {...password}/></Col>
      </FormGroup>
-
      <FormGroup>
        <Col componentClass={ControlLabel} sm={4}>Confirm Password</Col>
        <Col sm={5}>
@@ -150,75 +106,14 @@ const UpdateProfileInfoForm = ({
            placeholder='Password confirmation'
            {...confirmPassword}
          />
-        </Col>
+       </Col>
        <Col sm={3}><FormError {...confirmPassword}/></Col>
      </FormGroup>
-
      <div className={classNames(styles.center)}>
-      <Button bsStyle='primary' bsSize='large' type='submit'>Confirm Update
-      </Button>
+       <Button bsStyle='primary' bsSize='large' type='submit'>Sign Up</Button>
      </div>
    </div>
  </Form>
 );
 
-const UpdateProfileForm = formEnhancer(UpdateProfileInfoForm);
-
-const checkErrors = (responseErrors) => {
-  const errors = {};
-  if (responseErrors.emailAddress === false) {
-    errors.emailAddress = 'A user with this email already exists!';
-  }
-  if (responseErrors.emailAddress === 'invalid') {
-    errors.emailAddress = 'This email Address is not valid';
-  }
-  if (responseErrors.phoneNumber === 'invalid') {
-    errors.phoneNumber = 'This phone number is not valid';
-  }
-
-  return errors;
-};
-
-const updateAccount = withRouter(({
-  updateUser,
-  router,
-  userInfo,
-}) : Element => (
-  <div className={styles.center}>
-    <Well>
-        <Heading>
-          <FormattedMessage
-            id='Update-profile'
-            defaultMessage='Edit Your Account'
-          />
-        </Heading>
-      <UpdateProfileForm
-        onSubmit={(props) => {
-          const errors = validate(props);
-          const info = parseUser(props, userInfo);
-          if (!isEmpty(errors)) {
-            return Promise.reject(errors);
-          }
-          return updateUser(info).then(() => {
-            router.push('/profile');
-          }).catch((response) => {
-            return response.then(function(bodyContent) {
-              const errors = checkErrors(bodyContent);
-              return Promise.reject(errors);
-            });
-          });
-        }}
-      />
-    </Well>
-  </div>
-
-));
-
-export default connect(
-  (state) => ({
-    players: state.app.players,
-    userInfo: state.app.userInfo,
-  }),
-  {updateUser,
-  }
-)(updateAccount);
+const updateProfileForm = formEnhancer(updateProfileInfo);
