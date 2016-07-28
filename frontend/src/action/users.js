@@ -47,3 +47,7 @@ export const getTeamInfo = () => (dispatch, getState) => {
     return Promise.reject(error);
   });
 };
+// TODO update this for actually updating user.
+export const updateUser = (user) => () => {
+  return addUserAPI(user);
+};
