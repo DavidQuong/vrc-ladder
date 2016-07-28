@@ -179,7 +179,7 @@ const displayMyInfo = (userInfo) => (
       />
     </div>
     <div className={styles.profileDetails}>
-      {userInfo.firstName} {userInfo.lastName}
+      {userInfo.name}
     </div>
     <br/>
     <div className={styles.profileDetailsField}>
