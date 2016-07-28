@@ -7,7 +7,7 @@ import {getTeams} from './action/teams';
 import {getMatchSchedule, getMatchGroups} from './action/matchgroups';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
-import MatchGroups from './component/matchgroups/user/matchgroups';
+import MatchGroups from './component/matchgroups/admin/matchgroups-admin';
 import CreateTeam from './component/profile/profile';
 import {Nav, Navbar, Grid} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
