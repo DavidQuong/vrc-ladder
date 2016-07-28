@@ -54,7 +54,7 @@ const displayCourts = (courts, allTeams) => {
   }, courts);
 };
 
-export const MatchGroups = React.createClass({
+const MatchGroupsDummy = React.createClass({
   render: function() {
     return (<div>
       <button onClick={() => this.props.router.push('/match-results')}>
@@ -76,6 +76,6 @@ const mapStateToProps = (state) => (
   }
 );
 
-export default
+export const MatchGroups =
   connect(mapStateToProps,
-    {generateMatchGroups, getMatchSchedule})(withRouter(MatchGroups));
+    {generateMatchGroups, getMatchSchedule})(withRouter(MatchGroupsDummy));
