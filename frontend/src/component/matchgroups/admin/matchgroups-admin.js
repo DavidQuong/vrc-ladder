@@ -84,7 +84,7 @@ const MatchGroupForms = ({matchGroup, teams, reportMatchResults}) => {
         </div>
       </Panel>
       <Panel header='Result Submission' bsStyle='primary'>
-        {ResultForm(matchGroup, matchTeams, (props) => {
+        {ResultForm(matchTeams, (props) => {
           const errors = validate(props);
           if (!isEmpty(errors)) {
             return Promise.reject(errors);
