@@ -54,7 +54,7 @@ public class MatchScheduler {
             }
 
             for(int i = 0;i < slotBGroups.size();i++) {
-                courts.get(i).scheduleMatch(slotBGroups.get(i), PlayTime.TIME_SLOT_B);
+                courts.get(slotAGroups.size() + i).scheduleMatch(slotBGroups.get(i), PlayTime.TIME_SLOT_B);
             }
         }
 

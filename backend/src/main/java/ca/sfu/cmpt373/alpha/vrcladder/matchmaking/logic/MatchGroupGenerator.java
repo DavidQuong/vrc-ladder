@@ -25,7 +25,7 @@ public class MatchGroupGenerator {
         int deductedTeamsCount = 0;
         int teamsTotalCount = attendingTeams.size();
 
-        for(int counter = 0;deductedTeamsCount > 0; counter++) {
+        while(true) {
             int currentGroupSize;
             int remainingTeamsCount = (teamsTotalCount - deductedTeamsCount);
             if(remainingTeamsCount < MatchGroup.MIN_NUM_TEAMS){
@@ -39,7 +39,7 @@ public class MatchGroupGenerator {
             teamsToGroup.clear();
         }
 
-        if(results.size() == 0 && attendingTeams.size() > 0){
+        if(attendingTeams.size() > deductedTeamsCount){
             throw new MatchMakingException(ERROR_MESSAGE);
         }
 
@@ -57,13 +57,11 @@ public class MatchGroupGenerator {
     }
 
     private static int decideCurrentTeam(int remainingTeams){
-        int result;
         if(remainingTeams % MatchGroup.MAX_NUM_TEAMS == 0 && ((remainingTeams - MatchGroup.MAX_NUM_TEAMS) == 0 || (remainingTeams - MatchGroup.MAX_NUM_TEAMS) == 4)){
-           result = MatchGroup.MAX_NUM_TEAMS;
-        }else{
-           result = MatchGroup.MIN_NUM_TEAMS;
+           return MatchGroup.MAX_NUM_TEAMS;
+        } else {
+           return MatchGroup.MIN_NUM_TEAMS;
         }
-        return result;
     }
 
     private static void createGroup(int currentGroupSize, int deductedTeams, List<Team> teams, List<Team> teamsToGroup){

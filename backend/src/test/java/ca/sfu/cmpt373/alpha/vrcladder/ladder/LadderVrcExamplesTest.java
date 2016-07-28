@@ -98,9 +98,7 @@ public class LadderVrcExamplesTest {
 
         //generate matchgroups and set matchgroup results
         //every matchgroup's results didn't change within the matchgroup except for matchgroup 3
-        List<Team> waitList = new ArrayList<>();
-        int expectedNumberOfGroups = 4;
-        List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(teams, waitList, expectedNumberOfGroups);
+        List<MatchGroup> matchGroups = MatchGroupGenerator.generateMatchGroupings(teams);
         for (MatchGroup matchGroup : matchGroups) {
             matchGroup.getScoreCard().setRankedTeams(matchGroup.getTeams());
         }
@@ -111,8 +109,6 @@ public class LadderVrcExamplesTest {
         rankedTeams.add(thirdMatchGroup.getTeam3());
         rankedTeams.add(thirdMatchGroup.getTeam1());
         thirdMatchGroup.getScoreCard().setRankedTeams(rankedTeams);
-
-        Assert.assertEquals(waitList.size(), 0);
 
         //calculate new rankings
         Ladder ladder = new Ladder(teams);
