@@ -49,7 +49,7 @@ export const regenerateMatchGroups = (state) => {
 export const reportMatchResults = (props, state) => {
   return fetch(`${root}matchgroups/${props.matchGroupId}/scores`, {
     method: 'PUT',
-    body: JSON.stringify(props.result),
+    body: JSON.stringify(props.results),
     headers: {
       'Content-Type': 'application/json',
       Authorization: state.app.loggedIn.authorizationToken,

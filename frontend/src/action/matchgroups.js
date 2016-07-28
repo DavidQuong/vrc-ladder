@@ -27,8 +27,6 @@ export const getMatchSchedule = () => (dispatch, getState) => {
     }
     dispatch(syncMatchSchedule(response.courts));
     return Promise.resolve();
-  }).catch((error) => {
-    return Promise.reject(error);
   });
 };
 
@@ -50,11 +48,7 @@ export const regenerateMatchGroups = () => (dispatch, getState) => {
   });
 };
 
-export const reportMatchResults = (props) => (getState) => {
+export const reportMatchResults = (props) => (dispatch, getState) => {
   const state = getState();
-  return reportMatchResultsAPI(props, state).then(() => {
-    return Promise.resolve();
-  }).catch((error) => {
-    return Promise.reject(error);
-  });
+  return reportMatchResultsAPI(props, state);
 };

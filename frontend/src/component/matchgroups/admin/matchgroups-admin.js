@@ -70,7 +70,7 @@ const matchGroupTeams = ({matchGroup, teams}) => {
   );
 };
 
-const MatchGroupForms = ({matchGroup, teams}) => {
+const MatchGroupForms = ({matchGroup, teams, reportMatchResults}) => {
   const matchTeams = matchGroupTeams({matchGroup, teams});
   return (
     <Well>
@@ -93,8 +93,8 @@ const MatchGroupForms = ({matchGroup, teams}) => {
           console.log('matchgroup: ', matchGroup.matchGroupId);
           console.log(reportMatchResults);
           return reportMatchResults({
-            ...props,
-            ...matchGroup.matchGroupId,
+            results: props,
+            matchGroupId: matchGroup.matchGroupId,
           }).then((response) => {
             console.log("Submitted: ", response);
             return Promise.resolve();
@@ -114,6 +114,7 @@ const MatchGroupsDummy = withRouter(({
   teams,
   matchGroups,
   regenerateMatchGroups,
+  reportMatchResults,
 }) : Element => (
   <div className={styles.matchGroupPage}>
     <div>
@@ -126,6 +127,7 @@ const MatchGroupsDummy = withRouter(({
       <MatchGroupForms
         key={matchGroup.matchGroupId}
         matchGroup={matchGroup}
+        reportMatchResults={reportMatchResults}
         teams={teams}
       />
     ))}
