@@ -3,15 +3,12 @@ import {MatchGroups as AdminMatchGroupsPage} from './admin/matchgroups-admin';
 import React, {createElement} from 'react';
 import {connect} from 'react-redux';
 
-
-// {this.props.userInfo.userRole === 'ADMIN' ?
-//   <AdminMatchGroupsPage/> :
-//   <UserMatchGroupsPage/>}
-
 const MatchGroupsDummy = React.createClass({
   render: function() {
     return (<div>
-      <AdminMatchGroupsPage/>
+      {this.props.userInfo.userRole === 'ADMINISTRATOR' ?
+        <AdminMatchGroupsPage/> :
+        <UserMatchGroupsPage/>}
     </div>);
   },
 });

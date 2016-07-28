@@ -59,7 +59,7 @@ const ResultFormRows = reduxForm({
   </Form>
 ));
 
-export const ResultForm = (matchGroup, matchGroupTeams, onSubmitCallback) => {
+export const ResultForm = (matchGroupTeams, onSubmitCallback) => {
   return (
     <Well>
       <Panel header='Result Submission' bsStyle='primary'>
