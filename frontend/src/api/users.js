@@ -45,14 +45,34 @@ export const getTeamInfo = (state) => {
     return response.json();
   });
 };
-
+/*
 export const updateProfieInfo = (state) => {
   return fetch(`${root}user/${state.app.loggedIn.userId}/user`, {
+    method: 'PUT',
+    body: JSON.stringify({}),
     headers: {
       'Content-Type': 'application/json',
       Authorization: state.app.loggedIn.authorizationToken,
     },
-  }).then ((response) =>{
+  }).then((response) => {
     return response.json;
   });
-}
+};
+/*
+export const updateTeamStatus = (team) => {
+  return fetch(
+    `${root}team/${team.teamId}/attendance/playtime`, {
+      method: 'PUT',
+      body: JSON.stringify({playTime: team.playTime}),
+      headers: new Headers({
+        'Content-Type': 'application.json',
+        Authorization: team.authorizationToken,
+      }),
+    }).then((response) => {
+      const body = response.json();
+      if (response.ok) {
+        return Promise.resolve(body);
+      }
+      return Promise.reject(body);
+    });
+};*/

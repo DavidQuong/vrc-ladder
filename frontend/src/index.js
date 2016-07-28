@@ -8,6 +8,7 @@ import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import MatchGroups from './component/match-groups/match-groups';
 import CreateTeam from './component/profile/profile';
+import UpdateProfile from './component/profile/update-profile';
 import {Nav, Navbar, Grid} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import styles from './index.css';
@@ -69,6 +70,10 @@ export default ({store}) : Element => (
           <Route
             path='/logout'
             component={Logout}
+          />
+          <Route
+            path='/updateProfile'
+            component={UpdateProfile}
           />
           <Route
             path='/profile'

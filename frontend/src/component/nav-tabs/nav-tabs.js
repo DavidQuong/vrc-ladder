@@ -14,6 +14,9 @@ const NavTabsDummy = React.createClass({
         <LinkContainer to='/profile'>
           <NavItem>Profile</NavItem>
         </LinkContainer>
+        <LinkContainer to='/updateProfile'>
+          <NavItem>Edit Profile</NavItem>
+         </LinkContainer>
         <LinkContainer to='/ladder'>
           <NavItem>Ladder</NavItem>
         </LinkContainer>
