@@ -1,19 +1,59 @@
 import {createElement, Element} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
-import {reduxForm} from 'redux-form';
-import {SubmitBtn} from '../button';
+// import {SubmitBtn} from '../button';
 import {withRouter} from 'react-router';
-import {getTeamInfo} from '../../action/users';
-import map from 'lodash/fp/map';
+// import map from 'lodash/fp/map';
+import updateUser from '../../action/users';
 import styles from './profile.css';
 import Heading from '../heading/heading';
 import classNames from 'classnames';
-// import isEmpty from 'lodash/fp/isEmpty';
+import isEmpty from 'lodash/fp/isEmpty';
 // import sortBy from 'lodash/fp/sortBy';
+import {reduxForm} from 'redux-form';
 import {
-  Col, ControlLabel, Button, FormControl, FormGroup, Form,
+  Well, Col, ControlLabel, Button, FormControl, FormGroup, Form,
 } from 'react-bootstrap';
+
+const validate = (values) => {
+  const errors = {};
+  if (!values.userId) {
+    errors.userId = 'Required';
+  }
+  if (!values.firstName) {
+    errors.firstName = 'Required';
+  }
+  if (!values.lastName) {
+    errors.lastName = 'Required';
+  }
+  if (!values.emailAddress) {
+    errors.emailAddress = 'Required';
+  } else if
+  (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.emailAddress)) {
+    errors.emailAddress = 'Invalid email address';
+  }
+  if (!values.phoneNumber) {
+    errors.phoneNumber = 'Required';
+  }
+  if (!values.password) {
+    errors.password = 'Password Required';
+  } else if (values.password !== values.confirmPassword) {
+    errors.password = 'Password does not match';
+  }
+  return errors;
+};
+const formEnhancer = reduxForm({
+  form: 'updateProfile',
+  fields: [
+    'userId',
+    'firstName',
+    'lastName',
+    'emailAddress',
+    'phoneNumber',
+    'password',
+    'confirmPassword'],
+  validate,
+});
 
 const FormError = ({touched, error}) => {
   if (touched && error) {
@@ -116,4 +156,77 @@ const updateProfileInfo = ({
  </Form>
 );
 
+const checkErrors = (responseErrors) => {
+  const errors = {};
+
+  if (responseErrors.userId === false) {
+    errors.userId = 'A user with this ID already exists!';
+  }
+  if (responseErrors.emailAddress === false) {
+    errors.emailAddress = 'A user with this email already exists!';
+  }
+
+  if (responseErrors.userId === 'invalid') {
+    errors.userId = 'This userId is not valid';
+  }
+  if (responseErrors.emailAddress === 'invalid') {
+    errors.emailAddress = 'This email Address is not valid';
+  }
+  if (responseErrors.phoneNumber === 'invalid') {
+    errors.phoneNumber = 'This phone number is not valid';
+  }
+
+  return errors;
+};
+
+const parseUser = (props) => {
+  const user = props;
+  delete user.confirmPassword;
+  return ({
+    ...user,
+    userRole: 'PLAYER',
+    middleName: '',
+  });
+};
+
+const updateAccount = withRouter(({
+  updateUser,
+  router,
+}) : Element => (
+  <div className={styles.center}>
+    <Well>
+        <Heading>
+          <FormattedMessage
+            id='Update-profile'
+            defaultMessage='Edit Your Account:'
+          />
+        </Heading>
+      <updateProfileForm
+        onSubmit={(props) => {
+          const errors = validate(props);
+          const userInfo = parseUser(props);
+          if (!isEmpty(errors)) {
+            return Promise.reject(errors);
+          }
+          return updateUser(userInfo).then(() => {
+            router.push('/profile');
+          }).catch((response) => {
+            return response.then(function(bodyContent) {
+              const errors = checkErrors(bodyContent);
+              return Promise.reject(errors);
+            });
+          });
+        }}
+      />
+    </Well>
+  </div>
+));
 const updateProfileForm = formEnhancer(updateProfileInfo);
+export default connect(
+  (state) => ({
+    players: state.app.players,
+    userInfo: state.app.userInfo,
+  }),
+  {updateUser,
+  }
+)(updateAccount);
