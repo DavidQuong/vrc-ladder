@@ -108,7 +108,7 @@ const MatchGroupForms = ({matchGroup, teams}) => {
   );
 };
 
-const MatchGroups = withRouter(({
+const MatchGroupsDummy = withRouter(({
   getMatchGroups,
   generateMatchGroups,
   teams,
@@ -133,7 +133,7 @@ const MatchGroups = withRouter(({
   </div>
 ));
 
-export default connect(
+export const MatchGroups = connect(
   (state) => ({
     login: state.app.loggedIn,
     matchGroups: state.app.matchGroups,
@@ -143,4 +143,4 @@ export default connect(
     generateMatchGroups,
     reportMatchResults,
     regenerateMatchGroups}
-)(MatchGroups);
+)(MatchGroupsDummy);
