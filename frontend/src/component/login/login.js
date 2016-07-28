@@ -118,7 +118,7 @@ const LogIn = withRouter(({
             });
             getCurrentActiveUserInfo().then(() => {
               getTeamInfo().then(() => {
-                router.push('/ladder');
+                router.push('/profile');
               });
             });
           }).catch(() => {
