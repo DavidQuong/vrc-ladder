@@ -1,6 +1,6 @@
 import React, {createElement} from 'react';
 import {connect} from 'react-redux';
-import {getMatchSchedule, generateMatchGroups}
+import {getMatchSchedule, generateMatchGroups, reportMatchResults}
   from '../../../action/matchgroups';
 import {withRouter} from 'react-router';
 import map from 'lodash/fp/map';
@@ -78,4 +78,6 @@ const mapStateToProps = (state) => (
 
 export const MatchGroups =
   connect(mapStateToProps,
-    {generateMatchGroups, getMatchSchedule})(withRouter(MatchGroupsDummy));
+    {generateMatchGroups,
+      getMatchSchedule,
+      reportMatchResults})(withRouter(MatchGroupsDummy));
