@@ -317,7 +317,7 @@ public class LadderTest extends BaseTest {
 			List<List<Team>> ladderTestTeamsSeg = getTeams(teamCount, testCase);
 			List<Team> ladderTestTeams = ladderTestTeamsSeg.get(ATTENDING);
 
-			List<MatchGroup> ladderTestGroups = MatchGroupGenerator.generateMatchGroupings(ladderTestTeams, new ArrayList<>(), 3);
+			List<MatchGroup> ladderTestGroups = MatchGroupGenerator.generateMatchGroupings(ladderTestTeams);
 
 			//The following sets the 3 groups final scores to: 3-2-1, 2-1-3, 1-2-3
             List<Team> matchResults = new ArrayList<>();
@@ -721,7 +721,7 @@ public class LadderTest extends BaseTest {
 			ladderTestTeams.add(ladderTestTeamsSeg.get(ATTENDING).get(5));
 			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(2));
 
-			List<MatchGroup> ladderTestGroups = MatchGroupGenerator.generateMatchGroupings(ladderTestTeams, new ArrayList<>(), 2);
+			List<MatchGroup> ladderTestGroups = MatchGroupGenerator.generateMatchGroupings(ladderTestTeams);
 
 			//The following sets the 2 groups final scores to: 3-2-1, 1-2-3
             List<Team> matchResults = new ArrayList<>();
@@ -872,7 +872,7 @@ public class LadderTest extends BaseTest {
 			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(2));
 			ladderTestTeams.add(ladderTestTeamsSeg.get(NOT_ATTENDING).get(3));
 
-			List<MatchGroup> ladderTestGroups = MatchGroupGenerator.generateMatchGroupings(ladderTestTeams, new ArrayList<>(), 2);
+			List<MatchGroup> ladderTestGroups = MatchGroupGenerator.generateMatchGroupings(ladderTestTeams);
 
 			//The following sets the 2 groups final scores to: 3-1-2-4, 1-2-4-3
             List<Team> matchResults = new ArrayList<>();
