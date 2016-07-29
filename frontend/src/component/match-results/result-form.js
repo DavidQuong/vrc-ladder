@@ -1,8 +1,7 @@
 import {createElement} from 'react';
 import {Form, Panel, Well} from 'react-bootstrap';
 import {reduxForm} from 'redux-form';
-// import styles from './result-form.css';
-import styles from './temp.css';
+import styles from './result-form.css';
 import classNames from 'classnames';
 import {FormattedMessage} from 'react-intl';
 import {SubmitBtn} from '../button';
@@ -76,34 +75,29 @@ const ResultFormRows = reduxForm({
 
 export const ResultForm = (formName, matchGroup, matchGroupTeams, reportMatchResults) => {
   return (
-    <Well>
-      <Panel header='Result Submission' bsStyle='primary'>
-        <ResultFormRows
-          form={formName}
-          matchTeams={matchGroupTeams}
-          onSubmit={
-            (props) => {
-              const errors = validate(props);
-              if (!isEmpty(errors)) {
-                return Promise.reject(errors);
-              }
-              console.log('submitted: ', props);
-              console.log('matchgroup: ', matchGroup.matchGroupId);
-              console.log(reportMatchResults);
-              return reportMatchResults({
-                results: props,
-                matchGroupId: matchGroup.matchGroupId,
-              }).then((response) => {
-                console.log("Submitted: ", response);
-                return Promise.resolve();
-              }).catch((errors) => {
-                console.log('errors: ', errors);
-                return Promise.reject(errors);
-              });
+    <Panel header='Result Submission' bsStyle='primary'>
+      <ResultFormRows
+        form={formName}
+        matchTeams={matchGroupTeams}
+        onSubmit={
+          (props) => {
+            const errors = validate(props);
+            if (!isEmpty(errors)) {
+              return Promise.reject(errors);
             }
+            return reportMatchResults({
+              results: props,
+              matchGroupId: matchGroup.matchGroupId,
+            }).then((response) => {
+              window.alert('Results Submitted Successfully!');
+              return Promise.resolve();
+            }).catch((errors) => {
+              window.alert('There was an error submitting results');
+              return Promise.reject(errors);
+            });
           }
-        />
-      </Panel>
-    </Well>
+        }
+      />
+    </Panel>
   );
 };

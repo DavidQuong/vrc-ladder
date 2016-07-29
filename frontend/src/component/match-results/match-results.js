@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import map from 'lodash/fp/map';
 import {getMatchGroups, reportMatchResults} from '../../action/matchgroups';
 import {ResultForm} from './result-form';
+import {Well} from 'react-bootstrap';
 
 const getMatchGroupTeams = (matchGroup, allTeams) => {
   const teamIds = matchGroup.teamId4 ? [
@@ -30,13 +31,16 @@ export const findUserMatchGroup = (matchGroups, allTeams, teamId) => {
 };
 
 const displayMatchGroup = (matchGroup, allTeams, reportMatchResults) => {
-  return matchGroup ?
-    ResultForm(
-      'playerResultForm',
-      matchGroup,
-      getMatchGroupTeams(matchGroup, allTeams),
-      reportMatchResults) :
-    'Try fetching MatchGroups';
+  return (
+    <Well>
+      {matchGroup ?
+        ResultForm(
+          'playerResultForm',
+          matchGroup,
+          getMatchGroupTeams(matchGroup, allTeams),
+          reportMatchResults) :
+        'You\'re not in any MatchGroups!'}
+    </Well>);
 };
 
 const MatchResultsDummy = React.createClass({

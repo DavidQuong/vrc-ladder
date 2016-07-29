@@ -4,7 +4,8 @@ import {IntlProvider} from 'react-intl';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 import {getPlayer} from './action/users';
 import {getTeams} from './action/teams';
-import {getMatchSchedule, getMatchGroups, getMatchResults} from './action/matchgroups';
+import {getMatchSchedule, getMatchGroups, getMatchResults}
+  from './action/matchgroups';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import {MatchGroups} from './component/matchgroups/matchgroups';
