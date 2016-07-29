@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MatchScheduler {
-    private static final String ERROR_MESSAGE_NOT_ATTENDING = "A group has indicated they are not attending.";
-
     /**
      * @throws MatchMakingException if a group has indicated they are not attending
      */
@@ -34,10 +32,8 @@ public class MatchScheduler {
             for(MatchGroup matchGroup : matchGroups) {
                 if(matchGroup.getPreferredGroupPlayTime() == PlayTime.TIME_SLOT_A) {
                     slotAGroups.add(matchGroup);
-                } else if(matchGroup.getPreferredGroupPlayTime() == PlayTime.TIME_SLOT_B) {
-                    slotBGroups.add(matchGroup);
                 } else {
-                    throw new MatchMakingException(ERROR_MESSAGE_NOT_ATTENDING);
+                    slotBGroups.add(matchGroup);
                 }
             }
 

@@ -24,19 +24,15 @@ public class MatchGroupGenerator {
 
         int deductedTeamsCount = 0;
         int teamsTotalCount = attendingTeams.size();
+        int remainingTeamsCount = teamsTotalCount - deductedTeamsCount;
 
-        while(true) {
-            int currentGroupSize;
-            int remainingTeamsCount = (teamsTotalCount - deductedTeamsCount);
-            if(remainingTeamsCount < MatchGroup.MIN_NUM_TEAMS){
-                break;
-            }
-
-            currentGroupSize = decideCurrentTeam(remainingTeamsCount);
+        while(remainingTeamsCount >= MatchGroup.MIN_NUM_TEAMS) {
+            int currentGroupSize = decideCurrentTeam(remainingTeamsCount);
             createGroup(currentGroupSize, deductedTeamsCount, teams, teamsToGroup);
             deductedTeamsCount = deductedTeamsCount + currentGroupSize;
             results.add(new MatchGroup(teamsToGroup));
             teamsToGroup.clear();
+            remainingTeamsCount = teamsTotalCount - deductedTeamsCount;
         }
 
         if(attendingTeams.size() > deductedTeamsCount){
@@ -56,8 +52,8 @@ public class MatchGroupGenerator {
         return attendingTeams;
     }
 
-    private static int decideCurrentTeam(int remainingTeams){
-        if(remainingTeams % MatchGroup.MAX_NUM_TEAMS == 0 && ((remainingTeams - MatchGroup.MAX_NUM_TEAMS) == 0 || (remainingTeams - MatchGroup.MAX_NUM_TEAMS) == 4)){
+    private static int decideCurrentTeam(int remainingTeams) {
+        if((remainingTeams - MatchGroup.MAX_NUM_TEAMS) == 0 || (remainingTeams - MatchGroup.MAX_NUM_TEAMS) == MatchGroup.MAX_NUM_TEAMS){
            return MatchGroup.MAX_NUM_TEAMS;
         } else {
            return MatchGroup.MIN_NUM_TEAMS;
