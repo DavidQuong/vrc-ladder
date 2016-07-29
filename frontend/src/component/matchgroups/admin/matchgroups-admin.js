@@ -13,22 +13,6 @@ import classNames from 'classnames';
 import styles from './matchgroups-admin.css';
 import {ResultForm} from '../../match-results/result-form';
 import {Well, Panel} from 'react-bootstrap';
-import isEmpty from 'lodash/fp/isEmpty';
-
-const validate = (values) => {
-  const errors = {};
-  if (values.teamId1 === values.teamId2) {
-    errors.teamId1 = 'Cannot be same team';
-    errors.teamId2 = 'Cannot be same team';
-  } else if (values.teamId1 === values.teamId3) {
-    errors.teamId1 = 'Cannot be same team';
-    errors.teamId3 = 'Cannot be same team';
-  } else if (values.teamId2 === values.teamId3) {
-    errors.teamId2 = 'Cannot be same team';
-    errors.teamId3 = 'Cannot be same team';
-  }
-  return errors;
-};
 
 const getTeams = (state) => {
   const matchGroups = state.app.matchGroups;
@@ -70,7 +54,7 @@ const matchGroupTeams = ({matchGroup, teams}) => {
   );
 };
 
-const MatchGroupForms = ({matchGroup, teams, reportMatchResults}) => {
+const MatchGroupForms = ({formName, matchGroup, teams, reportMatchResults}) => {
   const matchTeams = matchGroupTeams({matchGroup, teams});
   return (
     <Well>
@@ -84,25 +68,7 @@ const MatchGroupForms = ({matchGroup, teams, reportMatchResults}) => {
         </div>
       </Panel>
       <Panel header='Result Submission' bsStyle='primary'>
-        {ResultForm(matchTeams, (props) => {
-          const errors = validate(props);
-          if (!isEmpty(errors)) {
-            return Promise.reject(errors);
-          }
-          console.log('submitted: ', props);
-          console.log('matchgroup: ', matchGroup.matchGroupId);
-          console.log(reportMatchResults);
-          return reportMatchResults({
-            results: props,
-            matchGroupId: matchGroup.matchGroupId,
-          }).then((response) => {
-            console.log("Submitted: ", response);
-            return Promise.resolve();
-          }).catch((errors) => {
-            console.log('errors: ', errors);
-            return Promise.reject(errors);
-          });
-        })}
+        {ResultForm(formName, matchGroup, matchTeams, reportMatchResults)}
       </Panel>
     </Well>
   );
@@ -115,25 +81,29 @@ const MatchGroupsDummy = withRouter(({
   matchGroups,
   regenerateMatchGroups,
   reportMatchResults,
-}) : Element => (
-  <div className={styles.matchGroupPage}>
+}) : Element => {
+  let formCount = 0;
+  return (<div className={styles.matchGroupPage}>
     <div>
       <button onClick={() => generateMatchGroups()}>GENERATE</button>
       <button onClick={() => regenerateMatchGroups()}>REGENERATE</button>
       <button onClick={() => getMatchGroups()}>FETCH</button>
     </div>
     <div>
-    {matchGroups.map((matchGroup) => (
-      <MatchGroupForms
-        key={matchGroup.matchGroupId}
-        matchGroup={matchGroup}
-        reportMatchResults={reportMatchResults}
-        teams={teams}
-      />
-    ))}
+    {matchGroups.map((matchGroup) => {
+      formCount++;
+      return (
+        <MatchGroupForms
+          key={matchGroup.matchGroupId}
+          formName={`resultForm${formCount}`}
+          matchGroup={matchGroup}
+          reportMatchResults={reportMatchResults}
+          teams={teams}
+        />);
+    })}
     </div>
-  </div>
-));
+  </div>);
+});
 
 export const MatchGroups = connect(
   (state) => ({

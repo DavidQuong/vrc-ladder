@@ -29,13 +29,9 @@ const findUserMatchGroup = (matchGroups, allTeams, teamId) => {
   return userMatchGroup;
 };
 
-const displayTeams = (teams) => {
-  return ResultForm(teams);
-};
-
 const displayMatchGroup = (matchGroup, allTeams) => {
   return matchGroup ?
-    displayTeams(getMatchGroupTeams(matchGroup, allTeams)) :
+    ResultForm(matchGroup, getMatchGroupTeams(matchGroup, allTeams)) :
     'Try fetching MatchGroups';
 };
 
