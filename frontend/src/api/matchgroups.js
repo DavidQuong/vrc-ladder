@@ -58,3 +58,15 @@ export const reportMatchResults = (props, state) => {
     return response.json();
   });
 };
+
+export const getMatchResults = (matchGroup, state) => {
+  return fetch(`${root}matchgroup/${matchGroup.matchGroupId}/scores`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: state.app.loggedIn.authorizationToken,
+    },
+  }).then((response) => {
+    return response.json();
+  });
+};

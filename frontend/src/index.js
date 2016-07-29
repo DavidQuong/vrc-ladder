@@ -4,7 +4,7 @@ import {IntlProvider} from 'react-intl';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 import {getPlayer} from './action/users';
 import {getTeams} from './action/teams';
-import {getMatchSchedule, getMatchGroups} from './action/matchgroups';
+import {getMatchSchedule, getMatchGroups, getMatchResults} from './action/matchgroups';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import {MatchGroups} from './component/matchgroups/matchgroups';
@@ -16,7 +16,8 @@ import LogIn from './component/login/login';
 import Logout from './component/logout/logout';
 import {UserLabel} from './component/user-label/user-label';
 import {NavTabs} from './component/nav-tabs/nav-tabs';
-import {MatchResults} from './component/match-results/match-results';
+import {MatchResults, findUserMatchGroup}
+  from './component/match-results/match-results';
 
 const Layout = ({children}) => (
   <div>
@@ -90,7 +91,14 @@ export default ({store}) : Element => (
             navbarTitle='Match Results'
             component={MatchResults}
             onEnter={(nextState, replace, callback) => {
+              const state = store.getState();
+              const matchGroups = state.app.matchGroups;
+              const allTeams = state.app.teams;
+              const userTeamId = state.app.teamInfo[0].teamId;
               store.dispatch(getMatchGroups()).then(callback);
+              store.dispatch(getMatchResults(
+                findUserMatchGroup(matchGroups, allTeams, userTeamId)))
+                .then(callback);
             }}
           />
           <Route

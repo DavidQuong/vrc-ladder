@@ -18,7 +18,7 @@ const getMatchGroupTeams = (matchGroup, allTeams) => {
     teamIds);
 };
 
-const findUserMatchGroup = (matchGroups, allTeams, teamId) => {
+export const findUserMatchGroup = (matchGroups, allTeams, teamId) => {
   const userMatchGroup = matchGroups.find((matchGroup) => {
     const matchGroupTeams = getMatchGroupTeams(matchGroup, allTeams);
     const userTeam = matchGroupTeams.find((team) => {
@@ -46,7 +46,9 @@ const MatchResultsDummy = React.createClass({
         displayMatchGroup(findUserMatchGroup(
           this.props.matchGroups,
           this.props.teams,
-          this.props.teamInfo.teamId), this.props.teams, this.props.reportMatchResults) :
+          this.props.teamInfo.teamId),
+            this.props.teams,
+            this.props.reportMatchResults) :
         'You\'re not in any MatchGroups!'}
       </div>);
   },
