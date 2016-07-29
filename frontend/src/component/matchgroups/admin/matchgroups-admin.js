@@ -95,7 +95,7 @@ const MatchGroupsDummy = withRouter(({
       return (
         <MatchGroupForms
           key={matchGroup.matchGroupId}
-          formName={`resultForm${formCount}`}
+          formName={`adminResultForm${formCount}`}
           matchGroup={matchGroup}
           reportMatchResults={reportMatchResults}
           teams={teams}

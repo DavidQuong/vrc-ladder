@@ -1,7 +1,7 @@
 import React, {createElement} from 'react';
 import {connect} from 'react-redux';
 import map from 'lodash/fp/map';
-import {getMatchGroups} from '../../action/matchgroups';
+import {getMatchGroups, reportMatchResults} from '../../action/matchgroups';
 import {ResultForm} from './result-form';
 
 const getMatchGroupTeams = (matchGroup, allTeams) => {
@@ -29,9 +29,13 @@ const findUserMatchGroup = (matchGroups, allTeams, teamId) => {
   return userMatchGroup;
 };
 
-const displayMatchGroup = (matchGroup, allTeams) => {
+const displayMatchGroup = (matchGroup, allTeams, reportMatchResults) => {
   return matchGroup ?
-    ResultForm(matchGroup, getMatchGroupTeams(matchGroup, allTeams)) :
+    ResultForm(
+      'playerResultForm',
+      matchGroup,
+      getMatchGroupTeams(matchGroup, allTeams),
+      reportMatchResults) :
     'Try fetching MatchGroups';
 };
 
@@ -42,8 +46,7 @@ const MatchResultsDummy = React.createClass({
         displayMatchGroup(findUserMatchGroup(
           this.props.matchGroups,
           this.props.teams,
-          this.props.teamInfo.teamId),
-          this.props.teams) :
+          this.props.teamInfo.teamId), this.props.teams, this.props.reportMatchResults) :
         'You\'re not in any MatchGroups!'}
       </div>);
   },
@@ -59,4 +62,4 @@ const mapStateToProps = (state) => {
 
 export const MatchResults =
   connect(mapStateToProps,
-    {getMatchGroups})(MatchResultsDummy);
+    {getMatchGroups, reportMatchResults})(MatchResultsDummy);
