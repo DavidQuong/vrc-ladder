@@ -5,6 +5,8 @@ import {getMatchSchedule, generateMatchGroups, reportMatchResults}
 import {withRouter} from 'react-router';
 import map from 'lodash/fp/map';
 import {Panel} from 'react-bootstrap';
+import classNames from 'classnames';
+import styles from './matchgroups.css';
 
 const getMatchGroupTeams = (matchGroup, allTeams) => {
   const teamIds = matchGroup.teamId4 ? [
@@ -32,13 +34,18 @@ const displayMatchGroup = (matchGroup, allTeams) => {
 };
 
 const displayCourt = (courtNumber, court, allTeams) => {
-  return (<Panel header={`Court ${courtNumber}`}>
-    <Panel header='8:00PM'>
+  return (
+  <Panel
+    header={`Court ${courtNumber}`}
+    className={classNames(styles.court)}
+    bsStyle='primary'
+  >
+    <Panel header='8:00PM' bsStyle='primary'>
       {court.TIME_SLOT_A ?
         displayMatchGroup(court.TIME_SLOT_A, allTeams) :
         'Nothing Scheduled'}
     </Panel>
-    <Panel header='9:30PM'>
+    <Panel header='9:30PM' bsStyle='primary'>
       {court.TIME_SLOT_B ?
         displayMatchGroup(court.TIME_SLOT_B, allTeams) :
         'Nothing Scheduled'}

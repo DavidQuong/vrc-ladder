@@ -1,5 +1,5 @@
 import {createElement} from 'react';
-import {Form, Panel, Well} from 'react-bootstrap';
+import {Form, Panel} from 'react-bootstrap';
 import {reduxForm} from 'redux-form';
 import styles from './result-form.css';
 import classNames from 'classnames';
@@ -9,6 +9,7 @@ import Heading from '../heading/heading';
 import map from 'lodash/fp/map';
 import isEmpty from 'lodash/fp/isEmpty';
 
+// TODO: make this work for 4 team matchgroup forms
 const validate = (values) => {
   const errors = {};
   if (values.teamId1 === values.teamId2) {
@@ -73,7 +74,11 @@ const ResultFormRows = reduxForm({
   </Form>
 ));
 
-export const ResultForm = (formName, matchGroup, matchGroupTeams, reportMatchResults) => {
+export const ResultForm = (
+  formName,
+  matchGroup,
+  matchGroupTeams,
+  reportMatchResults) => {
   return (
     <Panel header='Result Submission' bsStyle='primary'>
       <ResultFormRows
