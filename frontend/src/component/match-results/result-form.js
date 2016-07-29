@@ -8,6 +8,22 @@ import {FormattedMessage} from 'react-intl';
 import {SubmitBtn} from '../button';
 import Heading from '../heading/heading';
 import map from 'lodash/fp/map';
+import isEmpty from 'lodash/fp/isEmpty';
+
+const validate = (values) => {
+  const errors = {};
+  if (values.teamId1 === values.teamId2) {
+    errors.teamId1 = 'Cannot be same team';
+    errors.teamId2 = 'Cannot be same team';
+  } else if (values.teamId1 === values.teamId3) {
+    errors.teamId1 = 'Cannot be same team';
+    errors.teamId3 = 'Cannot be same team';
+  } else if (values.teamId2 === values.teamId3) {
+    errors.teamId2 = 'Cannot be same team';
+    errors.teamId3 = 'Cannot be same team';
+  }
+  return errors;
+};
 
 const generateRankingSubmissionRow = (teams, teamId, rankNumber) => (
   <div className={classNames(styles.formGroup)}>
@@ -37,9 +53,8 @@ const generateRankingSubmissionRow = (teams, teamId, rankNumber) => (
           </Heading>
       </div>}
   </div>);
-
+// (formName, matchTeams, handleSubmit) => (
 const ResultFormRows = reduxForm({
-  form: 'resultForm',
   fields: ['teamId1', 'teamId2', 'teamId3', 'teamId4'],
 })(({
   fields: {teamId1, teamId2, teamId3, teamId4},
@@ -59,13 +74,34 @@ const ResultFormRows = reduxForm({
   </Form>
 ));
 
-export const ResultForm = (matchGroupTeams, onSubmitCallback) => {
+export const ResultForm = (formName, matchGroup, matchGroupTeams, reportMatchResults) => {
   return (
     <Well>
       <Panel header='Result Submission' bsStyle='primary'>
         <ResultFormRows
+          form={formName}
           matchTeams={matchGroupTeams}
-          onSubmit={onSubmitCallback}
+          onSubmit={
+            (props) => {
+              const errors = validate(props);
+              if (!isEmpty(errors)) {
+                return Promise.reject(errors);
+              }
+              console.log('submitted: ', props);
+              console.log('matchgroup: ', matchGroup.matchGroupId);
+              console.log(reportMatchResults);
+              return reportMatchResults({
+                results: props,
+                matchGroupId: matchGroup.matchGroupId,
+              }).then((response) => {
+                console.log("Submitted: ", response);
+                return Promise.resolve();
+              }).catch((errors) => {
+                console.log('errors: ', errors);
+                return Promise.reject(errors);
+              });
+            }
+          }
         />
       </Panel>
     </Well>
