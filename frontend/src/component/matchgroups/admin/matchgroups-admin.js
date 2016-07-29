@@ -67,9 +67,7 @@ const MatchGroupForms = ({formName, matchGroup, teams, reportMatchResults}) => {
           ))}
         </div>
       </Panel>
-      <Panel header='Result Submission' bsStyle='primary'>
-        {ResultForm(formName, matchGroup, matchTeams, reportMatchResults)}
-      </Panel>
+      {ResultForm(formName, matchGroup, matchTeams, reportMatchResults)}
     </Well>
   );
 };
