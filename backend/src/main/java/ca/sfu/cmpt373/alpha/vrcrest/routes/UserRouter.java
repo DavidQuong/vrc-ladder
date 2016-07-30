@@ -76,12 +76,14 @@ public class UserRouter extends RestRouter {
     @Override
     public void attachRoutes() {
         Spark.post(ROUTE_USERS, this::handleCreateUser);
+
         Spark.get(ROUTE_USERS, this::handleGetUsers);
         Spark.get(ROUTE_PLAYERS, this::handleGetPlayers);
 
         Spark.get(ROUTE_USERS_SELF, this::handleGetActiveUser);
         Spark.put(ROUTE_USERS_SELF, this::handleUpdateActiveUser);
         Spark.get(ROUTE_USERS_SELF_TEAMS, this::handleGetAllActiveUserTeams);
+        Spark.delete(ROUTE_USERS_SELF, this::handleDeleteActiveUser);
 
         Spark.get(ROUTE_USER_ID, this::handleGetUserById);
         Spark.put(ROUTE_USER_ID, this::handleUpdateUserById);
@@ -283,7 +285,6 @@ public class UserRouter extends RestRouter {
         try {
             String requestedId = request.params(PARAM_ID);
             UserId userId = new UserId(requestedId);
-            User updatedUser = updateUserWithPayload(request, userId);
 
             UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
             User existingUser = userManager.update(
@@ -341,6 +342,27 @@ public class UserRouter extends RestRouter {
 
             User deletedUser = userManager.deleteById(userId);
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(deletedUser));
+            response.status(HttpStatus.OK_200);
+        } catch (ValidationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (EntityNotFoundException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
+            response.status(HttpStatus.NOT_FOUND_404);
+        } catch (RuntimeException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST + ": " + ex.getMessage());
+            response.status(HttpStatus.BAD_REQUEST_400);
+        }
+
+        return responseBody.toString();
+    }
+
+    private String handleDeleteActiveUser(Request request, Response response){
+        JsonObject responseBody = new JsonObject();
+        try {
+            User userToDelete = extractUserFromRequest(request);
+            userManager.delete(userToDelete);
+            responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(userToDelete));
             response.status(HttpStatus.OK_200);
         } catch (ValidationException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
