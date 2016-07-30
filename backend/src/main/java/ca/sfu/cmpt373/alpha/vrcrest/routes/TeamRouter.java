@@ -167,6 +167,7 @@ public class TeamRouter extends RestRouter {
     }
 
     private String handleDeleteTeamById(Request request, Response response) {
+        checkForVolunteerRole(request);
         JsonObject responseBody = new JsonObject();
 
         String paramId = request.params(PARAM_ID);

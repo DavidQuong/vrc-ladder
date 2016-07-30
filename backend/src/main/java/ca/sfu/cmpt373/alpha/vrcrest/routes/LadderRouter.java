@@ -74,6 +74,8 @@ public class LadderRouter extends RestRouter{
     }
 
     private String handleRearrangeLadder(Request request, Response response) {
+        checkForVolunteerRole(request);
+
         JsonObject responseBody = new JsonObject();
         try {
             NewTeamIdListPayload newTeamPayload = getGson().fromJson(request.body(), NewTeamIdListPayload.class);
@@ -101,6 +103,8 @@ public class LadderRouter extends RestRouter{
     }
 
     private String handleRegenerateLadder(Request request, Response response) {
+        checkForVolunteerRole(request);
+
         JsonObject responseBody = new JsonObject();
         try {
             List<Team> teams = teamManager.getAll();

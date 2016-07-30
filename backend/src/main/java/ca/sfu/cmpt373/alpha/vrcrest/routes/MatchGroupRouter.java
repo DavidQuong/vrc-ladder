@@ -130,6 +130,8 @@ public class MatchGroupRouter extends RestRouter {
     }
 
     private String handleGenerateMatchGroups(Request request, Response response) {
+        checkForVolunteerRole(request);
+
         JsonObject responseBody = new JsonObject();
         try {
             courtManager.deleteAll();
@@ -215,6 +217,8 @@ public class MatchGroupRouter extends RestRouter {
     }
 
     private String handleDeleteMatchGroup(Request request, Response response) {
+        checkForVolunteerRole(request);
+
         JsonObject responseBody = new JsonObject();
         try {
             String matchGroupIdParam = request.params(PARAM_ID);
@@ -228,6 +232,8 @@ public class MatchGroupRouter extends RestRouter {
     }
 
     private String handleUpdateMatchGroupTeams(Request request, Response response) {
+        checkForVolunteerRole(request);
+
         JsonObject responseBody = new JsonObject();
         try {
             String paramMatchGroupId1 = request.params(PARAM_MATCHGROUP_ID);
@@ -252,6 +258,8 @@ public class MatchGroupRouter extends RestRouter {
     }
 
     private String handleSwapMatchGroupTeams(Request request, Response response) {
+        checkForVolunteerRole(request);
+
         JsonObject responseBody = new JsonObject();
         try {
             NewTradingMatchGroupsPayload newSwapPayload = getGson().fromJson(request.body(), NewTradingMatchGroupsPayload.class);
