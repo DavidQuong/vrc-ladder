@@ -12,6 +12,9 @@ public class MatchScheduler {
     /**
      * @throws MatchMakingException if a group has indicated they are not attending
      */
+
+    public static final int MAX_SINGLE_TIME_SLOT_SIZE = 12;
+
     public static List<Court> scheduleMatches(List<MatchGroup> matchGroups) {
         // Schedule matches into the courts.
         List<Court> courts = new ArrayList<>();
@@ -19,7 +22,7 @@ public class MatchScheduler {
             courts.add(new Court());
         }
 
-        if(matchGroups.size() < 13) {
+        if(matchGroups.size() <= MAX_SINGLE_TIME_SLOT_SIZE) {
             assert(matchGroups.size() == courts.size());
 
             for(int index = 0;index < matchGroups.size();index++) {
