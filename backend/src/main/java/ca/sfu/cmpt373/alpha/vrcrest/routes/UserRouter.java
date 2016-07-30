@@ -4,8 +4,6 @@ import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PropertyInstantiationException;
 import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
-import ca.sfu.cmpt373.alpha.vrcladder.notifications.NotificationManager;
-import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.NotificationType;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
@@ -45,6 +43,8 @@ public class UserRouter extends RestRouter {
     public static final String ROUTE_PLAYERS = "/players";
 
     public static final String ROUTE_USERS_SELF = ROUTE_USERS + "/self";
+    public static final String ROUTE_USERS_SELF_TEAMS = ROUTE_USERS_SELF + "/teams";
+
     public static final String ROUTE_USER_ID = "/user/" + PARAM_ID;
     private static final String ROUTE_USER_ID_TEAMS = ROUTE_USER_ID + "/teams";
 
@@ -75,15 +75,20 @@ public class UserRouter extends RestRouter {
 
     @Override
     public void attachRoutes() {
-        Spark.get(ROUTE_USERS, this::handleGetUsers);
         Spark.post(ROUTE_USERS, this::handleCreateUser);
+
+        Spark.get(ROUTE_USERS, this::handleGetUsers);
         Spark.get(ROUTE_PLAYERS, this::handleGetPlayers);
+
         Spark.get(ROUTE_USERS_SELF, this::handleGetActiveUser);
         Spark.put(ROUTE_USERS_SELF, this::handleUpdateActiveUser);
+        Spark.get(ROUTE_USERS_SELF_TEAMS, this::handleGetAllActiveUserTeams);
+        Spark.delete(ROUTE_USERS_SELF, this::handleDeleteActiveUser);
+
         Spark.get(ROUTE_USER_ID, this::handleGetUserById);
         Spark.put(ROUTE_USER_ID, this::handleUpdateUserById);
+        Spark.get(ROUTE_USER_ID_TEAMS, this::handleGetAllTeamsByUserId);
         Spark.delete(ROUTE_USER_ID, this::handleDeleteUserById);
-        Spark.get(ROUTE_USER_ID_TEAMS, this::handleGetAllTeamsForUser);
     }
 
     @Override
@@ -280,7 +285,6 @@ public class UserRouter extends RestRouter {
         try {
             String requestedId = request.params(PARAM_ID);
             UserId userId = new UserId(requestedId);
-            User updatedUser = updateUserWithPayload(request, userId);
 
             UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
             User existingUser = userManager.update(
@@ -353,12 +357,42 @@ public class UserRouter extends RestRouter {
         return responseBody.toString();
     }
 
-    private String handleGetAllTeamsForUser(Request request, Response response) {
+    private String handleDeleteActiveUser(Request request, Response response){
+        JsonObject responseBody = new JsonObject();
+        try {
+            User userToDelete = extractUserFromRequest(request);
+            userManager.delete(userToDelete);
+            responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(userToDelete));
+            response.status(HttpStatus.OK_200);
+        } catch (ValidationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (EntityNotFoundException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
+            response.status(HttpStatus.NOT_FOUND_404);
+        } catch (RuntimeException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST + ": " + ex.getMessage());
+            response.status(HttpStatus.BAD_REQUEST_400);
+        }
+
+        return responseBody.toString();
+    }
+
+    private String handleGetAllTeamsByUserId(Request request, Response response) {
         checkForVolunteerRole(request);
 
         JsonObject responseBody = new JsonObject();
         String userIdParam = request.params(PARAM_ID);
         User user = userManager.getById(new UserId(userIdParam));
+
+        List<Team> teamsForUser = teamManager.getTeamsForUser(user);
+        responseBody.add(JSON_PROPERTY_TEAMS, getGson().toJsonTree(teamsForUser));
+        return responseBody.toString();
+    }
+
+    private String handleGetAllActiveUserTeams(Request request, Response response){
+        JsonObject responseBody = new JsonObject();
+        User user = extractUserFromRequest(request);;
 
         List<Team> teamsForUser = teamManager.getTeamsForUser(user);
         responseBody.add(JSON_PROPERTY_TEAMS, getGson().toJsonTree(teamsForUser));
