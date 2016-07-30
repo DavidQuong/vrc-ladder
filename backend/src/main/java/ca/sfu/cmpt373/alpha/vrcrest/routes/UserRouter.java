@@ -10,6 +10,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonProperties;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewUserPayload;
@@ -157,6 +158,10 @@ public class UserRouter extends RestRouter {
         JsonObject responseBody = new JsonObject();
         try {
             NewUserPayload newUserPayload = getGson().fromJson(request.body(), NewUserPayload.class);
+            if (newUserPayload.getUserRole() == UserRole.VOLUNTEER) {
+                checkForVolunteerRole(request);
+            }
+
             Password hashedPassword = securityManager.hashPassword(newUserPayload.getPassword());
 
             User newUser = userManager.create(
