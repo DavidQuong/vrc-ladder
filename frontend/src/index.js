@@ -4,17 +4,17 @@ import {IntlProvider} from 'react-intl';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 import {getPlayer} from './action/users';
 import {getTeams} from './action/teams';
+import {Nav, Navbar, Grid} from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
+import {UserLabel} from './component/user-label/user-label';
+import {NavTabs} from './component/nav-tabs/nav-tabs';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import MatchGroups from './component/match-groups/match-groups';
 import CreateTeam from './component/profile/profile';
-import {Nav, Navbar, Grid} from 'react-bootstrap';
-import {LinkContainer} from 'react-router-bootstrap';
 import styles from './index.css';
 import LogIn from './component/login/login';
 import Logout from './component/logout/logout';
-import {UserLabel} from './component/user-label/user-label';
-import {NavTabs} from './component/nav-tabs/nav-tabs';
 
 const Layout = ({children}) => (
   <div>

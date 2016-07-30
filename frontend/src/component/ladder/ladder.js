@@ -1,5 +1,4 @@
 import {createElement, Element} from 'react';
-// import {FormattedMessage} from 'react-intl';
 import {Well} from 'react-bootstrap';
 import {connect} from 'react-redux';
 import map from 'lodash/fp/map';
