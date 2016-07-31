@@ -1,15 +1,12 @@
 import {createElement, Element} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
-// import {SubmitBtn} from '../button';
 import {withRouter} from 'react-router';
-// import map from 'lodash/fp/map';
 import updateUser from '../../action/users';
 import styles from './profile.css';
 import Heading from '../heading/heading';
 import classNames from 'classnames';
 import isEmpty from 'lodash/fp/isEmpty';
-// import sortBy from 'lodash/fp/sortBy';
 import {reduxForm} from 'redux-form';
 import {
   Well, Col, ControlLabel, Button, FormControl, FormGroup, Form,
@@ -17,9 +14,6 @@ import {
 
 const validate = (values) => {
   const errors = {};
-  if (!values.userId) {
-    errors.userId = 'Required';
-  }
   if (!values.firstName) {
     errors.firstName = 'Required';
   }
@@ -42,10 +36,10 @@ const validate = (values) => {
   }
   return errors;
 };
+
 const formEnhancer = reduxForm({
   form: 'updateProfile',
   fields: [
-    'userId',
     'firstName',
     'lastName',
     'emailAddress',
@@ -70,7 +64,6 @@ const FormError = ({touched, error}) => {
 
 const updateProfileInfo = ({
  fields: {
-   userId,
    firstName,
    lastName,
    emailAddress,
@@ -83,10 +76,6 @@ const updateProfileInfo = ({
    <div>
      <FormGroup>
        <Col componentClass={ControlLabel} sm={4}>User ID</Col>
-       <Col sm={4}>
-         <FormControl type='userID' placeholder='Your ID #' {...userId} />
-       </Col>
-       <Col sm={3}><FormError {...userId}/></Col>
      </FormGroup>
      <FormGroup>
        <Col componentClass={ControlLabel} sm={4}>First Name</Col>
@@ -158,16 +147,8 @@ const updateProfileInfo = ({
 
 const checkErrors = (responseErrors) => {
   const errors = {};
-
-  if (responseErrors.userId === false) {
-    errors.userId = 'A user with this ID already exists!';
-  }
   if (responseErrors.emailAddress === false) {
     errors.emailAddress = 'A user with this email already exists!';
-  }
-
-  if (responseErrors.userId === 'invalid') {
-    errors.userId = 'This userId is not valid';
   }
   if (responseErrors.emailAddress === 'invalid') {
     errors.emailAddress = 'This email Address is not valid';
@@ -221,6 +202,7 @@ const updateAccount = withRouter(({
     </Well>
   </div>
 ));
+
 const updateProfileForm = formEnhancer(updateProfileInfo);
 export default connect(
   (state) => ({
