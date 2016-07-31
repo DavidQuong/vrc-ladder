@@ -8,7 +8,7 @@ public class EmailSettings {
     // Server Connection Parameters
     // TODO: must change to VRC email account info.
     static final String SERVER   = "mail.espuresystems.com";
-    static final int SERVER_PORT = 25;
+    static final String SERVER_PORT = "26";
     static final String USERNAME = "no-reply@vrc.espuresystems.com";
     static final String PASSWORD = "gzc4tZj+98";
     static final String FROM_NAME = "VRC";
