@@ -17,9 +17,9 @@ public class EmailSettings {
 
     // Template Settings.
     //-------------------
-    public static final String TEMPLATE_PATH_ACCOUNT = "src\\main\\resources\\notifications\\templates\\account\\email_";
-    public static final String TEMPLATE_PATH_GAME = "src\\main\\resources\\notifications\\templates\\game\\email_";
-    public static final String TEMPLATE_PATH_TEAM = "src\\main\\resources\\notifications\\templates\\team\\email_";
+    public static final String TEMPLATE_PATH_ACCOUNT = "src/main/resources/notifications/templates/account/email_";
+    public static final String TEMPLATE_PATH_GAME = "src/main/resources/notifications/templates/game/email_";
+    public static final String TEMPLATE_PATH_TEAM = "src/main/resources/notifications/templates/team/email_";
 
 
     // Email Subjects.
