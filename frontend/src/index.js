@@ -4,7 +4,7 @@ import {IntlProvider} from 'react-intl';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 import {getPlayer} from './action/users';
 import {getTeams} from './action/teams';
-import {Nav, Navbar, Grid} from 'react-bootstrap';
+import {Row, Col, Navbar, Grid} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import {UserLabel} from './component/user-label/user-label';
 import {NavTabs} from './component/nav-tabs/nav-tabs';
@@ -31,17 +31,21 @@ const Layout = ({children}) => (
           </Navbar.Text>
           <Navbar.Toggle />
         </Navbar.Header>
-        <UserLabel/>
         <Navbar.Collapse>
           <NavTabs/>
         </Navbar.Collapse>
       </Navbar>
       <Navbar fixedTop className={styles.lowerNavbar}>
-        <Nav className={styles.lowerNavContainer}>
-          <Navbar.Text className={styles.lowerNavbarHeading}>
-            {children.props.route.navbarTitle}
-          </Navbar.Text>
-        </Nav>
+        <Navbar.Collapse>
+          <Grid className={styles.lowerNavContainer}>
+            <Row>
+            <Col sm={6} md={4} className={styles.lowerNavbarHeading}>
+              {children.props.route.navbarTitle}
+            </Col>
+            <UserLabel/>
+            </Row>
+          </Grid>
+        </Navbar.Collapse>
       </Navbar>
     </div>
     <Grid>
