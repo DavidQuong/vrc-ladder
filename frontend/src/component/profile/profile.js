@@ -249,6 +249,7 @@ const CreateTeam = withRouter(({
   teamInfo,
   getTeamInfo,
   updateTeamStatus,
+  router,
 }) : Element => (
   <div className={styles.createTeam}>
       <div className={styles.sectionHeaders}>
@@ -284,6 +285,7 @@ const CreateTeam = withRouter(({
           authorizationToken: login.authorizationToken,
         }).then(() => {
           getTeamInfo();
+          router.replace('/profile');
           // TODO: Show a popup here!
         });
       }}
@@ -308,6 +310,7 @@ const CreateTeam = withRouter(({
           firstPlayerId: userInfo.userId,
         }, login).then(() => {
           getTeamInfo();
+          router.replace('/profile');
           // TODO: Show a popup here!
         }).catch(() => {
           const errors = {secondPlayerId: 'team exists'};
