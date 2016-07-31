@@ -25,6 +25,12 @@ const validate = (values) => {
   return errors;
 };
 
+const mapInitialStateToProps = (state) => {
+  return {
+    initialValues: state.app.matchResults,
+  };
+};
+
 const generateRankingSubmissionRow = (teams, teamId, rankNumber) => (
   <div className={classNames(styles.formGroup)}>
     <label className={classNames(styles.colXsTitle)}>
@@ -53,10 +59,10 @@ const generateRankingSubmissionRow = (teams, teamId, rankNumber) => (
           </Heading>
       </div>}
   </div>);
-// (formName, matchTeams, handleSubmit) => (
+
 const ResultFormRows = reduxForm({
   fields: ['teamId1', 'teamId2', 'teamId3', 'teamId4'],
-})(({
+}, mapInitialStateToProps)(({
   fields: {teamId1, teamId2, teamId3, teamId4},
   matchTeams,
   handleSubmit,
@@ -93,7 +99,7 @@ export const ResultForm = (
             return reportMatchResults({
               results: props,
               matchGroupId: matchGroup.matchGroupId,
-            }).then((response) => {
+            }).then(() => {
               window.alert('Results Submitted Successfully!');
               return Promise.resolve();
             }).catch((errors) => {

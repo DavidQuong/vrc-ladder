@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 const MatchGroupsDummy = React.createClass({
   render: function() {
     return (<div>
-      {this.props.userInfo.userRole === 'ADMINISTRATOR' ?
+      {this.props.userInfo.userRole === 'VOLUNTEER' ?
         <AdminMatchGroupsPage/> :
         <UserMatchGroupsPage/>}
     </div>);

@@ -2,7 +2,6 @@ import React, {createElement} from 'react';
 import {connect} from 'react-redux';
 import {getMatchSchedule, generateMatchGroups, reportMatchResults}
   from '../../../action/matchgroups';
-import {withRouter} from 'react-router';
 import map from 'lodash/fp/map';
 import {Panel} from 'react-bootstrap';
 import classNames from 'classnames';
@@ -64,9 +63,6 @@ const displayCourts = (courts, allTeams) => {
 const MatchGroupsDummy = React.createClass({
   render: function() {
     return (<div>
-      <button onClick={() => this.props.router.push('/match-results')}>
-        Goto Match Results Submission
-      </button>
       <div>{this.props.matchSchedule.length === 0 ?
         'No Match Schedule. Try fetching!' :
         displayCourts(this.props.matchSchedule, this.props.teams)}
@@ -86,5 +82,5 @@ const mapStateToProps = (state) => (
 export const MatchGroups =
   connect(mapStateToProps,
     {generateMatchGroups,
-      getMatchSchedule,
-      reportMatchResults})(withRouter(MatchGroupsDummy));
+    getMatchSchedule,
+    reportMatchResults})(MatchGroupsDummy);

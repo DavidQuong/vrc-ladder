@@ -17,8 +17,10 @@ import LogIn from './component/login/login';
 import Logout from './component/logout/logout';
 import {UserLabel} from './component/user-label/user-label';
 import {NavTabs} from './component/nav-tabs/nav-tabs';
-import {MatchResults, findUserMatchGroup}
+import {MatchResults}
   from './component/match-results/match-results';
+import {findUserMatchGroup, findAttendingUserTeam}
+  from './util/matchgroup-util';
 
 const Layout = ({children}) => (
   <div>
@@ -54,6 +56,27 @@ const Layout = ({children}) => (
   </div>
 );
 
+const syncMatchGroupsAndResults = (store) => (nextState, replace, callback) => {
+  store.dispatch(getMatchGroups()).then(() => {
+    const state = store.getState();
+    const allMatchGroups = state.app.matchGroups;
+    const allTeams = state.app.teams;
+    const userTeams = state.app.teamInfo;
+    const attendingUserTeam = findAttendingUserTeam(
+      allMatchGroups,
+      allTeams,
+      userTeams);
+    attendingUserTeam ?
+      store.dispatch(getMatchResults(findUserMatchGroup(
+        allMatchGroups,
+        allTeams,
+        attendingUserTeam.teamId
+      )))
+        .then(callback) :
+      callback();
+  });
+};
+
 export default ({store}) : Element => (
   <Provider store={store}>
     <IntlProvider messages={{}} defaultLocale='en-US'>
@@ -80,7 +103,7 @@ export default ({store}) : Element => (
             component={CreateTeam}
           />
           <Route
-            path='/match-groups'
+            path='/match-schedule'
             navbarTitle='Match Schedule'
             component={MatchGroups}
             onEnter={(nextState, replace, callback) => {
@@ -91,16 +114,7 @@ export default ({store}) : Element => (
             path='/match-results'
             navbarTitle='Match Results'
             component={MatchResults}
-            onEnter={(nextState, replace, callback) => {
-              const state = store.getState();
-              const matchGroups = state.app.matchGroups;
-              const allTeams = state.app.teams;
-              const userTeamId = state.app.teamInfo[0].teamId;
-              store.dispatch(getMatchGroups()).then(callback);
-              store.dispatch(getMatchResults(
-                findUserMatchGroup(matchGroups, allTeams, userTeamId)))
-                .then(callback);
-            }}
+            onEnter={syncMatchGroupsAndResults(store)}
           />
           <Route
             path='/ladder'
