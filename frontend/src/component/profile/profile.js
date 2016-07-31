@@ -179,7 +179,7 @@ const displayMyInfo = (userInfo) => (
       />
     </div>
     <div className={styles.profileDetails}>
-      {userInfo.firstName} {userInfo.lastName}
+      {userInfo.name}
     </div>
     <br/>
     <div className={styles.profileDetailsField}>
@@ -244,7 +244,6 @@ const CreateTeam = withRouter(({
   addTeam,
   players,
   teams,
-  router,
   login,
   userInfo,
   teamInfo,
@@ -284,9 +283,8 @@ const CreateTeam = withRouter(({
           ...props,
           authorizationToken: login.authorizationToken,
         }).then(() => {
-          getTeamInfo().then(() => {
-            router.push('/ladder');
-          });
+          getTeamInfo();
+          // TODO: Show a popup here!
         });
       }}
     />
@@ -309,9 +307,8 @@ const CreateTeam = withRouter(({
           ...props,
           firstPlayerId: userInfo.userId,
         }, login).then(() => {
-          getTeamInfo().then(() => {
-            router.push('/ladder');
-          });
+          getTeamInfo();
+          // TODO: Show a popup here!
         }).catch(() => {
           const errors = {secondPlayerId: 'team exists'};
           return Promise.reject(errors);
