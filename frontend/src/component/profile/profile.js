@@ -163,11 +163,11 @@ const displayMyInfo = (userInfo) => (
 
 const getTime = (time) => {
   if (time === 'TIME_SLOT_A') {
-    return '8:30';
+    return '8:00 PM';
   } else if (time === 'TIME_SLOT_B') {
-    return '9:30';
+    return '9:30 PM';
   }
-  return 'NONE';
+  return 'N/A';
 };
 
 const displayTeamInfo = map((teamInfo) => (
