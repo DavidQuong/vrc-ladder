@@ -55,13 +55,9 @@ public class Email {
             currentMessage.setHeader("Content-Type", contentType);
 
             synchronized(this) {
-                System.out.println("##########[ ENTERING CRITICAL SECTION ]##########");
                 transport.connect(EmailSettings.SERVER, EmailSettings.USERNAME, EmailSettings.PASSWORD);
-                System.out.println("CONNECTED to email server");
                 transport.sendMessage(currentMessage, currentMessage.getAllRecipients());
-                System.out.println("SENT");
                 transport.close();
-                System.out.println("CONNECTION terminated");
             }
         } catch (MessagingException e) {
             throw new MessageNotDeliveredException();

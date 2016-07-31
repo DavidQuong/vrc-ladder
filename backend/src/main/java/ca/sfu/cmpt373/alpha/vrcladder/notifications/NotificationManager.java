@@ -72,14 +72,11 @@ public class NotificationManager {
         String path = EmailSettings.TEMPLATE_PATH_ACCOUNT + currentTemplate + EXTENSION_SEPARATOR + EmailSettings.EMAILS_FORMAT;
 
         try {
-            System.out.println("#########[ ENTERING TRY-CATCH SECTION ]#########");
             String messageContent = template.getContents(path, values);
-            System.out.println("Email content was created successfully!");
             email.sendEmail(receiver, messageContent, type);
         } catch (IOException e) {
             throw new TemplateNotFoundException();
         }
-        System.out.println("PASSED SENDING EMAIL");
     }
 
     public void notifyUser(User user, NotificationType type, String token) {
