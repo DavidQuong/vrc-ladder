@@ -9,6 +9,7 @@ const emptyState =  {
   userInfo: [],
   teamInfo: [],
   matchGroups: [],
+  adminView: '',
 };
 
 const app = handleActions({
@@ -16,6 +17,13 @@ const app = handleActions({
     return {
       ...state,
       userInfo: payload,
+    };
+  },
+
+  ADMIN_VIEW: (state, {payload}) => {
+    return {
+      ...state,
+      adminView: payload,
     };
   },
 

@@ -13,6 +13,22 @@ export const addUser = (user) => {
   });
 };
 
+export const removeUser = (player, state) => {
+  return fetch(`${root}user/${player.userId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: state.app.loggedIn.authorizationToken,
+    },
+  }).then((response) => {
+    const body = response.json();
+    if (response.ok) {
+      return Promise.resolve(body);
+    }
+    return Promise.reject(body);
+  });
+};
+
 export const getCurrentActiveUserInfo = (state) => {
   return fetch(`${root}users/self`, {
     headers: {

@@ -6,6 +6,25 @@ import styles from './nav-tabs.css';
 
 const NavTabsDummy = React.createClass({
   render() {
+    if (this.props.userInfo.userRole === 'VOLUNTEER') {
+      return (<Nav pullRight className={styles.navTab}>
+        <LinkContainer to='/logout'>
+          <NavItem>Log out</NavItem>
+        </LinkContainer>
+        <LinkContainer to='/profile'>
+          <NavItem>Profile</NavItem>
+        </LinkContainer>
+        <LinkContainer to='/ladder'>
+          <NavItem>Ladder</NavItem>
+        </LinkContainer>
+        <LinkContainer to='/match-groups'>
+          <NavItem>Match Groups</NavItem>
+        </LinkContainer>
+        <LinkContainer to='/admin'>
+          <NavItem>Admin</NavItem>
+        </LinkContainer>
+      </Nav>);
+    }
     return (this.props.loggedIn.authorizationToken) ?
       (<Nav pullRight className={styles.navTab}>
         <LinkContainer to='/logout'>
@@ -38,6 +57,7 @@ const NavTabsDummy = React.createClass({
 const mapStateToProps = (state) => (
   {
     loggedIn: state.app.loggedIn,
+    userInfo: state.app.userInfo,
   }
 );
 
