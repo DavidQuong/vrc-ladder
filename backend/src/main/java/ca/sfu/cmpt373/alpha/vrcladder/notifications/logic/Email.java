@@ -6,13 +6,19 @@ import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MessageNotDeliveredException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.SubjectNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-
+import javax.mail.internet.MimeMultipart;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
@@ -66,6 +72,35 @@ public class Email {
         }
     }
 
+    public void sendEmail(EmailAddress receiver, String messageContent, String type, String pdfPath) {
+        new Thread(() -> asyncSendEmail(receiver, messageContent, type, pdfPath)).start();
+    }
+
+    private void asyncSendEmail(EmailAddress receiver, String messageContent, String type, String pdfPath){
+        try {
+            String subject = getEmailSubject(type);
+            MimeMessage currentMessage = message;
+            currentMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(receiver.toString()));
+            currentMessage.setSubject(subject);
+            BodyPart bodyPart = new MimeBodyPart();
+            bodyPart.setContent(messageContent, contentType);
+            bodyPart.setHeader("Content-Type", contentType);
+            Multipart multiPart = new MimeMultipart();
+            //multiPart.addBodyPart(bodyPart);
+            DataSource sourcePDF = new FileDataSource(pdfPath);
+            bodyPart.setDataHandler(new DataHandler(sourcePDF));
+            bodyPart.setFileName(pdfPath);
+            multiPart.addBodyPart(bodyPart);
+            currentMessage.setContent(multiPart);
+
+            transport.connect(EmailSettings.SERVER, EmailSettings.USERNAME, EmailSettings.PASSWORD);
+            transport.sendMessage(currentMessage, currentMessage.getAllRecipients());
+            transport.close();
+        } catch (MessagingException e) {
+            throw new MessageNotDeliveredException();
+        }
+    }
+
     private String getEmailSubject(String activity) {
         String results;
         switch (activity) {
@@ -104,6 +139,9 @@ public class Email {
                 break;
             case "gamescoresupdated":
                 results = EmailSettings.SUBJECT_GAME_SCORES_UPDATED;
+                break;
+            case "pdf":
+                results = EmailSettings.SUBJECT_PDF_CONTENT;
                 break;
             default:
                 throw new SubjectNotFoundException();
