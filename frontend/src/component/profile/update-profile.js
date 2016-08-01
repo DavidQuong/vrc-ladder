@@ -157,7 +157,7 @@ const UpdateProfileInfoForm = ({
  </Form>
 );
 
-const updateProfileForm = formEnhancer(UpdateProfileInfoForm);
+const UpdateProfileForm = formEnhancer(UpdateProfileInfoForm);
 
 const checkErrors = (responseErrors) => {
   const errors = {};
@@ -186,7 +186,7 @@ const updateAccount = withRouter(({
             defaultMessage='Edit Your Account:'
           />
         </Heading>
-      <updateProfileForm
+      <UpdateProfileForm
         onSubmit={(props) => {
           const errors = validate(props);
           const userInfo = parseUser(props);
