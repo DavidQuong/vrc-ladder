@@ -75,7 +75,7 @@ const UpdateAttendanceForm = reduxForm({
             <option value='' disabled>Select a team...</option>
             {map((teams) => (
               <option value={teams.teamId} key={teams.teamId}>
-                With:  {teams.secondPlayer.name}
+                {teams.firstPlayer.name} & {teams.secondPlayer.name}
               </option>
             ), teams)}
           </FormControl>
@@ -174,7 +174,7 @@ const displayTeamInfo = map((teamInfo) => (
   <ListGroupItem key={teamInfo.teamId}>
     <Grid className={styles.grid}>
       <Row>
-        <Col sm={3} md={2}><strong>Team With:</strong></Col>
+        <Col sm={3} md={2}>{teamInfo.firstPlayer.name}</Col>
         <Col sm={6} md={4}>{teamInfo.secondPlayer.name}</Col>
         <Col sm={4} md={3}><strong>Preferred Play Time:</strong></Col>
         <Col sm={3} md={2}>{getTime(teamInfo.playTime)}</Col>
@@ -252,6 +252,7 @@ const CreateTeam = withRouter(({
     </Panel>
   </Well>
 ));
+
 export default connect(
   (state) => ({
     players: sortBy('name', state.app.players),

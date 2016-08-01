@@ -12,7 +12,6 @@ export const addUser = (user) => () => {
 
 export const removeUser = (player) => (dispatch, getState) => {
   const state = getState();
-  console.log(player);
   return removeUserAPI(player, state);
 };
 

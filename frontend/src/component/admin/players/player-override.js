@@ -2,6 +2,7 @@ import {createElement, Element} from 'react';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {removeUser} from '../../../action/users';
+import {FormattedMessage} from 'react-intl';
 import {Well} from 'react-bootstrap';
 
 import classNames from 'classnames';
@@ -58,6 +59,12 @@ const PlayerOverride = ({
 }) : Element => (
   <Well className={`${styles.ladderTableContainer} table-responsive`}>
     <div>
+    <Heading>
+      <FormattedMessage
+        id='deletePlayers'
+        defaultMessage='Player Override:'
+      />
+    </Heading>
       {players.map((player) => (
         <PlayerDelete
           key={player.userId}
@@ -67,7 +74,7 @@ const PlayerOverride = ({
       <div>
         <button
           onClick={() => DeletePlayers({players, removeUser})}
-        >Send Update</button>
+        >Delete Selected Players</button>
       </div>
     </div>
   </Well>

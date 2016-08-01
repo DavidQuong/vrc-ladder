@@ -6,6 +6,7 @@ import {createAction} from 'redux-actions';
 import styles from './admin.css';
 import LadderOverride from './ladder/ladder-override';
 import PlayerOverride from './players/player-override';
+import TeamOverride from './teams/team-override';
 
 const updateView = createAction('ADMIN_VIEW');
 
@@ -15,7 +16,7 @@ const ToggleView = ({adminView}) => {
   } else if (adminView === 'player') {
     return <div><PlayerOverride/></div>;
   } else if (adminView === 'team') {
-    return <div>Team {adminView} </div>;
+    return <div><TeamOverride/></div>;
   }
   return <div></div>;
 };

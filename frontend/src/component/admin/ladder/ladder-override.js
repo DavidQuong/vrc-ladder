@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {Form, FormControl, Well} from 'react-bootstrap';
 import {createAction} from 'redux-actions';
+import {FormattedMessage} from 'react-intl';
 import {updateLadder} from '../../../action/ladder';
 
 import classNames from 'classnames';
@@ -84,13 +85,13 @@ const UpdateTeamPositions = ({teamId, ladderPosition, rank}, teams) =>
       // Same position dont move
     } else if (ladderPosition > rank) {
       for (i = index - 1; i >= rank - 1; i--) {
-        teams[i].ladderPosition++;
+        teams[i].ladderPosition = (teams[i].ladderPosition + 1);
       }
       teams[index].ladderPosition = rank;
       dispatch(syncTeams(teams));
     } else if (ladderPosition < rank) {
       for (i = index + 1; i < rank; i++) {
-        teams[i].ladderPosition--;
+        teams[i].ladderPosition = (teams[i].ladderPosition - 1);
       }
       teams[index].ladderPosition = rank;
       dispatch(syncTeams(teams));
@@ -130,7 +131,6 @@ const GetTeamIds = ({teams, updateLadder}) => {
   teams.map((team) => {
     teamIds.push(team.teamId);
   });
-  console.log({teamIds});
   return updateLadder({teamIds});
 };
 
@@ -141,6 +141,12 @@ const LadderOverride = ({
   updateLadder,
 }) : Element => (
   <Well className={`${styles.ladderTableContainer} table-responsive`}>
+  <Heading>
+    <FormattedMessage
+      id='ladderOverride'
+      defaultMessage='Update Team Ladder Position:'
+    />
+  </Heading>
     <div>
       <button onClick={() => SquashGaps(teams)}>SquashGaps</button>
       {teams.map((team) => (
@@ -153,7 +159,7 @@ const LadderOverride = ({
       ))}
       <div>
         <button
-          onClick={() => SquashGaps({teams, updateLadder})}
+          onClick={() => GetTeamIds({teams, updateLadder})}
         >Send Update</button>
       </div>
     </div>
