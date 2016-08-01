@@ -8,6 +8,7 @@ import {SubmitBtn} from '../button';
 import Heading from '../heading/heading';
 import map from 'lodash/fp/map';
 import isEmpty from 'lodash/fp/isEmpty';
+import {AlertModal} from '../alert/alert-modal'
 
 // TODO: make this work for 4 team matchgroup forms
 const validate = (values) => {
@@ -80,6 +81,9 @@ const ResultFormRows = reduxForm({
   </Form>
 ));
 
+const successAlert = <AlertModal body='Results submitted successfully'/>;
+const failureAlert = <AlertModal body='There was an error submitting results'/>;
+
 export const ResultForm = (
   formName,
   matchGroup,
@@ -100,15 +104,19 @@ export const ResultForm = (
               results: props,
               matchGroupId: matchGroup.matchGroupId,
             }).then(() => {
-              window.alert('Results Submitted Successfully!');
+              // successAlert.open();
+              alert('Results submitted successfully');
               return Promise.resolve();
             }).catch((errors) => {
-              window.alert('There was an error submitting results');
+              // failureAlert.open();
+              alert('Results submission failure');
               return Promise.reject(errors);
             });
           }
         }
       />
+      {successAlert}
+      {failureAlert}
     </Panel>
   );
 };
