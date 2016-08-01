@@ -32,7 +32,7 @@ import java.util.Map;
  * folder.
  */
 public class PdfManager {
-    private static final String PATH_SEPARATOR    = "\\";
+    private static final String PATH_SEPARATOR    = "/";
     private static final String DAT_EXPRESSION    = "yyyy-MM-dd hh:mm a";
     private static final String PDF_EXTENSION     = ".pdf";
     private static final String CONTENT_TAG       = "#content";

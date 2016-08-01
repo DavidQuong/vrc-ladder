@@ -1,6 +1,6 @@
 import React, {createElement} from 'react';
 import {Nav, NavItem} from 'react-bootstrap';
-import {LinkContainer} from 'react-router-bootstrap';
+import {LinkContainer, IndexLinkContainer} from 'react-router-bootstrap';
 import {connect} from 'react-redux';
 import styles from './nav-tabs.css';
 
@@ -25,9 +25,9 @@ const NavTabsDummy = React.createClass({
         </LinkContainer>
       </Nav>) :
       (<Nav pullRight className={styles.navTab}>
-       <LinkContainer to='/'>
+       <IndexLinkContainer to='/'>
          <NavItem>Log in</NavItem>
-       </LinkContainer>
+       </IndexLinkContainer>
        <LinkContainer to='/ladder'>
          <NavItem>Ladder</NavItem>
        </LinkContainer>
@@ -44,4 +44,6 @@ const mapStateToProps = (state) => (
   }
 );
 
-export const NavTabs = connect(mapStateToProps)(NavTabsDummy);
+export const NavTabs = connect(
+  mapStateToProps, null, null, {pure: false}
+)(NavTabsDummy);
