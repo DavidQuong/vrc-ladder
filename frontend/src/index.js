@@ -72,7 +72,7 @@ const syncMatchGroupsAndResults = (store) => (nextState, replace, callback) => {
         allTeams,
         attendingUserTeam.teamId
       )))
-        .then(callback) :
+        .catch(() =>(callback())).then(callback) :
       callback();
   });
 };
