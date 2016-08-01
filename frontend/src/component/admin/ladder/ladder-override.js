@@ -76,7 +76,7 @@ const UpdatePositionForm = reduxForm({
   </Form>
 ));
 
-const updateTeamPositions = ({teamId, ladderPosition, rank}, teams) =>
+const UpdateTeamPositions = ({teamId, ladderPosition, rank}, teams) =>
   (dispatch) => {
     const index = findIndex({teamId: teamId}, teams);
     let i;
@@ -97,7 +97,7 @@ const updateTeamPositions = ({teamId, ladderPosition, rank}, teams) =>
     }
   };
 
-const TeamLadderUpdate = ({team, teams, updateTeamPositions}) => {
+const TeamLadderUpdate = ({team, teams, UpdateTeamPositions}) => {
   return (
       <UpdatePositionForm
         team={team}
@@ -107,7 +107,7 @@ const TeamLadderUpdate = ({team, teams, updateTeamPositions}) => {
           if (!isEmpty(errors)) {
             return Promise.reject(errors);
           }
-          return updateTeamPositions({
+          return UpdateTeamPositions({
             ...props,
             ...team,
           }, teams);
@@ -116,7 +116,7 @@ const TeamLadderUpdate = ({team, teams, updateTeamPositions}) => {
     );
 };
 
-const squashGaps = (teams) => (dispatch) => {
+const SquashGaps = (teams) => (dispatch) => {
   const newTeamsList = [];
   teams.map((team) => {
     team.ladderPosition = findIndex({teamId: team.teamId}, teams) + 1;
@@ -125,7 +125,7 @@ const squashGaps = (teams) => (dispatch) => {
   dispatch(syncTeams(newTeamsList));
 };
 
-const getTeamIds = ({teams, updateLadder}) => {
+const GetTeamIds = ({teams, updateLadder}) => {
   const teamIds = [];
   teams.map((team) => {
     teamIds.push(team.teamId);
@@ -136,24 +136,24 @@ const getTeamIds = ({teams, updateLadder}) => {
 
 const LadderOverride = ({
   teams,
-  squashGaps,
-  updateTeamPositions,
+  SquashGaps,
+  UpdateTeamPositions,
   updateLadder,
 }) : Element => (
   <Well className={`${styles.ladderTableContainer} table-responsive`}>
     <div>
-      <button onClick={() => squashGaps(teams)}>SquashGaps</button>
+      <button onClick={() => SquashGaps(teams)}>SquashGaps</button>
       {teams.map((team) => (
         <TeamLadderUpdate
           key={team.teamId}
           team={team}
           teams={teams}
-          updateTeamPositions={updateTeamPositions}
+          UpdateTeamPositions={UpdateTeamPositions}
         />
       ))}
       <div>
         <button
-          onClick={() => getTeamIds({teams, updateLadder})}
+          onClick={() => SquashGaps({teams, updateLadder})}
         >Send Update</button>
       </div>
     </div>
@@ -166,8 +166,8 @@ export default connect(
   (state) => ({
     teams: sortBy('ladderPosition', state.app.teams),
   }), {
-    squashGaps,
-    updateTeamPositions,
+    SquashGaps,
+    UpdateTeamPositions,
     updateLadder,
   }
 )(LadderOverride);

@@ -2,11 +2,18 @@ import {
   addUser as addUserAPI,
   getPlayer as getPlayerAPI,
   getCurrentActiveUserInfo as getCurrentActiveUserInfoAPI,
-  getTeamInfo as getTeamInfoAPI} from '../api/users';
+  getTeamInfo as getTeamInfoAPI,
+  removeUser as removeUserAPI} from '../api/users';
 import {syncPlayers, syncUserInfo, syncTeamInfo} from './types';
 
 export const addUser = (user) => () => {
   return addUserAPI(user);
+};
+
+export const removeUser = (player) => (dispatch, getState) => {
+  const state = getState();
+  console.log(player);
+  return removeUserAPI(player, state);
 };
 
 export const getCurrentActiveUserInfo = () => (dispatch, getState) => {
