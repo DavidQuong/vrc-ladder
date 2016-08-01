@@ -169,6 +169,10 @@ public class User {
         attempts++;
     }
 
+    public void setAttempts(int attempts){
+        this.attempts = attempts;
+    }
+
     @Override
     public boolean equals(Object otherObj) {
         if (this == otherObj) {
