@@ -1,13 +1,14 @@
 import React, {createElement} from 'react';
 import {connect} from 'react-redux';
-import {Navbar} from 'react-bootstrap';
+import {Col} from 'react-bootstrap';
 import styles from './user-label.css';
 
 const UserLabelDummy = React.createClass({
   render: function() {
-    return (<Navbar.Text className={styles.userLabel}>
-      {this.props.userInfo.name}
-    </Navbar.Text>);
+    return (<Col sm={6} md={4} className={styles.userLabel}>
+       {this.props.userInfo.name ?
+         (`Welcome ${this.props.userInfo.name}!`) : null}
+       </Col>);
   },
 });
 

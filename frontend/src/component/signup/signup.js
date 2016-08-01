@@ -8,9 +8,9 @@ import styles from './signup.css';
 import Heading from '../heading/heading';
 import isEmpty from 'lodash/fp/isEmpty';
 import classNames from 'classnames';
-
+import {SubmitBtn} from '../button/button';
 import {
-  Well, Col, ControlLabel, Button, FormControl, FormGroup, Form,
+  Well, Col, ControlLabel, FormControl, FormGroup, Form,
 } from 'react-bootstrap';
 
 const validate = (values) => {
@@ -162,8 +162,8 @@ const BaseSignUpForm = ({
         <Col sm={3}><FormError {...confirmPassword}/></Col>
       </FormGroup>
 
-      <div className={classNames(styles.center)}>
-        <Button bsStyle='primary' bsSize='large' type='submit'>Sign Up</Button>
+      <div className={styles.center}>
+        <SubmitBtn type='submit'>Sign Up</SubmitBtn>
       </div>
     </div>
   </Form>

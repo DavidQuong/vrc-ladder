@@ -1,10 +1,9 @@
 ~colors: "./../../config/colors.config";
 
 .userLabel {
-  color: ~colors.white !important;
+  color: inherit !important;
   position: relative;
   line-height: 20px;
   font-size: 15px;
-  text-transform: uppercase;
   font-weight: bolder;
 }
