@@ -1,13 +1,14 @@
 import {createElement, Element} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
+import {reduxForm} from 'redux-form';
 import {withRouter} from 'react-router';
 import updateUser from '../../action/users';
-import styles from './profile.css';
+import styles from './updateProfile.css';
 import Heading from '../heading/heading';
-import classNames from 'classnames';
 import isEmpty from 'lodash/fp/isEmpty';
-import {reduxForm} from 'redux-form';
+import classNames from 'classnames';
+
 import {
   Well, Col, ControlLabel, Button, FormControl, FormGroup, Form,
 } from 'react-bootstrap';
@@ -37,6 +38,16 @@ const validate = (values) => {
   return errors;
 };
 
+const parseUser = (props) => {
+  const user = props;
+  delete user.confirmPassword;
+  return ({
+    ...user,
+    userRole: 'PLAYER',
+    middleName: '',
+  });
+};
+
 const formEnhancer = reduxForm({
   form: 'updateProfile',
   fields: [
@@ -62,7 +73,7 @@ const FormError = ({touched, error}) => {
   return null;
 };
 
-const updateProfileInfo = ({
+const UpdateProfileInfoForm = ({
  fields: {
    firstName,
    lastName,
@@ -74,10 +85,7 @@ const updateProfileInfo = ({
 }) => (
  <Form horizontal onSubmit={handleSubmit}>
    <div>
-     <FormGroup>
-       <Col componentClass={ControlLabel} sm={4}>User ID</Col>
-     </FormGroup>
-     <FormGroup>
+    <FormGroup>
        <Col componentClass={ControlLabel} sm={4}>First Name</Col>
        <Col sm={4}>
          <FormControl
@@ -120,6 +128,7 @@ const updateProfileInfo = ({
        </Col>
        <Col sm={3}><FormError {...phoneNumber}/></Col>
      </FormGroup>
+
      <FormGroup>
        <Col componentClass={ControlLabel} sm={4}>Password</Col>
        <Col sm={5}>
@@ -127,6 +136,7 @@ const updateProfileInfo = ({
        </Col>
        <Col sm={3}><FormError {...password}/></Col>
      </FormGroup>
+
      <FormGroup>
        <Col componentClass={ControlLabel} sm={4}>Confirm Password</Col>
        <Col sm={5}>
@@ -135,15 +145,19 @@ const updateProfileInfo = ({
            placeholder='Password confirmation'
            {...confirmPassword}
          />
-       </Col>
+        </Col>
        <Col sm={3}><FormError {...confirmPassword}/></Col>
      </FormGroup>
+
      <div className={classNames(styles.center)}>
-       <Button bsStyle='primary' bsSize='large' type='submit'>Sign Up</Button>
+      <Button bsStyle='primary' bsSize='large' type='submit'>Confirm Update
+      </Button>
      </div>
    </div>
  </Form>
 );
+
+const updateProfileForm = formEnhancer(UpdateProfileInfoForm);
 
 const checkErrors = (responseErrors) => {
   const errors = {};
@@ -158,16 +172,6 @@ const checkErrors = (responseErrors) => {
   }
 
   return errors;
-};
-
-const parseUser = (props) => {
-  const user = props;
-  delete user.confirmPassword;
-  return ({
-    ...user,
-    userRole: 'PLAYER',
-    middleName: '',
-  });
 };
 
 const updateAccount = withRouter(({
@@ -203,7 +207,6 @@ const updateAccount = withRouter(({
   </div>
 ));
 
-const updateProfileForm = formEnhancer(updateProfileInfo);
 export default connect(
   (state) => ({
     players: state.app.players,
