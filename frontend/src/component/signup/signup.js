@@ -8,7 +8,7 @@ import styles from './signup.css';
 import Heading from '../heading/heading';
 import isEmpty from 'lodash/fp/isEmpty';
 import classNames from 'classnames';
-import {SubmitBtn} from '../button/button';
+import {SubmitBtn} from '../button/index';
 import {
   Well, Col, ControlLabel, FormControl, FormGroup, Form,
 } from 'react-bootstrap';

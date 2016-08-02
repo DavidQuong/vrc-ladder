@@ -1,6 +1,7 @@
 import {
   addUser as addUserAPI,
   getPlayer as getPlayerAPI,
+  updateUserInfo,
   getCurrentActiveUserInfo as getCurrentActiveUserInfoAPI,
   getTeamInfo as getTeamInfoAPI} from '../api/users';
 import {syncPlayers, syncUserInfo, syncTeamInfo} from './types';
@@ -49,5 +50,5 @@ export const getTeamInfo = () => (dispatch, getState) => {
 };
 // TODO update this for actually updating user.
 export const updateUser = (user) => () => {
-  return addUserAPI(user);
+  return updateUserInfo(user);
 };
