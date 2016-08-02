@@ -7,6 +7,7 @@ import styles from './admin.css';
 import LadderOverride from './ladder/ladder-override';
 import PlayerOverride from './players/player-override';
 import TeamOverride from './teams/team-override';
+import {requestPDF} from '../../action/ladder';
 
 const updateView = createAction('ADMIN_VIEW');
 
@@ -25,15 +26,28 @@ const ViewSwitch = (props) => (dispatch) => {
   dispatch(updateView(props));
 };
 
+const EmailLadderPDF = ({requestPDF}) => {
+  return requestPDF().then(() => {
+    // some response
+  }).catch(() => {
+    // future code
+  });
+};
+
 const Admin = ({
   adminView,
   ViewSwitch,
+  requestPDF,
+  EmailLadderPDF,
 }) : Element => (
   <Well className={`${styles.ladderTableContainer} table-responsive`}>
     <div>
     <button onClick={() => ViewSwitch('ladder')}>LadderOverride</button>
     <button onClick={() => ViewSwitch('player')}>PlayerOverride</button>
     <button onClick={() => ViewSwitch('team')}>TeamOverride</button>
+    <button
+      onClick={() => EmailLadderPDF({requestPDF})}
+    >Request PDF Email</button>
     </div>
     <div>
         <ToggleView
@@ -49,5 +63,7 @@ export default connect(
     adminView: state.app.adminView,
   }), {
     ViewSwitch,
+    requestPDF,
+    EmailLadderPDF,
   }
 )(Admin);
