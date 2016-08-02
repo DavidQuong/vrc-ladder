@@ -2,7 +2,7 @@ import {createElement, Element} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
-import {addTeam, updateTeamStatus} from '../../action/teams';
+import {addTeam, updateTeamPlayTime} from '../../action/teams';
 import {SubmitBtn} from '../button';
 import {withRouter} from 'react-router';
 import {getTeamInfo} from '../../action/users';
@@ -249,7 +249,7 @@ const CreateTeam = withRouter(({
   userInfo,
   teamInfo,
   getTeamInfo,
-  updateTeamStatus,
+  updateTeamPlayTime,
 }) : Element => (
   <div className={styles.createTeam}>
       <div className={styles.sectionHeaders}>
@@ -280,7 +280,7 @@ const CreateTeam = withRouter(({
         if (!isEmpty(errors)) {
           return Promise.reject(errors);
         }
-        return updateTeamStatus({
+        return updateTeamPlayTime({
           ...props,
           authorizationToken: login.authorizationToken,
         }).then(() => {
@@ -331,5 +331,5 @@ export default connect(
     addTeam,
     displayMyInfo,
     getTeamInfo,
-    updateTeamStatus}
+    updateTeamPlayTime}
 )(CreateTeam);

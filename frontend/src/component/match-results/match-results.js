@@ -1,12 +1,17 @@
 import React, {createElement} from 'react';
 import {connect} from 'react-redux';
 import {getMatchGroups, reportMatchResults} from '../../action/matchgroups';
+import {updateTeamAttendanceStatus} from '../../action/teams';
 import {ResultForm} from './result-form';
 import {Well} from 'react-bootstrap';
 import {getMatchGroupTeams, findUserMatchGroup}
   from '../../util/matchgroup-util';
 
-const displayMatchGroup = (matchGroup, allTeams, reportMatchResults) => {
+const displayMatchGroup = (
+  matchGroup,
+  allTeams,
+  reportMatchResults,
+  updateTeamAttendanceStatus) => {
   return (
     <Well>
       {matchGroup ?
@@ -14,7 +19,8 @@ const displayMatchGroup = (matchGroup, allTeams, reportMatchResults) => {
           'playerResultForm',
           matchGroup,
           getMatchGroupTeams(matchGroup, allTeams),
-          reportMatchResults) :
+          reportMatchResults,
+          updateTeamAttendanceStatus) :
         'You\'re not in any MatchGroups!'}
     </Well>);
 };
@@ -28,7 +34,8 @@ const MatchResultsDummy = React.createClass({
           this.props.teams,
           this.props.teamInfo.teamId),
             this.props.teams,
-            this.props.reportMatchResults) :
+            this.props.reportMatchResults,
+            this.props.updateTeamAttendanceStatus) :
         'You\'re not in any MatchGroups!'}
       </div>);
   },
@@ -44,4 +51,8 @@ const mapStateToProps = (state) => {
 
 export const MatchResults =
   connect(mapStateToProps,
-    {getMatchGroups, reportMatchResults})(MatchResultsDummy);
+    {
+      getMatchGroups,
+      reportMatchResults,
+      updateTeamAttendanceStatus,
+    })(MatchResultsDummy);

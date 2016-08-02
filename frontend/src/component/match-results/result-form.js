@@ -8,7 +8,6 @@ import {SubmitBtn} from '../button';
 import Heading from '../heading/heading';
 import map from 'lodash/fp/map';
 import isEmpty from 'lodash/fp/isEmpty';
-import {AlertModal} from '../alert/alert-modal'
 
 // TODO: make this work for 4 team matchgroup forms
 const validate = (values) => {
@@ -26,9 +25,28 @@ const validate = (values) => {
   return errors;
 };
 
-const mapInitialStateToProps = (state) => {
+const mapInitialResultsStateToProps = (state) => {
   return {
     initialValues: state.app.matchResults,
+  };
+};
+
+const defaultInitialAttendanceStatuses = {
+  team1: 'PRESENT',
+  team2: 'PRESENT',
+  team3: 'LATE',
+  team4: 'PRESENT',
+};
+
+const getDefaultInitialAttendanceStatus = (attendanceStatus) => (
+  attendanceStatus ?
+    attendanceStatus :
+    defaultInitialAttendanceStatuses
+);
+
+const mapInitialAttendanceStateToProps = (state) => {
+  return {
+    initialValues: getDefaultInitialAttendanceStatus(state.app.attendance),
   };
 };
 
@@ -37,7 +55,7 @@ const generateRankingSubmissionRow = (teams, teamId, rankNumber) => (
     <label className={classNames(styles.colXsTitle)}>
       <FormattedMessage
         id={`teamId ${rankNumber}`}
-        defaultMessage={`TeamId ${rankNumber}:`}
+        defaultMessage={`Team ${rankNumber}:`}
       />
     </label>
     <select
@@ -63,7 +81,7 @@ const generateRankingSubmissionRow = (teams, teamId, rankNumber) => (
 
 const ResultFormRows = reduxForm({
   fields: ['teamId1', 'teamId2', 'teamId3', 'teamId4'],
-}, mapInitialStateToProps)(({
+}, mapInitialResultsStateToProps)(({
   fields: {teamId1, teamId2, teamId3, teamId4},
   matchTeams,
   handleSubmit,
@@ -81,42 +99,100 @@ const ResultFormRows = reduxForm({
   </Form>
 ));
 
-const successAlert = <AlertModal body='Results submitted successfully'/>;
-const failureAlert = <AlertModal body='There was an error submitting results'/>;
+const generateAttendanceSubmissionRow = (team, teamField) => (
+  <div>
+    <label className={classNames(styles.colXsTitle)}>
+      {team.firstPlayer.name} & {team.secondPlayer.name}
+    </label>
+    <select className={classNames(styles.goodForm)} {...teamField}>
+      <option value='PRESENT'>Present</option>
+      <option value='LATE'>Late</option>
+      <option value='NO_SHOW'>No Show</option>
+    </select>
+  </div>
+);
+
+const AttendanceStatusForm = reduxForm({
+  fields: ['team1', 'team2', 'team3', 'team4'],
+}, mapInitialAttendanceStateToProps)(({
+  fields: {team1, team2, team3, team4},
+  matchTeams,
+  handleSubmit,
+}) => (
+  <Form horizontal onSubmit={handleSubmit}>
+    <div>
+      {generateAttendanceSubmissionRow(matchTeams[0], team1)}
+      {generateAttendanceSubmissionRow(matchTeams[1], team2)}
+      {generateAttendanceSubmissionRow(matchTeams[2], team3)}
+      {matchTeams.length === 4 ?
+        generateAttendanceSubmissionRow(matchTeams[3], team4) :
+        null}
+      <SubmitBtn type='submit'>Submit Results</SubmitBtn>
+    </div>
+  </Form>
+));
+
+const onAttendanceSubmissionSuccess = () => {
+  alert('Attendance Submission Success!');
+  return Promise.resolve();
+}
 
 export const ResultForm = (
   formName,
   matchGroup,
   matchGroupTeams,
-  reportMatchResults) => {
+  reportMatchResults,
+  updateTeamAttendanceStatus) => {
   return (
-    <Panel header='Result Submission' bsStyle='primary'>
-      <ResultFormRows
-        form={formName}
-        matchTeams={matchGroupTeams}
-        onSubmit={
-          (props) => {
-            const errors = validate(props);
-            if (!isEmpty(errors)) {
-              return Promise.reject(errors);
+    <div>
+      <Panel header='Result Submission' bsStyle='primary'>
+        <ResultFormRows
+          form={`${formName}Results`}
+          matchTeams={matchGroupTeams}
+          onSubmit={
+            (props) => {
+              const errors = validate(props);
+              if (!isEmpty(errors)) {
+                return Promise.reject(errors);
+              }
+              return reportMatchResults({
+                results: props,
+                matchGroupId: matchGroup.matchGroupId,
+              }).then(() => {
+                alert('Results submitted successfully');
+                return Promise.resolve();
+              }).catch((errors) => {
+                alert('Results submission failure');
+                return Promise.reject(errors);
+              });
             }
-            return reportMatchResults({
-              results: props,
-              matchGroupId: matchGroup.matchGroupId,
-            }).then(() => {
-              // successAlert.open();
-              alert('Results submitted successfully');
-              return Promise.resolve();
-            }).catch((errors) => {
-              // failureAlert.open();
-              alert('Results submission failure');
-              return Promise.reject(errors);
-            });
           }
-        }
-      />
-      {successAlert}
-      {failureAlert}
-    </Panel>
+        />
+      </Panel>
+      <Panel header='Attendance Status Submission' bsStyle='primary'>
+        <AttendanceStatusForm
+          form={`${formName}Attendance`}
+          matchTeams={matchGroupTeams}
+          onSubmit={
+            (props) => {
+              // TODO: create an api call for updating MatchGroup attendances!
+              updateTeamAttendanceStatus(matchGroupTeams[0], props.team1).then(() =>
+                updateTeamAttendanceStatus(matchGroupTeams[1], props.team2).then(() =>
+                  updateTeamAttendanceStatus(matchGroupTeams[2], props.team3).then(() =>
+                    matchGroupTeams.length === 4 ?
+                      updateTeamAttendanceStatus(matchGroupTeams[3], props.team4).then(() =>
+                        onAttendanceSubmissionSuccess()
+                      ) :
+                      onAttendanceSubmissionSuccess()
+                    )))
+              .catch((errors) => {
+                alert('Attendance submission failure');
+                return Promise.reject(errors);
+              });
+            }
+          }
+        />
+      </Panel>
+    </div>
   );
 };
