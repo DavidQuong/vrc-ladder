@@ -17,12 +17,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * This class handles all notifications sent to users. It uses
  * TemplateManager class to open HTML and TEXT tempaltes of this
  * class. Templates are located in the resources folder.
  */
 public class NotificationManager {
+
     private static final String GAME_REPORTED_THREE_TEAMS = "threeteams";
     private static final String GAME_REPORTED_FOUR_TEAMS  = "fourteams";
     private static final String RECEIVER_NAME_TAG         = "#fullname";
