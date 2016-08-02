@@ -59,7 +59,6 @@ export const updateUserInfo = (user, state) => {
     if (response.ok) {
       return Promise.resolve(body);
     }
-    alert(body);
     return Promise.reject(body);
   });
 };
