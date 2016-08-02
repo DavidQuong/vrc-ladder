@@ -17,4 +17,5 @@ public class JsonProperties {
 
     public static final String JSON_PROPERTY_TEAM_ID = "teamId";
     public static final String JSON_PROPERTY_PLAY_TIME = "playTime";
+    public static final String JSON_PROPERTY_ATTENDANCE_STATUS = "attendanceStatus";
 }

@@ -10,11 +10,11 @@ import org.apache.commons.lang3.EnumUtils;
 
 import java.lang.reflect.Type;
 
+import static ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonProperties.JSON_PROPERTY_ATTENDANCE_STATUS;
+
 public class NewAttendanceStatusPayload {
 
     public static class GsonDeserializer extends BaseGsonDeserializer<NewAttendanceStatusPayload> {
-
-        public static final String JSON_PROPERTY_ATTENDANCE_STATUS = "AttendanceStatus";
 
         private static final String ERROR_INVALID_ATTENDANCE_STATUS = "Invalid AttendanceStatus.";
 
