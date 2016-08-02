@@ -55,7 +55,7 @@ public class RestApi {
         Spark.before(ROUTE_WILDCARD, (request, response) -> {
           if (request.requestMethod().equals("OPTIONS")) {
             response.header("Access-Control-Allow-Origin", "*");
-            response.header("Access-Control-Allow-Methods", "GET, POST, PUT");
+            response.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
             response.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
             Spark.halt(HttpStatus.OK_200, "");
           }
