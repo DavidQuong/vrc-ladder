@@ -17,6 +17,9 @@ const volunteerTabs = (<Nav pullRight className={styles.navTab}>
   <LinkContainer to='/match-schedule'>
     <NavItem>Match Groups</NavItem>
   </LinkContainer>
+  <LinkContainer to='/admin'>
+    <NavItem>Admin</NavItem>
+  </LinkContainer>
 </Nav>);
 
 const playerTabs = (<Nav pullRight className={styles.navTab}>

@@ -1,5 +1,6 @@
 import {
   addTeam as addTeamAPI,
+  removeTeam as removeTeamAPI,
   getTeams as getTeamsAPI,
   updateTeamPlayTime as updateTeamPlayTimeAPI,
   updateTeamAttendanceStatus as updateTeamAttendanceStatusAPI}
@@ -8,6 +9,11 @@ import {syncTeams} from './types';
 
 export const addTeam = (user, login) => () => {
   return addTeamAPI(user, login);
+};
+
+export const removeTeam = (team) => (dispatch, getState) => {
+  const state = getState();
+  return removeTeamAPI(team, state);
 };
 
 export const getTeams = () => (dispatch) => {
@@ -22,8 +28,9 @@ export const getTeams = () => (dispatch) => {
   });
 };
 
-export const updateTeamPlayTime = (teamInfo) => () => {
-  return updateTeamPlayTimeAPI(teamInfo).then((response) => {
+export const updateTeamPlayTime = (teamInfo) => (dispatch, getState) => {
+  const state = getState();
+  return updateTeamPlayTimeAPI(teamInfo, state).then((response) => {
     if (response.error) {
       return Promise.reject();
     }

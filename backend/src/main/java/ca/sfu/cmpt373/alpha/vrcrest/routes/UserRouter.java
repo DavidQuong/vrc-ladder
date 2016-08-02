@@ -1,15 +1,18 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PropertyInstantiationException;
-import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PropertyInstantiationException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
+import ca.sfu.cmpt373.alpha.vrcladder.notifications.NotificationManager;
+import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.NotificationType;
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonProperties;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewUserPayload;
@@ -30,6 +33,7 @@ import spark.Request;
 import spark.Response;
 import spark.Spark;
 import spark.route.HttpMethod;
+
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,7 +62,7 @@ public class UserRouter extends RestRouter {
 
     private static final List<RouteSignature> PUBLIC_ROUTE_SIGNATURES = createPublicRouteSignatures();
 
-    //private final NotificationManager notify;
+    private final NotificationManager notify;
     private SecurityManager securityManager;
     private UserManager userManager;
     private TeamManager teamManager;
@@ -70,7 +74,7 @@ public class UserRouter extends RestRouter {
         userManager = applicationManager.getUserManager();
         teamManager = applicationManager.getTeamManager();
         playerGson = buildGsonForPlayer();
-        //notify = new NotificationManager();
+        notify = new NotificationManager();
     }
 
     @Override
@@ -157,6 +161,10 @@ public class UserRouter extends RestRouter {
         JsonObject responseBody = new JsonObject();
         try {
             NewUserPayload newUserPayload = getGson().fromJson(request.body(), NewUserPayload.class);
+            if (newUserPayload.getUserRole() == UserRole.VOLUNTEER) {
+                checkForVolunteerRole(request);
+            }
+
             Password hashedPassword = securityManager.hashPassword(newUserPayload.getPassword());
 
             User newUser = userManager.create(
@@ -169,7 +177,7 @@ public class UserRouter extends RestRouter {
                 newUserPayload.getPhoneNumber(),
                 hashedPassword);
 
-            // notify.notifyUser(newUser, NotificationType.ACCOUNT_ACTIVATED);
+            notify.notifyUser(newUser, NotificationType.ACCOUNT_ACTIVATED);
             JsonElement jsonUser = getGson().toJsonTree(newUser);
             responseBody.add(JSON_PROPERTY_USER, jsonUser);
             response.status(HttpStatus.CREATED_201);

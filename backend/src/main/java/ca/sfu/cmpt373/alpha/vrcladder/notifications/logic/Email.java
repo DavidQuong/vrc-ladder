@@ -46,6 +46,10 @@ public class Email {
     }
 
     public void sendEmail(EmailAddress receiver, String messageContent, NotificationType type) {
+        new Thread(() -> asyncSendEmail(receiver, messageContent,type)).start();
+    }
+
+    private void asyncSendEmail(EmailAddress receiver, String messageContent, NotificationType type){
         try {
             String subject = getEmailSubject(type.getTemplate());
             MimeMessage currentMessage = message;
@@ -54,11 +58,12 @@ public class Email {
             currentMessage.setContent(messageContent, contentType);
             currentMessage.setHeader("Content-Type", contentType);
 
-            synchronized(this) {
+            synchronized (this){
                 transport.connect(EmailSettings.SERVER, EmailSettings.USERNAME, EmailSettings.PASSWORD);
                 transport.sendMessage(currentMessage, currentMessage.getAllRecipients());
                 transport.close();
             }
+
         } catch (MessagingException e) {
             throw new MessageNotDeliveredException();
         }

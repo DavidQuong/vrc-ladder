@@ -4,7 +4,7 @@ import {reduxForm} from 'redux-form';
 import styles from './result-form.css';
 import classNames from 'classnames';
 import {FormattedMessage} from 'react-intl';
-import {SubmitBtn} from '../button';
+import {SubmitBtn} from '../button/button';
 import Heading from '../heading/heading';
 import map from 'lodash/fp/map';
 import isEmpty from 'lodash/fp/isEmpty';

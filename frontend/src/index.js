@@ -6,17 +6,18 @@ import {getPlayer} from './action/users';
 import {getTeams} from './action/teams';
 import {getMatchSchedule, getMatchGroups, getMatchResults}
   from './action/matchgroups';
+import {Row, Col, Navbar, Grid} from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
+import {UserLabel} from './component/user-label/user-label';
+import {NavTabs} from './component/nav-tabs/nav-tabs';
+import Admin from './component/admin/admin';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import {MatchGroups} from './component/matchgroups/matchgroups';
 import CreateTeam from './component/profile/profile';
-import {Nav, Navbar, Grid} from 'react-bootstrap';
-import {LinkContainer} from 'react-router-bootstrap';
 import styles from './index.css';
 import LogIn from './component/login/login';
 import Logout from './component/logout/logout';
-import {UserLabel} from './component/user-label/user-label';
-import {NavTabs} from './component/nav-tabs/nav-tabs';
 import {MatchResults}
   from './component/match-results/match-results';
 import {findUserMatchGroup, findAttendingUserTeam}
@@ -37,17 +38,21 @@ const Layout = ({children}) => (
           </Navbar.Text>
           <Navbar.Toggle />
         </Navbar.Header>
-        <UserLabel/>
         <Navbar.Collapse>
           <NavTabs/>
         </Navbar.Collapse>
       </Navbar>
       <Navbar fixedTop className={styles.lowerNavbar}>
-        <Nav className={styles.lowerNavContainer}>
-          <Navbar.Text className={styles.lowerNavbarHeading}>
-            {children.props.route.navbarTitle}
-          </Navbar.Text>
-        </Nav>
+        <Navbar.Collapse>
+          <Grid className={styles.lowerNavContainer}>
+            <Row>
+            <Col sm={6} md={4} className={styles.lowerNavbarHeading}>
+              {children.props.route.navbarTitle}
+            </Col>
+            <UserLabel/>
+            </Row>
+          </Grid>
+        </Navbar.Collapse>
       </Navbar>
     </div>
     <Grid>
@@ -57,24 +62,25 @@ const Layout = ({children}) => (
 );
 
 const syncMatchGroupsAndResults = (store) => (nextState, replace, callback) => {
-  store.dispatch(getMatchGroups()).then(() => {
-    const state = store.getState();
-    const allMatchGroups = state.app.matchGroups;
-    const allTeams = state.app.teams;
-    const userTeams = state.app.teamInfo;
-    const attendingUserTeam = findAttendingUserTeam(
-      allMatchGroups,
-      allTeams,
-      userTeams);
-    attendingUserTeam ?
-      store.dispatch(getMatchResults(findUserMatchGroup(
+  store.dispatch(getTeams()).then(() =>
+    store.dispatch(getMatchGroups()).then(() => {
+      const state = store.getState();
+      const allMatchGroups = state.app.matchGroups;
+      const allTeams = state.app.teams;
+      const userTeams = state.app.teamInfo;
+      const attendingUserTeam = findAttendingUserTeam(
         allMatchGroups,
         allTeams,
-        attendingUserTeam.teamId
-      )))
-        .catch(() => (callback())).then(callback) :
-      callback();
-  });
+        userTeams);
+      attendingUserTeam ?
+        store.dispatch(getMatchResults(findUserMatchGroup(
+          allMatchGroups,
+          allTeams,
+          attendingUserTeam.teamId
+        )))
+          .catch(() => (callback())).then(callback) :
+        callback();
+    }));
 };
 
 export default ({store}) : Element => (
@@ -106,9 +112,11 @@ export default ({store}) : Element => (
             path='/match-schedule'
             navbarTitle='Match Schedule'
             component={MatchGroups}
-            onEnter={(nextState, replace, callback) => {
-              store.dispatch(getMatchSchedule()).then(callback);
-            }}
+            onEnter={(nextState, replace, callback) =>
+              store.dispatch(getTeams()).then(() =>
+                store.dispatch(getMatchSchedule()).then(callback)
+              )
+            }
           />
           <Route
             path='/match-results'
@@ -117,11 +125,19 @@ export default ({store}) : Element => (
             onEnter={syncMatchGroupsAndResults(store)}
           />
           <Route
+            path='/admin'
+            navbarTitle='Admin'
+            component={Admin}
+            onEnter={(nextState, replace, callback) => {
+              store.dispatch(getPlayer()).then(callback);
+              store.dispatch(getTeams()).then(callback);
+            }}
+          />
+          <Route
             path='/ladder'
             navbarTitle='Weekly Doubles Leaderboard'
             component={Ladder}
             onEnter={(nextState, replace, callback) => {
-              store.dispatch(getPlayer()).then(callback);
               store.dispatch(getTeams()).then(callback);
             }}
           />

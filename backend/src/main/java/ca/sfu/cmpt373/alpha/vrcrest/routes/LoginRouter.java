@@ -73,9 +73,14 @@ public class LoginRouter extends RestRouter {
             LoginPayload loginPayload = getGson().fromJson(request.body(), LoginPayload.class);
 
             User user = userManager.getById(loginPayload.getUserId());
+            user.incrementAttempts();
+            userManager.updateAttempts(user.getUserId(), user.getAttempts());
             String plaintextPassword = loginPayload.getPassword();
 
             String authorizationToken = securityManager.login(user, plaintextPassword);
+
+            user.resetAttempts();
+            userManager.updateAttempts(loginPayload.getUserId(), user.getAttempts());
             responseBody.addProperty(JSON_PROPERTY_AUTHORIZATION_TOKEN, authorizationToken);
             response.status(HttpStatus.OK_200);
         } catch (JsonSyntaxException ex) {
