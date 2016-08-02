@@ -51,16 +51,11 @@ const getInitialAttendanceStatuses = (matchGroupTeams) => (
   }
 );
 
-// this doesn't really map the redux state,
-// but was the only way I could find to initialize redux form field values
-const getMapInitialAttendanceStateToProps =
-  (matchGroupTeams, setDefaultValues) => () => {
-    return setDefaultValues ?
-    {
-      initialValues: getInitialAttendanceStatuses(matchGroupTeams),
-    } :
-      undefined;
+const mapInitialAttendanceStateToProps = (state, ownProps) => {
+  return {
+    initialValues: getInitialAttendanceStatuses(ownProps.matchTeams),
   };
+};
 
 const generateRankingSubmissionRow = (teams, teamId, rankNumber) => (
   <div className={classNames(styles.formGroup)}>
@@ -124,10 +119,9 @@ const generateAttendanceSubmissionRow = (team, teamField) => (
   </div>
 );
 
-const getAttendanceStatusForm =
-(matchGroupTeams, setDefaultValues) => reduxForm({
+const AttendanceStatusForm = reduxForm({
   fields: ['team1', 'team2', 'team3', 'team4'],
-}, getMapInitialAttendanceStateToProps(matchGroupTeams, setDefaultValues))(({
+}, mapInitialAttendanceStateToProps)(({
     fields: {team1, team2, team3, team4},
     matchTeams,
     handleSubmit,
@@ -203,12 +197,7 @@ export const ResultForm = (
   matchGroup,
   matchGroupTeams,
   reportMatchResults,
-  updateTeamAttendanceStatus,
-  setDefaultValues) => {
-  const AttendanceStatusForm =
-    getAttendanceStatusForm(matchGroupTeams, setDefaultValues);
-  // const successAlert = <AlertModal body='Results submitted successfully'/>;
-  // const failureAlert = <AlertModal body='Results submission failure'/>;
+  updateTeamAttendanceStatus) => {
   return (
     <div>
       <AlertModal

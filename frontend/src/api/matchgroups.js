@@ -36,7 +36,7 @@ export const generateMatchGroups = (state) => {
 
 export const regenerateMatchGroups = (state) => {
   return fetch(`${root}ladder/regenerate`, {
-    method: 'POST',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       Authorization: state.app.loggedIn.authorizationToken,

@@ -78,8 +78,7 @@ const MatchGroupForms = (
         matchGroup,
         matchTeams,
         reportMatchResults,
-        updateTeamAttendanceStatus,
-        false)}
+        updateTeamAttendanceStatus)}
     </Well>
   );
 };
