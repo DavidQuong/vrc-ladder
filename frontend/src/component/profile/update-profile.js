@@ -29,7 +29,6 @@ const parseUser = (props, userInfo) => {
     props.userId = userInfo.userId;
   }
   if (!props.firstName) {
-  alert(userInfo.firstName);
     props.firstName = userInfo.name;
   }
   if (!props.lastName) {
@@ -200,20 +199,20 @@ const updateAccount = withRouter(({
           const errors = validate(props);
           const info = parseUser(props, userInfo);
           if (!isEmpty(errors)) {
-          alert("failed: there are errors");
+            alert('failed: there are errors');
             return Promise.reject(errors);
           }
           return updateUser(info).then(() => {
-            alert(updated);
+            alert('updated');
             router.push('/profile');
           }).catch((response) => {
             return response.then(function(bodyContent) {
-              alert("caught response");
+              alert('caught response');
               const errors = checkErrors(bodyContent);
               return Promise.reject(errors);
             });
           });
-          alert("ending update");
+          alert('ending update');
         }}
       />
     </Well>
