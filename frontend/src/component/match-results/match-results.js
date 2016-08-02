@@ -6,6 +6,7 @@ import {ResultForm} from './result-form';
 import {Well} from 'react-bootstrap';
 import {getMatchGroupTeams, findUserMatchGroup}
   from '../../util/matchgroup-util';
+import {findAttendingUserTeam} from '../../util/team-util';
 
 const displayMatchGroup = (
   matchGroup,
@@ -27,12 +28,13 @@ const displayMatchGroup = (
 
 const MatchResultsDummy = React.createClass({
   render: function() {
+    const attendingUserTeam = findAttendingUserTeam(this.props.teamInfo);
     return (<div>
-      {this.props.teamInfo.teamId ?
+      {attendingUserTeam ?
         displayMatchGroup(findUserMatchGroup(
           this.props.matchGroups,
           this.props.teams,
-          this.props.teamInfo.teamId),
+          attendingUserTeam.teamId),
             this.props.teams,
             this.props.reportMatchResults,
             this.props.updateTeamAttendanceStatus) :
@@ -45,7 +47,7 @@ const mapStateToProps = (state) => {
   return {
     matchGroups: state.app.matchGroups,
     teams: state.app.teams,
-    teamInfo: state.app.teamInfo[0],
+    teamInfo: state.app.teamInfo,
   };
 };
 

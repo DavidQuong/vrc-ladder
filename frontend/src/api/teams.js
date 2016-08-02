@@ -61,7 +61,7 @@ export const updateTeamAttendanceStatus = (team, attendanceStatus, state) => {
   return fetch(
     `${root}team/${team.teamId}/attendance/status`, {
       method: 'PUT',
-      body: JSON.stringify({AttendanceStatus: attendanceStatus}),
+      body: JSON.stringify({attendanceStatus: attendanceStatus}),
       headers: new Headers({
         'Content-Type': 'application.json',
         Authorization: state.app.loggedIn.authorizationToken,

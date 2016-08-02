@@ -31,22 +31,30 @@ const mapInitialResultsStateToProps = (state) => {
   };
 };
 
-const defaultInitialAttendanceStatuses = {
-  team1: 'PRESENT',
-  team2: 'PRESENT',
-  team3: 'LATE',
-  team4: 'PRESENT',
-};
+const defaultInitialAttendanceStatus = 'PRESENT';
 
-const getDefaultInitialAttendanceStatus = (attendanceStatus) => (
-  attendanceStatus ?
-    attendanceStatus :
-    defaultInitialAttendanceStatuses
+const getDefaultAttendanceOrValue = (team) => (
+  team.attendanceStatus ?
+    team.attendanceStatus :
+    defaultInitialAttendanceStatus
 );
 
-const mapInitialAttendanceStateToProps = (state) => {
+const getInitialAttendanceStatuses = (matchGroupTeams) => (
+  {
+    team1: getDefaultAttendanceOrValue(matchGroupTeams[0]),
+    team2: getDefaultAttendanceOrValue(matchGroupTeams[1]),
+    team3: getDefaultAttendanceOrValue(matchGroupTeams[2]),
+    team4: matchGroupTeams.length === 4 ?
+            getDefaultAttendanceOrValue(matchGroupTeams[3]) :
+            null,
+  }
+);
+
+// this doesn't really map the redux state,
+// but was the only way I could find to initialize redux form field values
+const getMapInitialAttendanceStateToProps = (matchGroupTeams) => (state) => {
   return {
-    initialValues: getDefaultInitialAttendanceStatus(state.app.attendance),
+    initialValues: getInitialAttendanceStatuses(matchGroupTeams),
   };
 };
 
@@ -112,9 +120,9 @@ const generateAttendanceSubmissionRow = (team, teamField) => (
   </div>
 );
 
-const AttendanceStatusForm = reduxForm({
+const getAttendanceStatusForm = (matchGroupTeams) => reduxForm({
   fields: ['team1', 'team2', 'team3', 'team4'],
-}, mapInitialAttendanceStateToProps)(({
+}, getMapInitialAttendanceStateToProps(matchGroupTeams))(({
   fields: {team1, team2, team3, team4},
   matchTeams,
   handleSubmit,
@@ -137,12 +145,15 @@ const onAttendanceSubmissionSuccess = () => {
   return Promise.resolve();
 }
 
+// note this is a function that returns a react component
+// generated based on the parameters
 export const ResultForm = (
   formName,
   matchGroup,
   matchGroupTeams,
   reportMatchResults,
   updateTeamAttendanceStatus) => {
+  const AttendanceStatusForm = getAttendanceStatusForm(matchGroupTeams);
   return (
     <div>
       <Panel header='Result Submission' bsStyle='primary'>

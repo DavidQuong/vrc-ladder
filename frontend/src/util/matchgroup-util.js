@@ -24,19 +24,3 @@ export const findUserMatchGroup = (matchGroups, allTeams, teamId) => {
   });
   return userMatchGroup;
 };
-
-// TODO replace this with a check to team timeslot
-export const findAttendingUserTeam = (matchGroups, allTeams, userTeams) => {
-  let userTeam;
-  for (let i = 0; i < userTeams.length; i++) {
-    userTeam = userTeams[i];
-    const userMatchGroup = findUserMatchGroup(
-      matchGroups,
-      allTeams,
-      userTeam.teamId);
-    if (userMatchGroup) {
-      return userTeam;
-    }
-  }
-  return null;
-};

@@ -20,8 +20,9 @@ import LogIn from './component/login/login';
 import Logout from './component/logout/logout';
 import {MatchResults}
   from './component/match-results/match-results';
-import {findUserMatchGroup, findAttendingUserTeam}
+import {findUserMatchGroup}
   from './util/matchgroup-util';
+import {findAttendingUserTeam} from './util/team-util';
 
 const Layout = ({children}) => (
   <div>
@@ -68,10 +69,7 @@ const syncMatchGroupsAndResults = (store) => (nextState, replace, callback) => {
       const allMatchGroups = state.app.matchGroups;
       const allTeams = state.app.teams;
       const userTeams = state.app.teamInfo;
-      const attendingUserTeam = findAttendingUserTeam(
-        allMatchGroups,
-        allTeams,
-        userTeams);
+      const attendingUserTeam = findAttendingUserTeam(userTeams);
       attendingUserTeam ?
         store.dispatch(getMatchResults(findUserMatchGroup(
           allMatchGroups,
