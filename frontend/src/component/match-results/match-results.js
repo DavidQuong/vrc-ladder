@@ -21,7 +21,8 @@ const displayMatchGroup = (
           matchGroup,
           getMatchGroupTeams(matchGroup, allTeams),
           reportMatchResults,
-          updateTeamAttendanceStatus) :
+          updateTeamAttendanceStatus,
+          true) :
         'You\'re not in any MatchGroups!'}
     </Well>);
 };

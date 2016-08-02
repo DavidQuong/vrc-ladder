@@ -8,6 +8,7 @@ import {SubmitBtn} from '../button/button';
 import Heading from '../heading/heading';
 import map from 'lodash/fp/map';
 import isEmpty from 'lodash/fp/isEmpty';
+import {AlertModal} from '../alert/alert-modal';
 
 // TODO: make this work for 4 team matchgroup forms
 const validate = (values) => {
@@ -31,12 +32,12 @@ const mapInitialResultsStateToProps = (state) => {
   };
 };
 
-const defaultInitialAttendanceStatus = 'PRESENT';
+// const defaultInitialAttendanceStatus = 'PRESENT';
 
 const getDefaultAttendanceOrValue = (team) => (
   team.attendanceStatus ?
     team.attendanceStatus :
-    defaultInitialAttendanceStatus
+    'PRESENT'
 );
 
 const getInitialAttendanceStatuses = (matchGroupTeams) => (
@@ -52,11 +53,14 @@ const getInitialAttendanceStatuses = (matchGroupTeams) => (
 
 // this doesn't really map the redux state,
 // but was the only way I could find to initialize redux form field values
-const getMapInitialAttendanceStateToProps = (matchGroupTeams) => (state) => {
-  return {
-    initialValues: getInitialAttendanceStatuses(matchGroupTeams),
+const getMapInitialAttendanceStateToProps =
+  (matchGroupTeams, setDefaultValues) => () => {
+    return setDefaultValues ?
+    {
+      initialValues: getInitialAttendanceStatuses(matchGroupTeams),
+    } :
+      undefined;
   };
-};
 
 const generateRankingSubmissionRow = (teams, teamId, rankNumber) => (
   <div className={classNames(styles.formGroup)}>
@@ -120,63 +124,105 @@ const generateAttendanceSubmissionRow = (team, teamField) => (
   </div>
 );
 
-const getAttendanceStatusForm = (matchGroupTeams) => reduxForm({
+const getAttendanceStatusForm =
+(matchGroupTeams, setDefaultValues) => reduxForm({
   fields: ['team1', 'team2', 'team3', 'team4'],
-}, getMapInitialAttendanceStateToProps(matchGroupTeams))(({
-  fields: {team1, team2, team3, team4},
-  matchTeams,
-  handleSubmit,
-}) => (
-  <Form horizontal onSubmit={handleSubmit}>
-    <div>
-      {generateAttendanceSubmissionRow(matchTeams[0], team1)}
-      {generateAttendanceSubmissionRow(matchTeams[1], team2)}
-      {generateAttendanceSubmissionRow(matchTeams[2], team3)}
-      {matchTeams.length === 4 ?
-        generateAttendanceSubmissionRow(matchTeams[3], team4) :
-        null}
-      <SubmitBtn type='submit'>Submit Results</SubmitBtn>
-    </div>
-  </Form>
-));
+}, getMapInitialAttendanceStateToProps(matchGroupTeams, setDefaultValues))(({
+    fields: {team1, team2, team3, team4},
+    matchTeams,
+    handleSubmit,
+  }) => (
+    <Form horizontal onSubmit={handleSubmit}>
+      <div>
+        {generateAttendanceSubmissionRow(matchTeams[0], team1)}
+        {generateAttendanceSubmissionRow(matchTeams[1], team2)}
+        {generateAttendanceSubmissionRow(matchTeams[2], team3)}
+        {matchTeams.length === 4 ?
+          generateAttendanceSubmissionRow(matchTeams[3], team4) :
+          null}
+        <SubmitBtn type='submit'>Submit Results</SubmitBtn>
+      </div>
+    </Form>
+  ));
 
 const onAttendanceSubmissionSuccess = () => {
-  alert('Attendance Submission Success!');
+  alert.open('Attendance Submission Success!');
   return Promise.resolve();
-}
+};
 
-// note this is a function that returns a react component
-// generated based on the parameters
+const assignGlobalReference = function(a) {
+  global.alert = a;
+};
+
+const generateOnSubmitMatchResults =
+(matchGroup, reportMatchResults) => (props) => {
+  const errors = validate(props);
+  if (!isEmpty(errors)) {
+    return Promise.reject(errors);
+  }
+  return reportMatchResults({
+    results: props,
+    matchGroupId: matchGroup.matchGroupId,
+  }).then(() => {
+    alert.open('Success Submitting Results');
+    return Promise.resolve();
+  }).catch((errors) => {
+    alert.open('Results Submission Failure');
+    return Promise.reject(errors);
+  });
+};
+
+const generateOnSubmitAttendance =
+(matchGroupTeams, updateTeamAttendanceStatus) => (props) => {
+  // TODO: create an api call for updating MatchGroup attendances!
+  updateTeamAttendanceStatus(
+    matchGroupTeams[0],
+    props.team1).then(() =>
+    updateTeamAttendanceStatus(
+      matchGroupTeams[1],
+      props.team2).then(() =>
+      updateTeamAttendanceStatus(
+        matchGroupTeams[2],
+        props.team3).then(() =>
+        matchGroupTeams.length === 4 ?
+          updateTeamAttendanceStatus(
+            matchGroupTeams[3],
+            props.team4).then(() =>
+            onAttendanceSubmissionSuccess()
+          ) :
+          onAttendanceSubmissionSuccess()
+        )))
+  .catch((errors) => {
+    alert.open('Attendance submission failure');
+    return Promise.reject(errors);
+  });
+};
+
 export const ResultForm = (
   formName,
   matchGroup,
   matchGroupTeams,
   reportMatchResults,
-  updateTeamAttendanceStatus) => {
-  const AttendanceStatusForm = getAttendanceStatusForm(matchGroupTeams);
+  updateTeamAttendanceStatus,
+  setDefaultValues) => {
+  const AttendanceStatusForm =
+    getAttendanceStatusForm(matchGroupTeams, setDefaultValues);
+  // const successAlert = <AlertModal body='Results submitted successfully'/>;
+  // const failureAlert = <AlertModal body='Results submission failure'/>;
   return (
     <div>
+      <AlertModal
+        ref={assignGlobalReference}
+        body='Results submitted successfully'
+      />
       <Panel header='Result Submission' bsStyle='primary'>
         <ResultFormRows
           form={`${formName}Results`}
           matchTeams={matchGroupTeams}
           onSubmit={
-            (props) => {
-              const errors = validate(props);
-              if (!isEmpty(errors)) {
-                return Promise.reject(errors);
-              }
-              return reportMatchResults({
-                results: props,
-                matchGroupId: matchGroup.matchGroupId,
-              }).then(() => {
-                alert('Results submitted successfully');
-                return Promise.resolve();
-              }).catch((errors) => {
-                alert('Results submission failure');
-                return Promise.reject(errors);
-              });
-            }
+            generateOnSubmitMatchResults(
+              matchGroup,
+              reportMatchResults)
           }
         />
       </Panel>
@@ -185,22 +231,9 @@ export const ResultForm = (
           form={`${formName}Attendance`}
           matchTeams={matchGroupTeams}
           onSubmit={
-            (props) => {
-              // TODO: create an api call for updating MatchGroup attendances!
-              updateTeamAttendanceStatus(matchGroupTeams[0], props.team1).then(() =>
-                updateTeamAttendanceStatus(matchGroupTeams[1], props.team2).then(() =>
-                  updateTeamAttendanceStatus(matchGroupTeams[2], props.team3).then(() =>
-                    matchGroupTeams.length === 4 ?
-                      updateTeamAttendanceStatus(matchGroupTeams[3], props.team4).then(() =>
-                        onAttendanceSubmissionSuccess()
-                      ) :
-                      onAttendanceSubmissionSuccess()
-                    )))
-              .catch((errors) => {
-                alert('Attendance submission failure');
-                return Promise.reject(errors);
-              });
-            }
+            generateOnSubmitAttendance(
+              matchGroupTeams,
+              updateTeamAttendanceStatus)
           }
         />
       </Panel>

@@ -13,6 +13,7 @@ import classNames from 'classnames';
 import styles from './matchgroups-admin.css';
 import {ResultForm} from '../../match-results/result-form';
 import {Well, Panel} from 'react-bootstrap';
+import {updateTeamAttendanceStatus} from '../../../action/teams';
 
 const getTeams = (state) => {
   const matchGroups = state.app.matchGroups;
@@ -54,7 +55,12 @@ const matchGroupTeams = ({matchGroup, teams}) => {
   );
 };
 
-const MatchGroupForms = ({formName, matchGroup, teams, reportMatchResults}) => {
+const MatchGroupForms = (
+  {formName,
+  matchGroup,
+  teams,
+  reportMatchResults,
+  updateTeamAttendanceStatus}) => {
   const matchTeams = matchGroupTeams({matchGroup, teams});
   return (
     <Well>
@@ -67,7 +73,13 @@ const MatchGroupForms = ({formName, matchGroup, teams, reportMatchResults}) => {
           ))}
         </div>
       </Panel>
-      {ResultForm(formName, matchGroup, matchTeams, reportMatchResults)}
+      {ResultForm(
+        formName,
+        matchGroup,
+        matchTeams,
+        reportMatchResults,
+        updateTeamAttendanceStatus,
+        false)}
     </Well>
   );
 };
@@ -79,6 +91,7 @@ const MatchGroupsDummy = withRouter(({
   matchGroups,
   regenerateMatchGroups,
   reportMatchResults,
+  updateTeamAttendanceStatus,
 }) : Element => {
   let formCount = 0;
   return (<div className={styles.matchGroupPage}>
@@ -97,6 +110,7 @@ const MatchGroupsDummy = withRouter(({
           matchGroup={matchGroup}
           reportMatchResults={reportMatchResults}
           teams={teams}
+          updateTeamAttendanceStatus={updateTeamAttendanceStatus}
         />);
     })}
     </div>
@@ -112,5 +126,6 @@ export const MatchGroups = connect(
     getMatchGroups,
     generateMatchGroups,
     reportMatchResults,
+    updateTeamAttendanceStatus,
     regenerateMatchGroups}
 )(MatchGroupsDummy);
