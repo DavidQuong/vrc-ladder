@@ -8,6 +8,7 @@ import ca.sfu.cmpt373.alpha.vrcladder.file.logic.ElementsFactory;
 import ca.sfu.cmpt373.alpha.vrcladder.file.logic.PdfSettings;
 import ca.sfu.cmpt373.alpha.vrcladder.ladder.Ladder;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.NotificationManager;
+import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.util.TemplateManager;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
@@ -55,7 +56,7 @@ public class PdfManager {
         notify = new NotificationManager();
     }
 
-    public void exportLadder(){
+    public void exportLadder(User user){
         ITextRenderer renderer = new ITextRenderer();
         Map<String, String> values = new HashMap<>();
         String currentFileName = generateFileName();
@@ -66,7 +67,7 @@ public class PdfManager {
             initializePdfFont(renderer);
             createPdf(renderer, currentFileName);
             String pdfPath = PdfSettings.OUTPUT_PATH + PATH_SEPARATOR + currentFileName;
-            notify.sendPDF(pdfPath);
+            notify.sendPDF(user, pdfPath);
         } catch (IOException e) {
             throw new TemplateNotFoundException();
         } catch (DocumentException e) {

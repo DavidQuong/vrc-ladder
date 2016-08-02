@@ -95,9 +95,11 @@ public class Email {
             multiPart.addBodyPart(AttachmentPart);
             currentMessage.setContent(multiPart);
 
-            transport.connect(EmailSettings.SERVER, EmailSettings.USERNAME, EmailSettings.PASSWORD);
-            transport.sendMessage(currentMessage, currentMessage.getAllRecipients());
-            transport.close();
+            synchronized (this) {
+                transport.connect(EmailSettings.SERVER, EmailSettings.USERNAME, EmailSettings.PASSWORD);
+                transport.sendMessage(currentMessage, currentMessage.getAllRecipients());
+                transport.close();
+            }
         } catch (MessagingException e) {
             throw new MessageNotDeliveredException();
         }
