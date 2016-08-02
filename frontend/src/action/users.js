@@ -49,6 +49,7 @@ export const getTeamInfo = () => (dispatch, getState) => {
   });
 };
 
-export const updateUser = (user) => () => {
-  return updateUserInfo(user);
+export const updateUser = (user) => (dispatch, getState) => {
+  const state = getState();
+  return updateUserInfo(user, state);
 };

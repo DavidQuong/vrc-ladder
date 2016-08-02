@@ -3,7 +3,7 @@ import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {withRouter} from 'react-router';
-import updateUser from '../../action/users';
+import {updateUser} from '../../action/users';
 import styles from './updateProfile.css';
 import Heading from '../heading/heading';
 import isEmpty from 'lodash/fp/isEmpty';
@@ -88,8 +88,7 @@ const UpdateProfileInfoForm = ({
    phoneNumber,
    password,
    confirmPassword},
-   handleSubmit,
-}) => (
+   handleSubmit}) => (
  <Form horizontal onSubmit={handleSubmit}>
    <div>
     <FormGroup>

@@ -46,16 +46,19 @@ export const getTeamInfo = (state) => {
   });
 };
 
-export const updateUserInfo = (user) => {
-  return fetch(`${root}user/${user.app.loggedIn.userId}`, {
+export const updateUserInfo = (user, state) => {
+  return fetch(`${root}user/${user.userId}`, {
     method: 'PUT',
     body: JSON.stringify(user),
+    headers: {
+      'COntent-Type': 'application/json',
+      Authorization: state.app.loggedIn.authorizationToken,
+    },
   }).then((response) => {
     const body = response.json();
     if (response.ok) {
       return Promise.resolve(body);
     }
-    alert(body);
     return Promise.reject(body);
   });
 };
