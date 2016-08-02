@@ -198,19 +198,19 @@ const updateAccount = withRouter(({
           const errors = validate(props);
           const info = parseUser(props, userInfo);
           if (!isEmpty(errors)) {
-          alert("failed: there are errors");
+            alert('failed: there are errors');
             return Promise.reject(errors);
           }
           return updateUser(info).then(() => {
             router.push('/profile');
           }).catch((response) => {
             return response.then(function(bodyContent) {
-              alert("caught response");
+              alert('caught response');
               const errors = checkErrors(bodyContent);
               return Promise.reject(errors);
             });
           });
-          alert("ending update");
+          alert('ending update');
         }}
       />
     </Well>
