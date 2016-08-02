@@ -15,31 +15,39 @@ import {
 
 const validate = (values) => {
   const errors = {};
-  if (!values.firstName) {
-    errors.firstName = 'Required';
-  }
-  if (!values.lastName) {
-    errors.lastName = 'Required';
-  }
-  if (!values.emailAddress) {
-    errors.emailAddress = 'Required';
-  } else if
-  (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.emailAddress)) {
+  if  (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.emailAddress)) {
     errors.emailAddress = 'Invalid email address';
   }
-  if (!values.phoneNumber) {
-    errors.phoneNumber = 'Required';
-  }
-  if (!values.password) {
-    errors.password = 'Password Required';
-  } else if (values.password !== values.confirmPassword) {
+  if (values.password !== values.confirmPassword) {
     errors.password = 'Password does not match';
   }
   return errors;
 };
 
-const parseUser = (props) => {
+const parseUser = (props, userInfo) => {
+  if (!props.userId) {
+    props.userId = userInfo.userId;
+  }
+  if (!props.firstName) {
+  alert(userInfo.firstName);
+    props.firstName = userInfo.name;
+  }
+  if (!props.lastName) {
+    props.lastName = userInfo.lastName;
+  }
+  if (!props.emailAddress) {
+    props.emailAddress = userInfo.emailAddress;
+  }
+  if (!props.phoneNumber) {
+    props.phoneNumber = userInfo.phoneNumber;
+  }
+  if (!props.password) {
+    props.password = userInfo.password;
+  }
+
   const user = props;
+  alert(props.userId+'\n'+props.firstName+ '\n'+props.lastName+'\n'+props.emailAddress
+  +'\n'+props.phoneNumber+'\n'+props.password);
   delete user.confirmPassword;
   return ({
     ...user,
@@ -177,34 +185,40 @@ const checkErrors = (responseErrors) => {
 const updateAccount = withRouter(({
   updateUser,
   router,
+  userInfo,
 }) : Element => (
   <div className={styles.center}>
     <Well>
         <Heading>
           <FormattedMessage
             id='Update-profile'
-            defaultMessage='Edit Your Account:'
+            defaultMessage='Edit Your Account'
           />
         </Heading>
       <UpdateProfileForm
         onSubmit={(props) => {
           const errors = validate(props);
-          const userInfo = parseUser(props);
+          const info = parseUser(props, userInfo);
           if (!isEmpty(errors)) {
+          alert("failed: there are errors");
             return Promise.reject(errors);
           }
-          return updateUser(userInfo).then(() => {
+          return updateUser(info).then(() => {
+            alert(updated);
             router.push('/profile');
           }).catch((response) => {
             return response.then(function(bodyContent) {
+              alert("caught response");
               const errors = checkErrors(bodyContent);
               return Promise.reject(errors);
             });
           });
+          alert("ending update");
         }}
       />
     </Well>
   </div>
+
 ));
 
 export default connect(
