@@ -6,24 +6,32 @@ import ca.sfu.cmpt373.alpha.vrcladder.exceptions.MessageNotDeliveredException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.SubjectNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.EmailAddress;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-
+import javax.mail.internet.MimeMultipart;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 public class Email {
 
     private final String contentType;
+    private final String contentTypeAttachment;
     private final MimeMessage message;
     private Transport transport;
 
     public Email() {
         contentType = getCharset();
+        contentTypeAttachment = "multipart/mixed";
         String xMailer = "JAVA/" + Runtime.class.getPackage().getImplementationVersion();
         Properties properties = System.getProperties();
         properties.put("mail.smtp.host", EmailSettings.SERVER);
@@ -69,6 +77,49 @@ public class Email {
         }
     }
 
+    public void sendEmail(EmailAddress receiver, String messageContent, String type, String pdfPath) {
+        new Thread(() -> asyncSendEmail(receiver, messageContent, type, pdfPath)).start();
+    }
+
+    private void asyncSendEmail(EmailAddress receiver, String messageContent, String type, String pdfPath){
+        try {
+            String subject = getEmailSubject(type);
+            MimeMessage currentMessage = message;
+            currentMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(receiver.toString()));
+            currentMessage.setSubject(subject);
+            BodyPart bodyPart = getMessageContent(messageContent);
+            BodyPart AttachmentPart = getAttachment(pdfPath);
+
+            Multipart multiPart = new MimeMultipart();
+            multiPart.addBodyPart(bodyPart);
+            multiPart.addBodyPart(AttachmentPart);
+            currentMessage.setContent(multiPart);
+
+            synchronized (this) {
+                transport.connect(EmailSettings.SERVER, EmailSettings.USERNAME, EmailSettings.PASSWORD);
+                transport.sendMessage(currentMessage, currentMessage.getAllRecipients());
+                transport.close();
+            }
+        } catch (MessagingException e) {
+            throw new MessageNotDeliveredException();
+        }
+    }
+
+    private BodyPart getMessageContent(String messageContent) throws MessagingException {
+        BodyPart bodyPart = new MimeBodyPart();
+        bodyPart.setContent(messageContent, contentType);
+        bodyPart.setHeader("Content-Type", contentType);
+        return bodyPart;
+    }
+
+    private BodyPart getAttachment(String pdfPath) throws MessagingException {
+        BodyPart AttachmentPart = new MimeBodyPart();
+        DataSource sourcePDF = new FileDataSource(pdfPath);
+        AttachmentPart.setDataHandler(new DataHandler(sourcePDF));
+        AttachmentPart.setFileName(pdfPath);
+        return AttachmentPart;
+    }
+
     private String getEmailSubject(String activity) {
         String results;
         switch (activity) {
@@ -107,6 +158,9 @@ public class Email {
                 break;
             case "gamescoresupdated":
                 results = EmailSettings.SUBJECT_GAME_SCORES_UPDATED;
+                break;
+            case "pdf":
+                results = EmailSettings.SUBJECT_PDF_CONTENT;
                 break;
             default:
                 throw new SubjectNotFoundException();

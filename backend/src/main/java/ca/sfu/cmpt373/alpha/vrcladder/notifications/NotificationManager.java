@@ -35,6 +35,7 @@ public class NotificationManager {
     private static final String SECOND_PLAYER_TAG         = "#secondteammember";
     private static final String SCORE_TEAM_LEFT_TAG       = "#team";
     private static final String SCORE_TEAM_CLOSE_TAG      = "player";
+    private static final String TEMPLATE_PDF              = "pdf";
     private static final String EXTENSION_SEPARATOR       = ".";
     private static final int FIRST_PLAYER = 1;
     private static final int SECOND_PLAYER = 2;
@@ -111,6 +112,20 @@ public class NotificationManager {
                 email.sendEmail(receiver, messageContent, type);
             }
 
+        } catch (IOException e) {
+            throw new TemplateNotFoundException();
+        }
+    }
+
+    public void sendPDF(User user, String pdfPath) {
+        Map<String, String> values = new HashMap<>();
+        EmailAddress receiver = user.getEmailAddress();
+        String currentTemplate = TEMPLATE_PDF;
+        String path = EmailSettings.TEMPLATE_PATH_PDFS + currentTemplate + EXTENSION_SEPARATOR + EmailSettings.EMAILS_FORMAT;
+
+        try {
+            String messageContent = template.getContents(path, values);
+            email.sendEmail(receiver, messageContent, currentTemplate, pdfPath);
         } catch (IOException e) {
             throw new TemplateNotFoundException();
         }
