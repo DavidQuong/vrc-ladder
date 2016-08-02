@@ -53,7 +53,6 @@ export const updateUserInfo = (user) => {
   }).then((response) => {
     const body = response.json();
     if (response.ok) {
-      alert("Response ok");
       return Promise.resolve(body);
     }
     alert(body);
