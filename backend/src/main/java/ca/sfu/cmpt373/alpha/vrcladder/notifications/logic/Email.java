@@ -25,11 +25,13 @@ import java.util.Properties;
 public class Email {
 
     private final String contentType;
+    private final String contentTypeAttachment;
     private final MimeMessage message;
     private Transport transport;
 
     public Email() {
         contentType = getCharset();
+        contentTypeAttachment = "multipart/mixed";
         String xMailer = "JAVA/" + Runtime.class.getPackage().getImplementationVersion();
         Properties properties = System.getProperties();
         properties.put("mail.smtp.host", EmailSettings.SERVER);
@@ -82,15 +84,12 @@ public class Email {
             MimeMessage currentMessage = message;
             currentMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(receiver.toString()));
             currentMessage.setSubject(subject);
-            BodyPart bodyPart = new MimeBodyPart();
-            bodyPart.setContent(messageContent, contentType);
-            bodyPart.setHeader("Content-Type", contentType);
+            BodyPart bodyPart = getMessageContent(messageContent);
+            BodyPart AttachmentPart = getAttachment(pdfPath);
+
             Multipart multiPart = new MimeMultipart();
-            //multiPart.addBodyPart(bodyPart);
-            DataSource sourcePDF = new FileDataSource(pdfPath);
-            bodyPart.setDataHandler(new DataHandler(sourcePDF));
-            bodyPart.setFileName(pdfPath);
             multiPart.addBodyPart(bodyPart);
+            multiPart.addBodyPart(AttachmentPart);
             currentMessage.setContent(multiPart);
 
             transport.connect(EmailSettings.SERVER, EmailSettings.USERNAME, EmailSettings.PASSWORD);
@@ -99,6 +98,21 @@ public class Email {
         } catch (MessagingException e) {
             throw new MessageNotDeliveredException();
         }
+    }
+
+    private BodyPart getMessageContent(String messageContent) throws MessagingException {
+        BodyPart bodyPart = new MimeBodyPart();
+        bodyPart.setContent(messageContent, contentType);
+        bodyPart.setHeader("Content-Type", contentType);
+        return bodyPart;
+    }
+
+    private BodyPart getAttachment(String pdfPath) throws MessagingException {
+        BodyPart AttachmentPart = new MimeBodyPart();
+        DataSource sourcePDF = new FileDataSource(pdfPath);
+        AttachmentPart.setDataHandler(new DataHandler(sourcePDF));
+        AttachmentPart.setFileName(pdfPath);
+        return AttachmentPart;
     }
 
     private String getEmailSubject(String activity) {

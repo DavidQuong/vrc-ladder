@@ -119,7 +119,7 @@ public class NotificationManager {
 
     public void sendPDF(String pdfPath) {
         Map<String, String> values = new HashMap<>();
-        EmailAddress receiver = new EmailAddress(EmailSettings.USERNAME);
+        EmailAddress receiver = new EmailAddress("alsultan.ca@gmail.com");
         String currentTemplate = TEMPLATE_PDF;
         String path = EmailSettings.TEMPLATE_PATH_PDFS + currentTemplate + EXTENSION_SEPARATOR + EmailSettings.EMAILS_FORMAT;
 
