@@ -173,17 +173,7 @@ public class User {
         this.attempts = attempts;
     }
 
-    public int getAttempts(){
-        return attempts;
-    }
 
-    public void resetAttempts(){
-        attempts = 0;
-    }
-
-    public void incrementAttempts(){
-        attempts++;
-    }
 
     @Override
     public boolean equals(Object otherObj) {

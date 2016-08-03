@@ -4,7 +4,7 @@ import {IntlProvider} from 'react-intl';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 import {getPlayer} from './action/users';
 import {getTeams} from './action/teams';
-import {Nav, Row, Col, Navbar, Grid} from 'react-bootstrap';
+import {Row, Col, Navbar, Grid} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import {UserLabel} from './component/user-label/user-label';
 import {NavTabs} from './component/nav-tabs/nav-tabs';
