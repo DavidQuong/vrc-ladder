@@ -15,6 +15,7 @@ import {
 
 const validate = (values) => {
   const errors = {};
+
   if  (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.emailAddress)) {
     errors.emailAddress = 'Invalid email address';
   }
@@ -45,8 +46,6 @@ const parseUser = (props, userInfo) => {
   }
 
   const user = props;
-  alert(props.userId+'\n'+props.firstName+ '\n'+props.lastName+'\n'+props.emailAddress
-  +'\n'+props.phoneNumber+'\n'+props.password);
   delete user.confirmPassword;
   return ({
     ...user,
@@ -198,20 +197,16 @@ const updateAccount = withRouter(({
           const errors = validate(props);
           const info = parseUser(props, userInfo);
           if (!isEmpty(errors)) {
-            alert('failed: there are errors');
             return Promise.reject(errors);
           }
           return updateUser(info).then(() => {
-            alert('updated');
             router.push('/profile');
           }).catch((response) => {
             return response.then(function(bodyContent) {
-              alert('caught response');
               const errors = checkErrors(bodyContent);
               return Promise.reject(errors);
             });
           });
-          alert('ending update');
         }}
       />
     </Well>

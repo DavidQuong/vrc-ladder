@@ -51,7 +51,7 @@ export const updateUserInfo = (user, state) => {
     method: 'PUT',
     body: JSON.stringify(user),
     headers: {
-      'COntent-Type': 'application/json',
+      'Content-Type': 'application/json',
       Authorization: state.app.loggedIn.authorizationToken,
     },
   }).then((response) => {
