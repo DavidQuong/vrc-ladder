@@ -24,3 +24,17 @@ export const findUserMatchGroup = (matchGroups, allTeams, teamId) => {
   });
   return userMatchGroup;
 };
+
+export const findUserMatchGroupFromAllUserTeams =
+(allMatchGroups, allTeams, allUserTeams) => {
+  for (let i = 0;  i < allUserTeams.length; i++) {
+    const userMatchGroup = findUserMatchGroup(
+      allMatchGroups,
+      allTeams,
+      allUserTeams[i].teamId);
+    if (userMatchGroup) {
+      return userMatchGroup;
+    }
+  }
+  return undefined;
+};

@@ -4,9 +4,8 @@ import {getMatchGroups, reportMatchResults} from '../../action/matchgroups';
 import {updateTeamAttendanceStatus} from '../../action/teams';
 import {ResultForm} from './result-form';
 import {Well} from 'react-bootstrap';
-import {getMatchGroupTeams, findUserMatchGroup}
+import {getMatchGroupTeams, findUserMatchGroupFromAllUserTeams}
   from '../../util/matchgroup-util';
-import {findAttendingUserTeam} from '../../util/team-util';
 import Heading from '../heading/heading';
 
 const showNoMatchGroupMessage = () => {
@@ -36,13 +35,13 @@ const displayMatchGroup = (
 
 const MatchResultsDummy = React.createClass({
   render: function() {
-    const attendingUserTeam = findAttendingUserTeam(this.props.teamInfo);
+    const userMatchGroup = findUserMatchGroupFromAllUserTeams(
+      this.props.matchGroups,
+      this.props.teams,
+      this.props.teamInfo);
     return (<Well>
-      {attendingUserTeam ?
-        displayMatchGroup(findUserMatchGroup(
-          this.props.matchGroups,
-          this.props.teams,
-          attendingUserTeam.teamId),
+      {userMatchGroup ?
+        displayMatchGroup(userMatchGroup,
             this.props.teams,
             this.props.reportMatchResults,
             this.props.updateTeamAttendanceStatus) :
