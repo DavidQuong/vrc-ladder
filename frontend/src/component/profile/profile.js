@@ -3,17 +3,18 @@ import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {addTeam, updateTeamPlayTime} from '../../action/teams';
 import {SubmitBtn} from '../button/button';
-import {withRouter} from 'react-router';
 import {getTeamInfo} from '../../action/users';
 import {
   ListGroup, ListGroupItem, Row, Col, Grid,
   FormControl, FormGroup, Form, HelpBlock, Panel, Well,
 } from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
 import map from 'lodash/fp/map';
 import styles from './profile.css';
 import classNames from 'classnames';
 import isEmpty from 'lodash/fp/isEmpty';
 import sortBy from 'lodash/fp/sortBy';
+import {AlertModal} from '../alert/alert-modal';
 
 const validate = (values, userInfo) => {
   const errors = {};
@@ -146,10 +147,17 @@ const displayMyInfo = (userInfo) => (
         <Col sm={10} md={6}>{userInfo.emailAddress}</Col>
       </Grid>
     </ListGroupItem>
+    <ListGroupItem className={styles.center}>
+      <LinkContainer to='/update-profile'>
+        <SubmitBtn
+          type='submit'
+        >Edit Profile</SubmitBtn>
+      </LinkContainer>
+    </ListGroupItem>
   </ListGroup>
 );
 
-const DisplayTeamInfo = ({team, updateTeamPlayTime, router}) => {
+const DisplayTeamInfo = ({team, updateTeamPlayTime, getTeamInfo}) => {
   return (
     <ListGroupItem key={team.teamId}>
       <Grid className={styles.grid}>
@@ -173,21 +181,26 @@ const DisplayTeamInfo = ({team, updateTeamPlayTime, router}) => {
                   ...props,
                 }).then(() => {
                   getTeamInfo();
-                  router.replace('/profile');
-                  // TODO: Show a popup here!
+                  alert.open('Play Time Updated');
+                }).catch(() => {
+                  alert.open('One of the players in the selected team is ' +
+                  ' already attending on the tournament day');
                 });
               }}
              />
             }
           </Col>
-
         </Row>
       </Grid>
     </ListGroupItem>
   );
 };
 
-const CreateTeam = withRouter(({
+const assignGlobalReference = function(a) {
+  global.alert = a;
+};
+
+const CreateTeam = ({
   addTeam,
   players,
   teams,
@@ -196,9 +209,11 @@ const CreateTeam = withRouter(({
   teamInfo,
   getTeamInfo,
   updateTeamPlayTime,
-  router,
 }) : Element => (
   <Well>
+    <AlertModal
+      ref={assignGlobalReference}
+    />
     <Panel header='My Profile' bsStyle='primary'>
       {displayMyInfo(userInfo)}
     </Panel>
@@ -209,7 +224,7 @@ const CreateTeam = withRouter(({
           key={team.teamId}
           team={team}
           updateTeamPlayTime={updateTeamPlayTime}
-          router={router}
+          getTeamInfo={getTeamInfo}
         />
       ))}
       </ListGroup>
@@ -229,9 +244,9 @@ const CreateTeam = withRouter(({
             firstPlayerId: userInfo.userId,
           }, login).then(() => {
             getTeamInfo();
-            router.replace('/profile');
-            // TODO: Show a popup here!
+            alert.open('Team Created!');
           }).catch(() => {
+            alert.open('Team Exists');
             const errors = {secondPlayerId: 'team exists'};
             return Promise.reject(errors);
           });
@@ -239,7 +254,7 @@ const CreateTeam = withRouter(({
       />
     </Panel>
   </Well>
-));
+);
 
 export default connect(
   (state) => ({

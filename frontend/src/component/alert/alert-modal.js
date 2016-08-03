@@ -29,7 +29,7 @@ export const AlertModal = React.createClass({
             <p>{this.state.body}</p>
           </Modal.Body>
           <Modal.Footer>
-            <Button onClick={this.close}>Close</Button>
+            <Button onClick={this.close} bsStyle='primary'>Close</Button>
           </Modal.Footer>
         </Modal>
       </div>

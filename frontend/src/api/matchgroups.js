@@ -30,18 +30,9 @@ export const generateMatchGroups = (state) => {
       Authorization: state.app.loggedIn.authorizationToken,
     },
   }).then((response) => {
-    return response.json();
-  });
-};
-
-export const regenerateMatchGroups = (state) => {
-  return fetch(`${root}ladder/regenerate`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: state.app.loggedIn.authorizationToken,
-    },
-  }).then((response) => {
+    if (!response.ok) {
+      return Promise.reject(response);
+    }
     return response.json();
   });
 };

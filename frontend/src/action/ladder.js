@@ -1,6 +1,16 @@
 import {
   updateLadder as updateLadderAPI,
+  regenerateLadder as regenerateLadderAPI,
   requestPDF as requestPDFAPI} from '../api/ladder';
+
+export const regenerateLadder = () => (dispatch, getState) => {
+  const state = getState();
+  return regenerateLadderAPI(state).then((request) => {
+    return Promise.resolve(request);
+  }).catch((error) => {
+    return Promise.reject(error);
+  });
+};
 
 export const updateLadder = (teamIds) => (dispatch, getState) => {
   const state = getState();

@@ -1,5 +1,5 @@
 import {createElement} from 'react';
-import {Form, Panel} from 'react-bootstrap';
+import {FormControl, Form, Panel, FormGroup, Col} from 'react-bootstrap';
 import {reduxForm} from 'redux-form';
 import styles from './result-form.css';
 import classNames from 'classnames';
@@ -32,8 +32,6 @@ const mapInitialResultsStateToProps = (state) => {
   };
 };
 
-// const defaultInitialAttendanceStatus = 'PRESENT';
-
 const getDefaultAttendanceOrValue = (team) => (
   team.attendanceStatus ?
     team.attendanceStatus :
@@ -58,33 +56,35 @@ const mapInitialAttendanceStateToProps = (state, ownProps) => {
 };
 
 const generateRankingSubmissionRow = (teams, teamId, rankNumber) => (
-  <div className={classNames(styles.formGroup)}>
-    <label className={classNames(styles.colXsTitle)}>
-      <FormattedMessage
-        id={`teamId ${rankNumber}`}
-        defaultMessage={`Team ${rankNumber}:`}
-      />
-    </label>
-    <select
-      className={classNames(styles.goodForm, {
-        [styles.errorForm]: teamId.error &&
-                            teamId.touched})}
-      {...teamId}
-    >
-      <option value=''>Select a team...</option>
-      {map((team) => (
-        <option value={team.teamId}key={team.teamId}>
-          {team.firstPlayer.name} & {team.secondPlayer.name}
-        </option>
-      ), teams)}
-    </select>
-    {teamId.touched && teamId.error &&
-      <div className={classNames(styles.errorMsg)}>
-      <Heading kind='error'>
-            {teamId.error}
-          </Heading>
-      </div>}
-  </div>);
+  <FormGroup>
+    <Col xsOffset={1} sm={2}>
+      <label className={classNames(styles.colXsTitle)}>
+        <FormattedMessage
+          id={`teamId ${rankNumber}`}
+          defaultMessage={`Team ${rankNumber}:`}
+        />
+      </label>
+    </Col>
+    <Col md={7} sm={11}>
+      <FormControl
+        componentClass='select'
+        {...teamId}
+      >
+        <option value='' disabled>Select a team...</option>
+        {map((team) => (
+          <option value={team.teamId}key={team.teamId}>
+            {team.firstPlayer.name} & {team.secondPlayer.name}
+          </option>
+        ), teams)}
+      </FormControl>
+      {teamId.touched && teamId.error &&
+        <div className={classNames(styles.errorMsg)}>
+        <Heading kind='error'>
+              {teamId.error}
+            </Heading>
+        </div>}
+    </Col>
+  </FormGroup>);
 
 const ResultFormRows = reduxForm({
   fields: ['teamId1', 'teamId2', 'teamId3', 'teamId4'],
@@ -107,16 +107,20 @@ const ResultFormRows = reduxForm({
 ));
 
 const generateAttendanceSubmissionRow = (team, teamField) => (
-  <div>
-    <label className={classNames(styles.colXsTitle)}>
-      {team.firstPlayer.name} & {team.secondPlayer.name}
-    </label>
-    <select className={classNames(styles.goodForm)} {...teamField}>
-      <option value='PRESENT'>Present</option>
-      <option value='LATE'>Late</option>
-      <option value='NO_SHOW'>No Show</option>
-    </select>
-  </div>
+  <FormGroup>
+    <Col md={4} sm={6}>
+      <label className={classNames(styles.colXsTitle)}>
+        {team.firstPlayer.name} & {team.secondPlayer.name}
+      </label>
+    </Col>
+    <Col md={6} sm={10}>
+      <FormControl componentClass='select' {...teamField}>
+        <option value='PRESENT'>Present</option>
+        <option value='LATE'>Late</option>
+        <option value='NO_SHOW'>No Show</option>
+      </FormControl>
+    </Col>
+  </FormGroup>
 );
 
 const AttendanceStatusForm = reduxForm({
@@ -127,13 +131,13 @@ const AttendanceStatusForm = reduxForm({
     handleSubmit,
   }) => (
     <Form horizontal onSubmit={handleSubmit}>
-      <div>
-        {generateAttendanceSubmissionRow(matchTeams[0], team1)}
-        {generateAttendanceSubmissionRow(matchTeams[1], team2)}
-        {generateAttendanceSubmissionRow(matchTeams[2], team3)}
-        {matchTeams.length === 4 ?
-          generateAttendanceSubmissionRow(matchTeams[3], team4) :
-          null}
+      {generateAttendanceSubmissionRow(matchTeams[0], team1)}
+      {generateAttendanceSubmissionRow(matchTeams[1], team2)}
+      {generateAttendanceSubmissionRow(matchTeams[2], team3)}
+      {matchTeams.length === 4 ?
+        generateAttendanceSubmissionRow(matchTeams[3], team4) :
+        null}
+      <div className={classNames(styles.center)}>
         <SubmitBtn type='submit'>Submit Results</SubmitBtn>
       </div>
     </Form>
@@ -202,7 +206,6 @@ export const ResultForm = (
     <div>
       <AlertModal
         ref={assignGlobalReference}
-        body='Results submitted successfully'
       />
       <Panel header='Result Submission' bsStyle='primary'>
         <ResultFormRows

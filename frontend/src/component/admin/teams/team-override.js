@@ -5,7 +5,7 @@ import {Checkbox, Table, FormControl} from 'react-bootstrap';
 import {
   removeTeam, updateTeamPlayTime, getTeams,
 } from '../../../action/teams';
-
+import {AlertModal} from '../../alert/alert-modal';
 import SubmitBtn from '../../button/button';
 import styles from '../admin.css';
 import sortBy from 'lodash/fp/sortBy';
@@ -77,7 +77,10 @@ const TeamUpdate = ({team, updateTeamPlayTime, getTeams}) => {
         return updateTeamPlayTime({
           ...props,
         }).then(() => {
+          alert.open('Playtime updated successfully');
           getTeams();
+        }).catch(() => {
+          alert.open('There was an error updating the Playtime');
         });
       }}
     />
@@ -92,6 +95,10 @@ const DeleteTeams = ({teams, removeTeam}) => {
   });
 };
 
+const assignGlobalReference = function(a) {
+  global.alert = a;
+};
+
 const TeamOverride = ({
   teams,
   removeTeam,
@@ -99,6 +106,9 @@ const TeamOverride = ({
   getTeams,
 }) : Element => (
   <div>
+    <AlertModal
+      ref={assignGlobalReference}
+    />
     <Table responsive fill>
       <thead>
         <tr>
