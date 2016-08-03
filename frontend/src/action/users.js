@@ -2,11 +2,17 @@ import {
   addUser as addUserAPI,
   getPlayer as getPlayerAPI,
   getCurrentActiveUserInfo as getCurrentActiveUserInfoAPI,
-  getTeamInfo as getTeamInfoAPI} from '../api/users';
+  getTeamInfo as getTeamInfoAPI,
+  removeUser as removeUserAPI} from '../api/users';
 import {syncPlayers, syncUserInfo, syncTeamInfo} from './types';
 
 export const addUser = (user) => () => {
   return addUserAPI(user);
+};
+
+export const removeUser = (player) => (dispatch, getState) => {
+  const state = getState();
+  return removeUserAPI(player, state);
 };
 
 export const getCurrentActiveUserInfo = () => (dispatch, getState) => {
@@ -28,7 +34,7 @@ export const getPlayer =  () => (dispatch, getState) => {
     if (response.error) {
       return Promise.reject();
     }
-    dispatch(syncPlayers(response.users));
+    dispatch(syncPlayers(response.players));
     return Promise.resolve();
   }).catch((error) => {
     return Promise.reject(error);

@@ -4,15 +4,17 @@ import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {withRouter} from 'react-router';
 import {logInUser} from '../../action/login';
-import {getCurrentActiveUserInfo, getTeamInfo} from '../../action/users';
+import {
+  getCurrentActiveUserInfo, getPlayer, getTeamInfo,
+} from '../../action/users';
 import {createAction} from 'redux-actions';
 import {
-  Well, Col, ControlLabel, Button, FormControl, FormGroup, Form,
+  Well, Col, ControlLabel, FormControl, FormGroup, Form,
 } from 'react-bootstrap';
-
 import styles from './login.css';
 import Heading from '../heading/heading';
 import isEmpty from 'lodash/fp/isEmpty';
+import {SubmitBtn} from '../button/button';
 
 const validate = (values) => {
   const errors = {};
@@ -63,7 +65,7 @@ const BaseLogInForm = ({
       </FormGroup>
 
       <div className={styles.center}>
-        <Button bsStyle='primary' bsSize='large' type='submit'>Log In</Button>
+        <SubmitBtn type='submit'>Log In</SubmitBtn>
       </div>
     </div>
   </Form>
@@ -79,7 +81,7 @@ const formEnhancer = reduxForm({
 
 const LogInForm = formEnhancer(BaseLogInForm);
 
-const logInBuilder = (props, response) => {
+const LogInBuilder = (props, response) => {
   const user = props;
   delete user.password;
   return ({
@@ -94,6 +96,7 @@ const LogIn = withRouter(({
   userLogIn,
   logInUser,
   getCurrentActiveUserInfo,
+  getPlayer,
   getTeamInfo,
   router,
 }) : Element => (
@@ -112,13 +115,15 @@ const LogIn = withRouter(({
             return Promise.reject(errors);
           }
           return logInUser(props).then((response) => {
-            const userInfo = logInBuilder(props, response);
+            const userInfo = LogInBuilder(props, response);
             userLogIn({
               ...userInfo,
             });
             getCurrentActiveUserInfo().then(() => {
               getTeamInfo().then(() => {
-                router.push('/ladder');
+                getPlayer().then(() => {
+                  router.push('/profile');
+                });
               });
             });
           }).catch(() => {
@@ -137,6 +142,7 @@ export default connect(
   }), {
     logInUser,
     userLogIn,
+    getPlayer,
     getCurrentActiveUserInfo,
     getTeamInfo}
 )(LogIn);

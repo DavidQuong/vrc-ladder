@@ -61,7 +61,7 @@ public class UserManager extends DatabaseManager<User> {
     }
 
     public User update(UserId userId, String firstName, String middleName, String lastName, EmailAddress emailAddress,
-        PhoneNumber phoneNumber) {
+        PhoneNumber phoneNumber, Password password) {
         User user = getById(userId);
 
         user.setFirstName(firstName);
@@ -69,7 +69,13 @@ public class UserManager extends DatabaseManager<User> {
         user.setLastName(lastName);
         user.setEmailAddress(emailAddress);
         user.setPhoneNumber(phoneNumber);
+        user.setPassword(password);
+        return update(user);
+    }
 
+    public User updateAttempts(UserId userId, int attempts) {
+        User user = getById(userId);
+        user.setAttempts(attempts);
         return update(user);
     }
 

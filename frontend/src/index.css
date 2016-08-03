@@ -1,7 +1,7 @@
 ~colors: "./config/colors.config";
-
 :local {
   .upperNavbar {
+    font-family: 'Lato', sans-serif;
     background-color: ~colors.brightBlue;
     color: ~colors.white;
     border: ~colors.charcoalGrey;
@@ -15,10 +15,13 @@
     line-height: 20px;
     font-size: 15px;
     text-transform: uppercase;
+    margin-left: 0;
+    margin-right: 0;
     font-weight: bolder;
   }
 
   .lowerNavbar {
+    font-family: 'Lato', sans-serif;
     top: 50px;
     z-index: 100;
     background-color: ~colors.brightYellow;
@@ -44,22 +47,4 @@
     position: relative;
     display: inline-block !important;
   }
-
-  /*.navbar-default .navbar-nav > .active > a,
-  .navbar-default .navbar-nav > .active > a:focus,
-  .navbar-default .navbar-nav > .active > a:hover {
-      color: #555;
-      background-color: #e7e7e7;
-  }*/
-
-  /*.navItem .nav > .active > a,
-  .navItem .nav > .active > a:focus,
-  .navItem .nav > .active > a:hover {
-    background-color: red !important;
-  }*/
-
-  /*.navItem > li > a:active, .navItem > li > a:focus {
-    color: inherit !important;
-    background-color: ~colors.darkerGreen !important;
-  }*/
 }

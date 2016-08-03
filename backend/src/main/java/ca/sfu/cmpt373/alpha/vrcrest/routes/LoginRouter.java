@@ -1,6 +1,9 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
 import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.TemplateNotFoundException;
+import ca.sfu.cmpt373.alpha.vrcladder.notifications.NotificationManager;
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
@@ -73,9 +76,14 @@ public class LoginRouter extends RestRouter {
             LoginPayload loginPayload = getGson().fromJson(request.body(), LoginPayload.class);
 
             User user = userManager.getById(loginPayload.getUserId());
+            user.incrementAttempts();
+            userManager.updateAttempts(user.getUserId(), user.getAttempts());
             String plaintextPassword = loginPayload.getPassword();
 
             String authorizationToken = securityManager.login(user, plaintextPassword);
+
+            user.resetAttempts();
+            userManager.updateAttempts(loginPayload.getUserId(), user.getAttempts());
             responseBody.addProperty(JSON_PROPERTY_AUTHORIZATION_TOKEN, authorizationToken);
             response.status(HttpStatus.OK_200);
         } catch (JsonSyntaxException ex) {
@@ -90,9 +98,8 @@ public class LoginRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, SecurityManager.ERROR_INVALID_CREDENTIALS);
             response.status(HttpStatus.UNAUTHORIZED_401);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (TemplateNotFoundException ex) {
+            responseBody.addProperty(PersistenceConstants.NOTIFICATION, ERROR_NOTIFICATION_FAILED);
         }
 
         return responseBody.toString();

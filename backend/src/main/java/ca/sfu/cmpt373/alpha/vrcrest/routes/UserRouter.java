@@ -1,17 +1,19 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
-import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PropertyInstantiationException;
-import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PropertyInstantiationException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.TemplateNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.NotificationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.NotificationType;
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.users.UserManager;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.Password;
 import ca.sfu.cmpt373.alpha.vrcladder.users.authentication.SecurityManager;
+import ca.sfu.cmpt373.alpha.vrcladder.users.authorization.UserRole;
 import ca.sfu.cmpt373.alpha.vrcladder.users.personal.UserId;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonProperties;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewUserPayload;
@@ -32,6 +34,7 @@ import spark.Request;
 import spark.Response;
 import spark.Spark;
 import spark.route.HttpMethod;
+
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +48,8 @@ public class UserRouter extends RestRouter {
     public static final String ROUTE_PLAYERS = "/players";
 
     public static final String ROUTE_USERS_SELF = ROUTE_USERS + "/self";
+    public static final String ROUTE_USERS_SELF_TEAMS = ROUTE_USERS_SELF + "/teams";
+
     public static final String ROUTE_USER_ID = "/user/" + PARAM_ID;
     private static final String ROUTE_USER_ID_TEAMS = ROUTE_USER_ID + "/teams";
 
@@ -58,7 +63,7 @@ public class UserRouter extends RestRouter {
 
     private static final List<RouteSignature> PUBLIC_ROUTE_SIGNATURES = createPublicRouteSignatures();
 
-    //private final NotificationManager notify;
+    private final NotificationManager notify;
     private SecurityManager securityManager;
     private UserManager userManager;
     private TeamManager teamManager;
@@ -70,20 +75,25 @@ public class UserRouter extends RestRouter {
         userManager = applicationManager.getUserManager();
         teamManager = applicationManager.getTeamManager();
         playerGson = buildGsonForPlayer();
-        //notify = new NotificationManager();
+        notify = new NotificationManager();
     }
 
     @Override
     public void attachRoutes() {
-        Spark.get(ROUTE_USERS, this::handleGetUsers);
         Spark.post(ROUTE_USERS, this::handleCreateUser);
+
+        Spark.get(ROUTE_USERS, this::handleGetUsers);
         Spark.get(ROUTE_PLAYERS, this::handleGetPlayers);
+
         Spark.get(ROUTE_USERS_SELF, this::handleGetActiveUser);
         Spark.put(ROUTE_USERS_SELF, this::handleUpdateActiveUser);
+        Spark.get(ROUTE_USERS_SELF_TEAMS, this::handleGetAllActiveUserTeams);
+        Spark.delete(ROUTE_USERS_SELF, this::handleDeleteActiveUser);
+
         Spark.get(ROUTE_USER_ID, this::handleGetUserById);
         Spark.put(ROUTE_USER_ID, this::handleUpdateUserById);
+        Spark.get(ROUTE_USER_ID_TEAMS, this::handleGetAllTeamsByUserId);
         Spark.delete(ROUTE_USER_ID, this::handleDeleteUserById);
-        Spark.get(ROUTE_USER_ID_TEAMS, this::handleGetAllTeamsForUser);
     }
 
     @Override
@@ -122,28 +132,20 @@ public class UserRouter extends RestRouter {
         checkForVolunteerRole(request);
 
         JsonObject responseBody = new JsonObject();
-        try {
-            List<User> users = userManager.getAll();
-            responseBody.add(JSON_PROPERTY_USERS, getGson().toJsonTree(users));
-            response.status(HttpStatus.OK_200);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
-        }
+
+        List<User> users = userManager.getAll();
+        responseBody.add(JSON_PROPERTY_USERS, getGson().toJsonTree(users));
+        response.status(HttpStatus.OK_200);
 
         return responseBody.toString();
     }
 
     private String handleGetPlayers(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        try {
-            List<User> players = userManager.getAllPlayers();
-            responseBody.add(JSON_PROPERTY_PLAYERS, playerGson.toJsonTree(players));
-            response.status(HttpStatus.OK_200);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
-        }
+
+        List<User> players = userManager.getAllPlayers();
+        responseBody.add(JSON_PROPERTY_PLAYERS, playerGson.toJsonTree(players));
+        response.status(HttpStatus.OK_200);
 
         return responseBody.toString();
     }
@@ -152,6 +154,10 @@ public class UserRouter extends RestRouter {
         JsonObject responseBody = new JsonObject();
         try {
             NewUserPayload newUserPayload = getGson().fromJson(request.body(), NewUserPayload.class);
+            if (newUserPayload.getUserRole() == UserRole.VOLUNTEER) {
+                checkForVolunteerRole(request);
+            }
+
             Password hashedPassword = securityManager.hashPassword(newUserPayload.getPassword());
 
             User newUser = userManager.create(
@@ -164,10 +170,11 @@ public class UserRouter extends RestRouter {
                 newUserPayload.getPhoneNumber(),
                 hashedPassword);
 
-            // notify.notifyUser(newUser, NotificationType.ACCOUNT_ACTIVATED);
             JsonElement jsonUser = getGson().toJsonTree(newUser);
             responseBody.add(JSON_PROPERTY_USER, jsonUser);
             response.status(HttpStatus.CREATED_201);
+
+            notify.notifyUser(newUser, NotificationType.ACCOUNT_ACTIVATED);
         } catch (JsonSyntaxException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
             response.status(HttpStatus.BAD_REQUEST_400);
@@ -189,9 +196,8 @@ public class UserRouter extends RestRouter {
             }
 
             response.status(HttpStatus.CONFLICT_409);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST + ": " + ex.getMessage());
-            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (TemplateNotFoundException ex) {
+            responseBody.addProperty(PersistenceConstants.NOTIFICATION, ERROR_NOTIFICATION_FAILED);
         }
 
         return responseBody.toString();
@@ -211,9 +217,6 @@ public class UserRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         return responseBody.toString();
@@ -240,9 +243,6 @@ public class UserRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         return responseBody.toString();
@@ -266,9 +266,6 @@ public class UserRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         return responseBody.toString();
@@ -280,7 +277,6 @@ public class UserRouter extends RestRouter {
         try {
             String requestedId = request.params(PARAM_ID);
             UserId userId = new UserId(requestedId);
-            User updatedUser = updateUserWithPayload(request, userId);
 
             UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
             User existingUser = userManager.update(
@@ -289,7 +285,8 @@ public class UserRouter extends RestRouter {
                 updateUserPayload.getMiddleName(),
                 updateUserPayload.getLastName(),
                 updateUserPayload.getEmailAddress(),
-                updateUserPayload.getPhoneNumber());
+                updateUserPayload.getPhoneNumber(),
+                updateUserPayload.getPassword());
 
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(existingUser));
             response.status(HttpStatus.OK_200);
@@ -319,9 +316,6 @@ public class UserRouter extends RestRouter {
             }
 
             response.status(HttpStatus.CONFLICT_409);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST + ": " + ex.getMessage());
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         return responseBody.toString();
@@ -344,20 +338,44 @@ public class UserRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST + ": " + ex.getMessage());
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         return responseBody.toString();
     }
 
-    private String handleGetAllTeamsForUser(Request request, Response response) {
+    private String handleDeleteActiveUser(Request request, Response response){
+        JsonObject responseBody = new JsonObject();
+        try {
+            User userToDelete = extractUserFromRequest(request);
+            userManager.delete(userToDelete);
+            responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(userToDelete));
+            response.status(HttpStatus.OK_200);
+        } catch (ValidationException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
+            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (EntityNotFoundException ex) {
+            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
+            response.status(HttpStatus.NOT_FOUND_404);
+        }
+
+        return responseBody.toString();
+    }
+
+    private String handleGetAllTeamsByUserId(Request request, Response response) {
         checkForVolunteerRole(request);
 
         JsonObject responseBody = new JsonObject();
         String userIdParam = request.params(PARAM_ID);
         User user = userManager.getById(new UserId(userIdParam));
+
+        List<Team> teamsForUser = teamManager.getTeamsForUser(user);
+        responseBody.add(JSON_PROPERTY_TEAMS, getGson().toJsonTree(teamsForUser));
+        return responseBody.toString();
+    }
+
+    private String handleGetAllActiveUserTeams(Request request, Response response){
+        JsonObject responseBody = new JsonObject();
+        User user = extractUserFromRequest(request);;
 
         List<Team> teamsForUser = teamManager.getTeamsForUser(user);
         responseBody.add(JSON_PROPERTY_TEAMS, getGson().toJsonTree(teamsForUser));
@@ -373,7 +391,8 @@ public class UserRouter extends RestRouter {
             updateUserPayload.getMiddleName(),
             updateUserPayload.getLastName(),
             updateUserPayload.getEmailAddress(),
-            updateUserPayload.getPhoneNumber()
+            updateUserPayload.getPhoneNumber(),
+            updateUserPayload.getPassword()
         );
 
         return updatedUser;

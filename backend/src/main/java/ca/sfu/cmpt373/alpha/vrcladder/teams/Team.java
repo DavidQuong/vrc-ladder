@@ -37,8 +37,8 @@ public class Team {
     @Embedded
     private LadderPosition ladderPosition;
 
-    private Team() {
-        // Required by Hibernate.
+    protected Team() {
+        // Required by Hibernate and used by PlaceholderTeam
     }
 
     public Team(User firstPlayer, User secondPlayer, LadderPosition ladderPosition) {
@@ -69,7 +69,7 @@ public class Team {
         return ladderPosition;
     }
 
-    void setLadderPosition(LadderPosition ladderPosition) {
+    public void setLadderPosition(LadderPosition ladderPosition) {
         this.ladderPosition = ladderPosition;
     }
 

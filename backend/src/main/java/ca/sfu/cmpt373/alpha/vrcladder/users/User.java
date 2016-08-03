@@ -38,6 +38,9 @@ public class User {
     @Column(name = PersistenceConstants.COLUMN_LAST_NAME, nullable = false, length = PersistenceConstants.MAX_NAME_LENGTH)
     private String lastName;
 
+    @Column(name = PersistenceConstants.COLUMN_FAILED_ATTEMPTS, nullable = false)
+    private int attempts;
+
     @Embedded
     private EmailAddress emailAddress;
 
@@ -61,6 +64,7 @@ public class User {
         setEmailAddress(emailAddress);
         setPhoneNumber(phoneNumber);
         setPassword(password);
+        attempts = 0;
     }
 
     public UserId getUserId() {
@@ -151,6 +155,22 @@ public class User {
 
     public void setPassword(Password password) {
         this.password = password;
+    }
+
+    public int getAttempts(){
+        return attempts;
+    }
+
+    public void resetAttempts(){
+        attempts = 0;
+    }
+
+    public void incrementAttempts(){
+        attempts++;
+    }
+
+    public void setAttempts(int attempts){
+        this.attempts = attempts;
     }
 
     @Override

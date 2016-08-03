@@ -1,5 +1,12 @@
 ~colors: "./../../config/colors.config";
 
+:global {
+  .navbar-default .navbar-nav > .active > a,
+  .navbar-default .navbar-nav > .active > a:hover {
+    background-color: ~colors.paleBlue !important;
+  }
+}
+
 .navTab > li > a {
   color: inherit !important;
   background-color: transparent !important;

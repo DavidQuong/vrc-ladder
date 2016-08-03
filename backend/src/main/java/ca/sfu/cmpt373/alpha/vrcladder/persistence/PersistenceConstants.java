@@ -12,6 +12,7 @@ public class PersistenceConstants {
     public static final String COLUMN_EMAIL_ADDRESS = "EMAIL_ADDRESS";
     public static final String COLUMN_PHONE_NUMBER = "PHONE_NUMBER";
     public static final String COLUMN_PASSWORD_HASH = "PASSWORD_HASH";
+    public static final String COLUMN_FAILED_ATTEMPTS = "ATTEMPTS";
 
     public static final String TABLE_TEAM = "TEAM";
     public static final String COLUMN_ATTENDANCE_CARD_ID = "ATTENDANCE_CARD_ID";
@@ -32,5 +33,7 @@ public class PersistenceConstants {
     public static final String EXISTING_USER_EMAIL = "Email Address already exists";
     public static final String CONSTRAINT_CONFLICT_ID = "PUBLIC.USER(ID)";
     public static final String CONSTRAINT_CONFLICT_EMAIL = "PUBLIC.USER(EMAIL_ADDRESS)";
+
+    public static final String NOTIFICATION = "Notify";
 
 }
