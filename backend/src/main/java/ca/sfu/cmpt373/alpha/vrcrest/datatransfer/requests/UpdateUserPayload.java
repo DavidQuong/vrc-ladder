@@ -73,12 +73,22 @@ public class UpdateUserPayload {
 
     public UpdateUserPayload(String firstName, String middleName, String lastName, EmailAddress emailAddress,
         PhoneNumber phoneNumber, Password newPassword) {
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.lastName = lastName;
+        if(firstName != "") {
+            this.firstName = firstName;
+        }
+        if(middleName != "") {
+            this.middleName = middleName;
+        }
+        if(lastName != "") {
+            this.lastName = lastName;
+        }
+
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
-        this.password = newPassword;
+
+        if(newPassword.toString() != ""){
+            this.password = newPassword;
+        }
     }
 
     public String getFirstName() {
