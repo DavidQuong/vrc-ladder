@@ -1,7 +1,7 @@
 import {createElement, Element} from 'react';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
-import {addTeam, updateTeamStatus} from '../../action/teams';
+import {addTeam, updateTeamPlayTime} from '../../action/teams';
 import {SubmitBtn} from '../button/button';
 import {withRouter} from 'react-router';
 import {getTeamInfo} from '../../action/users';
@@ -58,36 +58,24 @@ const getValidationState = (item) => {
   return null;
 };
 
+const mapInitialTimefromProps = (state, props) => {
+  return {
+    initialValues: props.team,
+  };
+};
+
 const UpdateAttendanceForm = reduxForm({
-  form: 'updateTeam',
-  fields: ['teamId', 'playTime'],
-})(({
-  fields: {teamId, playTime},
-  teams,
+  fields: ['playTime'],
+}, mapInitialTimefromProps)(({
+  fields: {playTime},
   handleSubmit,
 }) => (
   <Form horizontal onSubmit={handleSubmit}>
     <Grid className={styles.grid}>
-      <FormGroup {...getValidationState(teamId)}>
-        <Col md={3} sm={5}><label>Select Team</label></Col>
-        <Col md={8} sm={13}>
-          <FormControl componentClass='select' {...teamId}>
-            <option value='' disabled>Select a team...</option>
-            {map((teams) => (
-              <option value={teams.teamId} key={teams.teamId}>
-                {teams.firstPlayer.name} & {teams.secondPlayer.name}
-              </option>
-            ), teams)}
-          </FormControl>
-          {teamId.touched && teamId.error &&
-            <HelpBlock>{teamId.error}</HelpBlock>}
-        </Col>
-      </FormGroup>
       <FormGroup {...getValidationState(playTime)}>
-        <Col md={3} sm={5}><label>Select Preferred Time:</label></Col>
-        <Col md={8} sm={13}>
+        <Col md={6}>
           <FormControl componentClass='select' {...playTime}>
-            <option value='' disabled>Select a time...</option>
+            <option value=''>Select a time...</option>
             {map((playTimes) => (
               <option value={playTimes.value} key={playTimes.value}>
                 {playTimes.time}
@@ -97,10 +85,10 @@ const UpdateAttendanceForm = reduxForm({
           {playTime.touched && playTime.error &&
             <HelpBlock>{playTime.error}</HelpBlock>}
         </Col>
+        <Col sm={1}>
+          <SubmitBtn type='submit'>Update</SubmitBtn>
+        </Col>
       </FormGroup>
-      <div className={classNames(styles.center)}>
-        <SubmitBtn type='submit'>Update Attendance</SubmitBtn>
-      </div>
     </Grid>
   </Form>
 ));
@@ -132,7 +120,7 @@ const CreateTeamForm = reduxForm({
         </Col>
       </FormGroup>
       <div className={classNames(styles.center)}>
-        <SubmitBtn type='submit'>Update Attendance</SubmitBtn>
+        <SubmitBtn type='submit'>Create Team</SubmitBtn>
       </div>
     </Grid>
   </Form>
@@ -161,27 +149,43 @@ const displayMyInfo = (userInfo) => (
   </ListGroup>
 );
 
-const getTime = (time) => {
-  if (time === 'TIME_SLOT_A') {
-    return '8:00 PM';
-  } else if (time === 'TIME_SLOT_B') {
-    return '9:30 PM';
-  }
-  return 'N/A';
-};
+const DisplayTeamInfo = ({team, updateTeamPlayTime, router}) => {
+  return (
+    <ListGroupItem key={team.teamId}>
+      <Grid className={styles.grid}>
+        <Row>
+          <Col sm={1}><strong>Rank:</strong></Col>
+          <Col sm={1}>{team.ladderPosition}</Col>
+          <Col sm={2}>{team.firstPlayer.name}</Col>
+          <Col sm={2}>{team.secondPlayer.name}</Col>
+          <Col sm={2} md={2}><strong>Preferred Play Time:</strong></Col>
+          <Col sm={4} md={4}>
+            {<UpdateAttendanceForm
+              team={team}
+              form={`${team.teamId}updateTeam`}
+              onSubmit={(props) => {
+                props.teamId = team.teamId;
+                const errors = validateUpdateStatus(props);
+                if (!isEmpty(errors)) {
+                  return Promise.reject(errors);
+                }
+                return updateTeamPlayTime({
+                  ...props,
+                }).then(() => {
+                  getTeamInfo();
+                  router.replace('/profile');
+                  // TODO: Show a popup here!
+                });
+              }}
+             />
+            }
+          </Col>
 
-const displayTeamInfo = map((teamInfo) => (
-  <ListGroupItem key={teamInfo.teamId}>
-    <Grid className={styles.grid}>
-      <Row>
-        <Col sm={3} md={2}>{teamInfo.firstPlayer.name}</Col>
-        <Col sm={6} md={4}>{teamInfo.secondPlayer.name}</Col>
-        <Col sm={4} md={3}><strong>Preferred Play Time:</strong></Col>
-        <Col sm={3} md={2}>{getTime(teamInfo.playTime)}</Col>
-      </Row>
-    </Grid>
-  </ListGroupItem>
-));
+        </Row>
+      </Grid>
+    </ListGroupItem>
+  );
+};
 
 const CreateTeam = withRouter(({
   addTeam,
@@ -191,41 +195,25 @@ const CreateTeam = withRouter(({
   userInfo,
   teamInfo,
   getTeamInfo,
-  updateTeamStatus,
+  updateTeamPlayTime,
   router,
 }) : Element => (
   <Well>
     <Panel header='My Profile' bsStyle='primary'>
       {displayMyInfo(userInfo)}
     </Panel>
-
     <Panel header='My Teams' bsStyle='primary'>
       <ListGroup fill>
-      {displayTeamInfo(teamInfo)}
+      {teamInfo.map((team) => (
+        <DisplayTeamInfo
+          key={team.teamId}
+          team={team}
+          updateTeamPlayTime={updateTeamPlayTime}
+          router={router}
+        />
+      ))}
       </ListGroup>
     </Panel>
-
-    <Panel header='Update Attendance' bsStyle='primary'>
-      <UpdateAttendanceForm
-        teams={teamInfo}
-        userInfo={userInfo}
-        onSubmit={(props) => {
-          const errors = validateUpdateStatus(props);
-          if (!isEmpty(errors)) {
-            return Promise.reject(errors);
-          }
-          return updateTeamStatus({
-            ...props,
-            authorizationToken: login.authorizationToken,
-          }).then(() => {
-            getTeamInfo();
-            router.replace('/profile');
-            // TODO: Show a popup here!
-          });
-        }}
-      />
-    </Panel>
-
     <Panel header='Create Team' bsStyle='primary'>
       <CreateTeamForm
         players={players}
@@ -259,10 +247,10 @@ export default connect(
     teams: state.app.teams,
     login: state.app.loggedIn,
     userInfo: state.app.userInfo,
-    teamInfo: state.app.teamInfo,
+    teamInfo: sortBy('ladderPostate', state.app.teamInfo),
   }), {
     addTeam,
     displayMyInfo,
     getTeamInfo,
-    updateTeamStatus}
+    updateTeamPlayTime}
 )(CreateTeam);

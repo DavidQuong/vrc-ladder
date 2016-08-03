@@ -4,6 +4,8 @@ import {IntlProvider} from 'react-intl';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 import {getPlayer} from './action/users';
 import {getTeams} from './action/teams';
+import {getMatchSchedule, getMatchGroups, getMatchResults}
+  from './action/matchgroups';
 import {Row, Col, Navbar, Grid} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import {UserLabel} from './component/user-label/user-label';
@@ -11,12 +13,17 @@ import {NavTabs} from './component/nav-tabs/nav-tabs';
 import Admin from './component/admin/admin';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
-import MatchGroups from './component/match-groups/match-groups';
+import {MatchGroups} from './component/matchgroups/matchgroups';
 import CreateTeam from './component/profile/profile';
 import UpdateProfile from './component/profile/update-profile';
 import styles from './index.css';
 import LogIn from './component/login/login';
 import Logout from './component/logout/logout';
+import {MatchResults}
+  from './component/match-results/match-results';
+import {findUserMatchGroup}
+  from './util/matchgroup-util';
+import {findAttendingUserTeam} from './util/team-util';
 
 const Layout = ({children}) => (
   <div>
@@ -56,6 +63,25 @@ const Layout = ({children}) => (
   </div>
 );
 
+const syncMatchGroupsAndResults = (store) => (nextState, replace, callback) => {
+  store.dispatch(getTeams()).then(() =>
+    store.dispatch(getMatchGroups()).then(() => {
+      const state = store.getState();
+      const allMatchGroups = state.app.matchGroups;
+      const allTeams = state.app.teams;
+      const userTeams = state.app.teamInfo;
+      const attendingUserTeam = findAttendingUserTeam(userTeams);
+      attendingUserTeam ?
+        store.dispatch(getMatchResults(findUserMatchGroup(
+          allMatchGroups,
+          allTeams,
+          attendingUserTeam.teamId
+        )))
+          .catch(() => (callback())).then(callback) :
+        callback();
+    }));
+};
+
 export default ({store}) : Element => (
   <Provider store={store}>
     <IntlProvider messages={{}} defaultLocale='en-US'>
@@ -86,9 +112,20 @@ export default ({store}) : Element => (
             component={CreateTeam}
           />
           <Route
-            path='/match-groups'
+            path='/match-schedule'
             navbarTitle='Match Schedule'
             component={MatchGroups}
+            onEnter={(nextState, replace, callback) =>
+              store.dispatch(getTeams()).then(() =>
+                store.dispatch(getMatchSchedule()).then(callback)
+              )
+            }
+          />
+          <Route
+            path='/match-results'
+            navbarTitle='Match Results'
+            component={MatchResults}
+            onEnter={syncMatchGroupsAndResults(store)}
           />
           <Route
             path='/admin'

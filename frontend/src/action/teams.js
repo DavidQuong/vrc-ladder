@@ -1,8 +1,10 @@
 import {
   addTeam as addTeamAPI,
+  removeTeam as removeTeamAPI,
   getTeams as getTeamsAPI,
-  updateTeamStatus as updateTeamStatusAPI,
-  removeTeam as removeTeamAPI} from '../api/teams';
+  updateTeamPlayTime as updateTeamPlayTimeAPI,
+  updateTeamAttendanceStatus as updateTeamAttendanceStatusAPI}
+    from '../api/teams';
 import {syncTeams} from './types';
 
 export const addTeam = (user, login) => () => {
@@ -14,7 +16,7 @@ export const removeTeam = (team) => (dispatch, getState) => {
   return removeTeamAPI(team, state);
 };
 
-export const getTeams =  () => (dispatch) => {
+export const getTeams = () => (dispatch) => {
   return getTeamsAPI().then((response) => {
     if (response.error) {
       return Promise.reject();
@@ -26,9 +28,23 @@ export const getTeams =  () => (dispatch) => {
   });
 };
 
-export const updateTeamStatus = (teamInfo) => (dispatch, getState) => {
+export const updateTeamPlayTime = (teamInfo) => (dispatch, getState) => {
   const state = getState();
-  return updateTeamStatusAPI(teamInfo, state).then((response) => {
+  return updateTeamPlayTimeAPI(teamInfo, state).then((response) => {
+    if (response.error) {
+      return Promise.reject();
+    }
+    return Promise.resolve();
+  }).catch((error) => {
+    return Promise.reject(error);
+  });
+};
+
+export const updateTeamAttendanceStatus = (team, attendanceStatus) =>
+(dispatch, getState) => {
+  const state = getState();
+  return updateTeamAttendanceStatusAPI(team, attendanceStatus, state)
+  .then((response) => {
     if (response.error) {
       return Promise.reject();
     }

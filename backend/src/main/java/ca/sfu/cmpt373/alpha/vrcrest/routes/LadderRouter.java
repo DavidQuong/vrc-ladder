@@ -1,14 +1,19 @@
 package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
 import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PdfCouldNotBeCreatedException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.TemplateNotFoundException;
+import ca.sfu.cmpt373.alpha.vrcladder.file.PdfManager;
 import ca.sfu.cmpt373.alpha.vrcladder.ladder.Ladder;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.CourtManager;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroup;
 import ca.sfu.cmpt373.alpha.vrcladder.matchmaking.MatchGroupManager;
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceStatus;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.PlayTime;
+import ca.sfu.cmpt373.alpha.vrcladder.users.User;
 import ca.sfu.cmpt373.alpha.vrcladder.util.GeneratedId;
 import ca.sfu.cmpt373.alpha.vrcrest.datatransfer.requests.NewTeamIdListPayload;
 import ca.sfu.cmpt373.alpha.vrcrest.security.RouteSignature;
@@ -40,6 +45,7 @@ public class LadderRouter extends RestRouter{
 
     public static final String ROUTE_LADDER_REGENERATE = ROUTE_LADDER + "/regenerate";
     public static final String ROUTE_LADDER_REARRANGE = ROUTE_LADDER + "/rearrange";
+    public static final String ROUTE_LADDER_PDF = ROUTE_LADDER + "/pdf";
 
     private static final String ERROR_SCORECARDS_NOT_FILLED = "Not all MatchGroups have reported their scores yet";
 
@@ -66,6 +72,7 @@ public class LadderRouter extends RestRouter{
     public void attachRoutes() {
         Spark.put(ROUTE_LADDER_REGENERATE, this::handleRegenerateLadder);
         Spark.put(ROUTE_LADDER_REARRANGE, this::handleRearrangeLadder);
+        Spark.post(ROUTE_LADDER_PDF, this::handleRequestPDF);
     }
 
     @Override
@@ -118,6 +125,26 @@ public class LadderRouter extends RestRouter{
             response.status(HttpStatus.BAD_REQUEST_400);
             responseBody.addProperty(JSON_PROPERTY_ERROR, e.getMessage());
         }
+        return responseBody.toString();
+    }
+
+    private String handleRequestPDF(Request request, Response response) {
+        checkForVolunteerRole(request);
+        User adminRequestor = extractUserFromRequest(request);
+
+        JsonObject responseBody = new JsonObject();
+        try{
+            Ladder ladderToExport = new Ladder(teamManager.getAll());
+            PdfManager pdfManager = new PdfManager(ladderToExport);
+            pdfManager.exportLadder(adminRequestor);
+            response.status(HttpStatus.CREATED_201);
+        } catch (TemplateNotFoundException | PdfCouldNotBeCreatedException ex){
+            ex.printStackTrace();
+            responseBody.addProperty(PersistenceConstants.PDF_GENERATED, false);
+            responseBody.addProperty(ex.getMessage(), true);
+            response.status(HttpStatus.SERVICE_UNAVAILABLE_503);
+        }
+
         return responseBody.toString();
     }
 

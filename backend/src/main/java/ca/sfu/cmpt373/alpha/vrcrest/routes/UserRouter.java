@@ -289,6 +289,7 @@ public class UserRouter extends RestRouter {
                 updateUserPayload.getPhoneNumber(),
                 securityManager.hashPassword(passwordHash));
 
+
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(existingUser));
             response.status(HttpStatus.OK_200);
         } catch (ValidationException ex) {
@@ -395,6 +396,7 @@ public class UserRouter extends RestRouter {
             updateUserPayload.getEmailAddress(),
             updateUserPayload.getPhoneNumber(),
             securityManager.hashPassword(passwordHash)
+
         );
 
         return updatedUser;
