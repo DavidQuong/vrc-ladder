@@ -1,14 +1,12 @@
 import {createElement, Element} from 'react';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
-import {FormControl} from 'react-bootstrap';
+import {Checkbox, Table, FormControl} from 'react-bootstrap';
 import {
-  removeTeam,
-  updateTeamPlayTime,
-  getTeams} from '../../../action/teams';
+  removeTeam, updateTeamPlayTime, getTeams,
+} from '../../../action/teams';
 
 import SubmitBtn from '../../button/button';
-import classNames from 'classnames';
 import styles from '../admin.css';
 import sortBy from 'lodash/fp/sortBy';
 import map from 'lodash/fp/map';
@@ -45,17 +43,10 @@ const TeamUpdateForm = reduxForm({
   team,
   handleSubmit,
 }) => (
-  <form onSubmit={handleSubmit}>
-    <label
-      className={classNames(styles.colXsTitle)}
-    >
-    </label>
-    <div>
-      {team.firstPlayer.name} & {team.secondPlayer.name}
-      <input
-        type='checkbox'
-        {...check}
-      />
+  <tr>
+    <td>{team.firstPlayer.name}</td>
+    <td>{team.secondPlayer.name}</td>
+    <td>
       <FormControl componentClass='select' {...playTime}>
         <option value='' disabled>{getActivePlaytime(team)}</option>
         {map((playTimes) => (
@@ -64,9 +55,16 @@ const TeamUpdateForm = reduxForm({
           </option>
         ), playTimes)}
       </FormControl>
-      <SubmitBtn type='submit'>Update Attendance</SubmitBtn>
-    </div>
-  </form>
+    </td>
+    <td>
+      <SubmitBtn
+        className={styles.largeButton}
+        onClick={handleSubmit}
+        type='submit'
+      >Update</SubmitBtn>
+    </td>
+    <td><Checkbox {...check} /></td>
+  </tr>
 ));
 
 const TeamUpdate = ({team, updateTeamPlayTime, getTeams}) => {
@@ -101,22 +99,31 @@ const TeamOverride = ({
   getTeams,
 }) : Element => (
   <div>
-    <div>
-      {teams.map((team) => (
-        <TeamUpdate
-          key={team.teamId}
-          team={team}
-          updateTeamPlayTime={updateTeamPlayTime}
-          getTeams={getTeams}
-        />
-      ))}
-    </div>
-    <div>
-      <SubmitBtn
-        bsStyle='danger'
-        onClick={() => DeleteTeams({teams, removeTeam})}
-      >Delete Selected Teams</SubmitBtn>
-    </div>
+    <Table responsive fill>
+      <thead>
+        <tr>
+          <th><strong>First Player</strong></th>
+          <th><strong>Second Player</strong></th>
+          <th><strong>New Attendance</strong></th>
+          <th><strong>Update Attendance</strong></th>
+          <th><strong>Delete?</strong></th>
+        </tr>
+      </thead>
+      <tbody>
+        {teams.map((team) => (
+          <TeamUpdate
+            key={team.teamId}
+            team={team}
+            updateTeamPlayTime={updateTeamPlayTime}
+            getTeams={getTeams}
+          />
+        ))}
+      </tbody>
+    </Table>
+    <SubmitBtn
+      bsStyle='danger'
+      onClick={() => DeleteTeams({teams, removeTeam})}
+    >Delete Selected Teams</SubmitBtn>
   </div>
 );
 export default connect(

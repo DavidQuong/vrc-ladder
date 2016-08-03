@@ -6,7 +6,6 @@ import {createAction} from 'redux-actions';
 import {updateLadder} from '../../../action/ladder';
 
 import SubmitBtn from '../../button/button';
-import classNames from 'classnames';
 import styles from '../admin.css';
 import sortBy from 'lodash/fp/sortBy';
 import findIndex from 'lodash/fp/findIndex';
@@ -32,11 +31,9 @@ const validateLadderPosition = (values, teams) => {
 const FormError = ({touched, error}) => {
   if (touched && error) {
     return (
-      <div className={classNames(styles.errorMsg)}>
         <Heading kind='error'>
           {error}
         </Heading>
-      </div>
     );
   }
   return null;
@@ -49,7 +46,7 @@ const UpdatePositionForm = reduxForm({
   team,
   handleSubmit,
 }) => (
-  <tr onSubmit={handleSubmit}>
+  <tr>
     <td className={styles.ladderTeamPlace}>
       <span>{team.ladderPosition}</span>
     </td>
@@ -63,11 +60,11 @@ const UpdatePositionForm = reduxForm({
       <FormControl type='rank' placeholder='new Rank' {...rank} />
     </td>
     <td className={styles.ladderTeamPlayer}>
-      <SubmitBtn type='submit'>Update</SubmitBtn>
+      <SubmitBtn onClick={handleSubmit} type='submit'>Update</SubmitBtn>
     </td>
-    <div>
+    <td>
       <FormError {...rank}/>
-    </div>
+    </td>
   </tr>
 ));
 

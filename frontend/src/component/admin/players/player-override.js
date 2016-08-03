@@ -45,27 +45,29 @@ const PlayerOverride = ({
   players,
   removeUser,
 }) : Element => (
-  <Table responsive fill>
-    <thead>
-      <tr>
-        <th><strong>User ID</strong></th>
-        <th><strong>Player Name</strong></th>
-        <th><strong>Delete?</strong></th>
-      </tr>
-    </thead>
-    <tbody>
-      {players.map((player) => (
-        <PlayerDelete
-          key={player.userId}
-          player={player}
-        />
-      ))}
-    </tbody>
+  <div>
+    <Table responsive fill>
+      <thead>
+        <tr>
+          <th><strong>User ID</strong></th>
+          <th><strong>Player Name</strong></th>
+          <th><strong>Delete?</strong></th>
+        </tr>
+      </thead>
+      <tbody>
+        {players.map((player) => (
+          <PlayerDelete
+            key={player.userId}
+            player={player}
+          />
+        ))}
+      </tbody>
+    </Table>
     <Button
       bsStyle='danger'
       onClick={() => DeletePlayers({players, removeUser})}
     >Delete Selected Players</Button>
-  </Table>
+  </div>
 );
 export default connect(
   (state) => ({

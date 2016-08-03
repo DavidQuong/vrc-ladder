@@ -1,5 +1,9 @@
 ~colors: "../../config/colors.config";
 
+.largeButton {
+  width: 100%;
+}
+
 .formGroup {
   text-align: center;
   margin-right: 15px;
