@@ -1,5 +1,5 @@
 import {createElement} from 'react';
-import {Form, Panel} from 'react-bootstrap';
+import {Form, Panel, FormGroup, Grid, Col} from 'react-bootstrap';
 import {reduxForm} from 'redux-form';
 import styles from './result-form.css';
 import classNames from 'classnames';
@@ -31,8 +31,6 @@ const mapInitialResultsStateToProps = (state) => {
     initialValues: state.app.matchResults,
   };
 };
-
-// const defaultInitialAttendanceStatus = 'PRESENT';
 
 const getDefaultAttendanceOrValue = (team) => (
   team.attendanceStatus ?
@@ -107,16 +105,20 @@ const ResultFormRows = reduxForm({
 ));
 
 const generateAttendanceSubmissionRow = (team, teamField) => (
-  <div>
-    <label className={classNames(styles.colXsTitle)}>
-      {team.firstPlayer.name} & {team.secondPlayer.name}
-    </label>
-    <select className={classNames(styles.goodForm)} {...teamField}>
-      <option value='PRESENT'>Present</option>
-      <option value='LATE'>Late</option>
-      <option value='NO_SHOW'>No Show</option>
-    </select>
-  </div>
+  <FormGroup>
+    <Col md={3} sm={5}>
+      <label className={classNames(styles.colXsTitle)}>
+        {team.firstPlayer.name} & {team.secondPlayer.name}
+      </label>
+    </Col>
+    <Col>
+      <select className={classNames(styles.goodForm)} {...teamField}>
+        <option value='PRESENT'>Present</option>
+        <option value='LATE'>Late</option>
+        <option value='NO_SHOW'>No Show</option>
+      </select>
+    </Col>
+  </FormGroup>
 );
 
 const AttendanceStatusForm = reduxForm({
@@ -127,14 +129,18 @@ const AttendanceStatusForm = reduxForm({
     handleSubmit,
   }) => (
     <Form horizontal onSubmit={handleSubmit}>
-      <div>
+      <Grid className={styles.grid}>
         {generateAttendanceSubmissionRow(matchTeams[0], team1)}
         {generateAttendanceSubmissionRow(matchTeams[1], team2)}
         {generateAttendanceSubmissionRow(matchTeams[2], team3)}
         {matchTeams.length === 4 ?
           generateAttendanceSubmissionRow(matchTeams[3], team4) :
           null}
-        <SubmitBtn type='submit'>Submit Results</SubmitBtn>
+      </Grid>
+      <div className={classNames(styles.center)}>
+        <SubmitBtn type='submit'>
+          Submit Results
+        </SubmitBtn>
       </div>
     </Form>
   ));
