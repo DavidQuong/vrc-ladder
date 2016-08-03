@@ -1,8 +1,7 @@
 import {createElement, Element} from 'react';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
-import {FormattedMessage} from 'react-intl';
-import {Well, FormControl} from 'react-bootstrap';
+import {FormControl} from 'react-bootstrap';
 import {
   removeTeam,
   updateTeamPlayTime,
@@ -13,7 +12,6 @@ import classNames from 'classnames';
 import styles from '../admin.css';
 import sortBy from 'lodash/fp/sortBy';
 import map from 'lodash/fp/map';
-import Heading from '../../heading/heading';
 
 const validate = (values, {team}) => {
   team.check = values.check;

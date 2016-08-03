@@ -47,7 +47,7 @@ const Layout = ({children}) => (
         <Navbar.Collapse>
           <Grid className={styles.lowerNavContainer}>
             <Row>
-            <Col sm={6} md={4} className={styles.lowerNavbarHeading}>
+            <Col sm={8} md={5} className={styles.lowerNavbarHeading}>
               {children.props.route.navbarTitle}
             </Col>
             <UserLabel/>
@@ -86,15 +86,15 @@ export default ({store}) : Element => (
     <IntlProvider messages={{}} defaultLocale='en-US'>
       <Router history={browserHistory}>
         <Route path='/' component={Layout}>
-          <IndexRoute navbarTitle='Login' component={LogIn}/>
+          <IndexRoute navbarTitle='' component={LogIn}/>
           <Route
             path='/signup'
-            navbarTitle='Sign Up'
+            navbarTitle=''
             component={SignUp}
           />
           <Route
             path='/login'
-            navbarTitle='Login'
+            navbarTitle=''
             component={LogIn}
           />
           <Route
@@ -103,7 +103,7 @@ export default ({store}) : Element => (
           />
           <Route
             path='/profile'
-            navbarTitle='Profile'
+            navbarTitle='View and Edit Profile'
             component={CreateTeam}
           />
           <Route
@@ -124,7 +124,7 @@ export default ({store}) : Element => (
           />
           <Route
             path='/admin'
-            navbarTitle='Admin'
+            navbarTitle='Admin Override Panel'
             component={Admin}
             onEnter={(nextState, replace, callback) => {
               store.dispatch(getPlayer()).then(callback);

@@ -1,9 +1,8 @@
 import {createElement, Element} from 'react';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
-import {Button, Form, FormControl, Well} from 'react-bootstrap';
+import {Button, ButtonToolbar, Table, FormControl} from 'react-bootstrap';
 import {createAction} from 'redux-actions';
-import {FormattedMessage} from 'react-intl';
 import {updateLadder} from '../../../action/ladder';
 
 import SubmitBtn from '../../button/button';
@@ -50,32 +49,26 @@ const UpdatePositionForm = reduxForm({
   team,
   handleSubmit,
 }) => (
-  <Form horizontal onSubmit={handleSubmit}>
-    <label
-      className={classNames(styles.colXsTitle)}
-    >
-    </label>
+  <tr onSubmit={handleSubmit}>
+    <td className={styles.ladderTeamPlace}>
+      <span>{team.ladderPosition}</span>
+    </td>
+    <td className={styles.ladderTeamPlayer}>
+      <span>{team.firstPlayer.name}</span>
+    </td>
+    <td className={styles.ladderTeamPlayer}>
+      <span>{team.secondPlayer.name}</span>
+    </td>
+    <td className={styles.ladderTeamPlayer}>
+      <FormControl type='rank' placeholder='new Rank' {...rank} />
+    </td>
+    <td className={styles.ladderTeamPlayer}>
+      <SubmitBtn type='submit'>Update</SubmitBtn>
+    </td>
     <div>
-      <td className={styles.ladderTeamPlace}>
-        <span>{team.ladderPosition}</span>
-      </td>
-      <td className={styles.ladderTeamPlayer}>
-        <span>{team.firstPlayer.name}</span>
-      </td>
-      <td className={styles.ladderTeamPlayer}>
-        <span>{team.secondPlayer.name}</span>
-      </td>
-      <td className={styles.ladderTeamPlayer}>
-        <FormControl type='rank' placeholder='new Rank' {...rank} />
-      </td>
-      <td className={styles.ladderTeamPlayer}>
-        <SubmitBtn type='submit'>Update</SubmitBtn>
-      </td>
-      <div>
-        <FormError {...rank}/>
-      </div>
+      <FormError {...rank}/>
     </div>
-  </Form>
+  </tr>
 ));
 
 const UpdateTeamPositions = ({teamId, ladderPosition, rank}, teams) =>
@@ -142,26 +135,37 @@ const LadderOverride = ({
   updateLadder,
 }) : Element => (
   <div>
-    <div>
+    <Table responsive fill className={styles.ladderTable}>
+      <thead>
+        <tr>
+          <th><strong>Position</strong></th>
+          <th><strong>First Player</strong></th>
+          <th><strong>Second Player</strong></th>
+          <th><strong>New Position</strong></th>
+          <th><strong>Update?</strong></th>
+        </tr>
+      </thead>
+      <tbody>
+        {teams.map((team) => (
+          <TeamLadderUpdate
+            key={team.teamId}
+            team={team}
+            teams={teams}
+            UpdateTeamPositions={UpdateTeamPositions}
+          />
+        ))}
+      </tbody>
+    </Table>
+    <ButtonToolbar>
       <Button
-        bsStyle='warning'
+        bsStyle='danger'
         onClick={() => SquashGaps(teams)}
-      >SquashGaps</Button>
-      {teams.map((team) => (
-        <TeamLadderUpdate
-          key={team.teamId}
-          team={team}
-          teams={teams}
-          UpdateTeamPositions={UpdateTeamPositions}
-        />
-      ))}
-      <div>
-        <Button
-          bsStyle='warning'
-          onClick={() => GetTeamIds({teams, updateLadder})}
-        >Send Update</Button>
-      </div>
-    </div>
+      >Squash Gaps in Ladder</Button>
+      <Button
+        bsStyle='danger'
+        onClick={() => GetTeamIds({teams, updateLadder})}
+      >Confirm Changes</Button>
+    </ButtonToolbar>
   </div>
 );
 

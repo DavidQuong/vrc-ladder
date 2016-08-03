@@ -1,14 +1,5 @@
 ~colors: "../../config/colors.config";
 
-:global {
-  tr {
-    background-color: ~colors.white;
-  }
-  tr:nth-of-type(even) {
-    background-color: ~colors.lightGrey;
-  }
-}
-
 .formGroup {
   text-align: center;
   margin-right: 15px;
@@ -123,7 +114,7 @@
   composes: columnHeadline;
   color: ~colors.charcoalGrey;
   text-align: left;
-  text-transform: none;
+  text-transform: capitalize;
   height: 50px;
   width: auto;
 }

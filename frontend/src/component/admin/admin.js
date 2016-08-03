@@ -12,13 +12,12 @@ import {requestPDF} from '../../action/ladder';
 const updateView = createAction('ADMIN_VIEW');
 
 const ToggleView = ({adminView}) => {
-  if (adminView === 'player') {
-    return <PlayerOverride/>;
-  } else if (adminView === 'team') {
-    return <TeamOverride/>;
+  switch (adminView) {
+  case 'ladder': return <LadderOverride/>;
+  case 'player': return <PlayerOverride/>;
+  case 'team': return <TeamOverride/>;
+  default: return null;
   }
-  // Default view
-  return <LadderOverride/>;
 };
 
 const ViewSwitch = (props) => (dispatch) => {
