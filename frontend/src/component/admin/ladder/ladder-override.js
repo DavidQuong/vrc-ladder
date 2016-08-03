@@ -1,12 +1,11 @@
 import {createElement, Element} from 'react';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
-import {Form, FormControl, Well} from 'react-bootstrap';
+import {Button, ButtonToolbar, Table, FormControl} from 'react-bootstrap';
 import {createAction} from 'redux-actions';
-import {FormattedMessage} from 'react-intl';
 import {updateLadder} from '../../../action/ladder';
 
-import classNames from 'classnames';
+import SubmitBtn from '../../button/button';
 import styles from '../admin.css';
 import sortBy from 'lodash/fp/sortBy';
 import findIndex from 'lodash/fp/findIndex';
@@ -32,11 +31,9 @@ const validateLadderPosition = (values, teams) => {
 const FormError = ({touched, error}) => {
   if (touched && error) {
     return (
-      <div className={classNames(styles.errorMsg)}>
         <Heading kind='error'>
           {error}
         </Heading>
-      </div>
     );
   }
   return null;
@@ -49,32 +46,26 @@ const UpdatePositionForm = reduxForm({
   team,
   handleSubmit,
 }) => (
-  <Form horizontal onSubmit={handleSubmit}>
-    <label
-      className={classNames(styles.colXsTitle)}
-    >
-    </label>
-    <div>
-      <td className={styles.ladderTeamPlace}>
-        <span>{team.ladderPosition}</span>
-      </td>
-      <td className={styles.ladderTeamPlayer}>
-        <span>{team.firstPlayer.name}</span>
-      </td>
-      <td className={styles.ladderTeamPlayer}>
-        <span>{team.secondPlayer.name}</span>
-      </td>
-      <td className={styles.ladderTeamPlayer}>
-        <FormControl type='rank' placeholder='new Rank' {...rank} />
-      </td>
-      <td className={styles.ladderTeamPlayer}>
-        <button type='submit'>Update</button>
-      </td>
-      <div>
-        <FormError {...rank}/>
-      </div>
-    </div>
-  </Form>
+  <tr>
+    <td className={styles.ladderTeamPlace}>
+      <span>{team.ladderPosition}</span>
+    </td>
+    <td className={styles.ladderTeamPlayer}>
+      <span>{team.firstPlayer.name}</span>
+    </td>
+    <td className={styles.ladderTeamPlayer}>
+      <span>{team.secondPlayer.name}</span>
+    </td>
+    <td className={styles.ladderTeamPlayer}>
+      <FormControl type='rank' placeholder='new Rank' {...rank} />
+    </td>
+    <td className={styles.ladderTeamPlayer}>
+      <SubmitBtn onClick={handleSubmit} type='submit'>Update</SubmitBtn>
+    </td>
+    <td>
+      <FormError {...rank}/>
+    </td>
+  </tr>
 ));
 
 const UpdateTeamPositions = ({teamId, ladderPosition, rank}, teams) =>
@@ -140,32 +131,39 @@ const LadderOverride = ({
   UpdateTeamPositions,
   updateLadder,
 }) : Element => (
-  <Well className={`${styles.ladderTableContainer} table-responsive`}>
-  <Heading>
-    <FormattedMessage
-      id='ladderOverride'
-      defaultMessage='Update Team Ladder Position:'
-    />
-  </Heading>
-    <div>
-      <button onClick={() => SquashGaps(teams)}>SquashGaps</button>
-      {teams.map((team) => (
-        <TeamLadderUpdate
-          key={team.teamId}
-          team={team}
-          teams={teams}
-          UpdateTeamPositions={UpdateTeamPositions}
-        />
-      ))}
-      <div>
-        <button
-          onClick={() => GetTeamIds({teams, updateLadder})}
-        >Send Update</button>
-      </div>
-    </div>
-    <div>
-    </div>
-  </Well>
+  <div>
+    <Table responsive fill className={styles.ladderTable}>
+      <thead>
+        <tr>
+          <th><strong>Position</strong></th>
+          <th><strong>First Player</strong></th>
+          <th><strong>Second Player</strong></th>
+          <th><strong>New Position</strong></th>
+          <th><strong>Update?</strong></th>
+        </tr>
+      </thead>
+      <tbody>
+        {teams.map((team) => (
+          <TeamLadderUpdate
+            key={team.teamId}
+            team={team}
+            teams={teams}
+            UpdateTeamPositions={UpdateTeamPositions}
+          />
+        ))}
+      </tbody>
+    </Table>
+    <ButtonToolbar>
+      <Button
+        bsStyle='danger'
+        onClick={() => SquashGaps(teams)}
+      >Squash Gaps in Ladder</Button>
+      <Button
+        bsStyle='danger'
+        onClick={() => GetTeamIds({teams, updateLadder})}
+      >Confirm Changes</Button>
+    </ButtonToolbar>
+  </div>
 );
 
 export default connect(

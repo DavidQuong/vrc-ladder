@@ -10,7 +10,7 @@ const emptyState = {
   teamInfo: [],
   matchGroups: [],
   matchSchedule: [],
-  adminView: '',
+  adminView: 'ladder',
 };
 
 const app = handleActions({

@@ -1,12 +1,7 @@
 ~colors: "../../config/colors.config";
 
-:global {
-  tr {
-    background-color: ~colors.white;
-  }
-  tr:nth-of-type(even) {
-    background-color: ~colors.lightGrey;
-  }
+.largeButton {
+  width: 100%;
 }
 
 .formGroup {
@@ -27,9 +22,7 @@
 }
 
 .colXsTitle {
-  /*width: 33.3%;*/
   position: relative;
-  /*float: left;*/
   min-height: 1px;
   padding-right: 15px;
   padding-left: 15px;
@@ -125,7 +118,7 @@
   composes: columnHeadline;
   color: ~colors.charcoalGrey;
   text-align: left;
-  text-transform: none;
+  text-transform: capitalize;
   height: 50px;
   width: auto;
 }

@@ -1,6 +1,6 @@
 import {createElement, Element} from 'react';
 import {connect} from 'react-redux';
-import {Well} from 'react-bootstrap';
+import {Panel, Well, Nav, NavItem} from 'react-bootstrap';
 import {createAction} from 'redux-actions';
 
 import styles from './admin.css';
@@ -12,14 +12,12 @@ import {requestPDF} from '../../action/ladder';
 const updateView = createAction('ADMIN_VIEW');
 
 const ToggleView = ({adminView}) => {
-  if (adminView === 'ladder') {
-    return <div><LadderOverride/></div>;
-  } else if (adminView === 'player') {
-    return <div><PlayerOverride/></div>;
-  } else if (adminView === 'team') {
-    return <div><TeamOverride/></div>;
+  switch (adminView) {
+  case 'ladder': return <LadderOverride/>;
+  case 'player': return <PlayerOverride/>;
+  case 'team': return <TeamOverride/>;
+  default: return null;
   }
-  return <div></div>;
 };
 
 const ViewSwitch = (props) => (dispatch) => {
@@ -41,20 +39,21 @@ const Admin = ({
   EmailLadderPDF,
 }) : Element => (
   <Well className={`${styles.ladderTableContainer} table-responsive`}>
-    <div>
-    <button onClick={() => ViewSwitch('ladder')}>LadderOverride</button>
-    <button onClick={() => ViewSwitch('player')}>PlayerOverride</button>
-    <button onClick={() => ViewSwitch('team')}>TeamOverride</button>
-    <button
-      onClick={() => EmailLadderPDF({requestPDF})}
-    >Request PDF Email</button>
-    </div>
-    <div>
-        <ToggleView
-          adminView={adminView}
-        />
-    </div>
-
+    <Nav
+      bsStyle='tabs'
+      activeKey={adminView}
+      onSelect={(eventKey) => ViewSwitch(eventKey)}
+    >
+      <NavItem eventKey='ladder'>Reorder Ladder</NavItem>
+      <NavItem eventKey='player'>Delete Players</NavItem>
+      <NavItem eventKey='team'>Update Teams</NavItem>
+      <NavItem onClick={() => EmailLadderPDF({requestPDF})}>
+        Request PDF Email
+      </NavItem>
+    </Nav>
+    <Panel>
+      <ToggleView adminView={adminView} />
+    </Panel>
   </Well>
 );
 

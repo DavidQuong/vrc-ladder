@@ -1,18 +1,15 @@
 import {createElement, Element} from 'react';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
-import {FormattedMessage} from 'react-intl';
-import {Well, FormControl} from 'react-bootstrap';
+import {Checkbox, Table, FormControl} from 'react-bootstrap';
 import {
-  removeTeam,
-  updateTeamPlayTime,
-  getTeams} from '../../../action/teams';
+  removeTeam, updateTeamPlayTime, getTeams,
+} from '../../../action/teams';
 
-import classNames from 'classnames';
+import SubmitBtn from '../../button/button';
 import styles from '../admin.css';
 import sortBy from 'lodash/fp/sortBy';
 import map from 'lodash/fp/map';
-import Heading from '../../heading/heading';
 
 const validate = (values, {team}) => {
   team.check = values.check;
@@ -46,17 +43,10 @@ const TeamUpdateForm = reduxForm({
   team,
   handleSubmit,
 }) => (
-  <form onSubmit={handleSubmit}>
-    <label
-      className={classNames(styles.colXsTitle)}
-    >
-    </label>
-    <div>
-      {team.firstPlayer.name} & {team.secondPlayer.name}
-      <input
-        type='checkbox'
-        {...check}
-      />
+  <tr>
+    <td>{team.firstPlayer.name}</td>
+    <td>{team.secondPlayer.name}</td>
+    <td>
       <FormControl componentClass='select' {...playTime}>
         <option value='' disabled>{getActivePlaytime(team)}</option>
         {map((playTimes) => (
@@ -65,9 +55,16 @@ const TeamUpdateForm = reduxForm({
           </option>
         ), playTimes)}
       </FormControl>
-      <button type='submit'>Update Attendance</button>
-    </div>
-  </form>
+    </td>
+    <td>
+      <SubmitBtn
+        className={styles.largeButton}
+        onClick={handleSubmit}
+        type='submit'
+      >Update</SubmitBtn>
+    </td>
+    <td><Checkbox {...check} /></td>
+  </tr>
 ));
 
 const TeamUpdate = ({team, updateTeamPlayTime, getTeams}) => {
@@ -101,29 +98,33 @@ const TeamOverride = ({
   updateTeamPlayTime,
   getTeams,
 }) : Element => (
-  <Well className={`${styles.ladderTableContainer} table-responsive`}>
-    <div>
-    <Heading>
-      <FormattedMessage
-        id='updateTeams'
-        defaultMessage='Team Override:'
-      />
-    </Heading>
-      {teams.map((team) => (
-        <TeamUpdate
-          key={team.teamId}
-          team={team}
-          updateTeamPlayTime={updateTeamPlayTime}
-          getTeams={getTeams}
-        />
-      ))}
-    </div>
-    <div>
-      <button
-        onClick={() => DeleteTeams({teams, removeTeam})}
-      >Delete Selected Teams</button>
-    </div>
-  </Well>
+  <div>
+    <Table responsive fill>
+      <thead>
+        <tr>
+          <th><strong>First Player</strong></th>
+          <th><strong>Second Player</strong></th>
+          <th><strong>New Attendance</strong></th>
+          <th><strong>Update Attendance</strong></th>
+          <th><strong>Delete?</strong></th>
+        </tr>
+      </thead>
+      <tbody>
+        {teams.map((team) => (
+          <TeamUpdate
+            key={team.teamId}
+            team={team}
+            updateTeamPlayTime={updateTeamPlayTime}
+            getTeams={getTeams}
+          />
+        ))}
+      </tbody>
+    </Table>
+    <SubmitBtn
+      bsStyle='danger'
+      onClick={() => DeleteTeams({teams, removeTeam})}
+    >Delete Selected Teams</SubmitBtn>
+  </div>
 );
 export default connect(
   (state) => ({
