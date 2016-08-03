@@ -1,6 +1,7 @@
 import {
   addUser as addUserAPI,
   getPlayer as getPlayerAPI,
+  updateUserInfo,
   getCurrentActiveUserInfo as getCurrentActiveUserInfoAPI,
   getTeamInfo as getTeamInfoAPI,
   removeUser as removeUserAPI} from '../api/users';
@@ -52,4 +53,9 @@ export const getTeamInfo = () => (dispatch, getState) => {
   }).catch((error) => {
     return Promise.reject(error);
   });
+};
+
+export const updateUser = (user) => (dispatch, getState) => {
+  const state = getState();
+  return updateUserInfo(user, state);
 };

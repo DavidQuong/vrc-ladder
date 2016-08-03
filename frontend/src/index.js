@@ -15,6 +15,7 @@ import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import {MatchGroups} from './component/matchgroups/matchgroups';
 import CreateTeam from './component/profile/profile';
+import UpdateProfile from './component/profile/update-profile';
 import styles from './index.css';
 import LogIn from './component/login/login';
 import Logout from './component/logout/logout';
@@ -100,6 +101,10 @@ export default ({store}) : Element => (
           <Route
             path='/logout'
             component={Logout}
+          />
+          <Route
+            path='/updateProfile'
+            component={UpdateProfile}
           />
           <Route
             path='/profile'

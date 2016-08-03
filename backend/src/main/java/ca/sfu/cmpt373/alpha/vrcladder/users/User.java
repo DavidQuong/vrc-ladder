@@ -173,6 +173,8 @@ public class User {
         this.attempts = attempts;
     }
 
+
+
     @Override
     public boolean equals(Object otherObj) {
         if (this == otherObj) {

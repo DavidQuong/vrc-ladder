@@ -278,6 +278,8 @@ public class UserRouter extends RestRouter {
             UserId userId = new UserId(requestedId);
 
             UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
+            Password plainTextPassWord = updateUserPayload.getPassword();
+            String passwordHash = plainTextPassWord.getHash();
             User existingUser = userManager.update(
                 userId,
                 updateUserPayload.getFirstName(),
@@ -285,7 +287,8 @@ public class UserRouter extends RestRouter {
                 updateUserPayload.getLastName(),
                 updateUserPayload.getEmailAddress(),
                 updateUserPayload.getPhoneNumber(),
-                securityManager.hashPassword(updateUserPayload.getPassword().getHash()));
+                securityManager.hashPassword(passwordHash));
+
 
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(existingUser));
             response.status(HttpStatus.OK_200);
@@ -383,7 +386,8 @@ public class UserRouter extends RestRouter {
 
     private User updateUserWithPayload(Request request, UserId userId) {
         UpdateUserPayload updateUserPayload = getGson().fromJson(request.body(), UpdateUserPayload.class);
-
+        Password plainTextPassWord = updateUserPayload.getPassword();
+        String passwordHash = plainTextPassWord.getHash();
         User updatedUser = userManager.update(
             userId,
             updateUserPayload.getFirstName(),
@@ -391,7 +395,8 @@ public class UserRouter extends RestRouter {
             updateUserPayload.getLastName(),
             updateUserPayload.getEmailAddress(),
             updateUserPayload.getPhoneNumber(),
-            securityManager.hashPassword(updateUserPayload.getPassword().getHash())
+            securityManager.hashPassword(passwordHash)
+
         );
 
         return updatedUser;
