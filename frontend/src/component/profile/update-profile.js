@@ -16,6 +16,22 @@ import {
 const validate = (values) => {
   const errors = {};
 
+  if (!values.firstName) {
+    errors.firstName = 'Required';
+  }
+
+  if (!values.lastName) {
+    errors.lastName = 'Required';
+  }
+
+  if (!values.password) {
+    errors.password = 'Required';
+  }
+
+  if (!values.confirmPassword) {
+    errors.confirmPassword = 'Required';
+  }
+
   if  (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.emailAddress)) {
     errors.emailAddress = 'Invalid email address';
   }
@@ -54,6 +70,15 @@ const parseUser = (props, userInfo) => {
   });
 };
 
+const mapInitialStateToProps = (state) => {
+  return {
+    initialValues: {...state.app.userInfo,
+      firstName: state.app.userInfo.name.split(' ')[0],
+      lastName: state.app.userInfo.name.split(' ')[1],
+    },
+  };
+};
+
 const formEnhancer = reduxForm({
   form: 'updateProfile',
   fields: [
@@ -64,7 +89,7 @@ const formEnhancer = reduxForm({
     'password',
     'confirmPassword'],
   validate,
-});
+}, mapInitialStateToProps);
 
 const FormError = ({touched, error}) => {
   if (touched && error) {
