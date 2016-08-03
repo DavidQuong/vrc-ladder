@@ -11,6 +11,7 @@ import sortBy from 'lodash/fp/sortBy';
 import findIndex from 'lodash/fp/findIndex';
 import isEmpty from 'lodash/fp/isEmpty';
 import Heading from '../../heading/heading';
+import {AlertModal} from '../../alert/alert-modal';
 
 const syncTeams = createAction('TEAM_SYNC');
 
@@ -60,7 +61,7 @@ const UpdatePositionForm = reduxForm({
       <FormControl type='rank' placeholder='new Rank' {...rank} />
     </td>
     <td className={styles.ladderTeamPlayer}>
-      <SubmitBtn onClick={handleSubmit} type='submit'>Update</SubmitBtn>
+      <SubmitBtn onClick={handleSubmit} type='submit'>Move</SubmitBtn>
     </td>
     <td>
       <FormError {...rank}/>
@@ -125,6 +126,10 @@ const GetTeamIds = ({teams, updateLadder}) => {
   return updateLadder({teamIds});
 };
 
+const assignGlobalReference = function(a) {
+  global.alert = a;
+};
+
 const LadderOverride = ({
   teams,
   SquashGaps,
@@ -132,6 +137,9 @@ const LadderOverride = ({
   updateLadder,
 }) : Element => (
   <div>
+    <AlertModal
+      ref={assignGlobalReference}
+    />
     <Table responsive fill className={styles.ladderTable}>
       <thead>
         <tr>
@@ -160,7 +168,11 @@ const LadderOverride = ({
       >Squash Gaps in Ladder</Button>
       <Button
         bsStyle='danger'
-        onClick={() => GetTeamIds({teams, updateLadder})}
+        onClick={() => GetTeamIds({teams, updateLadder}).then(() =>
+          alert.open('Ladder Update Successful!')
+        ).catch(() =>
+          alert.open('Ladder Update Failure')
+        )}
       >Confirm Changes</Button>
     </ButtonToolbar>
   </div>

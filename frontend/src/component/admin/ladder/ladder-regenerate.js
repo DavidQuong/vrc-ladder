@@ -1,8 +1,7 @@
 import {regenerateLadder} from '../../../action/ladder';
 import {connect} from 'react-redux';
 import React, {createElement} from 'react';
-import SubmitBtn from '../../button/button';
-import {Label} from 'react-bootstrap';
+import {Button} from 'react-bootstrap';
 import {AlertModal} from '../../alert/alert-modal';
 
 const mapStateToProps = () => (
@@ -18,11 +17,12 @@ const assignGlobalReference = function(a) {
 const LadderRegen = React.createClass({
 
   handleSubmit: function() {
-    this.props.regenerateLadder().then(() => {
-      alert.open('Ladder Regenerated Successfully');
-    }).catch(() => {
-      alert.open('Ladder failed to regenerate');
-    });
+    this.props.regenerateLadder().then(() =>
+      alert.open('Ladder Regenerated Successfully')
+    ).catch(() =>
+      alert.open('Ladder Regeneration Failure. Make sure all' +
+      ' MatchGroups have submitted their scores')
+    );
   },
 
   render: function() {
@@ -31,14 +31,18 @@ const LadderRegen = React.createClass({
         <AlertModal
           ref={assignGlobalReference}
         />
-        <Label>
+        <p>
           Pressing this button will regenerate the ladder rankings
           based on the current MatchGroups, their submitted scores, and
-          Attendance Statuses
-        </Label>
-        <SubmitBtn onClick={this.handleSubmit} type='submit'>
+          Attendance Statuses.
+        </p>
+        <p>
+          All current MatchGroups, scores, playtimes, and
+           attendance statuses will be reset. Proceed with caution.
+        </p>
+        <Button bsStyle='danger' onClick={this.handleSubmit} type='submit'>
           Regenerate Ladder
-        </SubmitBtn>
+        </Button>
       </div>
     );
   },

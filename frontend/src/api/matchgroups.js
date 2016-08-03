@@ -30,6 +30,9 @@ export const generateMatchGroups = (state) => {
       Authorization: state.app.loggedIn.authorizationToken,
     },
   }).then((response) => {
+    if (!response.ok) {
+      return Promise.reject(response);
+    }
     return response.json();
   });
 };

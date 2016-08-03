@@ -64,7 +64,7 @@ const MatchGroupsDummy = React.createClass({
   render: function() {
     return (<div>
       <div>{this.props.matchSchedule.length === 0 ?
-        'No Match Schedule. Try fetching!' :
+        'No Match Schedule has been created for this week. Check back later' :
         displayCourts(this.props.matchSchedule, this.props.teams)}
       </div>
     </div>);
