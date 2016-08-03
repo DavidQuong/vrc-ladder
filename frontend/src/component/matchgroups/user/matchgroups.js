@@ -3,9 +3,9 @@ import {connect} from 'react-redux';
 import {getMatchSchedule, generateMatchGroups, reportMatchResults}
   from '../../../action/matchgroups';
 import map from 'lodash/fp/map';
-import {Panel} from 'react-bootstrap';
-import classNames from 'classnames';
+import {Well, Panel} from 'react-bootstrap';
 import styles from './matchgroups.css';
+import Heading from '../../heading/heading';
 
 const getMatchGroupTeams = (matchGroup, allTeams) => {
   const teamIds = matchGroup.teamId4 ? [
@@ -36,15 +36,14 @@ const displayCourt = (courtNumber, court, allTeams) => {
   return (
   <Panel
     header={`Court ${courtNumber}`}
-    className={classNames(styles.court)}
     bsStyle='primary'
   >
-    <Panel header='8:00PM' bsStyle='primary'>
+    <Panel header='8:00PM' bsStyle='info'>
       {court.TIME_SLOT_A ?
         displayMatchGroup(court.TIME_SLOT_A, allTeams) :
         'Nothing Scheduled'}
     </Panel>
-    <Panel header='9:30PM' bsStyle='primary'>
+    <Panel header='9:30PM' bsStyle='info'>
       {court.TIME_SLOT_B ?
         displayMatchGroup(court.TIME_SLOT_B, allTeams) :
         'Nothing Scheduled'}
@@ -60,15 +59,25 @@ const displayCourts = (courts, allTeams) => {
   }, courts);
 };
 
+const showCheckAgainMessage = () => {
+  return (
+    <Heading>
+      No match schedule has been created yet for this week.
+      <br />
+      Please check back later.
+    </Heading>
+  );
+};
+
 const MatchGroupsDummy = React.createClass({
   render: function() {
-    return (<div>
-      <div>{this.props.matchSchedule.length === 0 ?
-        'No Match Schedule has been created for this week. Check back later' :
-        displayCourts(this.props.matchSchedule, this.props.teams)}
-      </div>
-    </div>);
-  },
+    return (
+      <Well className={styles.wellContainer}>
+        {this.props.matchSchedule.length === 0 ?
+          showCheckAgainMessage() :
+          displayCourts(this.props.matchSchedule, this.props.teams)}
+      </Well>
+  );},
 });
 
 const mapStateToProps = (state) => (

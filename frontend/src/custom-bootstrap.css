@@ -1,5 +1,9 @@
 :global {
 
+    .panel-heading {
+        text-align: left !important;
+    }
+
     .table > tbody > tr > td {
       vertical-align: middle;
     }

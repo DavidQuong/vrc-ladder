@@ -184,13 +184,13 @@ const DisplayTeamInfo = ({team, updateTeamPlayTime}) => {
                   getTeamInfo();
                   alert.open('Play Time Updated');
                 }).catch(() => {
-                  alert.open('You\'re already attending in another team');
+                  alert.open('One of the players in the selected team is ' +
+                  ' already attending on the tournament day');
                 });
               }}
              />
             }
           </Col>
-
         </Row>
       </Grid>
     </ListGroupItem>

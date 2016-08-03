@@ -1,5 +1,5 @@
 import {createElement} from 'react';
-import {Form, Panel, FormGroup, Grid, Col} from 'react-bootstrap';
+import {FormControl, Form, Panel, FormGroup, Col} from 'react-bootstrap';
 import {reduxForm} from 'redux-form';
 import styles from './result-form.css';
 import classNames from 'classnames';
@@ -57,7 +57,7 @@ const mapInitialAttendanceStateToProps = (state, ownProps) => {
 
 const generateRankingSubmissionRow = (teams, teamId, rankNumber) => (
   <FormGroup>
-    <Col md={3} sm={5}>
+    <Col xsOffset={1} sm={2}>
       <label className={classNames(styles.colXsTitle)}>
         <FormattedMessage
           id={`teamId ${rankNumber}`}
@@ -65,20 +65,18 @@ const generateRankingSubmissionRow = (teams, teamId, rankNumber) => (
         />
       </label>
     </Col>
-    <Col>
-      <select
-        className={classNames(styles.goodForm, {
-          [styles.errorForm]: teamId.error &&
-                              teamId.touched})}
+    <Col md={7} sm={11}>
+      <FormControl
+        componentClass='select'
         {...teamId}
       >
-        <option value=''>Select a team...</option>
+        <option value='' disabled>Select a team...</option>
         {map((team) => (
           <option value={team.teamId}key={team.teamId}>
             {team.firstPlayer.name} & {team.secondPlayer.name}
           </option>
         ), teams)}
-      </select>
+      </FormControl>
       {teamId.touched && teamId.error &&
         <div className={classNames(styles.errorMsg)}>
         <Heading kind='error'>
@@ -96,14 +94,12 @@ const ResultFormRows = reduxForm({
   handleSubmit,
 }) => (
   <Form horizontal onSubmit={handleSubmit}>
-    <Grid className={styles.grid}>
-      {generateRankingSubmissionRow(matchTeams, teamId1, 1)}
-      {generateRankingSubmissionRow(matchTeams, teamId2, 2)}
-      {generateRankingSubmissionRow(matchTeams, teamId3, 3)}
-      {matchTeams.length === 4 ?
-        generateRankingSubmissionRow(matchTeams, teamId4, 4) :
-        null}
-    </Grid>
+    {generateRankingSubmissionRow(matchTeams, teamId1, 1)}
+    {generateRankingSubmissionRow(matchTeams, teamId2, 2)}
+    {generateRankingSubmissionRow(matchTeams, teamId3, 3)}
+    {matchTeams.length === 4 ?
+      generateRankingSubmissionRow(matchTeams, teamId4, 4) :
+      null}
     <div className={classNames(styles.center)}>
       <SubmitBtn type='submit'>Submit Results</SubmitBtn>
     </div>
@@ -112,17 +108,17 @@ const ResultFormRows = reduxForm({
 
 const generateAttendanceSubmissionRow = (team, teamField) => (
   <FormGroup>
-    <Col md={3} sm={5}>
+    <Col md={4} sm={6}>
       <label className={classNames(styles.colXsTitle)}>
         {team.firstPlayer.name} & {team.secondPlayer.name}
       </label>
     </Col>
-    <Col>
-      <select className={classNames(styles.goodForm)} {...teamField}>
+    <Col md={6} sm={10}>
+      <FormControl componentClass='select' {...teamField}>
         <option value='PRESENT'>Present</option>
         <option value='LATE'>Late</option>
         <option value='NO_SHOW'>No Show</option>
-      </select>
+      </FormControl>
     </Col>
   </FormGroup>
 );
@@ -135,14 +131,12 @@ const AttendanceStatusForm = reduxForm({
     handleSubmit,
   }) => (
     <Form horizontal onSubmit={handleSubmit}>
-      <Grid className={styles.grid}>
-        {generateAttendanceSubmissionRow(matchTeams[0], team1)}
-        {generateAttendanceSubmissionRow(matchTeams[1], team2)}
-        {generateAttendanceSubmissionRow(matchTeams[2], team3)}
-        {matchTeams.length === 4 ?
-          generateAttendanceSubmissionRow(matchTeams[3], team4) :
-          null}
-      </Grid>
+      {generateAttendanceSubmissionRow(matchTeams[0], team1)}
+      {generateAttendanceSubmissionRow(matchTeams[1], team2)}
+      {generateAttendanceSubmissionRow(matchTeams[2], team3)}
+      {matchTeams.length === 4 ?
+        generateAttendanceSubmissionRow(matchTeams[3], team4) :
+        null}
       <div className={classNames(styles.center)}>
         <SubmitBtn type='submit'>Submit Results</SubmitBtn>
       </div>

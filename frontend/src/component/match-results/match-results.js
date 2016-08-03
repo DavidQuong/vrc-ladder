@@ -7,6 +7,13 @@ import {Well} from 'react-bootstrap';
 import {getMatchGroupTeams, findUserMatchGroup}
   from '../../util/matchgroup-util';
 import {findAttendingUserTeam} from '../../util/team-util';
+import Heading from '../heading/heading';
+
+const showNoMatchGroupMessage = () => {
+  return (
+    <Heading>You&#39;re not in any match groups!</Heading>
+  );
+};
 
 const displayMatchGroup = (
   matchGroup,
@@ -14,7 +21,7 @@ const displayMatchGroup = (
   reportMatchResults,
   updateTeamAttendanceStatus) => {
   return (
-    <Well>
+    <div>
       {matchGroup ?
         ResultForm(
           'playerResultForm',
@@ -22,14 +29,15 @@ const displayMatchGroup = (
           getMatchGroupTeams(matchGroup, allTeams),
           reportMatchResults,
           updateTeamAttendanceStatus) :
-        'You\'re not in any MatchGroups!'}
-    </Well>);
+          showNoMatchGroupMessage()
+      }
+    </div>);
 };
 
 const MatchResultsDummy = React.createClass({
   render: function() {
     const attendingUserTeam = findAttendingUserTeam(this.props.teamInfo);
-    return (<div>
+    return (<Well>
       {attendingUserTeam ?
         displayMatchGroup(findUserMatchGroup(
           this.props.matchGroups,
@@ -38,8 +46,8 @@ const MatchResultsDummy = React.createClass({
             this.props.teams,
             this.props.reportMatchResults,
             this.props.updateTeamAttendanceStatus) :
-        'You\'re not in any MatchGroups!'}
-      </div>);
+        showNoMatchGroupMessage()}
+      </Well>);
   },
 });
 
