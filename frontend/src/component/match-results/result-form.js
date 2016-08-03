@@ -56,33 +56,37 @@ const mapInitialAttendanceStateToProps = (state, ownProps) => {
 };
 
 const generateRankingSubmissionRow = (teams, teamId, rankNumber) => (
-  <div className={classNames(styles.formGroup)}>
-    <label className={classNames(styles.colXsTitle)}>
-      <FormattedMessage
-        id={`teamId ${rankNumber}`}
-        defaultMessage={`Team ${rankNumber}:`}
-      />
-    </label>
-    <select
-      className={classNames(styles.goodForm, {
-        [styles.errorForm]: teamId.error &&
-                            teamId.touched})}
-      {...teamId}
-    >
-      <option value=''>Select a team...</option>
-      {map((team) => (
-        <option value={team.teamId}key={team.teamId}>
-          {team.firstPlayer.name} & {team.secondPlayer.name}
-        </option>
-      ), teams)}
-    </select>
-    {teamId.touched && teamId.error &&
-      <div className={classNames(styles.errorMsg)}>
-      <Heading kind='error'>
-            {teamId.error}
-          </Heading>
-      </div>}
-  </div>);
+  <FormGroup>
+    <Col md={3} sm={5}>
+      <label className={classNames(styles.colXsTitle)}>
+        <FormattedMessage
+          id={`teamId ${rankNumber}`}
+          defaultMessage={`Team ${rankNumber}:`}
+        />
+      </label>
+    </Col>
+    <Col>
+      <select
+        className={classNames(styles.goodForm, {
+          [styles.errorForm]: teamId.error &&
+                              teamId.touched})}
+        {...teamId}
+      >
+        <option value=''>Select a team...</option>
+        {map((team) => (
+          <option value={team.teamId}key={team.teamId}>
+            {team.firstPlayer.name} & {team.secondPlayer.name}
+          </option>
+        ), teams)}
+      </select>
+      {teamId.touched && teamId.error &&
+        <div className={classNames(styles.errorMsg)}>
+        <Heading kind='error'>
+              {teamId.error}
+            </Heading>
+        </div>}
+    </Col>
+  </FormGroup>);
 
 const ResultFormRows = reduxForm({
   fields: ['teamId1', 'teamId2', 'teamId3', 'teamId4'],
@@ -92,12 +96,14 @@ const ResultFormRows = reduxForm({
   handleSubmit,
 }) => (
   <Form horizontal onSubmit={handleSubmit}>
-    {generateRankingSubmissionRow(matchTeams, teamId1, 1)}
-    {generateRankingSubmissionRow(matchTeams, teamId2, 2)}
-    {generateRankingSubmissionRow(matchTeams, teamId3, 3)}
-    {matchTeams.length === 4 ?
-      generateRankingSubmissionRow(matchTeams, teamId4, 4) :
-      null}
+    <Grid className={styles.grid}>
+      {generateRankingSubmissionRow(matchTeams, teamId1, 1)}
+      {generateRankingSubmissionRow(matchTeams, teamId2, 2)}
+      {generateRankingSubmissionRow(matchTeams, teamId3, 3)}
+      {matchTeams.length === 4 ?
+        generateRankingSubmissionRow(matchTeams, teamId4, 4) :
+        null}
+    </Grid>
     <div className={classNames(styles.center)}>
       <SubmitBtn type='submit'>Submit Results</SubmitBtn>
     </div>
@@ -138,9 +144,7 @@ const AttendanceStatusForm = reduxForm({
           null}
       </Grid>
       <div className={classNames(styles.center)}>
-        <SubmitBtn type='submit'>
-          Submit Results
-        </SubmitBtn>
+        <SubmitBtn type='submit'>Submit Results</SubmitBtn>
       </div>
     </Form>
   ));
