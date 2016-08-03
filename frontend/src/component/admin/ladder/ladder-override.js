@@ -1,11 +1,12 @@
 import {createElement, Element} from 'react';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
-import {Form, FormControl, Well} from 'react-bootstrap';
+import {Button, Form, FormControl, Well} from 'react-bootstrap';
 import {createAction} from 'redux-actions';
 import {FormattedMessage} from 'react-intl';
 import {updateLadder} from '../../../action/ladder';
 
+import SubmitBtn from '../../button/button';
 import classNames from 'classnames';
 import styles from '../admin.css';
 import sortBy from 'lodash/fp/sortBy';
@@ -68,7 +69,7 @@ const UpdatePositionForm = reduxForm({
         <FormControl type='rank' placeholder='new Rank' {...rank} />
       </td>
       <td className={styles.ladderTeamPlayer}>
-        <button type='submit'>Update</button>
+        <SubmitBtn type='submit'>Update</SubmitBtn>
       </td>
       <div>
         <FormError {...rank}/>
@@ -140,15 +141,12 @@ const LadderOverride = ({
   UpdateTeamPositions,
   updateLadder,
 }) : Element => (
-  <Well className={`${styles.ladderTableContainer} table-responsive`}>
-  <Heading>
-    <FormattedMessage
-      id='ladderOverride'
-      defaultMessage='Update Team Ladder Position:'
-    />
-  </Heading>
+  <div>
     <div>
-      <button onClick={() => SquashGaps(teams)}>SquashGaps</button>
+      <Button
+        bsStyle='warning'
+        onClick={() => SquashGaps(teams)}
+      >SquashGaps</Button>
       {teams.map((team) => (
         <TeamLadderUpdate
           key={team.teamId}
@@ -158,14 +156,13 @@ const LadderOverride = ({
         />
       ))}
       <div>
-        <button
+        <Button
+          bsStyle='warning'
           onClick={() => GetTeamIds({teams, updateLadder})}
-        >Send Update</button>
+        >Send Update</Button>
       </div>
     </div>
-    <div>
-    </div>
-  </Well>
+  </div>
 );
 
 export default connect(

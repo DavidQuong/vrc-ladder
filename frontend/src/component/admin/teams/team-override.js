@@ -8,6 +8,7 @@ import {
   updateTeamPlayTime,
   getTeams} from '../../../action/teams';
 
+import SubmitBtn from '../../button/button';
 import classNames from 'classnames';
 import styles from '../admin.css';
 import sortBy from 'lodash/fp/sortBy';
@@ -65,7 +66,7 @@ const TeamUpdateForm = reduxForm({
           </option>
         ), playTimes)}
       </FormControl>
-      <button type='submit'>Update Attendance</button>
+      <SubmitBtn type='submit'>Update Attendance</SubmitBtn>
     </div>
   </form>
 ));
@@ -101,14 +102,8 @@ const TeamOverride = ({
   updateTeamPlayTime,
   getTeams,
 }) : Element => (
-  <Well className={`${styles.ladderTableContainer} table-responsive`}>
+  <div>
     <div>
-    <Heading>
-      <FormattedMessage
-        id='updateTeams'
-        defaultMessage='Team Override:'
-      />
-    </Heading>
       {teams.map((team) => (
         <TeamUpdate
           key={team.teamId}
@@ -119,11 +114,12 @@ const TeamOverride = ({
       ))}
     </div>
     <div>
-      <button
+      <SubmitBtn
+        bsStyle='danger'
         onClick={() => DeleteTeams({teams, removeTeam})}
-      >Delete Selected Teams</button>
+      >Delete Selected Teams</SubmitBtn>
     </div>
-  </Well>
+  </div>
 );
 export default connect(
   (state) => ({
