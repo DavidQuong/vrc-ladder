@@ -9,54 +9,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MatchScheduler {
-    public static final int DEFAULT_NUM_COURTS = 6;
-    public static final int DEFAULT_NUM_PLAYTIME = 2;
-    private static final String ERROR_MESSAGE_COURTS_FULL = "There were not enough courts available to schedule all matches";
-
     /**
-     * @throws MatchMakingException if Courts are full, and matches cannot be scheduled
+     * @throws MatchMakingException if a group has indicated they are not attending
      */
-    public static List<Court> scheduleMatches(int numCourts, List<MatchGroup> matchGroups) {
+
+    public static final int MAX_SINGLE_TIME_SLOT_SIZE = 12;
+
+    public static List<Court> scheduleMatches(List<MatchGroup> matchGroups) {
         // Schedule matches into the courts.
         List<Court> courts = new ArrayList<>();
-        for (int i = 0; i < numCourts; i++) {
+        for(int i = 0;i < matchGroups.size();i++) {
             courts.add(new Court());
         }
 
-        for (MatchGroup matchGroup : matchGroups) {
-            PlayTime preferredPlayTime = matchGroup.getPreferredGroupPlayTime();
-            preferredPlayTime.checkPlayablePlayTime();
+        if(matchGroups.size() <= MAX_SINGLE_TIME_SLOT_SIZE) {
+            assert(matchGroups.size() == courts.size());
 
-            //try to schedule a match group at their preferred time
-            boolean isPreferredPlayTimeScheduled = false;
-            for (Court court : courts) {
-                if (court.isPlayTimeFree(preferredPlayTime)) {
-                    court.scheduleMatch(matchGroup, preferredPlayTime);
-                    isPreferredPlayTimeScheduled = true;
-                    break;
+            for(int index = 0;index < matchGroups.size();index++) {
+                courts.get(index).scheduleMatch(matchGroups.get(index), PlayTime.TIME_SLOT_A);
+            }
+        } else {
+            List<MatchGroup> slotAGroups = new ArrayList<>();
+            List<MatchGroup> slotBGroups = new ArrayList<>();
+
+            for(MatchGroup matchGroup : matchGroups) {
+                if(matchGroup.getPreferredGroupPlayTime() == PlayTime.TIME_SLOT_A) {
+                    slotAGroups.add(matchGroup);
+                } else {
+                    slotBGroups.add(matchGroup);
                 }
             }
 
-            //if no courts have the available preferred play time for a group, choose another play time to schedule them in
-            if (!isPreferredPlayTimeScheduled) {
-                boolean isAnyPlayTimeScheduled = false;
-                for (Court court : courts) {
-                    for (PlayTime playTime : PlayTime.values()) {
-                        if (playTime.isPlayable() && court.isPlayTimeFree(playTime)) {
-                            court.scheduleMatch(matchGroup, playTime);
-                            isAnyPlayTimeScheduled = true;
-                            break;
-                        }
-                    }
-                    if (isAnyPlayTimeScheduled) {
-                        break;
-                    }
-                }
-                if (!isAnyPlayTimeScheduled) {
-                    throw new MatchMakingException(ERROR_MESSAGE_COURTS_FULL);
-                }
+            while(slotAGroups.size() - slotBGroups.size() > 1) {
+                slotBGroups.add(slotAGroups.remove(slotAGroups.size() - 1));
+            }
+
+            while(slotBGroups.size() - slotAGroups.size() > 1) {
+                slotAGroups.add(slotBGroups.remove(slotBGroups.size() - 1));
+            }
+
+            for(int i = 0;i < slotAGroups.size();i++) {
+                courts.get(i).scheduleMatch(slotAGroups.get(i), PlayTime.TIME_SLOT_A);
+            }
+
+            for(int i = 0;i < slotBGroups.size();i++) {
+                courts.get(slotAGroups.size() + i).scheduleMatch(slotBGroups.get(i), PlayTime.TIME_SLOT_B);
             }
         }
+
         return courts;
     }
 }
