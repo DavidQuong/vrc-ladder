@@ -14,6 +14,7 @@ import styles from './profile.css';
 import classNames from 'classnames';
 import isEmpty from 'lodash/fp/isEmpty';
 import sortBy from 'lodash/fp/sortBy';
+import {AlertModal} from '../alert/alert-modal';
 
 const validate = (values, userInfo) => {
   const errors = {};
@@ -173,8 +174,10 @@ const DisplayTeamInfo = ({team, updateTeamPlayTime, router}) => {
                   ...props,
                 }).then(() => {
                   getTeamInfo();
-                  router.replace('/profile');
-                  // TODO: Show a popup here!
+                  // router.replace('/profile');
+                  alert.open('Play Time Updated');
+                }).catch(() => {
+                  alert.open('You\'re already attending in another team');
                 });
               }}
              />
@@ -185,6 +188,10 @@ const DisplayTeamInfo = ({team, updateTeamPlayTime, router}) => {
       </Grid>
     </ListGroupItem>
   );
+};
+
+const assignGlobalReference = function(a) {
+  global.alert = a;
 };
 
 const CreateTeam = withRouter(({
@@ -199,6 +206,9 @@ const CreateTeam = withRouter(({
   router,
 }) : Element => (
   <Well>
+    <AlertModal
+      ref={assignGlobalReference}
+    />
     <Panel header='My Profile' bsStyle='primary'>
       {displayMyInfo(userInfo)}
     </Panel>
@@ -230,8 +240,9 @@ const CreateTeam = withRouter(({
           }, login).then(() => {
             getTeamInfo();
             router.replace('/profile');
-            // TODO: Show a popup here!
+            alert.open('Team Created!');
           }).catch(() => {
+            alert.open('Team Exists');
             const errors = {secondPlayerId: 'team exists'};
             return Promise.reject(errors);
           });

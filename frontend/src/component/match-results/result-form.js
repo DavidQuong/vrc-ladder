@@ -212,7 +212,6 @@ export const ResultForm = (
     <div>
       <AlertModal
         ref={assignGlobalReference}
-        body='Results submitted successfully'
       />
       <Panel header='Result Submission' bsStyle='primary'>
         <ResultFormRows
