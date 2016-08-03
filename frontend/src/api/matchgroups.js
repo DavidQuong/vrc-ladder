@@ -11,9 +11,57 @@ export const getMatchGroups = (state) => {
   });
 };
 
+export const getMatchSchedule = (state) => {
+  return fetch(`${root}matchgroups/schedule`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: state.app.loggedIn.authorizationToken,
+    },
+  }).then((response) => {
+    return response.json();
+  });
+};
+
 export const generateMatchGroups = (state) => {
   return fetch(`${root}matchgroups/generate`, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: state.app.loggedIn.authorizationToken,
+    },
+  }).then((response) => {
+    return response.json();
+  });
+};
+
+export const regenerateMatchGroups = (state) => {
+  return fetch(`${root}ladder/regenerate`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: state.app.loggedIn.authorizationToken,
+    },
+  }).then((response) => {
+    return response.json();
+  });
+};
+
+export const reportMatchResults = (props, state) => {
+  return fetch(`${root}matchgroup/${props.matchGroupId}/scores`, {
+    method: 'PUT',
+    body: JSON.stringify(props.results),
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: state.app.loggedIn.authorizationToken,
+    },
+  }).then((response) => {
+    return response.json();
+  });
+};
+
+export const getMatchResults = (matchGroup, state) => {
+  return fetch(`${root}matchgroup/${matchGroup.matchGroupId}/scores`, {
+    method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       Authorization: state.app.loggedIn.authorizationToken,

@@ -2,13 +2,14 @@ import {handleActions} from 'redux-actions';
 import {combineReducers} from 'redux';
 import {reducer as form} from 'redux-form';
 
-const emptyState =  {
+const emptyState = {
   players: [],
   teams: [],
   loggedIn: {},
   userInfo: [],
   teamInfo: [],
   matchGroups: [],
+  matchSchedule: [],
   adminView: '',
 };
 
@@ -63,6 +64,20 @@ const app = handleActions({
     return {
       ...state,
       matchGroups: payload,
+    };
+  },
+
+  MATCH_SCHEDULE_SYNC: (state, {payload}) => {
+    return {
+      ...state,
+      matchSchedule: payload,
+    };
+  },
+
+  MATCH_RESULTS_SYNC: (state, {payload}) => {
+    return {
+      ...state,
+      matchResults: payload,
     };
   },
 

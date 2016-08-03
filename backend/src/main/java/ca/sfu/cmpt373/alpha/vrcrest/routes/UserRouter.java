@@ -57,7 +57,6 @@ public class UserRouter extends RestRouter {
     public static final String JSON_PROPERTY_USER = "user";
     public static final String JSON_PROPERTY_PLAYERS = "players";
 
-
     private static final String ERROR_NONEXISTENT_USER = "This user does not exist.";
     private static final String ERROR_INVALID_PROPERTY = "The following property is invalid: ";
 
@@ -286,7 +285,7 @@ public class UserRouter extends RestRouter {
                 updateUserPayload.getLastName(),
                 updateUserPayload.getEmailAddress(),
                 updateUserPayload.getPhoneNumber(),
-                updateUserPayload.getPassword());
+                securityManager.hashPassword(updateUserPayload.getPassword().getHash()));
 
             responseBody.add(JSON_PROPERTY_USER, getGson().toJsonTree(existingUser));
             response.status(HttpStatus.OK_200);
@@ -392,7 +391,7 @@ public class UserRouter extends RestRouter {
             updateUserPayload.getLastName(),
             updateUserPayload.getEmailAddress(),
             updateUserPayload.getPhoneNumber(),
-            updateUserPayload.getPassword()
+            securityManager.hashPassword(updateUserPayload.getPassword().getHash())
         );
 
         return updatedUser;

@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static ca.sfu.cmpt373.alpha.vrcrest.datatransfer.JsonProperties.JSON_PROPERTY_ATTENDANCE_STATUS;
+
 public class TeamRouter extends RestRouter {
 
     public static final String ROUTE_TEAMS = "/teams";
@@ -45,7 +47,6 @@ public class TeamRouter extends RestRouter {
 
     public static final String JSON_PROPERTY_TEAMS = "teams";
     public static final String JSON_PROPERTY_TEAM = "team";
-    public static final String JSON_PROPERTY_ATTENDANCE = "attendance";
 
     private static final List<RouteSignature> PUBLIC_ROUTE_SIGNATURES = createPublicRouteSignatures();
 
@@ -194,7 +195,7 @@ public class TeamRouter extends RestRouter {
             Team existingTeam = teamManager.getById(generatedId);
             AttendanceCard attendanceCard = existingTeam.getAttendanceCard();
 
-            responseBody.add(JSON_PROPERTY_ATTENDANCE, getGson().toJsonTree(attendanceCard));
+            responseBody.add(JSON_PROPERTY_ATTENDANCE_STATUS, getGson().toJsonTree(attendanceCard));
             response.status(HttpStatus.OK_200);
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_TEAM);
@@ -216,7 +217,7 @@ public class TeamRouter extends RestRouter {
             AttendanceCard attendanceCard = existingTeam.getAttendanceCard();
             notify.notifyTeam(existingTeam, NotificationType.TEAM_TIME_UPDATED);
 
-            responseBody.add(JSON_PROPERTY_ATTENDANCE, getGson().toJsonTree(attendanceCard));
+            responseBody.add(JSON_PROPERTY_ATTENDANCE_STATUS, getGson().toJsonTree(attendanceCard));
             response.status(HttpStatus.OK_200);
         } catch (JsonSyntaxException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
@@ -246,7 +247,7 @@ public class TeamRouter extends RestRouter {
             Team existingTeam = teamManager.updateAttendanceStatus(generatedId, AttendanceStatusPayload.getAttendanceStatus());
             AttendanceCard attendanceCard = existingTeam.getAttendanceCard();
 
-            responseBody.add(JSON_PROPERTY_ATTENDANCE, getGson().toJsonTree(attendanceCard));
+            responseBody.add(JSON_PROPERTY_ATTENDANCE_STATUS, getGson().toJsonTree(attendanceCard));
             response.status(HttpStatus.OK_200);
         } catch (JsonSyntaxException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);

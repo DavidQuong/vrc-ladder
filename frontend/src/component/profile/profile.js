@@ -1,7 +1,7 @@
 import {createElement, Element} from 'react';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
-import {addTeam, updateTeamStatus} from '../../action/teams';
+import {addTeam, updateTeamPlayTime} from '../../action/teams';
 import {SubmitBtn} from '../button/button';
 import {withRouter} from 'react-router';
 import {getTeamInfo} from '../../action/users';
@@ -191,7 +191,7 @@ const CreateTeam = withRouter(({
   userInfo,
   teamInfo,
   getTeamInfo,
-  updateTeamStatus,
+  updateTeamPlayTime,
   router,
 }) : Element => (
   <Well>
@@ -214,7 +214,7 @@ const CreateTeam = withRouter(({
           if (!isEmpty(errors)) {
             return Promise.reject(errors);
           }
-          return updateTeamStatus({
+          return updateTeamPlayTime({
             ...props,
             authorizationToken: login.authorizationToken,
           }).then(() => {
@@ -264,5 +264,5 @@ export default connect(
     addTeam,
     displayMyInfo,
     getTeamInfo,
-    updateTeamStatus}
+    updateTeamPlayTime}
 )(CreateTeam);

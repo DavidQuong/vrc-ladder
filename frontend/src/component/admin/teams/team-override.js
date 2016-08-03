@@ -5,7 +5,7 @@ import {FormattedMessage} from 'react-intl';
 import {Well, FormControl} from 'react-bootstrap';
 import {
   removeTeam,
-  updateTeamStatus,
+  updateTeamPlayTime,
   getTeams} from '../../../action/teams';
 
 import classNames from 'classnames';
@@ -70,14 +70,14 @@ const TeamUpdateForm = reduxForm({
   </form>
 ));
 
-const TeamUpdate = ({team, updateTeamStatus, getTeams}) => {
+const TeamUpdate = ({team, updateTeamPlayTime, getTeams}) => {
   return (
     <TeamUpdateForm
       team={team}
       form={`teamOverride-${team.teamId}`}
       onSubmit={(props) => {
         props.teamId = team.teamId;
-        return updateTeamStatus({
+        return updateTeamPlayTime({
           ...props,
         }).then(() => {
           getTeams();
@@ -98,7 +98,7 @@ const DeleteTeams = ({teams, removeTeam}) => {
 const TeamOverride = ({
   teams,
   removeTeam,
-  updateTeamStatus,
+  updateTeamPlayTime,
   getTeams,
 }) : Element => (
   <Well className={`${styles.ladderTableContainer} table-responsive`}>
@@ -113,7 +113,7 @@ const TeamOverride = ({
         <TeamUpdate
           key={team.teamId}
           team={team}
-          updateTeamStatus={updateTeamStatus}
+          updateTeamPlayTime={updateTeamPlayTime}
           getTeams={getTeams}
         />
       ))}
@@ -130,7 +130,7 @@ export default connect(
     teams: sortBy('ladderPosition', state.app.teams),
   }), {
     removeTeam,
-    updateTeamStatus,
+    updateTeamPlayTime,
     getTeams,
   }
 )(TeamOverride);
