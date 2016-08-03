@@ -3,7 +3,6 @@ import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {addTeam, updateTeamPlayTime} from '../../action/teams';
 import {SubmitBtn} from '../button/button';
-import {withRouter} from 'react-router';
 import {getTeamInfo} from '../../action/users';
 import {
   ListGroup, ListGroupItem, Row, Col, Grid,
@@ -158,7 +157,7 @@ const displayMyInfo = (userInfo) => (
   </ListGroup>
 );
 
-const DisplayTeamInfo = ({team, updateTeamPlayTime}) => {
+const DisplayTeamInfo = ({team, updateTeamPlayTime, getTeamInfo}) => {
   return (
     <ListGroupItem key={team.teamId}>
       <Grid className={styles.grid}>
@@ -201,7 +200,7 @@ const assignGlobalReference = function(a) {
   global.alert = a;
 };
 
-const CreateTeam = withRouter(({
+const CreateTeam = ({
   addTeam,
   players,
   teams,
@@ -210,7 +209,6 @@ const CreateTeam = withRouter(({
   teamInfo,
   getTeamInfo,
   updateTeamPlayTime,
-  router,
 }) : Element => (
   <Well>
     <AlertModal
@@ -226,6 +224,7 @@ const CreateTeam = withRouter(({
           key={team.teamId}
           team={team}
           updateTeamPlayTime={updateTeamPlayTime}
+          getTeamInfo={getTeamInfo}
         />
       ))}
       </ListGroup>
@@ -245,7 +244,6 @@ const CreateTeam = withRouter(({
             firstPlayerId: userInfo.userId,
           }, login).then(() => {
             getTeamInfo();
-            router.replace('/profile');
             alert.open('Team Created!');
           }).catch(() => {
             alert.open('Team Exists');
@@ -256,7 +254,7 @@ const CreateTeam = withRouter(({
       />
     </Panel>
   </Well>
-));
+);
 
 export default connect(
   (state) => ({
