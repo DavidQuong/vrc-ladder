@@ -200,7 +200,8 @@ const updateAccount = withRouter(({
             return Promise.reject(errors);
           }
           return updateUser(info).then(() => {
-            router.push('/profile');
+            // TODO: pause on a warning/alert here!
+            router.push('/logout');
           }).catch((response) => {
             return response.then(function(bodyContent) {
               const errors = checkErrors(bodyContent);

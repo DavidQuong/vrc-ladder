@@ -103,12 +103,13 @@ export default ({store}) : Element => (
             component={Logout}
           />
           <Route
-            path='/updateProfile'
+            path='/update-profile'
+            navbarTitle='Change Personal Information'
             component={UpdateProfile}
           />
           <Route
             path='/profile'
-            navbarTitle='View and Edit Profile'
+            navbarTitle='Personal and Team Information'
             component={CreateTeam}
           />
           <Route

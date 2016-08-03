@@ -9,6 +9,7 @@ import {
   ListGroup, ListGroupItem, Row, Col, Grid,
   FormControl, FormGroup, Form, HelpBlock, Panel, Well,
 } from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
 import map from 'lodash/fp/map';
 import styles from './profile.css';
 import classNames from 'classnames';
@@ -146,6 +147,13 @@ const displayMyInfo = (userInfo) => (
         <Col sm={3} md={2}><strong>Email:</strong></Col>
         <Col sm={10} md={6}>{userInfo.emailAddress}</Col>
       </Grid>
+    </ListGroupItem>
+    <ListGroupItem className={styles.center}>
+      <LinkContainer to='/update-profile'>
+        <SubmitBtn
+          type='submit'
+        >Edit Profile</SubmitBtn>
+      </LinkContainer>
     </ListGroupItem>
   </ListGroup>
 );
