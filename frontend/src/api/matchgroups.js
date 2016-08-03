@@ -34,18 +34,6 @@ export const generateMatchGroups = (state) => {
   });
 };
 
-export const regenerateMatchGroups = (state) => {
-  return fetch(`${root}ladder/regenerate`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: state.app.loggedIn.authorizationToken,
-    },
-  }).then((response) => {
-    return response.json();
-  });
-};
-
 export const reportMatchResults = (props, state) => {
   return fetch(`${root}matchgroup/${props.matchGroupId}/scores`, {
     method: 'PUT',

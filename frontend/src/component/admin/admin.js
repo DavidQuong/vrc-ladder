@@ -7,6 +7,7 @@ import styles from './admin.css';
 import LadderOverride from './ladder/ladder-override';
 import PlayerOverride from './players/player-override';
 import TeamOverride from './teams/team-override';
+import LadderRegen from './ladder/ladder-regenerate';
 import {requestPDF} from '../../action/ladder';
 
 const updateView = createAction('ADMIN_VIEW');
@@ -16,6 +17,7 @@ const ToggleView = ({adminView}) => {
   case 'ladder': return <LadderOverride/>;
   case 'player': return <PlayerOverride/>;
   case 'team': return <TeamOverride/>;
+  case 'regenerate': return <LadderRegen/>;
   default: return null;
   }
 };
@@ -50,6 +52,7 @@ const Admin = ({
       <NavItem onClick={() => EmailLadderPDF({requestPDF})}>
         Request PDF Email
       </NavItem>
+      <NavItem eventKey='regenerate'>Regenerate Ladder</NavItem>
     </Nav>
     <Panel>
       <ToggleView adminView={adminView} />

@@ -4,8 +4,7 @@ import {
   getMatchGroups,
   generateMatchGroups,
   reportMatchResults,
-  regenerateMatchGroups} from '../../../action/matchgroups';
-import {withRouter} from 'react-router';
+} from '../../../action/matchgroups';
 import map from 'lodash/fp/map';
 import reduce from 'lodash/fp/reduce';
 import find from 'lodash/fp/find';
@@ -83,12 +82,11 @@ const MatchGroupForms = (
   );
 };
 
-const MatchGroupsDummy = withRouter(({
+const MatchGroupsDummy = ({
   getMatchGroups,
   generateMatchGroups,
   teams,
   matchGroups,
-  regenerateMatchGroups,
   reportMatchResults,
   updateTeamAttendanceStatus,
 }) : Element => {
@@ -96,7 +94,6 @@ const MatchGroupsDummy = withRouter(({
   return (<div className={styles.matchGroupPage}>
     <div>
       <button onClick={() => generateMatchGroups()}>GENERATE</button>
-      <button onClick={() => regenerateMatchGroups()}>REGENERATE</button>
       <button onClick={() => getMatchGroups()}>FETCH</button>
     </div>
     <div>
@@ -114,7 +111,7 @@ const MatchGroupsDummy = withRouter(({
     })}
     </div>
   </div>);
-});
+};
 
 export const MatchGroups = connect(
   (state) => ({
@@ -126,5 +123,5 @@ export const MatchGroups = connect(
     generateMatchGroups,
     reportMatchResults,
     updateTeamAttendanceStatus,
-    regenerateMatchGroups}
+  }
 )(MatchGroupsDummy);

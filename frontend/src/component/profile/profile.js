@@ -150,7 +150,7 @@ const displayMyInfo = (userInfo) => (
   </ListGroup>
 );
 
-const DisplayTeamInfo = ({team, updateTeamPlayTime, router}) => {
+const DisplayTeamInfo = ({team, updateTeamPlayTime}) => {
   return (
     <ListGroupItem key={team.teamId}>
       <Grid className={styles.grid}>
@@ -174,7 +174,6 @@ const DisplayTeamInfo = ({team, updateTeamPlayTime, router}) => {
                   ...props,
                 }).then(() => {
                   getTeamInfo();
-                  // router.replace('/profile');
                   alert.open('Play Time Updated');
                 }).catch(() => {
                   alert.open('You\'re already attending in another team');
@@ -219,7 +218,6 @@ const CreateTeam = withRouter(({
           key={team.teamId}
           team={team}
           updateTeamPlayTime={updateTeamPlayTime}
-          router={router}
         />
       ))}
       </ListGroup>
