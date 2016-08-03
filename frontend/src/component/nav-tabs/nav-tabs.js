@@ -59,38 +59,7 @@ const NavTabsDummy = React.createClass({
         volunteerTabs :
         playerTabs;
     }
-    return (this.props.loggedIn.authorizationToken) ?
-      (<Nav pullRight className={styles.navTab}>
-        <LinkContainer to='/logout'>
-          <NavItem>Log out</NavItem>
-        </LinkContainer>
-        <LinkContainer to='/profile'>
-          <NavItem>Profile</NavItem>
-        </LinkContainer>
-        <LinkContainer to='/updateProfile'>
-          <NavItem>Edit Profile</NavItem>
-         </LinkContainer>
-        <LinkContainer to='/ladder'>
-          <NavItem>Ladder</NavItem>
-        </LinkContainer>
-        <LinkContainer to='/match-groups'>
-          <NavItem>Match Groups</NavItem>
-        </LinkContainer>
-      </Nav>) :
-      (<Nav pullRight className={styles.navTab}>
-       <IndexLinkContainer to='/'>
-         <NavItem>Log in</NavItem>
-       </IndexLinkContainer>
-       <LinkContainer to='/ladder'>
-         <NavItem>Ladder</NavItem>
-       </LinkContainer>
-       <LinkContainer to='/signup'>
-         <NavItem>Sign up</NavItem>
-       </LinkContainer>
-      </Nav>);
-
     return signedOutTabs;
-
   },
 });
 
