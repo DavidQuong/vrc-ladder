@@ -25,6 +25,7 @@ import java.util.Map;
  */
 public class NotificationManager {
 
+    private static final EmailAddress NULL_EMAIL          = new EmailAddress("null@null.null");
     private static final String GAME_REPORTED_THREE_TEAMS = "threeteams";
     private static final String GAME_REPORTED_FOUR_TEAMS  = "fourteams";
     private static final String RECEIVER_NAME_TAG         = "#fullname";
@@ -39,8 +40,8 @@ public class NotificationManager {
     private static final String SCORE_TEAM_CLOSE_TAG      = "player";
     private static final String TEMPLATE_PDF              = "pdf";
     private static final String EXTENSION_SEPARATOR       = ".";
-    private static final int FIRST_PLAYER = 1;
-    private static final int SECOND_PLAYER = 2;
+    private static final int FIRST_PLAYER                 = 1;
+    private static final int SECOND_PLAYER                = 2;
     private final TemplateManager template;
     private Email email;
 
@@ -49,7 +50,7 @@ public class NotificationManager {
         email = new Email();
     }
 
-    public void notifyUser(Team team, NotificationType type) {
+    public void notifyTeam(Team team, NotificationType type) {
         Map<String, String> values = new HashMap<>();
         List<EmailAddress> receivers = new ArrayList<>();
         List<String> names = new ArrayList<>();
@@ -97,7 +98,7 @@ public class NotificationManager {
         }
     }
 
-    public void notifyUser(MatchGroup group, NotificationType type) {
+    public void notifyMatchgroup(MatchGroup group, NotificationType type) {
         Map<String, String> values = new HashMap<>();
         List<EmailAddress> receivers = new ArrayList<>();
         List<String> names = new ArrayList<>();
@@ -183,5 +184,9 @@ public class NotificationManager {
             values.put(SCORE_TEAM_LEFT_TAG + currentTeam + SCORE_TEAM_CLOSE_TAG + FIRST_PLAYER, firstPlayer.getDisplayName());
             values.put(SCORE_TEAM_LEFT_TAG + currentTeam + SCORE_TEAM_CLOSE_TAG + SECOND_PLAYER, secondPlayer.getDisplayName());
         }
+    }
+
+    private static boolean checkForNullEmail(User user){
+        return NULL_EMAIL.equals(user.getEmailAddress());
     }
 }
