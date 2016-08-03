@@ -69,29 +69,29 @@ public class NotificationManager {
     }
 
     public void notifyUser(User user, NotificationType type) {
-        Map<String, String> values = new HashMap<>();
-        EmailAddress receiver = buildUserInfoAndGetEmail(user, values);
+        Map<String, String> values = buildUserInfo(user);
+        EmailAddress userEmail = user.getEmailAddress();
         String currentTemplate = type.getTemplate();
         String path = EmailSettings.TEMPLATE_PATH_ACCOUNT + currentTemplate + EXTENSION_SEPARATOR + EmailSettings.EMAILS_FORMAT;
 
         try {
             String messageContent = template.getContents(path, values);
-            email.sendEmail(receiver, messageContent, type);
+            email.sendEmail(userEmail, messageContent, type);
         } catch (IOException e) {
             throw new TemplateNotFoundException();
         }
     }
 
     public void notifyUser(User user, NotificationType type, String token) {
-        Map<String, String> values = new HashMap<>();
-        EmailAddress receiver = buildUserInfoAndGetEmail(user, values);
+        Map<String, String> values = buildUserInfo(user);
+        EmailAddress userEmail = user.getEmailAddress();
         String currentTemplate = type.getTemplate();
         String path = EmailSettings.TEMPLATE_PATH_ACCOUNT + currentTemplate + EXTENSION_SEPARATOR + EmailSettings.EMAILS_FORMAT;
         setTokenValues(token, values);
 
         try {
             String messageContent = template.getContents(path, values);
-            email.sendEmail(receiver, messageContent, type);
+            email.sendEmail(userEmail, messageContent, type);
         } catch (IOException e) {
             throw new TemplateNotFoundException();
         }
@@ -133,10 +133,11 @@ public class NotificationManager {
         }
     }
 
-    private EmailAddress buildUserInfoAndGetEmail(User user, Map<String, String> values){
+    private Map<String, String> buildUserInfo(User user){
+        Map<String, String> values = new HashMap<>();
         values.put(RECEIVER_NAME_TAG, user.getDisplayName());
         values.put(RECEIVER_ID_TAG, user.getUserId().toString());
-        return user.getEmailAddress();
+        return values;
     }
 
     private String getCurrentTemplate(MatchGroup group, String template){
