@@ -9,7 +9,7 @@ public class EmailSettings {
     // TODO: must change to VRC email account info.
     static final String SERVER   = "mail.espuresystems.com";
     static final String SERVER_PORT = "26";
-    static final String USERNAME = "no-reply@vrc.espuresystems.com";
+    public static final String USERNAME = "no-reply@vrc.espuresystems.com";
     static final String PASSWORD = "gzc4tZj+98";
     static final String FROM_NAME = "VRC";
     public static final String WEBSITE_LINK = "http://www.vrc.ca";
@@ -20,6 +20,7 @@ public class EmailSettings {
     public static final String TEMPLATE_PATH_ACCOUNT = "src/main/resources/notifications/templates/account/email_";
     public static final String TEMPLATE_PATH_GAME = "src/main/resources/notifications/templates/game/email_";
     public static final String TEMPLATE_PATH_TEAM = "src/main/resources/notifications/templates/team/email_";
+    public static final String TEMPLATE_PATH_PDFS = "src/main/resources/notifications/templates/pdf/email_";
 
 
     // Email Subjects.
@@ -37,5 +38,6 @@ public class EmailSettings {
     static final String SUBJECT_GENERAL_EMAIL              = "Notification from VRC";
     static final String SUBJECT_ACCOUNT_ACTIVATED          = "Welcome to VRC";
     static final String SUBJECT_PASSWORD_RESET             = "Password reset";
+    static final String SUBJECT_PDF_CONTENT                = "Pdf of the ladder";
 
 }

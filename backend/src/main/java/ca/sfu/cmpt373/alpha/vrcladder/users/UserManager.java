@@ -73,6 +73,12 @@ public class UserManager extends DatabaseManager<User> {
         return update(user);
     }
 
+    public User updateAttempts(UserId userId, int attempts) {
+        User user = getById(userId);
+        user.setAttempts(attempts);
+        return update(user);
+    }
+
     @Override
     public User delete(User user) {
         if (user.getUserRole() == UserRole.PLAYER) {

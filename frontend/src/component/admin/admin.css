@@ -9,6 +9,32 @@
   }
 }
 
+.formGroup {
+  text-align: center;
+  margin-right: 15px;
+  margin-left: 15px;
+  margin-bottom: 15px;
+  height: 34px;
+}
+
+.errorMsg {
+  width: 20%;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  float: right;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.colXsTitle {
+  /*width: 33.3%;*/
+  position: relative;
+  /*float: left;*/
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
 .ladder {
   font-family: 'Roboto', sans-serif;
   padding: 15px;
@@ -99,7 +125,7 @@
   composes: columnHeadline;
   color: ~colors.charcoalGrey;
   text-align: left;
-  text-transform: capitalize;
+  text-transform: none;
   height: 50px;
   width: auto;
 }

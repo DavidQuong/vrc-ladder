@@ -4,18 +4,19 @@ import {IntlProvider} from 'react-intl';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 import {getPlayer} from './action/users';
 import {getTeams} from './action/teams';
+import {Nav, Row, Col, Navbar, Grid} from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
+import {UserLabel} from './component/user-label/user-label';
+import {NavTabs} from './component/nav-tabs/nav-tabs';
+import Admin from './component/admin/admin';
 import SignUp from './component/signup/signup';
 import Ladder from './component/ladder/ladder';
 import MatchGroups from './component/match-groups/match-groups';
 import CreateTeam from './component/profile/profile';
 import UpdateProfile from './component/profile/update-profile';
-import {Nav, Navbar, Grid} from 'react-bootstrap';
-import {LinkContainer} from 'react-router-bootstrap';
 import styles from './index.css';
 import LogIn from './component/login/login';
 import Logout from './component/logout/logout';
-import {UserLabel} from './component/user-label/user-label';
-import {NavTabs} from './component/nav-tabs/nav-tabs';
 
 const Layout = ({children}) => (
   <div>
@@ -32,17 +33,21 @@ const Layout = ({children}) => (
           </Navbar.Text>
           <Navbar.Toggle />
         </Navbar.Header>
-        <UserLabel/>
         <Navbar.Collapse>
           <NavTabs/>
         </Navbar.Collapse>
       </Navbar>
       <Navbar fixedTop className={styles.lowerNavbar}>
-        <Nav className={styles.lowerNavContainer}>
-          <Navbar.Text className={styles.lowerNavbarHeading}>
-            {children.props.route.navbarTitle}
-          </Navbar.Text>
-        </Nav>
+        <Navbar.Collapse>
+          <Grid className={styles.lowerNavContainer}>
+            <Row>
+            <Col sm={6} md={4} className={styles.lowerNavbarHeading}>
+              {children.props.route.navbarTitle}
+            </Col>
+            <UserLabel/>
+            </Row>
+          </Grid>
+        </Navbar.Collapse>
       </Navbar>
     </div>
     <Grid>
@@ -86,11 +91,19 @@ export default ({store}) : Element => (
             component={MatchGroups}
           />
           <Route
+            path='/admin'
+            navbarTitle='Admin'
+            component={Admin}
+            onEnter={(nextState, replace, callback) => {
+              store.dispatch(getPlayer()).then(callback);
+              store.dispatch(getTeams()).then(callback);
+            }}
+          />
+          <Route
             path='/ladder'
             navbarTitle='Weekly Doubles Leaderboard'
             component={Ladder}
             onEnter={(nextState, replace, callback) => {
-              store.dispatch(getPlayer()).then(callback);
               store.dispatch(getTeams()).then(callback);
             }}
           />

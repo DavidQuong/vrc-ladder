@@ -1,15 +1,16 @@
 import {createElement, Element} from 'react';
-import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {addTeam, updateTeamStatus} from '../../action/teams';
-import {SubmitBtn} from '../button';
+import {SubmitBtn} from '../button/button';
 import {withRouter} from 'react-router';
 import {getTeamInfo} from '../../action/users';
-
+import {
+  ListGroup, ListGroupItem, Row, Col, Grid,
+  FormControl, FormGroup, Form, HelpBlock, Panel, Well,
+} from 'react-bootstrap';
 import map from 'lodash/fp/map';
 import styles from './profile.css';
-import Heading from '../heading/heading';
 import classNames from 'classnames';
 import isEmpty from 'lodash/fp/isEmpty';
 import sortBy from 'lodash/fp/sortBy';
@@ -24,6 +25,7 @@ const validate = (values, userInfo) => {
   }
   return errors;
 };
+
 const validateUpdateStatus = (values) => {
   const errors = {};
   if (!values.playTime) {
@@ -46,6 +48,16 @@ const playTimes = [{
   value: 'NONE',
 }];
 
+const getValidationState = (item) => {
+  if (item.touched) {
+    if (item.error) {
+      return {validationState: 'error'};
+    }
+    return {validationState: 'success'};
+  }
+  return null;
+};
+
 const UpdateAttendanceForm = reduxForm({
   form: 'updateTeam',
   fields: ['teamId', 'playTime'],
@@ -54,72 +66,43 @@ const UpdateAttendanceForm = reduxForm({
   teams,
   handleSubmit,
 }) => (
-  <form
-    className={styles.formHorizontal}
-    onSubmit={handleSubmit}
-  >
-  <div className={classNames(styles.formGroup)}>
-    <label
-      className={classNames(styles.colXsTitle)}
-    >
-      <FormattedMessage
-        id='selectTeam'
-        defaultMessage='Select Team'
-      />
-    </label>
-    <select
-      className={classNames(styles.goodForm, {
-        [styles.errorForm]: teamId.error &&
-                            teamId.touched})}
-      {...teamId}
-    >
-      <option value=''>Select a team...</option>
-      {map((teams) => (
-        <option value={teams.teamId}key={teams.teamId}>
-          With:  {teams.secondPlayer.name}
-        </option>
-      ), teams)}
-    </select>
-    {teamId.touched && teamId.error &&
-      <div className={classNames(styles.errorMsg)}>
-      <Heading kind='error'>
-            {teamId.error}
-          </Heading>
-      </div>}
-  </div>
-  <div className={classNames(styles.formGroup)}>
-    <label
-      className={classNames(styles.colXsTitle)}
-    >
-      <FormattedMessage
-        id='Select a Time'
-        defaultMessage='Time'
-      />
-    </label>
-    <select
-      className={classNames(styles.goodForm, {
-        [styles.errorForm]: playTime.error &&
-                            playTime.touched})}
-      {...playTime}
-    >
-      <option value=''>Select a time...</option>
-      {map((playTimes) => (
-        <option value={playTimes.value}key={playTimes.value}>
-          {playTimes.time}
-        </option>
-      ), playTimes)}
-    </select>
-    {playTime.touched && playTime.error &&
-      <div className={classNames(styles.errorMsg)}>
-      <Heading kind='error'>
-            {playTime.error}
-          </Heading>
-      </div>}
-  </div>
-    <div className={classNames(styles.center)}>
-      <SubmitBtn type='submit'>Update Attendance</SubmitBtn>
-    </div>
-  </form>
+  <Form horizontal onSubmit={handleSubmit}>
+    <Grid className={styles.grid}>
+      <FormGroup {...getValidationState(teamId)}>
+        <Col md={3} sm={5}><label>Select Team</label></Col>
+        <Col md={8} sm={13}>
+          <FormControl componentClass='select' {...teamId}>
+            <option value='' disabled>Select a team...</option>
+            {map((teams) => (
+              <option value={teams.teamId} key={teams.teamId}>
+                {teams.firstPlayer.name} & {teams.secondPlayer.name}
+              </option>
+            ), teams)}
+          </FormControl>
+          {teamId.touched && teamId.error &&
+            <HelpBlock>{teamId.error}</HelpBlock>}
+        </Col>
+      </FormGroup>
+      <FormGroup {...getValidationState(playTime)}>
+        <Col md={3} sm={5}><label>Select Preferred Time:</label></Col>
+        <Col md={8} sm={13}>
+          <FormControl componentClass='select' {...playTime}>
+            <option value='' disabled>Select a time...</option>
+            {map((playTimes) => (
+              <option value={playTimes.value} key={playTimes.value}>
+                {playTimes.time}
+              </option>
+            ), playTimes)}
+          </FormControl>
+          {playTime.touched && playTime.error &&
+            <HelpBlock>{playTime.error}</HelpBlock>}
+        </Col>
+      </FormGroup>
+      <div className={classNames(styles.center)}>
+        <SubmitBtn type='submit'>Update Attendance</SubmitBtn>
+      </div>
+    </Grid>
+  </Form>
 ));
 
 const CreateTeamForm = reduxForm({
@@ -131,113 +114,73 @@ const CreateTeamForm = reduxForm({
   players,
   handleSubmit,
 }) => (
-  <form
-    className={styles.formHorizontal}
-    onSubmit={handleSubmit}
-  >
-    <div className={classNames(styles.formGroup)}>
-      <label
-        className={classNames(styles.colXsTitle)}
-      >
-        <FormattedMessage
-          id='secondPlayerId'
-          defaultMessage="Select Team Member's Name"
-        />
-      </label>
-      <select
-        className={classNames(styles.goodForm, {
-          [styles.errorForm]: secondPlayerId.error &&
-                              secondPlayerId.touched})}
-        {...secondPlayerId}
-      >
-        <option value=''>Select a player...</option>
-        {map((player) => (
-          <option value={player.userId}key={player.userId}>
-            {player.name} {player.userId}
-          </option>
-        ), players)}
-      </select>
-      {secondPlayerId.touched && secondPlayerId.error &&
-        <div className={classNames(styles.errorMsg)}>
-          <Heading kind='error'>
-            {secondPlayerId.error}
-          </Heading>
-        </div>}
-    </div>
-    <div className={classNames(styles.center)}>
-      <SubmitBtn type='submit'>Create Team</SubmitBtn>
-    </div>
-  </form>
+  <Form horizontal onSubmit={handleSubmit}>
+    <Grid className={styles.grid}>
+      <FormGroup {...getValidationState(secondPlayerId)}>
+        <Col md={3} sm={5}><label>{"Select Your Partner"}</label></Col>
+        <Col md={8} sm={13}>
+          <FormControl componentClass='select' {...secondPlayerId}>
+            <option value='' disabled>Select a player...</option>
+            {map((player) => (
+              <option value={player.userId}key={player.userId}>
+                {player.name} {player.userId}
+              </option>
+            ), players)}
+          </FormControl>
+          {secondPlayerId.touched && secondPlayerId.error &&
+            <HelpBlock>{secondPlayerId.error}</HelpBlock>}
+        </Col>
+      </FormGroup>
+      <div className={classNames(styles.center)}>
+        <SubmitBtn type='submit'>Update Attendance</SubmitBtn>
+      </div>
+    </Grid>
+  </Form>
 ));
 
 const displayMyInfo = (userInfo) => (
-  <div>
-    <div className={styles.profileDetailsField}>
-      <FormattedMessage
-        id='firstName'
-        defaultMessage='Name: '
-      />
-    </div>
-    <div className={styles.profileDetails}>
-      {userInfo.name}
-    </div>
-    <br/>
-    <div className={styles.profileDetailsField}>
-      <FormattedMessage
-        id='phoneNumber'
-        defaultMessage='Phone Number: '
-      />
-    </div>
-    <div className={styles.profileDetails}>
-      {userInfo.phoneNumber}
-    </div>
-    <br/>
-    <div className={styles.profileDetailsField}>
-      <FormattedMessage
-        id='emailAddress'
-        defaultMessage='Email: '
-      />
-    </div>
-    <div className={styles.profileDetails}>
-      {userInfo.emailAddress}
-    </div>
-  </div>
+  <ListGroup fill>
+    <ListGroupItem>
+      <Grid>
+        <Col sm={3} md={2}><strong>Name:</strong></Col>
+        <Col sm={10} md={6}>{userInfo.name}</Col>
+      </Grid>
+    </ListGroupItem>
+    <ListGroupItem>
+      <Grid>
+        <Col sm={3} md={2}><strong>Phone Number:</strong></Col>
+        <Col sm={10} md={6}>{userInfo.phoneNumber}</Col>
+      </Grid>
+    </ListGroupItem>
+    <ListGroupItem>
+      <Grid>
+        <Col sm={3} md={2}><strong>Email:</strong></Col>
+        <Col sm={10} md={6}>{userInfo.emailAddress}</Col>
+      </Grid>
+    </ListGroupItem>
+  </ListGroup>
 );
 
 const getTime = (time) => {
   if (time === 'TIME_SLOT_A') {
-    return '8:30';
+    return '8:00 PM';
   } else if (time === 'TIME_SLOT_B') {
-    return '9:30';
+    return '9:30 PM';
   }
-  return 'NONE';
+  return 'N/A';
 };
 
 const displayTeamInfo = map((teamInfo) => (
-  <div
-    key={teamInfo.teamId}
-    className={styles.inactiveProfileTeams}
-  >
-    <div className={styles.profileDetailsField}>
-      <FormattedMessage
-        id='firstPlayer'
-        defaultMessage='Team With: '
-      />
-    </div>
-    <div className={styles.profileDetails}>
-      {teamInfo.secondPlayer.name}
-    </div>
-    <br/>
-    <div className={styles.profileDetailsField}>
-      <FormattedMessage
-        id='playTime'
-        defaultMessage='Preferred Play Time: '
-      />
-    </div>
-    <div className={styles.profileDetails}>
-      {getTime(teamInfo.playTime)}
-    </div>
-  </div>
+  <ListGroupItem key={teamInfo.teamId}>
+    <Grid className={styles.grid}>
+      <Row>
+        <Col sm={3} md={2}>{teamInfo.firstPlayer.name}</Col>
+        <Col sm={6} md={4}>{teamInfo.secondPlayer.name}</Col>
+        <Col sm={4} md={3}><strong>Preferred Play Time:</strong></Col>
+        <Col sm={3} md={2}>{getTime(teamInfo.playTime)}</Col>
+      </Row>
+    </Grid>
+  </ListGroupItem>
 ));
 
 const CreateTeam = withRouter(({
@@ -249,74 +192,67 @@ const CreateTeam = withRouter(({
   teamInfo,
   getTeamInfo,
   updateTeamStatus,
+  router,
 }) : Element => (
-  <div className={styles.createTeam}>
-      <div className={styles.sectionHeaders}>
-        <FormattedMessage
-          id='myInfo'
-          defaultMessage='My Profile'
-        />
-      </div>
-    {displayMyInfo(userInfo)}
-    <div className={styles.sectionHeaders}>
-      <FormattedMessage
-        id='myTeams'
-        defaultMessage='My Teams'
+  <Well>
+    <Panel header='My Profile' bsStyle='primary'>
+      {displayMyInfo(userInfo)}
+    </Panel>
+
+    <Panel header='My Teams' bsStyle='primary'>
+      <ListGroup fill>
+      {displayTeamInfo(teamInfo)}
+      </ListGroup>
+    </Panel>
+
+    <Panel header='Update Attendance' bsStyle='primary'>
+      <UpdateAttendanceForm
+        teams={teamInfo}
+        userInfo={userInfo}
+        onSubmit={(props) => {
+          const errors = validateUpdateStatus(props);
+          if (!isEmpty(errors)) {
+            return Promise.reject(errors);
+          }
+          return updateTeamStatus({
+            ...props,
+            authorizationToken: login.authorizationToken,
+          }).then(() => {
+            getTeamInfo();
+            router.replace('/profile');
+            // TODO: Show a popup here!
+          });
+        }}
       />
-    </div>
-    {displayTeamInfo(teamInfo)}
-    <div className={styles.sectionHeaders}>
-      <FormattedMessage
-        id='teamAttendance'
-        defaultMessage='Update Attendance'
+    </Panel>
+
+    <Panel header='Create Team' bsStyle='primary'>
+      <CreateTeamForm
+        players={players}
+        teams={teams}
+        userInfo={userInfo}
+        onSubmit={(props) => {
+          const errors = validate(props, userInfo);
+          if (!isEmpty(errors)) {
+            return Promise.reject(errors);
+          }
+          return addTeam({
+            ...props,
+            firstPlayerId: userInfo.userId,
+          }, login).then(() => {
+            getTeamInfo();
+            router.replace('/profile');
+            // TODO: Show a popup here!
+          }).catch(() => {
+            const errors = {secondPlayerId: 'team exists'};
+            return Promise.reject(errors);
+          });
+        }}
       />
-    </div>
-    <UpdateAttendanceForm
-      teams={teamInfo}
-      userInfo={userInfo}
-      onSubmit={(props) => {
-        const errors = validateUpdateStatus(props);
-        if (!isEmpty(errors)) {
-          return Promise.reject(errors);
-        }
-        return updateTeamStatus({
-          ...props,
-          authorizationToken: login.authorizationToken,
-        }).then(() => {
-          getTeamInfo();
-          // TODO: Show a popup here!
-        });
-      }}
-    />
-  <div className={styles.sectionHeaders}>
-    <FormattedMessage
-      id='createTeam'
-      defaultMessage='Create Team'
-    />
-   </div>
-    <CreateTeamForm
-      players={players}
-      teams={teams}
-      userInfo={userInfo}
-      onSubmit={(props) => {
-        const errors = validate(props, userInfo);
-        if (!isEmpty(errors)) {
-          return Promise.reject(errors);
-        }
-        return addTeam({
-          ...props,
-          firstPlayerId: userInfo.userId,
-        }, login).then(() => {
-          getTeamInfo();
-          // TODO: Show a popup here!
-        }).catch(() => {
-          const errors = {secondPlayerId: 'team exists'};
-          return Promise.reject(errors);
-        });
-      }}
-    />
-  </div>
+    </Panel>
+  </Well>
 ));
+
 export default connect(
   (state) => ({
     players: sortBy('name', state.app.players),
