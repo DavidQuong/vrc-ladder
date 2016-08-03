@@ -16,3 +16,15 @@ export const updateLadder = (teams, state) => {
     return Promise.reject(body);
   });
 };
+
+export const requestPDF = (state) => {
+  return fetch(`${root}ladder/pdf`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: state.app.loggedIn.authorizationToken,
+    },
+  }).then((response) => {
+    return response.json();
+  });
+};

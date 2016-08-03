@@ -34,6 +34,7 @@ public class PersistenceConstants {
     public static final String CONSTRAINT_CONFLICT_ID = "PUBLIC.USER(ID)";
     public static final String CONSTRAINT_CONFLICT_EMAIL = "PUBLIC.USER(EMAIL_ADDRESS)";
 
+    public static final String PDF_GENERATED = "PDF Generated?: ";
     public static final String NOTIFICATION = "Notify";
 
 }
