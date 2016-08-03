@@ -7,9 +7,9 @@ import styles from './ladder.css';
 
 const getTime = (time) => {
   if (time === 'TIME_SLOT_A') {
-    return '8:00 pm';
+    return 'ATTENDING';
   } else if (time === 'TIME_SLOT_B') {
-    return '9:30 pm';
+    return 'ATTENDING';
   }
   return 'N/A';
 };
