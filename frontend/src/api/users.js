@@ -36,7 +36,7 @@ export const getPlayer = (state) => {
 };
 
 export const getTeamInfo = (state) => {
-  return fetch(`${root}users/self/teams`, {
+  return fetch(`${root}user/${state.app.loggedIn.userId}/teams`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: state.app.loggedIn.authorizationToken,
