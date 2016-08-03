@@ -281,9 +281,6 @@ public class MatchGroupRouter extends RestRouter {
         } catch (JsonSyntaxException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
             response.status(HttpStatus.BAD_REQUEST_400);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
         return responseBody.toString();
     }

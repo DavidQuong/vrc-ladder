@@ -2,6 +2,7 @@ package ca.sfu.cmpt373.alpha.vrcrest.routes;
 
 import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.PropertyInstantiationException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.TemplateNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ValidationException;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.NotificationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.NotificationType;
@@ -131,28 +132,20 @@ public class UserRouter extends RestRouter {
         checkForVolunteerRole(request);
 
         JsonObject responseBody = new JsonObject();
-        try {
-            List<User> users = userManager.getAll();
-            responseBody.add(JSON_PROPERTY_USERS, getGson().toJsonTree(users));
-            response.status(HttpStatus.OK_200);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
-        }
+
+        List<User> users = userManager.getAll();
+        responseBody.add(JSON_PROPERTY_USERS, getGson().toJsonTree(users));
+        response.status(HttpStatus.OK_200);
 
         return responseBody.toString();
     }
 
     private String handleGetPlayers(Request request, Response response) {
         JsonObject responseBody = new JsonObject();
-        try {
-            List<User> players = userManager.getAllPlayers();
-            responseBody.add(JSON_PROPERTY_PLAYERS, playerGson.toJsonTree(players));
-            response.status(HttpStatus.OK_200);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
-        }
+
+        List<User> players = userManager.getAllPlayers();
+        responseBody.add(JSON_PROPERTY_PLAYERS, playerGson.toJsonTree(players));
+        response.status(HttpStatus.OK_200);
 
         return responseBody.toString();
     }
@@ -177,10 +170,11 @@ public class UserRouter extends RestRouter {
                 newUserPayload.getPhoneNumber(),
                 hashedPassword);
 
-            notify.notifyUser(newUser, NotificationType.ACCOUNT_ACTIVATED);
             JsonElement jsonUser = getGson().toJsonTree(newUser);
             responseBody.add(JSON_PROPERTY_USER, jsonUser);
             response.status(HttpStatus.CREATED_201);
+
+            notify.notifyUser(newUser, NotificationType.ACCOUNT_ACTIVATED);
         } catch (JsonSyntaxException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_MALFORMED_JSON);
             response.status(HttpStatus.BAD_REQUEST_400);
@@ -202,9 +196,8 @@ public class UserRouter extends RestRouter {
             }
 
             response.status(HttpStatus.CONFLICT_409);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST + ": " + ex.getMessage());
-            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (TemplateNotFoundException ex) {
+            responseBody.addProperty(PersistenceConstants.NOTIFICATION, ERROR_NOTIFICATION_FAILED);
         }
 
         return responseBody.toString();
@@ -224,9 +217,6 @@ public class UserRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         return responseBody.toString();
@@ -253,9 +243,6 @@ public class UserRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         return responseBody.toString();
@@ -279,9 +266,6 @@ public class UserRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         return responseBody.toString();
@@ -332,9 +316,6 @@ public class UserRouter extends RestRouter {
             }
 
             response.status(HttpStatus.CONFLICT_409);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST + ": " + ex.getMessage());
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         return responseBody.toString();
@@ -357,9 +338,6 @@ public class UserRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST + ": " + ex.getMessage());
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         return responseBody.toString();
@@ -378,9 +356,6 @@ public class UserRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_USER);
             response.status(HttpStatus.NOT_FOUND_404);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST + ": " + ex.getMessage());
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         return responseBody.toString();

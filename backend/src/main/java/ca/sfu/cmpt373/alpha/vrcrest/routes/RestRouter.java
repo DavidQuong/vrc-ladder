@@ -24,6 +24,8 @@ public abstract class RestRouter {
     protected static final String ERROR_COULD_NOT_COMPLETE_REQUEST = "Request could not be completed.";
     protected static final String ERROR_MALFORMED_JSON = "The provided JSON in the request body is malformed.";
     protected static final String ERROR_INVALID_RESOURCE_ID = "The provided resource identifier is invalid.";
+    public static final String ERROR_NOTIFICATION_FAILED = "User notification failed!";
+
 
     private SecurityManager securityManager;
     private UserManager userManager;

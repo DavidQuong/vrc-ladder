@@ -3,8 +3,10 @@ package ca.sfu.cmpt373.alpha.vrcrest.routes;
 import ca.sfu.cmpt373.alpha.vrcladder.ApplicationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.DuplicateTeamMemberException;
 import ca.sfu.cmpt373.alpha.vrcladder.exceptions.ExistingTeamException;
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.TemplateNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.NotificationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.NotificationType;
+import ca.sfu.cmpt373.alpha.vrcladder.persistence.PersistenceConstants;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.Team;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.TeamManager;
 import ca.sfu.cmpt373.alpha.vrcladder.teams.attendance.AttendanceCard;
@@ -114,7 +116,7 @@ public class TeamRouter extends RestRouter {
         try {
             NewTeamPayload newTeamPayload = getGson().fromJson(request.body(), NewTeamPayload.class);
             Team newTeam = teamManager.create(newTeamPayload.getFirstPlayerId(), newTeamPayload.getSecondPlayerId());
-            notify.notifyUser(newTeam, NotificationType.ADDED_TO_TEAM);
+            notify.notifyTeam(newTeam, NotificationType.ADDED_TO_TEAM);
             JsonElement jsonTeam = getGson().toJsonTree(newTeam);
             responseBody.add(JSON_PROPERTY_TEAM, jsonTeam);
             response.status(HttpStatus.CREATED_201);
@@ -133,9 +135,8 @@ public class TeamRouter extends RestRouter {
         } catch(DuplicateTeamMemberException ex)  {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_IDENTICAL_PLAYER_ID);
             response.status(HttpStatus.BAD_REQUEST_400);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (TemplateNotFoundException ex) {
+            responseBody.addProperty(PersistenceConstants.NOTIFICATION, ERROR_NOTIFICATION_FAILED);
         }
 
         return responseBody.toString();
@@ -158,9 +159,6 @@ public class TeamRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_TEAM);
             response.status(HttpStatus.NOT_FOUND_404);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         return responseBody.toString();
@@ -181,9 +179,6 @@ public class TeamRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_TEAM);
             response.status(HttpStatus.NOT_FOUND_404);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         return responseBody.toString();
@@ -204,9 +199,6 @@ public class TeamRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_TEAM);
             response.status(HttpStatus.NOT_FOUND_404);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         return responseBody.toString();
@@ -222,7 +214,7 @@ public class TeamRouter extends RestRouter {
             NewPlayTimePayload playTimePayload = getGson().fromJson(request.body(), NewPlayTimePayload.class);
             Team existingTeam = teamManager.updateAttendancePlaytime(generatedId, playTimePayload.getPlayTime());
             AttendanceCard attendanceCard = existingTeam.getAttendanceCard();
-            notify.notifyUser(existingTeam, NotificationType.TEAM_TIME_UPDATED);
+            notify.notifyTeam(existingTeam, NotificationType.TEAM_TIME_UPDATED);
 
             responseBody.add(JSON_PROPERTY_ATTENDANCE, getGson().toJsonTree(attendanceCard));
             response.status(HttpStatus.OK_200);
@@ -235,9 +227,8 @@ public class TeamRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_TEAM);
             response.status(HttpStatus.NOT_FOUND_404);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
+        } catch (TemplateNotFoundException ex) {
+            responseBody.addProperty(PersistenceConstants.NOTIFICATION, ERROR_NOTIFICATION_FAILED);
         }
 
         return responseBody.toString();
@@ -266,9 +257,6 @@ public class TeamRouter extends RestRouter {
         } catch (EntityNotFoundException ex) {
             responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_NONEXISTENT_TEAM);
             response.status(HttpStatus.NOT_FOUND_404);
-        } catch (RuntimeException ex) {
-            responseBody.addProperty(JSON_PROPERTY_ERROR, ERROR_COULD_NOT_COMPLETE_REQUEST);
-            response.status(HttpStatus.BAD_REQUEST_400);
         }
 
         return responseBody.toString();

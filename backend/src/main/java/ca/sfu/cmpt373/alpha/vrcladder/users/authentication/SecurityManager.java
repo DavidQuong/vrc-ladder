@@ -1,5 +1,6 @@
 package ca.sfu.cmpt373.alpha.vrcladder.users.authentication;
 
+import ca.sfu.cmpt373.alpha.vrcladder.exceptions.TemplateNotFoundException;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.NotificationManager;
 import ca.sfu.cmpt373.alpha.vrcladder.notifications.logic.NotificationType;
 import ca.sfu.cmpt373.alpha.vrcladder.users.User;
@@ -53,9 +54,14 @@ public class SecurityManager {
 
         if (!doesPasswordMatch(plaintextPassword, password)) {
 
-            if(user.getAttempts() % NUMBER_OF_ATTEMPTS_TO_NOTIFY_USER == 0 && user.getAttempts() > 0){
-                notify.notifyUser(user, NotificationType.FAILED_LOGIN);
+            try{
+                if(user.getAttempts() % NUMBER_OF_ATTEMPTS_TO_NOTIFY_USER == 0 && user.getAttempts() > 0){
+                    notify.notifyUser(user, NotificationType.FAILED_LOGIN);
+                }
+            } catch (TemplateNotFoundException ex){
+                ex.printStackTrace();
             }
+
             throw new AuthenticationException(ERROR_INVALID_CREDENTIALS);
         }
 
