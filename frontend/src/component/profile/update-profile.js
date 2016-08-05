@@ -3,7 +3,9 @@ import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import {withRouter} from 'react-router';
-import {updateUser} from '../../action/users';
+import {updateUser,
+  getCurrentActiveUserInfo as getUserInfo,
+} from '../../action/users';
 import styles from './updateProfile.css';
 import Heading from '../heading/heading';
 import isEmpty from 'lodash/fp/isEmpty';
@@ -200,12 +202,12 @@ const checkErrors = (responseErrors) => {
   if (responseErrors.phoneNumber === 'invalid') {
     errors.phoneNumber = 'This phone number is not valid';
   }
-
   return errors;
 };
 
 const updateAccount = withRouter(({
   updateUser,
+  getUserInfo,
   router,
   userInfo,
 }) : Element => (
@@ -226,7 +228,9 @@ const updateAccount = withRouter(({
           }
           return updateUser(info).then(() => {
             // TODO: pause on a warning/alert here!
-            router.push('/logout');
+            getUserInfo().then(() => {
+              router.push('/profile');
+            });
           }).catch((response) => {
             return response.then(function(bodyContent) {
               const errors = checkErrors(bodyContent);
@@ -246,5 +250,6 @@ export default connect(
     userInfo: state.app.userInfo,
   }),
   {updateUser,
+    getUserInfo,
   }
 )(updateAccount);
