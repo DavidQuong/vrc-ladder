@@ -26,9 +26,9 @@ const validate = (values) => {
   return errors;
 };
 
-const mapInitialResultsStateToProps = (state) => {
+const mapInitialResultsStateToProps = (state, ownProps) => {
   return {
-    initialValues: state.app.matchResults,
+    initialValues: ownProps.matchGroup.scores,
   };
 };
 
@@ -210,6 +210,7 @@ export const ResultForm = (
       <Panel header='Result Submission' bsStyle='primary'>
         <ResultFormRows
           form={`${formName}Results`}
+          matchGroup={matchGroup}
           matchTeams={matchGroupTeams}
           onSubmit={
             generateOnSubmitMatchResults(
