@@ -3,13 +3,14 @@
 ## CMPT 373 - Team Alpha
 ------------------------
 
-This project was developed for the non-profit society, the Vancouver Racquets Club (VRC), as a part of CMPT373: Software Development Methods, and it is provided under the terms of the Berkeley Software Distribution (BSD) license.
+This project was developed for the non-profit society, the Vancouver Racquets Club (VRC), as a part of CMPT373: Software Development Methods. It is licensed under the Berkeley Software Distribution (BSD) license.
 
 The goal of the system is to modernize the weekly doubles ladder system of VRC through an easy-to-use, platform-independent user interface.
-The project is split into two large parts:
-    1. The frontend: Website/user interface (JavaScript)
-    2. The backend: Rest API, Business Logic and Database (Java)
-These are the two folders in the root folder of the project
+
+The project is split into two parts:
+    1. The front-end: Website/User Interface (JavaScript)
+    2. The back-end: Rest API, Business Logic and Database (Java)   
+These are the two folders in the root folder of the project.
 
 ------------
 ### Frontend
